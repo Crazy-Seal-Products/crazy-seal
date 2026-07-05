@@ -17,7 +17,7 @@ const SIZE_CLASSES = {
 }
 
 export function QuoteButton({
-  children = 'Get a Free Quote',
+  children = 'Get in Touch',
   className,
   size = 'md',
 }: QuoteButtonProps) {
@@ -37,8 +37,8 @@ export function QuoteButton({
   )
 }
 
-const PHONE_NUMBER = '8557827667'
-const PHONE_DISPLAY = '(855) 782-7667'
+const PHONE_NUMBER = '8009630131'
+const PHONE_DISPLAY = '(800) 963-0131'
 
 interface QuoteCtaProps {
   quoteText?: string

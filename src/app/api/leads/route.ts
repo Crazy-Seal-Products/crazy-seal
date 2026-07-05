@@ -11,8 +11,9 @@ export async function POST(request: NextRequest) {
     const {
       name, email, phone,
       street_address, city, state, zip_code,
-      rv_year, rv_make, rv_model, rv_length,
-      roof_type, has_roof_damage,
+      project_type, rv_length, square_footage,
+      business_name, business_type, business_website,
+      lead_type,
       how_heard,
       texting_consent, photo_url, photo_urls,
       message, source_page,
@@ -108,23 +109,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Insert lead with full attribution + all RV-specific fields
+    // Insert lead with full attribution
     const { data: lead, error: leadError } = await supabase
       .from('leads')
       .insert({
         name,
         email: email.toLowerCase(),
         phone,
-        street_address: street_address || null,
-        city: city || null,
-        state: state || null,
-        zip_code: zip_code || null,
-        rv_year,
-        rv_make,
-        rv_model,
-        rv_length,
-        roof_type: roof_type || null,
-        has_roof_damage: has_roof_damage ?? null,
+        location: [city, state, zip_code].filter(Boolean).join(', ') || null,
+        project_type: project_type || null,
+        rv_length: rv_length || null,
+        square_footage: square_footage || null,
+        business_name: business_name || null,
+        business_type: business_type || null,
+        website: business_website || null,
+        lead_type: lead_type || 'contact',
         how_heard: how_heard || null,
         texting_consent: texting_consent ?? false,
         photo_url: photo_url || null,
@@ -158,12 +157,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Fire-and-forget: Zoho CRM push
     const nameParts = name.split(' ')
     const firstName = nameParts[0] || ''
     const lastName = nameParts.slice(1).join(' ') || name
 
-    // Fire-and-forget: Meta Conversions API (server-side Lead, mirrors WP plugin)
+    // Fire-and-forget: Meta Conversions API (server-side Lead)
     const fbpCookie = request.cookies.get('_fbp')?.value || null
     const fbcCookie =
       request.cookies.get('_fbc')?.value ||
@@ -173,7 +171,7 @@ export async function POST(request: NextRequest) {
       sendMetaCapiEvent({
         eventName: 'Lead',
         eventId: event_id,
-        eventSourceUrl: request.headers.get('referer') || `https://rv-armor.com${source_page || ''}`,
+        eventSourceUrl: request.headers.get('referer') || `https://crazyseal.com${source_page || ''}`,
         userData: {
           email,
           phone,
@@ -192,6 +190,7 @@ export async function POST(request: NextRequest) {
       }).catch((err) => console.error('[Meta CAPI] Lead error:', err))
     }
 
+    // Fire-and-forget: Zoho CRM push
     createZohoLead({
       First_Name: firstName,
       Last_Name: lastName,
@@ -203,13 +202,13 @@ export async function POST(request: NextRequest) {
       Zip_Code: zip_code || undefined,
       Lead_Source: 'Website Lead form',
       How_did_you_hear_about_us: how_heard || undefined,
-      What_type_of_RV_roof_do_you_have: roof_type || undefined,
-      Lead_Form_Comments: message || undefined,
-      How_old_is_your_roof: rv_year || undefined,
-      RV_Make: rv_make || undefined,
-      RV_Model: rv_model || undefined,
-      How_long_is_your_RV: rv_length || undefined,
-      Do_you_have_roof_damage_or_an_existing_roof_leak: has_roof_damage ? 'Yes' : has_roof_damage === false ? 'No' : undefined,
+      Lead_Form_Comments: [
+        project_type ? `Project type: ${project_type}` : null,
+        rv_length ? `RV length: ${rv_length} ft` : null,
+        square_footage ? `Square footage: ${square_footage}` : null,
+        business_name ? `Business: ${business_name} (${business_type || 'n/a'})` : null,
+        message || null,
+      ].filter(Boolean).join('\n') || undefined,
       Photo_URLS: photo_urls?.length ? (photo_urls as string[]).join('\n') : undefined,
       UTM_Source: (firstTouch.first_utm_source as string) || undefined,
       UTM_Medium: (firstTouch.first_utm_medium as string) || undefined,
@@ -229,8 +228,8 @@ export async function POST(request: NextRequest) {
     sendLeadNotification({
       name, email, phone,
       street_address, city, state, zip_code,
-      rv_year, rv_make, rv_model, rv_length,
-      roof_type, has_roof_damage,
+      project_type, rv_length, square_footage,
+      business_name, business_type,
       photo_urls, texting_consent,
       message, source_page,
     }).catch(err => console.error('[Gmail] Lead notification error:', err))
@@ -238,8 +237,8 @@ export async function POST(request: NextRequest) {
     sendLeadAutoReply({
       name, email, phone,
       street_address, city, state, zip_code,
-      rv_year, rv_make, rv_model, rv_length,
-      roof_type, has_roof_damage,
+      project_type, rv_length, square_footage,
+      business_name, business_type,
       message,
     }).catch(err => console.error('[Gmail] Auto-reply error:', err))
 

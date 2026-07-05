@@ -9,13 +9,19 @@ const s3 = new S3Client({
   },
 })
 
-const BUCKET = process.env.S3_BUCKET_NAME || 'rv-armor-media'
-const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.rv-armor.com'}`
+const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
+const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.crazyseal.com'}`
+
+const ALLOWED_FOLDERS = ['lead-photos', 'warranty', 'content-requests'] as const
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const files = formData.getAll('files') as File[]
+    const folderInput = formData.get('folder') as string | null
+    const folder = ALLOWED_FOLDERS.includes(folderInput as typeof ALLOWED_FOLDERS[number])
+      ? folderInput
+      : 'lead-photos'
 
     if (!files.length) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 })
@@ -26,7 +32,7 @@ export async function POST(request: NextRequest) {
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue
 
-      const key = `user-uploads/lead-photos/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+      const key = `user-uploads/${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
       const buffer = Buffer.from(await file.arrayBuffer())
 
       await s3.send(new PutObjectCommand({

@@ -11,7 +11,7 @@ export default function AdminDashboardPage() {
             <Heading level={1} className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
               Dashboard
             </Heading>
-            <Text className="text-gray-500">RV Armor Admin Panel</Text>
+            <Text className="text-gray-500">Crazy Seal Admin Panel</Text>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

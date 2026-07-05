@@ -1,46 +1,37 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = 'https://rv-armor.com'
+const BASE_URL = 'https://crazyseal.com'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date().toISOString()
 
   const mainPages = [
     { url: '/', changeFrequency: 'weekly' as const, priority: 1.0 },
-    { url: '/rv-armor/', changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: '/crazy-seal/', changeFrequency: 'monthly' as const, priority: 0.9 },
     { url: '/pricing/', changeFrequency: 'monthly' as const, priority: 0.9 },
     { url: '/advantages/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/products/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/applications/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/rv-roofs/', changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: '/commercial-roofing/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/residential/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/transportation/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/facilities/', changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: '/installation/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/installation/membrane-roof/', changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: '/installation/direct-to-deck/', changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: '/warranty/', changeFrequency: 'monthly' as const, priority: 0.8 },
-    { url: '/insurance/', changeFrequency: 'monthly' as const, priority: 0.8 },
-    { url: '/insurance/adjusters/', changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: '/services/', changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: '/professionals/', changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: '/business-accelerator-program/', changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: '/technical-data/', changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: '/ordering/', changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: '/custom-orders/', changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: '/build-your-own-kit/', changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: '/return-policy/', changeFrequency: 'yearly' as const, priority: 0.4 },
     { url: '/about/', changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: '/photos/', changeFrequency: 'weekly' as const, priority: 0.8 },
     { url: '/reviews/', changeFrequency: 'weekly' as const, priority: 0.8 },
     { url: '/contact/', changeFrequency: 'monthly' as const, priority: 0.9 },
     { url: '/faq/', changeFrequency: 'monthly' as const, priority: 0.8 },
-    { url: '/financing/', changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: '/our-work/', changeFrequency: 'weekly' as const, priority: 0.7 },
-    { url: '/blog/', changeFrequency: 'weekly' as const, priority: 0.6 },
-    { url: '/techs/', changeFrequency: 'monthly' as const, priority: 0.5 },
-    { url: '/tech-application/', changeFrequency: 'monthly' as const, priority: 0.4 },
-    { url: '/newsletter/', changeFrequency: 'monthly' as const, priority: 0.4 },
-  ]
-
-  const contentPages = [
-    '/how-to-prep-your-rv-for-your-new-rv-armor-roof/',
-    '/the-permanent-roof-coating-for-your-travel-trailer/',
-    '/the-care-and-cleaning-of-your-rv-armor-roof/',
-  ]
-
-  const promoPages = [
-    '/beat-the-spring-rush/',
-    '/christmas-in-july/',
-    '/end-of-the-year-sale/',
-    '/fall-into-savings/',
-    '/relief-sale/',
-    '/southern-savings/',
-    '/year-end-and-southern-savings-sale/',
   ]
 
   const legalPages = [
@@ -54,18 +45,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: page.changeFrequency,
       priority: page.priority,
-    })),
-    ...contentPages.map((url) => ({
-      url: `${BASE_URL}${url}`,
-      lastModified: now,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    })),
-    ...promoPages.map((url) => ({
-      url: `${BASE_URL}${url}`,
-      lastModified: now,
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
     })),
     ...legalPages.map((url) => ({
       url: `${BASE_URL}${url}`,

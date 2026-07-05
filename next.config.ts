@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "media.rv-armor.com",
+        hostname: "media.crazyseal.com",
         pathname: "/**",
       },
       {

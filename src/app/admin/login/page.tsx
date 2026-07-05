@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-[#003365] flex items-center justify-center mb-3">
-            <span className="text-white text-lg font-bold">RVA</span>
+            <span className="text-white text-lg font-bold">CS</span>
           </div>
           <h1 className="text-xl font-bold text-gray-900">Admin Login</h1>
           <p className="text-sm text-gray-500 mt-1">Sign in to the admin panel</p>

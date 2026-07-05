@@ -8,10 +8,11 @@ export function CtaSection() {
           Get Started Today
         </p>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#003365] mb-4 tracking-tight">
-          Ready to Protect Your RV?
+          Ready to Do It Once and Do It Right?
         </h2>
         <p className="text-gray-500 text-base sm:text-lg mb-6 md:mb-10 leading-relaxed">
-          Get a free, no-obligation quote. Our certified technicians come to you anywhere in the continental US.
+          Talk to a Crazy Seal specialist about your project, or get an instant
+          quote and have your kit shipped straight to your door.
         </p>
         <QuoteCta />
       </div>

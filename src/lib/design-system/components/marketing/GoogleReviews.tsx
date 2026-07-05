@@ -305,7 +305,7 @@ export function GoogleReviews({
         layout="custom"
         renderer={customRenderer}
         structuredData={true}
-        brandName="RV Armor"
+        brandName="Crazy Seal"
         accessibility={true}
       />
     </div>

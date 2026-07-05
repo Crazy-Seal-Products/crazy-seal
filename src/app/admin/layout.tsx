@@ -108,7 +108,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-[#003365] flex items-center justify-center animate-pulse">
-            <span className="text-white text-sm font-bold">RVA</span>
+            <span className="text-white text-sm font-bold">CS</span>
           </div>
           <p className="text-sm text-gray-400">Loading...</p>
         </div>
@@ -137,7 +137,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {!collapsed && (
             <Link href="/admin" className="flex items-center gap-2 group">
               <div className="w-7 h-7 rounded-md bg-[#003365] flex items-center justify-center shrink-0">
-                <span className="text-white text-[10px] font-bold">RVA</span>
+                <span className="text-white text-[10px] font-bold">CS</span>
               </div>
               <span className="text-xs font-bold text-gray-900 group-hover:text-[#003365] transition-colors">Admin</span>
             </Link>
@@ -145,7 +145,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {collapsed && (
             <button onClick={() => setCollapsed(false)} className="mx-auto p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors" title="Expand sidebar">
               <div className="w-7 h-7 rounded-md bg-[#003365] flex items-center justify-center">
-                <span className="text-white text-[10px] font-bold">RVA</span>
+                <span className="text-white text-[10px] font-bold">CS</span>
               </div>
             </button>
           )}
@@ -207,7 +207,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </button>
         <Link href="/admin" className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-md bg-[#003365] flex items-center justify-center">
-            <span className="text-white text-[10px] font-bold">RVA</span>
+            <span className="text-white text-[10px] font-bold">CS</span>
           </div>
           <span className="text-sm font-bold text-gray-900">Admin</span>
         </Link>
@@ -221,7 +221,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex items-center justify-between h-14 px-4 border-b border-gray-100 shrink-0">
               <Link href="/admin" className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-[#003365] flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">RVA</span>
+                  <span className="text-white text-xs font-bold">CS</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">Admin</span>
               </Link>

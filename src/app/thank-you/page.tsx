@@ -6,7 +6,7 @@ import { ThankYouConversion } from './ThankYouConversion'
 
 export const metadata: Metadata = {
   title: 'Thank You',
-  description: 'Thank you for contacting RV Armor. We will be in touch within 24 hours.',
+  description: 'Thank you for contacting Crazy Seal. We will be in touch within 24 hours.',
 }
 
 export default function ThankYouPage() {
@@ -22,17 +22,17 @@ export default function ThankYouPage() {
             <Heading level={1}>Thank You!</Heading>
             <Text className="max-w-lg mx-auto !text-lg">
               We&apos;ve received your request and will be in touch within 24 hours
-              with a detailed quote for your RV.
+              to help with your project.
             </Text>
 
             <div className="mt-8 p-4 bg-blue-50 rounded-xl max-w-sm mx-auto">
               <p className="text-sm text-gray-600 mb-2">Need to talk sooner?</p>
               <a
-                href="tel:8557827667"
+                href="tel:8009630131"
                 className="flex items-center justify-center gap-2 text-[#003365] font-semibold hover:underline"
               >
                 <Phone className="w-4 h-4" />
-                (855) 782-7667
+                (800) 963-0131
               </a>
             </div>
 

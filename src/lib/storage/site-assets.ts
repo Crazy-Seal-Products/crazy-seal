@@ -1,4 +1,4 @@
-const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || 'https://media.rv-armor.com'
+const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || 'https://media.crazyseal.com'
 const SITE_ASSETS_PREFIX = 'site-assets/'
 const PRESIGNED_THRESHOLD = 4 * 1024 * 1024
 

@@ -6,9 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/lms/', '/api/'],
+        disallow: ['/admin/', '/api/'],
       },
     ],
-    sitemap: 'https://rv-armor.com/sitemap.xml',
+    sitemap: 'https://crazyseal.com/sitemap.xml',
   }
 }
