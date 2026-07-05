@@ -3,7 +3,9 @@ import { Check, Phone } from 'lucide-react'
 import { Container, SectionHeading, LinkButton, YouTubeEmbed } from '@/lib/design-system'
 import { ContactForm } from '@/components/forms/ContactForm'
 import { CtaSection } from '@/components/CtaSection'
+import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import {
+  MEDIA,
   ProTestimonials,
   ProApplications,
   ProQuickLinks,
@@ -103,7 +105,11 @@ export default function RvProfessionalsPage() {
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center">
             <div>
-              <YouTubeEmbed videoId="C5FvTulPDaY" variant="card" />
+              <ProYouTubeEmbed
+                videoId="C5FvTulPDaY"
+                thumbnail={`${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`}
+                title="Crazy Seal full overview video"
+              />
               <p className="text-center text-sm font-semibold text-gray-500 mt-3">
                 Watch our video for a full overview!
               </p>

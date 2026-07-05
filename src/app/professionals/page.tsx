@@ -20,6 +20,7 @@ import {
   YouTubeEmbed,
 } from '@/lib/design-system'
 import { ProfessionalContactForm } from '@/components/forms/ProfessionalContactForm'
+import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -44,7 +45,7 @@ const QUICK_LINKS = [
     title: 'Install & Earn Big',
     desc: 'Install seamless roofs and earn big with raw materials factory direct from Crazy Seal!',
     cta: 'Ways to Earn',
-    href: '/business-accelerator-program',
+    href: '/ways-to-earn',
     icon: BadgeDollarSign,
   },
   {
@@ -68,7 +69,7 @@ const QUICK_LINKS = [
     title: 'Our Tools / Your Profit',
     desc: 'Use these downloadable tools to help you grow your Crazy Seal Installation Business.',
     cta: 'Professional Tools',
-    href: '/business-accelerator-program',
+    href: '/professional-tools',
     icon: Wrench,
   },
   {
@@ -331,7 +332,11 @@ export default function ProfessionalsPage() {
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div>
-              <YouTubeEmbed videoId="C5FvTulPDaY" variant="card" />
+              <ProYouTubeEmbed
+                videoId="C5FvTulPDaY"
+                thumbnail={`${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`}
+                title="21 and a half Reasons Why video"
+              />
               <p className="text-center text-white/60 text-sm font-semibold mt-3">
                 21&frac12; Reasons Why
               </p>

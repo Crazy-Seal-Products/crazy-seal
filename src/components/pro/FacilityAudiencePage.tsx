@@ -20,6 +20,7 @@ import { Container, Grid, SectionHeading, LinkButton, YouTubeEmbed, FeatureCard 
 import { ContactForm } from '@/components/forms/ContactForm'
 import { CtaSection } from '@/components/CtaSection'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import { MEDIA, ProTestimonials } from '@/components/pro/ProSections'
 
 const PHASES = [
@@ -291,7 +292,11 @@ export function FacilityAudiencePage({
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center">
             <div>
-              <YouTubeEmbed videoId="C5FvTulPDaY" variant="card" />
+              <ProYouTubeEmbed
+                videoId="C5FvTulPDaY"
+                thumbnail={`${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`}
+                title="Crazy Seal full overview video"
+              />
               <p className="text-center text-sm font-semibold text-gray-500 mt-3">
                 Click to watch our full overview video
               </p>

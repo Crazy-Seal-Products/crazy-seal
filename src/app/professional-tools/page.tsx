@@ -4,6 +4,7 @@ import { Container, SectionHeading, LinkButton, YouTubeEmbed } from '@/lib/desig
 import { ContactForm } from '@/components/forms/ContactForm'
 import { CtaSection } from '@/components/CtaSection'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import { MEDIA, ProTestimonials, ProTrailerLife } from '@/components/pro/ProSections'
 
 export const metadata: Metadata = {
@@ -135,7 +136,11 @@ export default function ProfessionalToolsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {OVERVIEW_VIDEOS.map((v) => (
               <div key={v.videoId}>
-                <YouTubeEmbed videoId={v.videoId} variant="card" />
+                <ProYouTubeEmbed
+                  videoId={v.videoId}
+                  thumbnail={v.thumbnail}
+                  title={v.caption}
+                />
                 <p className="text-center text-sm font-semibold text-gray-600 mt-3 mb-2">
                   {v.caption}
                 </p>
