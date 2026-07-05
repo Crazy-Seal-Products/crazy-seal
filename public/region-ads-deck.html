@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RV Armor — Regional Ad Library</title>
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-2: #13283d;
+    --steel: #1b3a57;
+    --red: #e63946;
+    --red-soft: #ff5a67;
+    --ink: #e8eef4;
+    --muted: #9bb0c4;
+    --line: rgba(255, 255, 255, 0.08);
+    --card: rgba(255, 255, 255, 0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: 6vh 8vw 11vh;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(230, 57, 70, 0.16), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(27, 58, 87, 0.55), transparent 55%),
+      linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; animation: fade 0.45s ease; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-size: clamp(11px, 1.1vw, 14px);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--red-soft);
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-size: clamp(34px, 6vw, 78px);
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  h1 .accent { color: var(--red-soft); }
+
+  h2 {
+    font-size: clamp(26px, 3.6vw, 46px);
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    color: var(--muted);
+    font-size: clamp(15px, 1.7vw, 22px);
+    line-height: 1.5;
+    max-width: 60ch;
+    margin-top: 18px;
+  }
+
+  .section-head { margin-bottom: 26px; }
+  .section-head .tag {
+    display: inline-block;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .section-head .note {
+    color: var(--muted);
+    font-size: clamp(14px, 1.5vw, 18px);
+    margin-top: 6px;
+  }
+
+  .lines { display: flex; flex-direction: column; gap: 14px; max-width: 1100px; }
+  .line {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--red);
+    border-radius: 12px;
+    padding: 18px 22px;
+    font-size: clamp(15px, 1.7vw, 21px);
+    line-height: 1.45;
+  }
+  .line .region { color: var(--red-soft); font-weight: 700; }
+
+  /* Example ad slides */
+  .ad-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    max-width: 1000px;
+  }
+  .ad-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+  .chip {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(230, 57, 70, 0.14);
+    border: 1px solid rgba(230, 57, 70, 0.4);
+    color: var(--red-soft);
+  }
+  .chip.neutral {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--line);
+    color: var(--muted);
+  }
+  .script {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 30px 34px;
+    font-size: clamp(16px, 1.8vw, 23px);
+    line-height: 1.6;
+    max-width: 1000px;
+  }
+  .script p { margin-bottom: 16px; }
+  .script p:last-child { margin-bottom: 0; }
+  .script .region { color: var(--red-soft); font-weight: 700; }
+  .script .adr { color: var(--red-soft); font-weight: 700; }
+
+  /* per-ad region selector bar */
+  .ad-region-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    max-width: 1000px;
+  }
+  .ad-region-bar .label {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .ad-region-bar .ar {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ad-region-bar .ar:hover { color: #fff; border-color: var(--red); }
+  .ad-region-bar .ar.active { background: var(--red); border-color: var(--red); color: #fff; }
+  .ad-region-bar .ar-input {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    width: 150px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .ad-region-bar .ar-input::placeholder { color: var(--muted); font-weight: 500; }
+  .ad-region-bar .ar-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(230,57,70,0.18); }
+  .ad-region-bar .ar-input.active { border-color: var(--red); background: rgba(230,57,70,0.12); }
+
+  .regions-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .region-pill {
+    padding: 14px 22px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    font-weight: 700;
+    font-size: clamp(14px, 1.5vw, 19px);
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .region-pill:hover { transform: translateY(-2px); border-color: var(--red); }
+  .region-pill.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(230, 57, 70, 0.35);
+  }
+
+  /* live placeholder spans become tappable */
+  .rp {
+    cursor: pointer;
+    border-bottom: 2px dotted rgba(255, 90, 103, 0.6);
+    padding-bottom: 1px;
+  }
+  .rp:hover { border-bottom-style: solid; }
+
+  /* footer region switcher */
+  .region-switch {
+    position: fixed;
+    top: 18px; right: 8vw;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    z-index: 25;
+    max-width: 70vw;
+    justify-content: flex-end;
+  }
+  .region-switch .rs {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .region-switch .rs:hover { color: #fff; border-color: var(--red); }
+  .region-switch .rs.active { background: var(--red); border-color: var(--red); color: #fff; }
+  .region-switch .rs.reset { color: var(--muted); }
+  .region-switch .rs-input {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    width: 170px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .region-switch .rs-input::placeholder { color: var(--muted); font-weight: 500; }
+  .region-switch .rs-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(230,57,70,0.18); }
+  .region-switch .rs-input.active { border-color: var(--red); background: rgba(230,57,70,0.12); }
+
+  .agenda { list-style: none; max-width: 760px; margin-top: 26px; }
+  .agenda li {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: clamp(16px, 1.9vw, 24px);
+  }
+  .agenda li span.num {
+    color: var(--red-soft);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    min-width: 38px;
+  }
+
+  /* footer / nav */
+  .footer {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8vw;
+    background: linear-gradient(to top, rgba(8,16,26,0.92), transparent);
+    pointer-events: none;
+    z-index: 20;
+  }
+  .brand { font-weight: 800; letter-spacing: 0.04em; font-size: 15px; }
+  .brand .b-red { color: var(--red-soft); }
+  .nav { display: flex; align-items: center; gap: 14px; pointer-events: auto; }
+  .nav button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    width: 42px; height: 42px;
+    border-radius: 999px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .nav button:hover { background: var(--red); transform: translateY(-2px); }
+  .counter { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; min-width: 54px; text-align: center; }
+
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--red), var(--red-soft));
+    z-index: 30;
+    transition: width 0.35s ease;
+  }
+
+  .hint { color: var(--muted); font-size: 13px; margin-top: 34px; }
+  .hint kbd {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-family: inherit;
+    font-size: 12px;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1100px; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="region-switch" id="regionSwitch">
+  <button class="rs" data-region="Northwest">Northwest</button>
+  <button class="rs" data-region="Southwest">Southwest</button>
+  <button class="rs" data-region="Midwest">Midwest</button>
+  <button class="rs" data-region="Gulf Coast">Gulf Coast</button>
+  <button class="rs" data-region="Northeast">Northeast</button>
+  <button class="rs" data-region="Southeast">Southeast</button>
+  <input class="rs-input" id="customRegion" type="text" placeholder="Type a custom region..." autocomplete="off" />
+  <button class="rs reset" data-region="[REGION]">Reset</button>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1: Title -->
+  <section class="slide active">
+    <div class="eyebrow">RV Armor &middot; Ad Strategy</div>
+    <h1>Regional Ad<br /><span class="accent">Soundbite Library</span></h1>
+    <p class="sub">A switchboard of short, region-specific clips for Lee to record. Assemble them into ads, then dial each region up or down based on where you have open capacity.</p>
+    <div class="regions-row">
+      <div class="region-pill" data-region="Northwest">Northwest</div>
+      <div class="region-pill" data-region="Southwest">Southwest</div>
+      <div class="region-pill" data-region="Midwest">Midwest</div>
+      <div class="region-pill" data-region="Gulf Coast">Gulf Coast</div>
+      <div class="region-pill" data-region="Northeast">Northeast</div>
+      <div class="region-pill" data-region="Southeast">Southeast</div>
+    </div>
+    <div class="hint">Click a region to fill it into every script &middot; Use <kbd>&larr;</kbd> <kbd>&rarr;</kbd> to move through the deck.</div>
+  </section>
+
+  <!-- 2: How it works -->
+  <section class="slide">
+    <div class="eyebrow">The Idea</div>
+    <h2>One assembly line. Six regions.</h2>
+    <p class="sub">Lee records each line once, for all six regions, as standalone clips. We mix the intro hook + the core message + a CTA. When a region is booked out, we turn the "openings now" lines off and the "booked out" line on — and shift ad spend to the regions that need demand.</p>
+    <ul class="agenda">
+      <li><span class="num">1</span> Region Callout Hooks <span style="color:var(--muted);font-size:0.7em">&nbsp; opening lines</span></li>
+      <li><span class="num">2</span> Availability Soundbites <span style="color:var(--muted);font-size:0.7em">&nbsp; for light regions</span></li>
+      <li><span class="num">3</span> Weather &amp; Region Angles</li>
+      <li><span class="num">4</span> Peace-of-Mind / Family</li>
+      <li><span class="num">5</span> Regional CTAs</li>
+      <li><span class="num">6</span> Six Ready-to-Read Ad Examples</li>
+    </ul>
+  </section>
+
+  <!-- 3: Section 1 Hooks -->
+  <section class="slide">
+    <div class="section-head">
+      <div class="tag">Section 1</div>
+      <h2>Region Callout Hooks</h2>
+      <div class="note">First lines. Make the local owner feel "this is for me."</div>
+    </div>
+    <div class="lines">
+      <div class="line">"If your RV lives in the <span class="region rp">[REGION]</span>, your roof is taking a beating you probably don't see."</div>
+      <div class="line"><span class="region rp">[REGION]</span> RV owners… if your roof is more than five years old, this is for you."</div>
+      <div class="line">"Whether you store your RV in a driveway, a storage lot, or a campground in the <span class="region rp">[REGION]</span>, your roof is aging every single day."</div>
+      <div class="line">"If your RV spends most of its time in the <span class="region rp">[REGION]</span> sun and weather, your roof is working harder than you think."</div>
+      <div class="line">"Full-timers and weekend warriors in the <span class="region rp">[REGION]</span>… your trips are only as reliable as the roof over your head."</div>
+      <div class="line">"If you've got an RV parked anywhere in the <span class="region rp">[REGION]</span>, your biggest hidden risk is usually the roof, not the engine."</div>
+    </div>
+  </section>
+
+  <!-- 4: Section 2 Availability -->
+  <section class="slide">
+    <div class="section-head">
+      <div class="tag">Section 2</div>
+      <h2>Availability &amp; Utilization Soundbites</h2>
+      <div class="note">Crank these up only where you have open capacity. Turn off when booked.</div>
+    </div>
+    <div class="lines">
+      <div class="line">"Right now we've got certified RV Armor technicians in the <span class="region rp">[REGION]</span> with openings on the schedule."</div>
+      <div class="line">"Our <span class="region rp">[REGION]</span> crews are actively booking new installs this month, while your rig is parked."</div>
+      <div class="line">"If you're in the <span class="region rp">[REGION]</span>, we have technicians in your area ready to install a permanent roof at your location."</div>
+      <div class="line">"We've built out our <span class="region rp">[REGION]</span> team, and we're looking for more roofs we can protect for life."</div>
+      <div class="line">"In the <span class="region rp">[REGION]</span>, we still have spots before the next big travel rush hits."</div>
+      <div class="line">"If you're seeing this in the <span class="region rp">[REGION]</span>, it's because we've got room on the calendar for a few more installs."</div>
+    </div>
+  </section>
+
+  <!-- 5: Section 3 Weather -->
+  <section class="slide">
+    <div class="section-head">
+      <div class="tag">Section 3</div>
+      <h2>Weather &amp; Region Angles</h2>
+      <div class="note">Pick the ones that fit each region's reality — rain, snow, sun.</div>
+    </div>
+    <div class="lines">
+      <div class="line">"In the <span class="region rp">[REGION]</span>, you get a mix of sun, rain, and temperature swings that are rough on RV roofs."</div>
+      <div class="line">"The freeze-thaw cycles in the <span class="region rp">[REGION]</span> are brutal on seams and sealants."</div>
+      <div class="line">"Long, hot summers in the <span class="region rp">[REGION]</span> cook sealant and dry out roofs faster than most owners realize."</div>
+      <div class="line">"Heavy rain and humidity in the <span class="region rp">[REGION]</span> mean even a small crack can turn into a big problem."</div>
+    </div>
+  </section>
+
+  <!-- 6: Section 4 Family -->
+  <section class="slide">
+    <div class="section-head">
+      <div class="tag">Section 4</div>
+      <h2>Peace-of-Mind / Family Angle</h2>
+      <div class="note">Universal, but lands nicely with a region tag.</div>
+    </div>
+    <div class="lines">
+      <div class="line">"If your family travels out of the <span class="region rp">[REGION]</span> every year, the last thing you want to worry about is a leaking roof on the road."</div>
+      <div class="line">"For a lot of people in the <span class="region rp">[REGION]</span>, their RV is their favorite place on earth. We treat that roof like it's protecting our own."</div>
+      <div class="line">"My goal is simple: every RV in the <span class="region rp">[REGION]</span> should have a roof you never have to think about again."</div>
+    </div>
+  </section>
+
+  <!-- 7: Section 5 CTAs -->
+  <section class="slide">
+    <div class="section-head">
+      <div class="tag">Section 5</div>
+      <h2>Regional CTAs</h2>
+      <div class="note">Use after any meat section.</div>
+    </div>
+    <div class="lines">
+      <div class="line">"If your RV is in the <span class="region rp">[REGION]</span>, visit RV-Armor.com, tell us where you're located, and we'll show you your options."</div>
+      <div class="line">"RVs in the <span class="region rp">[REGION]</span>: go to RV-Armor.com, punch in your info, and my team will send you a custom quote."</div>
+      <div class="line">"If you're in the <span class="region rp">[REGION]</span> and want a roof you don't have to worry about, head to RV-Armor.com for your free quote."</div>
+    </div>
+  </section>
+
+  <!-- 8: Divider for examples -->
+  <section class="slide">
+    <div class="eyebrow">Section 6</div>
+    <h1>Six Ads,<br /><span class="accent">Ready to Read</span></h1>
+    <p class="sub">Each one is fully wired — hook, core message, availability note, and CTA. Lee can read these as-is. Swap the region and tweak the weather mention per zone.</p>
+  </section>
+
+  <!-- 9: Northwest -->
+  <section class="slide ad-slide" data-default="Northwest">
+    <div class="ad-meta">
+      <span class="chip adr">Northwest</span>
+      <span class="chip neutral">Underutilized &middot; Cold Ad</span>
+      <span class="chip neutral">Angle: Moisture &amp; Temp Swings</span>
+    </div>
+    <div class="ad-region-bar"></div>
+    <div class="script">
+      <p>"If your RV lives in the <span class="adr">Northwest</span>, your roof is taking a beating you probably don't see.</p>
+      <p>I'm Lee Thaxton, founder of RV Armor. We install a permanent, seamless RV roof right where your rig sits — driveway, storage lot, or campground.</p>
+      <p>In the <span class="adr">Northwest</span>, you get a mix of rain, moisture, and temperature swings that are rough on seams and sealants. That's why we've built out our <span class="adr">Northwest</span> team, and right now we've got certified technicians with openings on the schedule.</p>
+      <p>Our system is designed to be the last RV roof you ever need, with a true lifetime material and labor warranty tracked to your VIN — and you never climb up there to reseal seams again.</p>
+      <p>If your RV is in the <span class="adr">Northwest</span> and your roof is five to ten years old, visit RV-Armor.com, tell us where you're located, and my team will send you a free custom quote."</p>
+    </div>
+  </section>
+
+  <!-- 10: Southwest -->
+  <section class="slide ad-slide" data-default="Southwest">
+    <div class="ad-meta">
+      <span class="chip adr">Southwest</span>
+      <span class="chip neutral">Cold / Warm</span>
+      <span class="chip neutral">Angle: Sun Damage</span>
+    </div>
+    <div class="ad-region-bar"></div>
+    <div class="script">
+      <p>"If your RV spends most of its time in the <span class="adr">Southwest</span> sun, your roof is working harder than you think.</p>
+      <p>I'm Lee Thaxton, founder of RV Armor. Long, hot summers in the <span class="adr">Southwest</span> cook sealant and dry out roofs faster than most owners realize. By the time you see a stain inside, the damage has usually been building for years.</p>
+      <p>We install a seamless, permanent roof system right on top of your existing roof, at your location, anywhere in the <span class="adr">Southwest</span>. Then we back it with a true lifetime material and labor warranty, tied to your RV's VIN and fully transferable if you sell.</p>
+      <p>Our <span class="adr">Southwest</span> crews are actively booking new installs this month while rigs are parked.</p>
+      <p>If you want one roof you don't have to worry about in the <span class="adr">Southwest</span> heat, go to RV-Armor.com for a free quote."</p>
+    </div>
+  </section>
+
+  <!-- 11: Midwest -->
+  <section class="slide ad-slide" data-default="Midwest">
+    <div class="ad-meta">
+      <span class="chip adr">Midwest</span>
+      <span class="chip neutral">Cold Ad</span>
+      <span class="chip neutral">Angle: Freeze / Thaw</span>
+    </div>
+    <div class="ad-region-bar"></div>
+    <div class="script">
+      <p>"In the <span class="adr">Midwest</span>, the freeze-thaw cycle is brutal on RV roofs.</p>
+      <p>I'm Lee Thaxton, founder of RV Armor. Seams and sealant crack, water gets in, freezes, expands, and quietly rips things apart under the surface. Most owners don't notice until soft spots and staining show up inside.</p>
+      <p>Our <span class="adr">Midwest</span> team installs a seamless roof system at your driveway, storage lot, or campground and backs it with a hassle-free lifetime material and labor warranty. No resealing, no maintenance requirements to keep it valid.</p>
+      <p>If your RV is parked in the <span class="adr">Midwest</span> right now, it's the perfect time to take care of the roof before next season.</p>
+      <p>Visit RV-Armor.com, punch in your info, and we'll show you your options."</p>
+    </div>
+  </section>
+
+  <!-- 12: Gulf Coast -->
+  <section class="slide ad-slide" data-default="Gulf Coast">
+    <div class="ad-meta">
+      <span class="chip adr">Gulf Coast</span>
+      <span class="chip neutral">Cold / Warm</span>
+      <span class="chip neutral">Angle: Storm / Humidity</span>
+    </div>
+    <div class="ad-region-bar"></div>
+    <div class="script">
+      <p>"If your RV is parked anywhere in the <span class="adr">Gulf Coast</span> region, heavy rain and humidity mean even a small crack in the roof can turn into a big problem.</p>
+      <p>I'm Lee Thaxton, founder of RV Armor. I've seen tiny leaks quietly soak into the wood for months before anything shows up inside.</p>
+      <p>That's why we built a mobile system: our <span class="adr">Gulf Coast</span> crews come to you and install a seamless, permanent roof with a true lifetime material and labor warranty. No resealing schedule. No shop visits.</p>
+      <p>Right now we still have spots open in the <span class="adr">Gulf Coast</span> region before the next big travel rush hits.</p>
+      <p>If you'd like your RV roof handled once — the right way — visit RV-Armor.com for a free quote."</p>
+    </div>
+  </section>
+
+  <!-- 13: Southeast -->
+  <section class="slide ad-slide" data-default="Southeast">
+    <div class="ad-meta">
+      <span class="chip adr">Southeast</span>
+      <span class="chip neutral">Warm Retargeting</span>
+      <span class="chip neutral">Angle: Rain / Full-Timer</span>
+    </div>
+    <div class="ad-region-bar"></div>
+    <div class="script">
+      <p>"Full-timers and weekend warriors in the <span class="adr">Southeast</span>… your trips are only as reliable as the roof over your head.</p>
+      <p>I'm Lee Thaxton, founder of RV Armor. In the <span class="adr">Southeast</span>, constant sun, heat, and sudden downpours are tough on RV roofs. Most of the damage I see didn't happen overnight — it built up slowly and silently.</p>
+      <p>We have technicians based in the <span class="adr">Southeast</span>, and we're looking for more roofs we can protect for life. In two to three days, they'll install a seamless roof at your location and back it with a true lifetime material and labor warranty.</p>
+      <p>If you're in the <span class="adr">Southeast</span> and want a roof you don't have to think about anymore, head to RV-Armor.com and get your free quote."</p>
+    </div>
+  </section>
+
+  <!-- 14: Northeast -->
+  <section class="slide ad-slide" data-default="Northeast">
+    <div class="ad-meta">
+      <span class="chip adr">Northeast</span>
+      <span class="chip neutral">Booked Out &middot; Waitlist</span>
+      <span class="chip neutral">Angle: Authority</span>
+    </div>
+    <div class="ad-region-bar"></div>
+    <div class="script">
+      <p>"In the <span class="adr">Northeast</span>, RV roofs see everything — snow, ice, spring rain, and summer sun.</p>
+      <p>I'm Lee Thaxton, founder of RV Armor. Our <span class="adr">Northeast</span> crews have been protecting roofs here for years, and as a result, we're usually booked several months in advance.</p>
+      <p>We install a permanent, seamless roof at your location and stand behind it with a lifetime material and labor warranty. For a lot of owners, that's the last time they ever think about their roof.</p>
+      <p>If you're in the <span class="adr">Northeast</span> and want to get on our priority list for the next available install dates, visit RV-Armor.com and tell us about your rig. We'll review your situation and hold the next opening we have in your area."</p>
+    </div>
+  </section>
+
+  <!-- 15: Closing -->
+  <section class="slide">
+    <div class="eyebrow">The Lever</div>
+    <h2>Same ad. Different dial.</h2>
+    <p class="sub">Keep the structure identical across every region. When capacity shifts, swap "we've got openings now" for "we're usually booked out" and move the spend. One library of clips becomes a utilization control panel.</p>
+    <div class="two-col" style="margin-top:30px;">
+      <div class="line" style="border-left-color:#39d98a;">
+        <strong style="color:#39d98a;">Light region</strong><br />
+        Turn availability lines ON. Increase spend. Push "openings now."
+      </div>
+      <div class="line" style="border-left-color:var(--red);">
+        <strong style="color:var(--red-soft);">Booked region</strong><br />
+        Turn availability lines OFF. Run the waitlist ad. Reduce spend.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="footer">
+  <div class="brand">RV<span class="b-red">ARMOR</span></div>
+  <div class="nav">
+    <button id="prev" aria-label="Previous">&larr;</button>
+    <span class="counter" id="counter">1 / 15</span>
+    <button id="next" aria-label="Next">&rarr;</button>
+  </div>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = 0;
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+
+  function show(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+    counter.textContent = (current + 1) + ' / ' + slides.length;
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+    slides[current].scrollTop = 0;
+  }
+
+  document.getElementById('next').addEventListener('click', () => show(current + 1));
+  document.getElementById('prev').addEventListener('click', () => show(current - 1));
+
+  // --- Region selection ---
+  const placeholders = Array.from(document.querySelectorAll('.rp'));
+  const switchBtns = Array.from(document.querySelectorAll('.region-switch .rs'));
+  const titlePills = Array.from(document.querySelectorAll('.region-pill'));
+
+  const customInput = document.getElementById('customRegion');
+
+  function setRegion(region, fromInput) {
+    const display = (region && region.trim()) ? region : '[REGION]';
+    placeholders.forEach(el => el.textContent = display);
+    const isReset = display === '[REGION]';
+    const presets = switchBtns.map(b => b.dataset.region);
+    switchBtns.forEach(b => b.classList.toggle('active', !b.classList.contains('reset') && b.dataset.region === display));
+    titlePills.forEach(p => p.classList.toggle('active', !isReset && p.dataset.region === display));
+    // custom input is "active" only when a non-preset value is in play
+    const isCustom = !isReset && !presets.includes(display);
+    customInput.classList.toggle('active', isCustom);
+    if (!fromInput && !isCustom) customInput.value = '';
+  }
+
+  switchBtns.forEach(b => b.addEventListener('click', () => setRegion(b.dataset.region)));
+  titlePills.forEach(p => p.addEventListener('click', () => setRegion(p.dataset.region)));
+  customInput.addEventListener('input', () => setRegion(customInput.value, true));
+  // click a placeholder to cycle to the next region
+  const regionOrder = ['Northwest','Southwest','Midwest','Gulf Coast','Northeast','Southeast','[REGION]'];
+  placeholders.forEach(el => el.addEventListener('click', () => {
+    const i = regionOrder.indexOf(el.textContent);
+    setRegion(regionOrder[(i + 1) % regionOrder.length]);
+  }));
+
+  // --- Per-ad region selectors ---
+  const REGIONS = ['Northwest','Southwest','Midwest','Gulf Coast','Northeast','Southeast'];
+  document.querySelectorAll('.ad-slide').forEach(slide => {
+    const bar = slide.querySelector('.ad-region-bar');
+    const targets = Array.from(slide.querySelectorAll('.adr'));
+    const def = slide.dataset.default;
+    if (!bar) return;
+
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = 'Region:';
+    bar.appendChild(label);
+
+    const btns = REGIONS.map(r => {
+      const b = document.createElement('button');
+      b.className = 'ar';
+      b.textContent = r;
+      b.dataset.region = r;
+      bar.appendChild(b);
+      return b;
+    });
+
+    const input = document.createElement('input');
+    input.className = 'ar-input';
+    input.type = 'text';
+    input.placeholder = 'Custom...';
+    input.autocomplete = 'off';
+    bar.appendChild(input);
+
+    function apply(region, fromInput) {
+      const val = (region && region.trim()) ? region : def;
+      targets.forEach(el => el.textContent = val);
+      btns.forEach(b => b.classList.toggle('active', b.dataset.region === val));
+      const isCustom = !REGIONS.includes(val);
+      input.classList.toggle('active', isCustom);
+      if (!fromInput && !isCustom) input.value = '';
+    }
+
+    btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.region)));
+    input.addEventListener('input', () => apply(input.value, true));
+    apply(def);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target && e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(current - 1); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+
+  // touch swipe
+  let startX = 0;
+  document.addEventListener('touchstart', e => startX = e.touches[0].clientX, {passive:true});
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+  }, {passive:true});
+
+  show(0);
+</script>
+</body>
+</html>

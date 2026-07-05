@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+/* RV Armor Design System Colors */
+:root {
+  /* Brand Colors */
+  --rva-primary: #003365;
+  --rva-primary-light: #125F97;
+  --rva-primary-dark: #002043;
+
+  --rva-secondary: #125F97;
+  --rva-secondary-light: #1A7BC4;
+  --rva-secondary-dark: #0E4D7C;
+
+  --rva-accent: #5BA411;
+  --rva-accent-light: #6DC015;
+  --rva-accent-dark: #3A6B0B;
+
+  --rva-highlight: #F9EA1C;
+  --rva-highlight-light: #FDF388;
+  --rva-highlight-dark: #C7BA16;
+
+  /* Light Mode */
+  --background: #ffffff;
+  --foreground: #111827;
+  --card-background: #ffffff;
+  --card-border: #E5E7EB;
+  --input-background: #F9FAFB;
+  --muted: #6B7280;
+  --muted-foreground: #9CA3AF;
+}
+
+@theme inline {
+  /* Core Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Brand Colors */
+  --color-primary: var(--rva-primary);
+  --color-primary-light: var(--rva-primary-light);
+  --color-primary-dark: var(--rva-primary-dark);
+
+  --color-secondary: var(--rva-secondary);
+  --color-secondary-light: var(--rva-secondary-light);
+  --color-secondary-dark: var(--rva-secondary-dark);
+
+  --color-accent: var(--rva-accent);
+  --color-accent-light: var(--rva-accent-light);
+  --color-accent-dark: var(--rva-accent-dark);
+
+  --color-highlight: var(--rva-highlight);
+  --color-highlight-light: var(--rva-highlight-light);
+  --color-highlight-dark: var(--rva-highlight-dark);
+
+  /* UI Colors */
+  --color-card: var(--card-background);
+  --color-card-border: var(--card-border);
+  --color-input: var(--input-background);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Semantic Colors */
+  --color-success: var(--rva-highlight);
+  --color-info: var(--rva-primary);
+  --color-warning: var(--rva-accent);
+  --color-error: #DC2626;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Courier New', monospace;
+
+  /* Container sizes */
+  --container-sm: 48rem;
+  --container-md: 64rem;
+  --container-lg: 80rem;
+  --container-xl: 88rem;
+  --container-2xl: 100rem;
+}
+
+/* Dark Mode - Optional for admin/staff areas */
+@media (prefers-color-scheme: dark) {
+  :root.dark-mode {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --card-background: #1F2937;
+    --card-border: #374151;
+    --input-background: #374151;
+    --muted: #9CA3AF;
+    --muted-foreground: #6B7280;
+  }
+}
+
+/* Base Styles */
+html {
+  /* scroll-behavior: smooth causes visible scroll animation on page navigation */
+  /* Use scroll-smooth class on specific containers if needed for anchor links */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--rva-primary);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background: var(--rva-primary);
+  color: white;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Light scrollbar for dark backgrounds */
+.scrollbar-light::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-light::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+.scrollbar-light::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+.scrollbar-light::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Utility classes for brand colors */
+.bg-rva-primary { background-color: var(--rva-primary); }
+.bg-rva-secondary { background-color: var(--rva-secondary); }
+.bg-rva-accent { background-color: var(--rva-accent); }
+.bg-rva-highlight { background-color: var(--rva-highlight); }
+
+.text-rva-primary { color: var(--rva-primary); }
+.text-rva-secondary { color: var(--rva-secondary); }
+.text-rva-accent { color: var(--rva-accent); }
+.text-rva-highlight { color: var(--rva-highlight); }
+
+.border-rva-primary { border-color: var(--rva-primary); }
+.border-rva-secondary { border-color: var(--rva-secondary); }
+.border-rva-accent { border-color: var(--rva-accent); }
+.border-rva-highlight { border-color: var(--rva-highlight); }
+
+/* Gradient utilities */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--rva-primary), var(--rva-primary-light));
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, var(--rva-secondary), var(--rva-secondary-light));
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--rva-accent), var(--rva-accent-light));
+}
+
+.gradient-highlight {
+  background: linear-gradient(135deg, var(--rva-highlight), var(--rva-highlight-light));
+}
+
+.gradient-brand {
+  background: linear-gradient(135deg, var(--rva-primary), var(--rva-secondary));
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, var(--rva-primary), var(--rva-secondary), var(--rva-accent));
+}
+
+/* Full-bleed section cards on mobile, rounded cards on sm+ */
+.section-bleed {
+  margin-inline: -1.25rem;
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .section-bleed {
+    margin-inline: 0;
+    border-radius: 1.5rem;
+  }
+}
