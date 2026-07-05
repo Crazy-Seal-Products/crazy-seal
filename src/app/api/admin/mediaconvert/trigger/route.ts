@@ -16,7 +16,7 @@ const mediaConvertClient = new MediaConvertClient({
   endpoint: process.env.MEDIACONVERT_ENDPOINT,
 })
 
-const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'rv-armor-media'
+const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 
 export async function POST(request: NextRequest) {
   try {

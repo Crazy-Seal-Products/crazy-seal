@@ -48,7 +48,7 @@ export function HomeGalleryPreview() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={photo.cdn_url}
-                  alt="RV Armor installation"
+                  alt="Crazy Seal installation"
                   loading="lazy"
                   className="w-full object-cover hover:scale-105 transition-transform duration-300"
                   style={{ aspectRatio: row.aspect }}

@@ -1,44 +1,45 @@
 import type { Metadata } from 'next'
-import { Phone, Mail, MapPin, Clock } from 'lucide-react'
+import { Phone, Mail, Clock, ShoppingCart } from 'lucide-react'
 import { Container, Stack } from '@/lib/design-system'
 import { ContactForm } from '@/components/forms/ContactForm'
 
-const MEDIA = 'https://media.rv-armor.com/site-assets/wp-media'
+const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
 export const metadata: Metadata = {
-  title: 'Contact RV Armor | Get a Free Quote | RV ARMOR',
-  description: 'Get a free, no-obligation quote for your RV roof. Our technicians come to you anywhere in the USA. Call (855) 782-7667.',
+  title: 'Contact Crazy Seal',
+  description:
+    'Contact the professionals at Crazy Seal. Tell us your roofing story and learn how we can help. Call (800) 963-0131, Mon-Fri 9am-6pm EST.',
 }
 
 const CONTACT_INFO = [
-  { icon: Phone, label: 'Call Us', value: '(855) 782-7667', href: 'tel:8557827667' },
-  { icon: Mail, label: 'Email', value: 'info@rv-armor.com', href: 'mailto:info@rv-armor.com' },
-  { icon: MapPin, label: 'Service Area', value: 'Nationwide Mobile Service', href: undefined },
-  { icon: Clock, label: 'Response Time', value: 'Within 24 hours', href: undefined },
+  { icon: Phone, label: 'Phone', value: '(800) 963-0131', href: 'tel:8009630131' },
+  { icon: Mail, label: 'Email', value: 'info@crazyseal.com', href: 'mailto:info@crazyseal.com' },
+  { icon: Clock, label: 'Hours', value: 'Mon - Fri: 9am - 6pm EST', href: undefined },
+  {
+    icon: ShoppingCart,
+    label: 'Online Store',
+    value: 'buy.crazyseal.com',
+    href: 'https://buy.crazyseal.com/',
+  },
 ]
 
 export default function ContactPage() {
   return (
     <Container size="xl">
       <Stack gap="lg">
-        {/* Hero with background image */}
-        <section className="relative section-bleed overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`${MEDIA}/2018/12/On-the-Road-RV-Armor.jpg`}
-            alt="RV on the road"
-            className="w-full h-48 sm:h-64 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#003365]/80 to-[#003365]/40 flex items-center">
-            <div className="px-6 sm:px-10 md:px-16">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
-                Let&apos;s Get in Touch
-              </h1>
-              <p className="text-white/80 text-sm sm:text-base max-w-lg">
-                Wondering how much it would cost to put RV Armor on your roof? Our trained
-                specialists can help!
-              </p>
-            </div>
+        {/* Hero */}
+        <section className="relative section-bleed overflow-hidden bg-primary">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
+          <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-14 md:px-16 text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3">
+              Get in Touch
+            </h1>
+            <p className="text-white/70 text-base sm:text-lg max-w-xl mx-auto">
+              Have any questions? Our Crazy Seal specialists can help! We
+              promise to be fun, informative, and will do our very best to
+              help you!
+            </p>
           </div>
         </section>
 
@@ -46,6 +47,14 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Form */}
             <div className="lg:col-span-2">
+              <h2 className="text-xl font-bold text-primary mb-2">
+                Send Us a Quick Message
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Want to get in touch with us? Fill out the form below and one
+                of our Crazy Seal specialists will be in touch with you
+                shortly.
+              </p>
               <ContactForm sourcePage="contact" />
             </div>
 
@@ -58,13 +67,13 @@ export default function ContactPage() {
                     className="rounded-2xl border border-gray-200/80 bg-gray-50/50 p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#003365]/10 flex items-center justify-center flex-shrink-0">
-                        <item.icon className="w-5 h-5 text-[#003365]" />
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <item.icon className="w-5 h-5 text-primary" />
                       </div>
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{item.label}</p>
                         {item.href ? (
-                          <a href={item.href} className="text-sm font-medium text-gray-900 hover:text-[#003365] transition-colors">
+                          <a href={item.href} className="text-sm font-medium text-gray-900 hover:text-primary transition-colors">
                             {item.value}
                           </a>
                         ) : (
@@ -75,12 +84,12 @@ export default function ContactPage() {
                   </div>
                 ))}
 
-                {/* RV Armor logo */}
+                {/* Crazy Seal logo */}
                 <div className="flex justify-center pt-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`${MEDIA}/2018/12/RV-Armor-RV.png`}
-                    alt="RV Armor"
+                    src={`${MEDIA}/2019/03/CRAZY-SEAL-LOGO-1000x800-400x320.png`}
+                    alt="Crazy Seal"
                     className="h-32 object-contain"
                   />
                 </div>

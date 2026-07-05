@@ -9,8 +9,8 @@ const s3 = new S3Client({
   },
 })
 
-const BUCKET = process.env.S3_BUCKET_NAME || 'rv-armor-media'
-const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.rv-armor.com'}`
+const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
+const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.crazyseal.com'}`
 const PREFIX = 'site-assets/'
 
 export async function GET(request: NextRequest) {

@@ -13,17 +13,16 @@ interface Lead {
   name: string
   email: string
   phone: string | null
-  street_address: string | null
-  city: string | null
-  state: string | null
-  zip_code: string | null
-  rv_year: string | null
-  rv_make: string | null
-  rv_model: string | null
+  location: string | null
+  project_type: string | null
   rv_length: string | null
-  roof_type: string | null
-  has_roof_damage: boolean | null
+  square_footage: string | null
+  business_name: string | null
+  business_type: string | null
+  website: string | null
+  lead_type: string | null
   how_heard: string | null
+  photo_urls: string[] | null
   message: string | null
   source_page: string | null
   zoho_lead_id: string | null
@@ -61,8 +60,8 @@ export default function AdminLeadsPage() {
       lead.name.toLowerCase().includes(search.toLowerCase()) ||
       lead.email.toLowerCase().includes(search.toLowerCase()) ||
       (lead.phone && lead.phone.includes(search)) ||
-      (lead.city && lead.city.toLowerCase().includes(search.toLowerCase())) ||
-      (lead.state && lead.state.toLowerCase().includes(search.toLowerCase()))
+      (lead.location && lead.location.toLowerCase().includes(search.toLowerCase())) ||
+      (lead.business_name && lead.business_name.toLowerCase().includes(search.toLowerCase()))
 
     const matchesSource = sourceFilter === 'all' || lead.source_page === sourceFilter
 
@@ -156,7 +155,7 @@ export default function AdminLeadsPage() {
                         <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
                           <span>{lead.email}</span>
                           {lead.phone && <span>{lead.phone}</span>}
-                          {lead.state && <span>{lead.city ? `${lead.city}, ${lead.state}` : lead.state}</span>}
+                          {lead.location && <span>{lead.location}</span>}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
@@ -180,33 +179,43 @@ export default function AdminLeadsPage() {
                                 <a href={`tel:${lead.phone}`} className="hover:text-[#003365] transition-colors">{lead.phone}</a>
                               </div>
                             )}
-                            {(lead.street_address || lead.city || lead.state) && (
+                            {lead.location && (
                               <div className="flex items-start gap-2 text-gray-700">
                                 <MapPin className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                                <span>
-                                  {[lead.street_address, lead.city, lead.state, lead.zip_code].filter(Boolean).join(', ')}
-                                </span>
+                                <span>{lead.location}</span>
                               </div>
                             )}
                           </div>
 
                           <div className="space-y-2">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">RV Details</p>
-                            {lead.rv_year && (
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Project Details</p>
+                            {lead.project_type && (
                               <div className="flex items-center gap-2 text-gray-700">
                                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                                <span>{lead.rv_year} {lead.rv_make} {lead.rv_model}</span>
+                                <span>{lead.project_type}</span>
                               </div>
                             )}
                             {lead.rv_length && (
                               <div className="flex items-center gap-2 text-gray-700">
                                 <Truck className="w-3.5 h-3.5 text-gray-400" />
-                                <span>{lead.rv_length} ft</span>
+                                <span>{lead.rv_length} ft RV</span>
                               </div>
                             )}
-                            {lead.roof_type && <p className="text-gray-700">Roof: {lead.roof_type}</p>}
-                            {lead.has_roof_damage !== null && (
-                              <p className="text-gray-700">Damage: {lead.has_roof_damage ? 'Yes' : 'No'}</p>
+                            {lead.square_footage && <p className="text-gray-700">Size: {lead.square_footage}</p>}
+                            {lead.business_name && (
+                              <p className="text-gray-700">
+                                Business: {lead.business_name}{lead.business_type ? ` (${lead.business_type})` : ''}
+                              </p>
+                            )}
+                            {lead.photo_urls && lead.photo_urls.length > 0 && (
+                              <p className="text-gray-700">
+                                Photos:{' '}
+                                {lead.photo_urls.map((url, i) => (
+                                  <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="text-[#003365] hover:underline mr-2">
+                                    {i + 1}
+                                  </a>
+                                ))}
+                              </p>
                             )}
                           </div>
 

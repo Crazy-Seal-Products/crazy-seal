@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Container, Stack, Heading, Text } from '@/lib/design-system'
-import { CtaSection } from '@/components/CtaSection'
 
 export const metadata: Metadata = {
-  title: 'Terms and Conditions - RV Armor',
-  description: 'RV Armor terms and conditions. Terms of use for our website and services.',
+  title: 'Terms and Conditions',
+  description:
+    'Crazy Seal Products, Inc. terms and conditions. Terms of use for our website and services.',
 }
 
 export default function TermsAndConditionsPage() {
@@ -20,9 +20,9 @@ export default function TermsAndConditionsPage() {
           <div>
             <Heading level={2}>1. Acceptance of Terms</Heading>
             <Text>
-              By accessing and using the RV Armor website (https://rv-armor.com), you accept and agree to
-              be bound by these Terms and Conditions. If you do not agree to these terms, please do not
-              use our website or services.
+              By accessing and using the Crazy Seal website (https://crazyseal.com), you accept and
+              agree to be bound by these Terms and Conditions. If you do not agree to these terms,
+              please do not use our website or services.
             </Text>
           </div>
 
@@ -39,48 +39,49 @@ export default function TermsAndConditionsPage() {
             <Heading level={2}>3. Intellectual Property</Heading>
             <Text>
               All content on this website, including text, graphics, logos, images, and software, is the
-              property of RV Armor, Inc. and is protected by United States and international copyright,
-              trademark, and other intellectual property laws. You may not reproduce, distribute, modify,
-              or create derivative works from any content without our express written permission.
+              property of Crazy Seal Products, Inc. and is protected by United States and international
+              copyright, trademark, and other intellectual property laws. You may not reproduce,
+              distribute, modify, or create derivative works from any content without our express
+              written permission.
             </Text>
           </div>
 
           <div>
-            <Heading level={2}>4. Service Terms</Heading>
+            <Heading level={2}>4. Product and Service Terms</Heading>
             <Text>
-              RV Armor provides mobile RV roofing services across the continental United States. All
-              installations are performed by certified technicians and are covered by our transferable
-              lifetime warranty. Specific terms of service, pricing, and warranty details are provided
-              in writing with each individual quote and service agreement.
+              Crazy Seal Products, Inc. manufactures and sells the Crazy Seal Roofing System, a
+              fluid-applied, seamless roofing system shipped directly to customers. Specific terms of
+              sale, pricing, and warranty details are provided in writing with each individual quote
+              and order.
             </Text>
           </div>
 
           <div>
             <Heading level={2}>5. Quotes and Pricing</Heading>
             <Text>
-              Quotes provided through our website or by our service advisors are estimates based on the
-              information provided. Final pricing may vary based on the actual condition of the RV roof
-              as assessed by our certified technician. All quotes are valid for 30 days unless otherwise
-              stated.
+              Quotes provided through our website or by our specialists are estimates based on the
+              information provided. Final pricing may vary based on the actual size and condition of
+              your roof and the products required for your application. All quotes are valid for 30
+              days unless otherwise stated.
             </Text>
           </div>
 
           <div>
             <Heading level={2}>6. Warranty</Heading>
             <Text>
-              RV Armor installations include a transferable lifetime warranty covering materials and labor.
-              Full warranty terms are provided with each installation. The warranty is subject to the
-              conditions outlined in the warranty documentation provided at the time of service.
+              The Crazy Seal Roofing System is backed by our 50 year warranty. Full warranty terms are
+              provided with each purchase. The warranty is subject to the conditions outlined in the
+              warranty documentation provided at the time of sale.
             </Text>
           </div>
 
           <div>
             <Heading level={2}>7. Limitation of Liability</Heading>
             <Text>
-              RV Armor, Inc. shall not be liable for any indirect, incidental, special, consequential,
-              or punitive damages arising out of your use of or inability to use the website or services.
-              Our total liability shall not exceed the amount paid for the specific service giving rise
-              to the claim.
+              Crazy Seal Products, Inc. shall not be liable for any indirect, incidental, special,
+              consequential, or punitive damages arising out of your use of or inability to use the
+              website or services. Our total liability shall not exceed the amount paid for the specific
+              product or service giving rise to the claim.
             </Text>
           </div>
 
@@ -88,8 +89,8 @@ export default function TermsAndConditionsPage() {
             <Heading level={2}>8. Disclaimer of Warranties</Heading>
             <Text>
               The website is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis.
-              RV Armor makes no warranties, expressed or implied, regarding the operation of the website
-              or the information, content, or materials included on the website.
+              Crazy Seal makes no warranties, expressed or implied, regarding the operation of the
+              website or the information, content, or materials included on the website.
             </Text>
           </div>
 
@@ -107,7 +108,7 @@ export default function TermsAndConditionsPage() {
           <div>
             <Heading level={2}>10. Changes to Terms</Heading>
             <Text>
-              RV Armor reserves the right to modify these Terms and Conditions at any time. Changes
+              Crazy Seal reserves the right to modify these Terms and Conditions at any time. Changes
               will be posted on this page. Your continued use of the website after any modifications
               constitutes acceptance of the updated terms.
             </Text>
@@ -117,14 +118,12 @@ export default function TermsAndConditionsPage() {
             <Text className="font-semibold">Contact Us</Text>
             <Text>
               If you have questions about these Terms and Conditions, contact us at:<br />
-              Phone: (855) 782-7667<br />
-              Email: info@rv-armor.com
+              Phone: (800) 963-0131<br />
+              Email: info@crazyseal.com
             </Text>
           </div>
           </div>
         </section>
-
-        <CtaSection />
       </Stack>
     </Container>
   )

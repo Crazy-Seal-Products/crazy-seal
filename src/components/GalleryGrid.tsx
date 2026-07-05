@@ -74,7 +74,7 @@ export function GalleryGrid({ photos, initialRows = 8 }: GalleryGridProps) {
   const lightboxImages: LightboxImage[] = filtered.map((p) => ({
     id: p.id,
     src: p.cdn_url,
-    alt: `RV Armor installation ${p.filename}`,
+    alt: `Crazy Seal installation ${p.filename}`,
   }))
 
   return (
@@ -116,7 +116,7 @@ export function GalleryGrid({ photos, initialRows = 8 }: GalleryGridProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={photo.cdn_url}
-                  alt={`RV Armor installation ${photo.filename}`}
+                  alt={`Crazy Seal installation ${photo.filename}`}
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />

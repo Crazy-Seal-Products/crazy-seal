@@ -1,5 +1,5 @@
 import { Container, Heading, Text, Card, Stack } from '@/lib/design-system'
-import { Users, Eye, MousePointerClick, FolderOpen } from 'lucide-react'
+import { Users, ShieldCheck, MousePointerClick, FolderOpen } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminDashboardPage() {
@@ -29,17 +29,19 @@ export default function AdminDashboardPage() {
               </Card>
             </Link>
 
-            <Card variant="elevated" className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                  <Eye className="w-6 h-6 text-green-600" />
+            <Link href="/admin/warranty">
+              <Card variant="elevated" className="p-6 hover:border-[#003365] transition-colors cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <Text className="text-sm text-gray-500">Warranty</Text>
+                    <Text className="text-xl font-bold text-gray-900">View All</Text>
+                  </div>
                 </div>
-                <div>
-                  <Text className="text-sm text-gray-500">Sessions</Text>
-                  <Text className="text-xl font-bold text-gray-900">--</Text>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
 
             <Card variant="elevated" className="p-6">
               <div className="flex items-center gap-4">

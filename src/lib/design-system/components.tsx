@@ -1,6 +1,6 @@
 'use client'
 
-// RV Armor Design System - Component Library
+// Crazy Seal Design System - Component Library
 // Barrel export for all design system components
 
 // Layout Components

@@ -1,147 +1,239 @@
 import type { Metadata } from 'next'
 import {
-  Shield,
-  Clock,
-  MapPin,
-  Wrench,
-  Zap,
-  CheckCircle,
-  Download,
-  Layers,
-  Droplets,
+  ArrowRight,
+  Phone,
+  DollarSign,
+  Timer,
+  ShieldCheck,
+  BadgeCheck,
   Hammer,
-  Ban,
+  Truck,
+  PiggyBank,
+  Smile,
   Sun,
+  Shuffle,
+  Dumbbell,
+  Sparkles,
   Feather,
+  Ruler,
   FlaskConical,
-  Thermometer,
-  Leaf,
-  Puzzle,
-  Construction,
-  MoveHorizontal,
+  Layers,
+  CloudLightning,
+  Hourglass,
+  Scissors,
+  Droplets,
+  SunDim,
+  Store,
+  Waves,
 } from 'lucide-react'
 import {
   Container,
   Grid,
   SectionHeading,
   FeatureCard,
-  ContentImageSection,
+  TestimonialCard,
   LinkButton,
 } from '@/lib/design-system'
-import { VideoHero } from '@/components/VideoHero'
-import { CtaSection } from '@/components/CtaSection'
 
-const MEDIA = 'https://media.rv-armor.com/site-assets/wp-media'
+const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
 export const metadata: Metadata = {
-  title: 'RV Armor Advantages | RV ARMOR',
-  description: 'Discover why RV owners choose RV Armor: lifetime warranty, zero maintenance, mobile service, and seamless protection.',
+  title: 'Crazy Seal Advantages',
+  description:
+    'The Crazy Seal roofing system has many advantages over traditional roofing methods.',
 }
+
+const TOP_ADVANTAGES = [
+  {
+    icon: <DollarSign className="w-6 h-6 text-accent" />,
+    title: 'Save Money',
+    eyebrow: 'Do It Yourself & Save Big',
+    desc: 'Much of the cost of a typical roofing installation comes with labor. Do it yourself and save big with raw materials factory direct from Crazy Seal!',
+    href: '/pricing',
+    cta: 'Pricing',
+  },
+  {
+    icon: <Timer className="w-6 h-6 text-accent" />,
+    title: 'Quick Install',
+    eyebrow: 'Get the Job Done Fast',
+    desc: 'Hiring a roofing technician can take several weeks or even months. With Crazy Seal, you can have a brand new roof within hours of receiving your kit.',
+    href: '/installation',
+    cta: 'Installation',
+  },
+  {
+    icon: <ShieldCheck className="w-6 h-6 text-accent" />,
+    title: 'Permanent',
+    eyebrow: '50 Year Product Warranty',
+    desc: "If it's worth doing, it's worth doing right. Rather than putting a bandaid on a problem, do it right and do it once with the Crazy Seal roofing system.",
+    href: '/warranty',
+    cta: 'Warranty',
+  },
+]
+
+const ROOF_TYPES = ['TPO', 'EPDM', 'Rubber', 'Vinyl', 'Aluminum', 'Fiberglass']
+
+const COLORS = [
+  { name: 'White', swatch: '#FFFFFF', border: true },
+  { name: 'Gray', swatch: '#9CA3AF', border: false },
+  { name: 'Tan', swatch: '#D2B48C', border: false },
+]
+
+const ALL_ADVANTAGES = [
+  { icon: BadgeCheck, title: 'Guaranteed', desc: 'We offer a fully transferrable 50 year product warranty.' },
+  { icon: Hammer, title: 'DIY', desc: 'For the DIY person looking for a long-term solution to their roofing needs.' },
+  { icon: Truck, title: 'We Ship to You', desc: 'We ship anywhere within the United States and Canada.' },
+  { icon: PiggyBank, title: 'Affordable', desc: "Our DIY application can save you $1,000's on your roofing needs." },
+  { icon: Smile, title: 'Easy', desc: 'Easy application process that sticks to most surfaces without a primer.' },
+  { icon: Sun, title: 'Energy Efficient', desc: 'Reflective properties help reduce interior temperature and A/C expense.' },
+  { icon: Shuffle, title: 'Versatile', desc: 'Can be used for a variety of applications, not just roofing.' },
+  { icon: Dumbbell, title: 'Heavy Duty', desc: 'Fiber-infused, making it scratch resistant, strong, & tough.' },
+  { icon: Sparkles, title: 'No Upkeep', desc: "Won't crack, chip, peel, or streak. No need to climb on your roof again." },
+  { icon: Feather, title: 'Lightweight', desc: 'Our Crazy Seal system is extremely light. It will not add stress to your roof or chassis.' },
+  { icon: Ruler, title: 'Custom Fit', desc: 'Starts out as a liquid, but dries into a seamless, maintenance free roof.' },
+  { icon: FlaskConical, title: 'Resistant', desc: 'Resistant to mold penetration, fungus, salt, acids, and overall is chemical resistant.' },
+  { icon: Layers, title: 'Direct Application', desc: 'Can be installed directly to decking. No existing roof membrane is required.' },
+  { icon: CloudLightning, title: 'Extreme', desc: 'The Crazy Seal system is designed to perform in all kinds of extreme weather conditions.' },
+  { icon: Hourglass, title: 'Long Lasting', desc: 'Our system is designed to last a crazy long time.' },
+  { icon: Scissors, title: 'Tear Resistant', desc: 'Designed to be puncture and tear resistant. Great for whatever craziness your roof encounters!' },
+  { icon: Droplets, title: 'Waterproof', desc: 'Superior waterproofing capabilities.' },
+  { icon: SunDim, title: 'UV Protection', desc: 'Offers superior UV protection with high reflectivity.' },
+  { icon: Store, title: 'Exclusive', desc: 'Ships direct from manufacturer. Not available in stores.' },
+  { icon: Waves, title: 'Flexible', desc: 'The Crazy Seal system is extremely flexible, allowing it to flex without cracking.' },
+]
+
+const APPLICATIONS = [
+  {
+    title: 'RV',
+    desc: "RV's, travel trailers, fifth wheels, motor coaches, and more.",
+    href: '/rv-roofs',
+    cta: 'RV Roofs',
+    image: `${MEDIA}/2022/01/Areas_RVs.png`,
+  },
+  {
+    title: 'Commercial',
+    desc: 'Facilities of all kinds with flat roofs are using Crazy Seal!',
+    href: '/commercial-roofing',
+    cta: 'Commercial Flat Roofs',
+    image: `${MEDIA}/2022/01/Areas_Commercial.png`,
+  },
+  {
+    title: 'Residential',
+    desc: 'Flat residential roofs, sunrooms, storage buildings, and more.',
+    href: '/residential',
+    cta: 'Residential Flat Roofs',
+    image: `${MEDIA}/2022/01/Areas_Residential.png`,
+  },
+  {
+    title: 'Transportation',
+    desc: 'Tractor trailers, box trucks, delivery vehicles, fleets.',
+    href: '/transportation',
+    cta: 'Transportation Roofs',
+    image: `${MEDIA}/2022/01/Areas_Fleets.png`,
+  },
+]
+
+const TESTIMONIALS = [
+  {
+    name: 'David Vincent, Key Largo, FL',
+    text: 'Thank you for a great and reassuring experience! I have already referred this system to 3 family and friends.',
+  },
+  {
+    name: 'Philip Posey, Tuscumbia, AL',
+    photo: `${MEDIA}/2021/11/Philip-Posey-400x400-1.jpg`,
+    text: 'We could not be more pleased with the Crazy Seal product.',
+  },
+  {
+    name: 'Douglas Evans, Overton, NV',
+    photo: `${MEDIA}/2020/05/Doug-Evans-400x400.jpg`,
+    text: 'After viewing the videos 4 times, I followed the instructions to the letter. The product went on easily.',
+  },
+]
 
 export default function AdvantagesPage() {
   return (
     <>
-      {/* ─── HERO ─── */}
+      {/* ─── HERO + TOP 3 ADVANTAGES ─── */}
       <Container size="xl">
-        <VideoHero
-          heading="RV Armor"
-          highlight="Advantages"
-          subheading="Incredible value and convenience. Not all roofing systems are created equal. See why thousands of RV owners have chosen RV Armor for permanent roof protection."
-          youtubeId="4ptAJz64Zok"
-          imageAlt="RV Armor advantages overview"
-          badge="Permanent Protection"
-          variant="dark"
-        />
-      </Container>
-
-      {/* ─── NOT ALL ROOFING SYSTEMS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <ContentImageSection
-            imageSrc={`${MEDIA}/2018/12/RV-Roof-White.jpg`}
-            imageAlt="RV Armor white roof installation"
-            gridCols="lg:grid-cols-[7fr_3fr]"
-          >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">The Problem</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-4">
-              Not All Roofing Systems Are Created Equal
-            </h2>
-            <p className="text-gray-500 leading-relaxed mb-4">
-              If you take your RV to a dealership service department, they will remove your old
-              roof and replace it with the exact same material that failed in the first place.
-              That means in 10-15 years you&apos;ll be doing it all over again.
-            </p>
-            <p className="text-gray-500 leading-relaxed">
-              RV Armor is different. Our proprietary seamless membrane is custom-manufactured
-              directly on your RV, creating a permanent barrier with a lifetime guarantee.
-            </p>
-          </ContentImageSection>
+        <div className="relative section-bleed bg-primary overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
+          <div className="relative z-10 px-5 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight text-center mb-8 lg:mb-12">
+              Crazy Seal Advantages
+            </h1>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+              {TOP_ADVANTAGES.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 lg:p-8 text-center flex flex-col items-center"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                    {item.icon}
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-1">{item.title}</h2>
+                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-3">
+                    {item.eyebrow}
+                  </p>
+                  <p className="text-white/60 leading-relaxed mb-6">{item.desc}</p>
+                  <div className="mt-auto">
+                    <LinkButton href={item.href} variant="accent" size="md">
+                      {item.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </LinkButton>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </Container>
 
-      {/* ─── COMPARISON (card) ─── */}
+      {/* ─── ROOF TEMPERATURE ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
           <SectionHeading
-            eyebrow="Compare"
-            heading="RV Armor vs Standard Fiberglass"
-            subheading="See how RV Armor stacks up against a standard fiberglass roof replacement."
+            heading="Reduce Your Average Roof Temperature Dramatically"
+            subheading="Shot before & after applying the Crazy Seal system at 95 degrees Fahrenheit outdoor temperature."
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="rounded-2xl bg-white border-2 border-accent/30 p-8 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
-              <div className="text-center mb-6">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`${MEDIA}/2018/12/RV-Armor-RV.png`}
-                  alt="RV with RV Armor roof"
-                  className="h-36 mx-auto object-contain mb-4"
-                />
-                <h3 className="text-xl font-bold text-accent">RV Armor</h3>
-              </div>
-              <ul className="space-y-3 text-sm">
-                {[
-                  '1/3 of typical fiberglass cost',
-                  'Lifetime material and labor warranty',
-                  'Zero maintenance required',
-                  'Fully transferable warranty',
-                  'We come to your location',
-                  '2-3 day installation',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            <div className="text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${MEDIA}/2019/07/TEMP-GAUGES-160.jpg`}
+                alt="Roof temperature gauge reading 160 degrees before Crazy Seal"
+                className="rounded-2xl shadow-lg w-full h-auto mb-4"
+              />
+              <h3 className="text-lg font-bold text-primary">Before Crazy Seal</h3>
             </div>
-            <div className="rounded-2xl bg-white border border-gray-200 p-8 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gray-300" />
-              <div className="text-center mb-6">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`${MEDIA}/2018/12/Other-Guys-RV.png`}
-                  alt="Standard RV roof"
-                  className="h-36 mx-auto object-contain mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-400">Standard Fiberglass</h3>
-              </div>
-              <ul className="space-y-3 text-sm">
-                {[
-                  '$11,500-$20,000+ cost',
-                  'Pro-rated warranty only',
-                  'Requires annual maintenance',
-                  'Warranty not transferable',
-                  'Must bring RV to dealer',
-                  'Weeks at the dealership',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-red-100 text-red-400 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">&#10005;</span>
-                    <span className="text-gray-500">{item}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${MEDIA}/2019/07/TEMP-GAUGES-104.jpg`}
+                alt="Roof temperature gauge reading 104 degrees after Crazy Seal"
+                className="rounded-2xl shadow-lg w-full h-auto mb-4"
+              />
+              <h3 className="text-lg font-bold text-accent">After Crazy Seal</h3>
             </div>
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── ROOF TYPES ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <SectionHeading
+            heading="Crazy Seal Can Be Applied to All Roof Types"
+            variant="dark"
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
+            {ROOF_TYPES.map((type) => (
+              <div
+                key={type}
+                className="rounded-2xl bg-white/5 ring-1 ring-white/10 py-6 px-3 text-center"
+              >
+                <p className="text-white font-bold uppercase tracking-wide">{type}</p>
+              </div>
+            ))}
           </div>
         </div>
       </Container>
@@ -149,74 +241,41 @@ export default function AdvantagesPage() {
       {/* ─── COLORS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Available in 3 Colors" subheading="Actual coating color may vary slightly depending on screen resolution and contrast of your viewing device." />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {[
-              { label: 'White', file: 'RV-Roof-White.jpg' },
-              { label: 'Tan', file: 'Tan.jpg' },
-              { label: 'Gray', file: 'RV-Roof-Gray.jpg' },
-            ].map((color) => (
-              <div key={color.label} className="group">
-                <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`${MEDIA}/2018/12/${color.file}`}
-                    alt={`${color.label} RV Armor roof`}
-                    className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <p className="text-lg font-bold text-primary text-center mt-4">{color.label}</p>
+          <SectionHeading
+            heading="Available in 3 Colors"
+            subheading="You asked for it, and we delivered! Crazy Seal is now available in 3 colors. White provides ultimate reflectivity, while the tan and gray help you to match your style. Choose the color that suits you best! All the Crazy Caulk, Crazy Patch, and Crazy Seal in your kit will be color matching."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 max-w-3xl mx-auto">
+            {COLORS.map((color) => (
+              <div
+                key={color.name}
+                className="rounded-2xl border border-gray-200/80 bg-white shadow-sm overflow-hidden text-center"
+              >
+                <div
+                  className={`h-28 ${color.border ? 'border-b border-gray-200' : ''}`}
+                  style={{ backgroundColor: color.swatch }}
+                />
+                <p className="font-bold text-primary uppercase tracking-wide py-4">
+                  {color.name}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </Container>
 
-      {/* ─── ALL ROOF TYPES (card) ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="We Do All Roof Types" variant="dark" />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
-            {['Rubber (EPDM)', 'Fiberglass', 'TPO', 'Metal', 'Vinyl', 'Wood Decking', 'Aluminum', 'Direct to Deck'].map((type) => (
-              <div key={type} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
-                <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
-                <span className="text-sm font-medium text-white">{type}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── ADVANTAGES GRID ─── */}
+      {/* ─── FULL ADVANTAGES GRID ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading eyebrow="The Details" heading="Every Advantage Matters" />
-          <Grid responsiveCols={{ mobile: 1, tablet: 2, desktop: 4 }} gap="lg">
-            {[
-              { icon: <Shield className="w-6 h-6 text-primary" />, title: 'Guaranteed', desc: 'Fully transferable lifetime material and labor warranty.' },
-              { icon: <MapPin className="w-6 h-6 text-primary" />, title: 'Convenient', desc: 'We come to you. Your driveway. Your campground. Wherever you are.' },
-              { icon: <Zap className="w-6 h-6 text-primary" />, title: 'Affordable', desc: '30%-50% less than a tear off and replacement.' },
-              { icon: <Clock className="w-6 h-6 text-primary" />, title: 'Nationwide', desc: 'Installed by certified technicians nationwide.' },
-              { icon: <Wrench className="w-6 h-6 text-primary" />, title: 'Comprehensive', desc: 'All makes and models. Class A, C, 5th Wheel, Travel Trailers, Horse Trailers, etc.' },
-              { icon: <Hammer className="w-6 h-6 text-primary" />, title: 'Durable', desc: 'Tensile strength of 2140 psi.' },
-              { icon: <Sun className="w-6 h-6 text-primary" />, title: 'UV Protection', desc: 'Loaded with UV stabilizers for superior solar protection.' },
-              { icon: <Ban className="w-6 h-6 text-primary" />, title: 'Wear Resistant', desc: 'Antioxidants prevent cracking, chalking, and fading.' },
-              { icon: <Layers className="w-6 h-6 text-primary" />, title: 'Permanent', desc: 'The last roof your RV will ever need.' },
-              { icon: <Droplets className="w-6 h-6 text-primary" />, title: 'Solvent Based', desc: 'Resists mold penetration.' },
-              { icon: <Feather className="w-6 h-6 text-primary" />, title: 'Lightweight', desc: "Won't add stress to roof or chassis." },
-              { icon: <FlaskConical className="w-6 h-6 text-primary" />, title: 'Resistant', desc: 'Resistant to fungus, salt, acids, and chemicals.' },
-              { icon: <Shield className="w-6 h-6 text-primary" />, title: 'Tear Resistant', desc: 'Puncture and tear resistant.' },
-              { icon: <CheckCircle className="w-6 h-6 text-primary" />, title: 'No Upkeep', desc: "Won't crack, chip, peel, or streak. No need to climb on your RV roof again." },
-              { icon: <Puzzle className="w-6 h-6 text-primary" />, title: 'Custom Fit', desc: 'Starts as liquid, dries into a seamless, maintenance-free roof.' },
-              { icon: <Thermometer className="w-6 h-6 text-primary" />, title: 'Extreme', desc: 'Handles temperatures from -75\u00B0F to +350\u00B0F.' },
-              { icon: <Leaf className="w-6 h-6 text-primary" />, title: 'Energy Efficient', desc: 'Reflective properties reduce interior temperature and A/C expense.' },
-              { icon: <Construction className="w-6 h-6 text-primary" />, title: 'Versatile', desc: 'Can be installed over Rubber, Fiberglass, TPO, Metal, and directly to wood decking.' },
-              { icon: <Wrench className="w-6 h-6 text-primary" />, title: 'Any Condition', desc: 'Complete operation from wood replacement to total tear-off.' },
-              { icon: <MoveHorizontal className="w-6 h-6 text-primary" />, title: 'Flexible', desc: 'Elongation of 830%.' },
-            ].map((item) => (
+          <SectionHeading
+            eyebrow="Do It Once. Do It Right."
+            heading="Crazy Seal Advantages"
+          />
+          <Grid responsiveCols={{ mobile: 1, tablet: 2, desktop: 4 }} gap="md">
+            {ALL_ADVANTAGES.map((item) => (
               <FeatureCard
                 key={item.title}
-                icon={item.icon}
+                icon={<item.icon className="w-6 h-6 text-accent" />}
                 title={item.title}
                 description={item.desc}
               />
@@ -225,46 +284,84 @@ export default function AdvantagesPage() {
         </div>
       </Container>
 
-      {/* ─── TOUGH SKIN (card) ─── */}
+      {/* ─── APPLICATIONS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 pt-6 pb-4 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 md:gap-4 lg:gap-6 items-center">
-            <div className="order-2 md:order-1 relative flex items-center justify-center md:justify-start">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2018/12/RV-Armor-Tough-Skin-Brochure-b.jpg`}
-                alt="Trailer Life Magazine - RV Armor Tough Skin article"
-                className="rounded-2xl shadow-2xl ring-1 ring-white/10 h-auto md:max-h-[400px] object-contain"
-              />
-            </div>
-            <div className="order-1 md:order-2 text-center md:text-left">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                Featured in Trailer Life Magazine
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
-                Tough Skin
-              </h2>
-              <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-4 md:mb-8">
-                Read what Trailer Life Magazine has to say about RV Armor. Our proprietary roofing
-                system has been featured in major RV publications for its durability and value.
-              </p>
-              <LinkButton
-                href={`${MEDIA}/2018/12/RV-Armor-Tough-Skin-Brochure.jpg`}
-                variant="white"
-                size="lg"
-                external
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <SectionHeading heading="Crazy Seal Works on Just About Any Application" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {APPLICATIONS.map((app) => (
+              <a
+                key={app.title}
+                href={app.href}
+                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <Download className="w-5 h-5" />
-                Read the Article
-              </LinkButton>
-            </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={app.image}
+                  alt={app.title}
+                  className="w-full h-auto object-cover"
+                />
+                <div className="p-5 text-center">
+                  <h3 className="font-bold text-primary mb-1">{app.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-3">{app.desc}</p>
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-accent group-hover:gap-2 transition-all">
+                    {app.cta} <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </Container>
 
-      {/* ─── CTA ─── */}
+      {/* ─── PHOTOS & REVIEWS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <CtaSection />
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <SectionHeading heading="Photos & Reviews" />
+          <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="lg">
+            {TESTIMONIALS.map((t) => (
+              <TestimonialCard
+                key={t.name}
+                name={t.name}
+                photo={t.photo}
+                text={t.text}
+              />
+            ))}
+          </Grid>
+          <div className="flex justify-center pt-6 md:pt-10">
+            <LinkButton href="/reviews" variant="accent" size="md">
+              See More Photos & Reviews
+              <ArrowRight className="w-4 h-4" />
+            </LinkButton>
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── CONTACT CTA ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+            Let&apos;s Get in Touch
+          </h2>
+          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
+            Have any questions? Our Crazy Seal specialists can help!
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <LinkButton href="/contact" variant="accent" size="lg">
+              Contact Us
+            </LinkButton>
+            <LinkButton href="/pricing" variant="white" size="lg">
+              Get an Instant Quote
+            </LinkButton>
+            <a
+              href="tel:8009630131"
+              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
+            >
+              <Phone className="w-5 h-5" />
+              (800) 963-0131
+            </a>
+          </div>
+        </div>
       </Container>
     </>
   )

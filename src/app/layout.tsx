@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { GlobalLayout } from "@/components/layout/GlobalLayout";
-import { TrackingProvider, MetaPixel } from "@/components/tracking";
+import { TrackingProvider, MetaPixel, ClickCease } from "@/components/tracking";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -65,6 +65,7 @@ export default function RootLayout({
       )}
       <body className={`${inter.variable} font-sans antialiased`}>
         <MetaPixel />
+        <ClickCease />
         <TrackingProvider>
           <GlobalLayout>{children}</GlobalLayout>
         </TrackingProvider>

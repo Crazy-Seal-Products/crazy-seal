@@ -9,7 +9,7 @@ const s3 = new S3Client({
   },
 })
 
-const BUCKET = process.env.S3_BUCKET_NAME || 'rv-armor-media'
+const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 
 export async function POST(request: NextRequest) {
   try {

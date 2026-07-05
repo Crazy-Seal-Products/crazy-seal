@@ -1,195 +1,172 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Download, Star, Quote } from 'lucide-react'
-import { Container, Stack, Heading, Text, Card, Grid } from '@/lib/design-system'
-import { VideoHero } from '@/components/VideoHero'
-import { FAQAccordion } from '@/components/FAQAccordion'
-import { CtaSection } from '@/components/CtaSection'
+import { ArrowRight, Download, Phone } from 'lucide-react'
+import {
+  Container,
+  Grid,
+  SectionHeading,
+  TestimonialCard,
+  LinkButton,
+  YouTubeEmbed,
+} from '@/lib/design-system'
+import { CrazySealFAQ } from './CrazySealFAQ'
 
-const MEDIA = 'https://media.rv-armor.com/site-assets/wp-media'
+const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
 export const metadata: Metadata = {
-  title: 'Frequently Asked Questions | RV ARMOR',
-  description: 'Common questions about RV Armor pricing, roof types, application time, warranty, DIY options, and coverage.',
+  title: 'Frequently Asked Questions',
+  description:
+    'You have questions and we want to answer them. The Crazy Seal system is 100% guaranteed. Find out how we can be so confident in our products.',
 }
-
-const FAQ_VIDEOS = [
-  { id: 'H0ugkwN_9gQ', title: 'What happens if I need to replace a vent, AC, or antenna?' },
-  { id: 'xk4rYIK05Po', title: 'What do you do with air conditioners?' },
-  { id: 'InAahyPWiB8', title: 'How do you handle solar panels?' },
-  { id: 'noySxhi2qpI', title: 'Time-lapse of an RV Armor application' },
-]
-
-const TESTIMONIAL_VIDEOS = [
-  { id: 'sOHaDWI7cCk', name: 'Jim & Cathy McBride' },
-  { id: 'xPhvy0XRPxk', name: 'Tom Liberty' },
-  { id: 'LF6IPFXeZzM', name: 'Bill & Kelly Bonner' },
-]
 
 const TESTIMONIALS = [
   {
-    name: 'Robert Vancura',
-    photo: '0003_Robert-Vancura-300x300.jpg',
-    text: 'Very professional and well worth the money! Thank you RV Armor!',
+    name: 'David Vincent, Key Largo, FL',
+    text: 'Thank you for a great and reassuring experience! I have already referred this system to 3 family and friends.',
   },
   {
-    name: 'Erik Fowler',
-    photo: '0009_Erik-Fowler-300x300.jpg',
-    text: '5 stars for sure. Very professional service and they come to you to do the work. Luis was great and really knew what he was doing!!!',
+    name: 'Philip Posey, Tuscumbia, AL',
+    photo: `${MEDIA}/2021/11/Philip-Posey-400x400-1.jpg`,
+    text: 'We could not be more pleased with the Crazy Seal product.',
   },
   {
-    name: 'Michael & Charlene Outlaw',
-    photo: '0010_Michael-Charlene-Outlaw-300x300.jpg',
-    text: 'We love our new RV Armor roof! Professional installation and great customer service.',
+    name: 'Douglas Evans, Overton, NV',
+    photo: `${MEDIA}/2020/05/Doug-Evans-400x400.jpg`,
+    text: 'After viewing the videos 4 times, I followed the instructions to the letter. The product went on easily.',
   },
 ]
 
 export default function FAQPage() {
   return (
-    <Container size="xl">
-      <Stack gap="lg">
-        {/* Hero with Lee Thaxton FAQ video */}
-        <VideoHero
-          heading="Ask &"
-          highlight="We Answer"
-          subheading="Watch our founder Lee Thaxton answer common questions about RV Armor, then browse the full FAQ below."
-          youtubeId="GUQiARMKyUU"
-          imageAlt="Lee Thaxton answering FAQ"
-          badge="FAQ"
-          variant="dark"
-        />
-
-        {/* FAQ Accordion */}
-        <section>
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <div className="text-center mb-8">
-              <Heading level={2} className="!text-[#003365]">Frequently Asked Questions</Heading>
-              <Text className="max-w-2xl mx-auto">
-                Find answers to common questions about RV Armor pricing, installation, warranty, and more.
-              </Text>
-            </div>
-            <FAQAccordion />
+    <>
+      {/* ─── HERO ─── */}
+      <Container size="xl">
+        <div className="relative section-bleed bg-primary overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
+          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16 text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
+              FAQ&apos;s
+            </h1>
+            <p className="text-white/70 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+              Please browse the question and answer dropdowns below to see if
+              your specific question is in writing. If you still have
+              questions, please feel free to contact us and one of our
+              representatives will be with you shortly.
+            </p>
           </div>
-        </section>
+        </div>
+      </Container>
 
-        {/* FAQ Answer Videos */}
-        <section>
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <div className="text-center mb-8">
-              <Heading level={2} className="!text-[#003365]">Watch Our Answers</Heading>
-              <Text className="max-w-2xl mx-auto">
-                Video answers to specific questions about the RV Armor process.
-              </Text>
-            </div>
-            <Grid responsiveCols={{ mobile: 1, tablet: 2 }} gap="md">
-              {FAQ_VIDEOS.map((video) => (
-                <Card key={video.id} className="!p-4">
-                  <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-gray-900">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${video.id}?rel=0`}
-                      title={video.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="absolute inset-0 w-full h-full"
-                    />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900">{video.title}</p>
-                </Card>
-              ))}
-            </Grid>
+      {/* ─── FAQ ACCORDION ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <SectionHeading heading="Frequently Asked Questions" />
+          <div className="max-w-3xl mx-auto">
+            <CrazySealFAQ />
           </div>
-        </section>
+        </div>
+      </Container>
 
-        {/* Tough Skin Brochure */}
-        <section>
-          <div className="section-bleed bg-primary overflow-hidden px-5 pt-6 pb-4 sm:px-6 md:p-6 lg:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 md:gap-4 lg:gap-6 items-center">
-              <div className="order-2 md:order-1 relative flex items-center justify-center md:justify-start">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`${MEDIA}/2018/12/RV-Armor-Tough-Skin-Brochure-b.jpg`}
-                  alt="Trailer Life Magazine - RV Armor Tough Skin article"
-                  className="rounded-2xl shadow-2xl ring-1 ring-white/10 h-auto md:max-h-[400px] object-contain"
-                />
-              </div>
-              <div className="order-1 md:order-2 text-center md:text-left">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                  Featured in Trailer Life Magazine
-                </p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
-                  Tough Skin
-                </h2>
-                <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-4 md:mb-8">
-                  Read what Trailer Life Magazine has to say about RV Armor. Our proprietary roofing
-                  system has been featured for its durability and value.
-                </p>
-                <Link
-                  href={`${MEDIA}/2018/12/RV-Armor-Tough-Skin-Brochure.jpg`}
-                  target="_blank"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary hover:bg-gray-100 transition-all"
-                >
-                  <Download className="w-4 h-4" />
-                  Read the Article
-                </Link>
-              </div>
+      {/* ─── TIME-LAPSE VIDEO ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <SectionHeading
+            eyebrow="See It in Action"
+            heading="Watch a Full Crazy Seal Installation Time-Lapse"
+            subheading="See the entire Crazy Seal System being applied to an RV roof."
+            variant="dark"
+          />
+          <div className="max-w-3xl mx-auto">
+            <YouTubeEmbed videoId="d1AG8cfgqQc" variant="card" />
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── BROCHURE DOWNLOAD ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 md:gap-4 lg:gap-6 items-center">
+            <div className="order-2 md:order-1 relative flex items-center justify-center md:justify-start">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${MEDIA}/2019/06/Crazy-Seal-Brochure-for-Download-1-Small.jpg`}
+                alt="Crazy Seal system brochure cover"
+                className="rounded-2xl shadow-xl h-auto md:max-h-[400px] object-contain"
+              />
+            </div>
+            <div className="order-1 md:order-2 text-center md:text-left">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
+                Free Download
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-4">
+                Crazy Seal System
+              </h2>
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-4 md:mb-8">
+                Download a brochure explaining our Crazy Seal system.
+              </p>
+              <LinkButton
+                href={`${MEDIA}/2019/06/Crazy-Seal-Brochure-for-Download.pdf`}
+                variant="primary"
+                size="lg"
+                external
+              >
+                <Download className="w-5 h-5" />
+                Download
+              </LinkButton>
             </div>
           </div>
-        </section>
+        </div>
+      </Container>
 
-        {/* Testimonial Videos */}
-        <section>
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <div className="text-center mb-8">
-              <Heading level={2} className="!text-[#003365]">Happy Customers</Heading>
-            </div>
-            <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="md">
-              {TESTIMONIAL_VIDEOS.map((video) => (
-                <Card key={video.id} className="!p-4">
-                  <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-gray-900">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${video.id}?rel=0`}
-                      title={`${video.name} testimonial`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="absolute inset-0 w-full h-full"
-                    />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900 text-center">{video.name}</p>
-                </Card>
-              ))}
-            </Grid>
+      {/* ─── PHOTOS & REVIEWS ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+          <SectionHeading heading="Photos & Reviews" />
+          <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="lg">
+            {TESTIMONIALS.map((t) => (
+              <TestimonialCard
+                key={t.name}
+                name={t.name}
+                photo={t.photo}
+                text={t.text}
+              />
+            ))}
+          </Grid>
+          <div className="flex justify-center pt-6 md:pt-10">
+            <LinkButton href="/reviews" variant="accent" size="md">
+              See More Photos & Reviews
+              <ArrowRight className="w-4 h-4" />
+            </LinkButton>
           </div>
-        </section>
+        </div>
+      </Container>
 
-        {/* Written Testimonials */}
-        <section>
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <div className="text-center mb-8">
-              <Heading level={2} className="!text-[#003365]">Testimonials</Heading>
-            </div>
-            <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="md">
-              {TESTIMONIALS.map((t) => (
-                <Card key={t.name} className="text-center">
-                  <div className="flex flex-col items-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`${MEDIA}/2018/12/${t.photo}`} alt={t.name} className="w-20 h-20 rounded-full object-cover mb-4" />
-                    <Quote className="w-6 h-6 text-[#003365]/30 mb-2" />
-                    <Text size="sm" className="italic !mb-3">&ldquo;{t.text}&rdquo;</Text>
-                    <p className="text-sm font-semibold text-gray-900">{t.name}</p>
-                    <div className="flex gap-0.5 mt-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-[#F9EA1C] fill-[#F9EA1C]" />
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </Grid>
+      {/* ─── CONTACT CTA ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+            Still Have Questions?
+          </h2>
+          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
+            Have any questions? Our Crazy Seal specialists can help!
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <LinkButton href="/contact" variant="accent" size="lg">
+              Contact Us
+            </LinkButton>
+            <LinkButton href="/pricing" variant="white" size="lg">
+              Get an Instant Quote
+            </LinkButton>
+            <a
+              href="tel:8009630131"
+              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
+            >
+              <Phone className="w-5 h-5" />
+              (800) 963-0131
+            </a>
           </div>
-        </section>
-
-        <CtaSection />
-      </Stack>
-    </Container>
+        </div>
+      </Container>
+    </>
   )
 }

@@ -11,6 +11,7 @@ import {
   ExternalLink,
   LogOut,
   Users,
+  ShieldCheck,
   HelpCircle,
   ImageIcon,
   FolderOpen,
@@ -35,6 +36,7 @@ const adminNavSections: NavSection[] = [
     label: 'Content',
     items: [
       { name: 'Leads', href: '/admin/leads', icon: Users },
+      { name: 'Warranty', href: '/admin/warranty', icon: ShieldCheck },
       { name: 'FAQ Manager', href: '/admin/faq', icon: HelpCircle },
       { name: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
     ],
