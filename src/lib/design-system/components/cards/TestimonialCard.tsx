@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge'
 
 interface TestimonialCardProps {
   name: string
-  photo: string
+  photo?: string
   text: string
   rating?: number
   variant?: 'light' | 'dark'
@@ -33,12 +33,23 @@ export function TestimonialCard({
       )}
     >
       <div className="flex items-center gap-4 mb-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={photo}
-          alt={name}
-          className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/10"
-        />
+        {photo ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={photo}
+            alt={name}
+            className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/10"
+          />
+        ) : (
+          <div
+            className={twMerge(
+              'w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg ring-2 ring-primary/10',
+              isLight ? 'bg-primary/10 text-primary' : 'bg-white/20 text-white'
+            )}
+          >
+            {name.charAt(0)}
+          </div>
+        )}
         <div>
           <p className={twMerge('font-semibold', isLight ? 'text-gray-900' : 'text-white')}>
             {name}

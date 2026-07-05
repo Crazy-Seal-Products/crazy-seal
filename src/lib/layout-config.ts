@@ -6,14 +6,14 @@
  * about the current page's layout context.
  */
 
-export type LayoutZone = 'marketing' | 'admin' | 'lms' | 'bare'
+export type LayoutZone = 'marketing' | 'admin' | 'bare'
 
 export interface LayoutConfig {
   zone: LayoutZone
   header: boolean
   footer: boolean
   pageWrapper: boolean
-  sidebar: 'none' | 'admin' | 'lms'
+  sidebar: 'none' | 'admin'
   tracking: boolean
 }
 
@@ -35,20 +35,8 @@ const ZONE_RULES: ZoneRule[] = [
     },
   },
   {
-    match: (p) => p.startsWith('/lms'),
-    config: {
-      zone: 'lms',
-      header: false,
-      footer: false,
-      pageWrapper: false,
-      sidebar: 'lms',
-      tracking: false,
-    },
-  },
-  {
     match: (p) =>
       p.startsWith('/print') ||
-      p.startsWith('/pdf') ||
       p.startsWith('/api'),
     config: {
       zone: 'bare',
@@ -57,17 +45,6 @@ const ZONE_RULES: ZoneRule[] = [
       pageWrapper: false,
       sidebar: 'none',
       tracking: false,
-    },
-  },
-  {
-    match: (p) => p === '/financing' || p === '/financing/',
-    config: {
-      zone: 'marketing',
-      header: true,
-      footer: true,
-      pageWrapper: false,
-      sidebar: 'none',
-      tracking: true,
     },
   },
 ]

@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
-/* RV Armor Design System Colors */
+/* Crazy Seal Design System Colors */
 :root {
   /* Brand Colors */
-  --rva-primary: #003365;
-  --rva-primary-light: #125F97;
-  --rva-primary-dark: #002043;
+  --cs-primary: #003365;
+  --cs-primary-light: #125F97;
+  --cs-primary-dark: #002043;
 
-  --rva-secondary: #125F97;
-  --rva-secondary-light: #1A7BC4;
-  --rva-secondary-dark: #0E4D7C;
+  --cs-secondary: #125F97;
+  --cs-secondary-light: #1A7BC4;
+  --cs-secondary-dark: #0E4D7C;
 
-  --rva-accent: #5BA411;
-  --rva-accent-light: #6DC015;
-  --rva-accent-dark: #3A6B0B;
+  --cs-accent: #5BA411;
+  --cs-accent-light: #6DC015;
+  --cs-accent-dark: #3A6B0B;
 
-  --rva-highlight: #F9EA1C;
-  --rva-highlight-light: #FDF388;
-  --rva-highlight-dark: #C7BA16;
+  --cs-highlight: #F9EA1C;
+  --cs-highlight-light: #FDF388;
+  --cs-highlight-dark: #C7BA16;
 
   /* Light Mode */
   --background: #ffffff;
@@ -35,21 +35,21 @@
   --color-foreground: var(--foreground);
 
   /* Brand Colors */
-  --color-primary: var(--rva-primary);
-  --color-primary-light: var(--rva-primary-light);
-  --color-primary-dark: var(--rva-primary-dark);
+  --color-primary: var(--cs-primary);
+  --color-primary-light: var(--cs-primary-light);
+  --color-primary-dark: var(--cs-primary-dark);
 
-  --color-secondary: var(--rva-secondary);
-  --color-secondary-light: var(--rva-secondary-light);
-  --color-secondary-dark: var(--rva-secondary-dark);
+  --color-secondary: var(--cs-secondary);
+  --color-secondary-light: var(--cs-secondary-light);
+  --color-secondary-dark: var(--cs-secondary-dark);
 
-  --color-accent: var(--rva-accent);
-  --color-accent-light: var(--rva-accent-light);
-  --color-accent-dark: var(--rva-accent-dark);
+  --color-accent: var(--cs-accent);
+  --color-accent-light: var(--cs-accent-light);
+  --color-accent-dark: var(--cs-accent-dark);
 
-  --color-highlight: var(--rva-highlight);
-  --color-highlight-light: var(--rva-highlight-light);
-  --color-highlight-dark: var(--rva-highlight-dark);
+  --color-highlight: var(--cs-highlight);
+  --color-highlight-light: var(--cs-highlight-light);
+  --color-highlight-dark: var(--cs-highlight-dark);
 
   /* UI Colors */
   --color-card: var(--card-background);
@@ -59,9 +59,9 @@
   --color-muted-foreground: var(--muted-foreground);
 
   /* Semantic Colors */
-  --color-success: var(--rva-highlight);
-  --color-info: var(--rva-primary);
-  --color-warning: var(--rva-accent);
+  --color-success: var(--cs-highlight);
+  --color-info: var(--cs-primary);
+  --color-warning: var(--cs-accent);
   --color-error: #DC2626;
 
   /* Typography */
@@ -106,13 +106,13 @@ body {
 
 /* Focus styles */
 *:focus-visible {
-  outline: 2px solid var(--rva-primary);
+  outline: 2px solid var(--cs-primary);
   outline-offset: 2px;
 }
 
 /* Selection color */
 ::selection {
-  background: var(--rva-primary);
+  background: var(--cs-primary);
   color: white;
 }
 
@@ -152,44 +152,44 @@ body {
 }
 
 /* Utility classes for brand colors */
-.bg-rva-primary { background-color: var(--rva-primary); }
-.bg-rva-secondary { background-color: var(--rva-secondary); }
-.bg-rva-accent { background-color: var(--rva-accent); }
-.bg-rva-highlight { background-color: var(--rva-highlight); }
+.bg-cs-primary { background-color: var(--cs-primary); }
+.bg-cs-secondary { background-color: var(--cs-secondary); }
+.bg-cs-accent { background-color: var(--cs-accent); }
+.bg-cs-highlight { background-color: var(--cs-highlight); }
 
-.text-rva-primary { color: var(--rva-primary); }
-.text-rva-secondary { color: var(--rva-secondary); }
-.text-rva-accent { color: var(--rva-accent); }
-.text-rva-highlight { color: var(--rva-highlight); }
+.text-cs-primary { color: var(--cs-primary); }
+.text-cs-secondary { color: var(--cs-secondary); }
+.text-cs-accent { color: var(--cs-accent); }
+.text-cs-highlight { color: var(--cs-highlight); }
 
-.border-rva-primary { border-color: var(--rva-primary); }
-.border-rva-secondary { border-color: var(--rva-secondary); }
-.border-rva-accent { border-color: var(--rva-accent); }
-.border-rva-highlight { border-color: var(--rva-highlight); }
+.border-cs-primary { border-color: var(--cs-primary); }
+.border-cs-secondary { border-color: var(--cs-secondary); }
+.border-cs-accent { border-color: var(--cs-accent); }
+.border-cs-highlight { border-color: var(--cs-highlight); }
 
 /* Gradient utilities */
 .gradient-primary {
-  background: linear-gradient(135deg, var(--rva-primary), var(--rva-primary-light));
+  background: linear-gradient(135deg, var(--cs-primary), var(--cs-primary-light));
 }
 
 .gradient-secondary {
-  background: linear-gradient(135deg, var(--rva-secondary), var(--rva-secondary-light));
+  background: linear-gradient(135deg, var(--cs-secondary), var(--cs-secondary-light));
 }
 
 .gradient-accent {
-  background: linear-gradient(135deg, var(--rva-accent), var(--rva-accent-light));
+  background: linear-gradient(135deg, var(--cs-accent), var(--cs-accent-light));
 }
 
 .gradient-highlight {
-  background: linear-gradient(135deg, var(--rva-highlight), var(--rva-highlight-light));
+  background: linear-gradient(135deg, var(--cs-highlight), var(--cs-highlight-light));
 }
 
 .gradient-brand {
-  background: linear-gradient(135deg, var(--rva-primary), var(--rva-secondary));
+  background: linear-gradient(135deg, var(--cs-primary), var(--cs-secondary));
 }
 
 .gradient-hero {
-  background: linear-gradient(135deg, var(--rva-primary), var(--rva-secondary), var(--rva-accent));
+  background: linear-gradient(135deg, var(--cs-primary), var(--cs-secondary), var(--cs-accent));
 }
 
 /* Full-bleed section cards on mobile, rounded cards on sm+ */

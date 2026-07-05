@@ -1,8 +1,8 @@
-// RV Armor Design System
+// Crazy Seal Design System
 // Design Tokens - Single source of truth for all design values
 
 export const colors = {
-  // Primary Brand Color - RV Armor Navy
+  // Primary Brand Color - Crazy Seal Navy
   primary: {
     50: '#E6EBF3',
     100: '#B3C2D9',
@@ -12,7 +12,7 @@ export const colors = {
     700: '#002043',
   },
 
-  // Secondary Brand Color - RV Armor Blue
+  // Secondary Brand Color - Supporting Blue
   secondary: {
     50: '#E7EFF8',
     100: '#B5CDE6',
@@ -22,7 +22,7 @@ export const colors = {
     700: '#0A3B61',
   },
 
-  // Accent Color - RV Armor Green (CTAs, trust, guarantee)
+  // Accent Color - Crazy Seal Green (CTAs, trust, guarantee)
   accent: {
     50: '#EFF6E7',
     100: '#CEE4B5',
@@ -32,7 +32,7 @@ export const colors = {
     700: '#3A6B0B',
   },
 
-  // Highlight Color - RV Armor Yellow (energy, attention)
+  // Highlight Color - Crazy Seal Yellow (energy, attention)
   highlight: {
     50: '#FEFCE8',
     100: '#FDF7B8',

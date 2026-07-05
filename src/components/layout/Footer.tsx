@@ -2,28 +2,37 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Phone, Mail, MapPin } from 'lucide-react'
+import { Phone, Mail, Truck } from 'lucide-react'
 
 const FOOTER_LINKS = {
-  services: [
-    { href: '/services', label: 'Our Services' },
+  system: [
+    { href: '/crazy-seal', label: 'Our System' },
     { href: '/advantages', label: 'Advantages' },
-    { href: '/warranty', label: 'Warranty' },
+    { href: '/products', label: 'Products' },
     { href: '/pricing', label: 'Pricing' },
-    { href: '/financing', label: 'Financing' },
+    { href: '/installation', label: 'Installation' },
+    { href: '/technical-data', label: 'Technical Data' },
   ],
-  company: [
-    { href: '/about', label: 'About Us' },
-    { href: '/techs', label: 'Technicians' },
-    { href: '/reviews', label: 'Reviews' },
-    { href: '/photos', label: 'Photos' },
-    { href: '/our-work', label: 'Our Work' },
+  applications: [
+    { href: '/rv-roofs', label: 'RV Roofs' },
+    { href: '/commercial-roofing', label: 'Commercial Flat Roofs' },
+    { href: '/residential', label: 'Residential Flat Roofs' },
+    { href: '/transportation', label: 'Transportation' },
+    { href: '/professionals', label: 'Professionals' },
   ],
   support: [
+    { href: '/warranty', label: 'Warranty' },
+    { href: '/warranty-transfer', label: 'Warranty Transfer' },
     { href: '/faq', label: 'FAQ' },
+    { href: '/ordering', label: 'How to Order' },
+    { href: '/return-policy', label: 'Return Policy' },
     { href: '/contact', label: 'Contact' },
-    { href: '/insurance', label: 'Insurance Claims' },
-    { href: '/tech-application', label: 'Tech Application' },
+  ],
+  shop: [
+    { href: 'https://buy.crazyseal.com/products/double-layer-kit', label: 'Double Layer Kits' },
+    { href: 'https://buy.crazyseal.com/products/direct-to-deck-kit', label: 'Direct to Deck Kits' },
+    { href: 'https://buy.crazyseal.com/pages/build-your-own-kit', label: 'Build Your Own Kit' },
+    { href: 'https://buy.crazyseal.com/', label: 'Shop All Products' },
   ],
 }
 
@@ -31,41 +40,41 @@ export function Footer() {
   return (
     <footer className="bg-[#003365] text-white">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
           <div>
-            <Link href="/" className="inline-block">
+            <Link href="/" className="inline-block bg-white rounded-xl p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://media.rv-armor.com/site-assets/wp-media/2018/12/RVARMOR_logo_75.png"
-                alt="RV Armor"
+                src="https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-150.png"
+                alt="Crazy Seal"
                 className="h-10 w-auto"
               />
             </Link>
             <p className="mt-4 text-sm text-blue-200 leading-relaxed">
-              The last roof your RV will ever need. Lifetime warranty, nationwide service.
+              The patented, fluid-applied, seamless roofing system backed by a 50 year warranty. You can buy cheaper. You can&apos;t buy better.
             </p>
             <div className="mt-6 space-y-3">
-              <a href="tel:8557827667" className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
+              <a href="tel:8009630131" className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                (855) 782-7667
+                (800) 963-0131
               </a>
-              <a href="mailto:info@rv-armor.com" className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
+              <a href="mailto:info@crazyseal.com" className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                info@rv-armor.com
+                info@crazyseal.com
               </a>
               <div className="flex items-start gap-2 text-sm text-blue-200">
-                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                Nationwide Mobile Service
+                <Truck className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                Made in the USA. Free shipping on orders over $500.
               </div>
             </div>
           </div>
 
-          {/* Services */}
+          {/* The System */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-300 mb-4">Services</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-300 mb-4">The System</h3>
             <ul className="space-y-2">
-              {FOOTER_LINKS.services.map((link) => (
+              {FOOTER_LINKS.system.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-blue-200 hover:text-white transition-colors">
                     {link.label}
@@ -75,11 +84,11 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Applications */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-300 mb-4">Company</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-300 mb-4">Applications</h3>
             <ul className="space-y-2">
-              {FOOTER_LINKS.company.map((link) => (
+              {FOOTER_LINKS.applications.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-blue-200 hover:text-white transition-colors">
                     {link.label}
@@ -102,12 +111,26 @@ export function Footer() {
               ))}
             </ul>
           </div>
+
+          {/* Shop */}
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-300 mb-4">Shop</h3>
+            <ul className="space-y-2">
+              {FOOTER_LINKS.shop.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} className="text-sm text-blue-200 hover:text-white transition-colors">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-blue-400/20 flex flex-row flex-wrap justify-between items-center gap-4">
           <p className="text-xs text-blue-300">
-            &copy; {new Date().getFullYear()} RV Armor. All rights reserved.
+            &copy; {new Date().getFullYear()} Crazy Seal Products, Inc. All rights reserved. U.S. Patent #12,146,061.
           </p>
           <div className="flex gap-6">
             <Link href="/privacy-policy" className="text-xs text-blue-300 hover:text-white transition-colors">

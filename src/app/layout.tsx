@@ -10,17 +10,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://rv-armor.com";
+const SITE_URL = "https://crazyseal.com";
 
 export const metadata: Metadata = {
   title: {
-    default: "RV Armor - The Last Roof Your RV Will Ever Need",
-    template: "%s | RV Armor",
+    default: "Crazy Seal | DIY Roofing Done Right",
+    template: "%s | Crazy Seal",
   },
   description:
-    "RV Armor provides a permanent, seamless roofing membrane for all RV types. Lifetime warranty, nationwide mobile service. Starting at $175/linear foot.",
+    "The Crazy Seal Roofing System is a patented, fluid-applied, seamless roofing system for RVs, commercial and residential flat roofs, and transportation vehicles. Backed by a 50 year warranty and shipped straight to your door.",
   keywords:
-    "RV roof, RV roofing, RV roof coating, RV roof replacement, lifetime warranty, mobile RV service, RV Armor",
+    "Crazy Seal, DIY roofing, seamless roofing system, silicone roof coating, RV roof, flat roof repair, fluid applied roofing, 50 year warranty",
   metadataBase: new URL(SITE_URL),
   icons: {
     icon: "/icon.png",
@@ -29,16 +29,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "RV Armor",
-    title: "RV Armor - The Last Roof Your RV Will Ever Need",
+    siteName: "Crazy Seal",
+    title: "Crazy Seal | DIY Roofing Done Right",
     description:
-      "Permanent, seamless RV roofing membrane with a lifetime warranty. Nationwide mobile service for all RV types.",
+      "Patented, fluid-applied, seamless roofing system backed by a 50 year warranty. Manufactured in the USA and shipped straight to your door.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "RV Armor - The Last Roof Your RV Will Ever Need",
+    title: "Crazy Seal | DIY Roofing Done Right",
     description:
-      "Permanent, seamless RV roofing membrane with a lifetime warranty. Nationwide mobile service.",
+      "Patented, fluid-applied, seamless roofing system backed by a 50 year warranty. Manufactured in the USA and shipped straight to your door.",
   },
   robots: {
     index: true,
