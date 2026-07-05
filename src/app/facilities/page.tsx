@@ -4,7 +4,6 @@ import { useState } from 'react'
 import {
   ArrowRight,
   Download,
-  ExternalLink,
   Phone,
   Play,
 } from 'lucide-react'
@@ -80,12 +79,11 @@ export default function FacilitiesPage() {
                 download the video or embed code below.
               </p>
               <LinkButton
-                href="https://crazyseal.com/facilities-overview/"
+                href="/facilities-overview"
                 variant="primary"
                 size="lg"
-                external
               >
-                <ExternalLink className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5" />
                 Visit Digital Presentation Page
               </LinkButton>
             </div>
