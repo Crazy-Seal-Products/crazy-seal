@@ -279,7 +279,7 @@ export function FacilityAudiencePage({
             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 text-center">
               <ShoppingCart className="w-9 h-9 text-highlight mx-auto mb-3" />
               <h3 className="text-lg font-bold text-white mb-3">Visit Our Online Store</h3>
-              <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="md" external>
+              <LinkButton href="/store" variant="accent" size="md">
                 Shop Kits
               </LinkButton>
             </div>

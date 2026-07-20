@@ -15,7 +15,7 @@ interface KitTier {
   url: string
 }
 
-const SHOP = 'https://buy.crazyseal.com/products'
+const SHOP = '/store'
 
 const SINGLE_LAYER: KitTier[] = [
   { range: '0-100 SQ FT', maxSqft: 100, price: 520, url: `${SHOP}/single-layer-kit?variant=15320363401265` },
@@ -239,7 +239,7 @@ export function InstantQuoteCalculator() {
             about volume pricing.
           </p>
           <div className="flex flex-wrap gap-3">
-            <LinkButton href="https://buy.crazyseal.com/pages/build-your-own-kit" variant="accent" size="md" external>
+            <LinkButton href="/store#products" variant="accent" size="md">
               Build Your Custom Kit
               <ArrowRight className="w-4 h-4" />
             </LinkButton>

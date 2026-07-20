@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Phone, ChevronDown, ShoppingCart } from 'lucide-react'
 import { clsx } from 'clsx'
+import { CartButton } from '@/components/store/CartButton'
 
 const SYSTEM_DROPDOWN = [
   { href: '/crazy-seal', label: 'Our System' },
@@ -223,16 +224,20 @@ export function Header() {
               <Phone className="w-4 h-4" />
               (800) 963-0131
             </a>
-            <a
-              href="https://buy.crazyseal.com/"
+            <Link
+              href="/store"
               className="flex items-center gap-2 rounded-full bg-[#5BA411] px-5 py-2 text-sm font-semibold text-white hover:bg-[#4A870E] transition-colors shadow-sm hover:shadow-md"
             >
               <ShoppingCart className="w-4 h-4" />
               Shop Kits
-            </a>
+            </Link>
+            <CartButton />
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile cart + menu button */}
+          <div className="lg:hidden flex items-center gap-1 md:hidden">
+            <CartButton />
+          </div>
           <button
             type="button"
             className="lg:hidden p-2 text-gray-700"
@@ -300,13 +305,14 @@ export function Header() {
                 <Phone className="w-5 h-5" />
                 (800) 963-0131
               </a>
-              <a
-                href="https://buy.crazyseal.com/"
+              <Link
+                href="/store"
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 w-full text-center rounded-full bg-[#5BA411] px-5 py-3 text-base font-semibold text-white"
               >
                 <ShoppingCart className="w-5 h-5" />
                 Shop Kits
-              </a>
+              </Link>
             </div>
           </div>
         </div>

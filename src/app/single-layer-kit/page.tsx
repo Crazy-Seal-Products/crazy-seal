@@ -12,7 +12,7 @@ import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { VideoPlayer } from '../build-your-own-kit/VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_KIT = 'https://buy.crazyseal.com/products/single-layer-kit/'
+const SHOP_KIT = '/store/single-layer-kit'
 
 export const metadata: Metadata = {
   title: 'Single Layer Kit',
@@ -264,7 +264,7 @@ export default function SingleLayerKitPage() {
               single layer system can help you do that. However, we recommend
               our{' '}
               <a
-                href="https://buy.crazyseal.com/products/double-layer-kit"
+                href="/store/double-layer-kit"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-accent font-semibold hover:underline"
@@ -315,10 +315,10 @@ export default function SingleLayerKitPage() {
                 hat, and one tote bag. A $50 value!
               </p>
               <LinkButton
-                href="https://buy.crazyseal.com/products/free-crazy-seal-swag-pack"
+                href="/store/free-crazy-seal-swag-pack"
                 variant="white"
                 size="lg"
-                external
+               
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart

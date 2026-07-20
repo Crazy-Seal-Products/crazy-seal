@@ -11,7 +11,7 @@ import { Container, LinkButton } from '@/lib/design-system'
 import { VideoPlayer } from '../../build-your-own-kit/VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_URL = 'https://buy.crazyseal.com/products/crazy-patch'
+const SHOP_URL = '/store/crazy-patch'
 
 export const metadata: Metadata = {
   title: 'Crazy Patch',

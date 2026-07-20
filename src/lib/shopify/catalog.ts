@@ -7,7 +7,9 @@ export interface ShopifyVariant {
   price: string
   compareAtPrice: string | null
   availableForSale: boolean
-  inventoryQuantity: number | null
+  image: string | null
+  /** e.g. [{ name: "Size", value: "1 Gallon" }, { name: "Color", value: "White" }] */
+  selectedOptions: Array<{ name: string; value: string }>
 }
 
 export interface ShopifyProduct {
@@ -17,12 +19,11 @@ export interface ShopifyProduct {
   description: string
   descriptionHtml: string
   status: string
-  productType: string
-  tags: string[]
   featuredImage: string | null
   images: string[]
+  /** Option groups, e.g. [{ name: "Size", values: ["1 Gallon", "3 Gallon"] }] */
+  options: Array<{ name: string; values: string[] }>
   variants: ShopifyVariant[]
-  onlineStoreUrl: string | null
 }
 
 const PRODUCTS_QUERY = /* GraphQL */ `
@@ -39,9 +40,10 @@ const PRODUCTS_QUERY = /* GraphQL */ `
         description
         descriptionHtml
         status
-        productType
-        tags
-        onlineStoreUrl
+        options {
+          name
+          values
+        }
         featuredMedia {
           preview {
             image {
@@ -58,7 +60,7 @@ const PRODUCTS_QUERY = /* GraphQL */ `
             }
           }
         }
-        variants(first: 50) {
+        variants(first: 100) {
           nodes {
             id
             title
@@ -66,7 +68,13 @@ const PRODUCTS_QUERY = /* GraphQL */ `
             price
             compareAtPrice
             availableForSale
-            inventoryQuantity
+            image {
+              url
+            }
+            selectedOptions {
+              name
+              value
+            }
           }
         }
       }
@@ -84,12 +92,21 @@ interface ProductsQueryResult {
       description: string
       descriptionHtml: string
       status: string
-      productType: string
-      tags: string[]
-      onlineStoreUrl: string | null
+      options: Array<{ name: string; values: string[] }>
       featuredMedia: { preview: { image: { url: string } | null } | null } | null
       media: { nodes: Array<{ preview: { image: { url: string } | null } | null }> }
-      variants: { nodes: ShopifyVariant[] }
+      variants: {
+        nodes: Array<{
+          id: string
+          title: string
+          sku: string | null
+          price: string
+          compareAtPrice: string | null
+          availableForSale: boolean
+          image: { url: string } | null
+          selectedOptions: Array<{ name: string; value: string }>
+        }>
+      }
     }>
   }
 }
@@ -112,14 +129,21 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
         description: node.description,
         descriptionHtml: node.descriptionHtml,
         status: node.status,
-        productType: node.productType,
-        tags: node.tags,
+        options: node.options,
         featuredImage: node.featuredMedia?.preview?.image?.url ?? null,
         images: node.media.nodes
           .map((m) => m.preview?.image?.url)
           .filter((u): u is string => Boolean(u)),
-        variants: node.variants.nodes,
-        onlineStoreUrl: node.onlineStoreUrl,
+        variants: node.variants.nodes.map((v) => ({
+          id: v.id,
+          title: v.title,
+          sku: v.sku,
+          price: v.price,
+          compareAtPrice: v.compareAtPrice,
+          availableForSale: v.availableForSale,
+          image: v.image?.url ?? null,
+          selectedOptions: v.selectedOptions,
+        })),
       })
     }
     cursor = data.products.pageInfo.hasNextPage ? data.products.pageInfo.endCursor : null
@@ -131,11 +155,12 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
 /**
  * Build a Shopify cart permalink that pre-fills the checkout with the given
  * variant quantities. Variant IDs may be numeric IDs or gid:// strings.
+ * Works with no Storefront API token — used as the checkout fallback.
  */
 export function buildCartPermalink(
   items: Array<{ variantId: string; quantity: number }>
 ): string {
-  const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN
+  const domain = process.env.SHOPIFY_PUBLIC_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN
   const parts = items
     .map((i) => `${i.variantId.replace('gid://shopify/ProductVariant/', '')}:${i.quantity}`)
     .join(',')

@@ -11,7 +11,7 @@ import { Container, LinkButton } from '@/lib/design-system'
 import { VideoPlayer } from '../../build-your-own-kit/VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_URL = 'https://buy.crazyseal.com/products/crazy-tape'
+const SHOP_URL = '/store/crazy-tape'
 
 export const metadata: Metadata = {
   title: 'Crazy Tape',

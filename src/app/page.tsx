@@ -34,25 +34,25 @@ const KIT_TYPES = [
   {
     title: 'Double Layer Kits',
     desc: 'Our most popular kit with double layer protection.',
-    href: 'https://buy.crazyseal.com/products/double-layer-kit',
+    href: '/store/double-layer-kit',
     image: `${MEDIA}/2019/05/Double-White-100-300-Crazy-Seal-Flat-Roofing-Project-Kit-1024x336.png`,
   },
   {
     title: 'Direct to Deck Kits',
     desc: 'A special kit for sealing directly over wood decking.',
-    href: 'https://buy.crazyseal.com/products/direct-to-deck-kit',
+    href: '/store/direct-to-deck-kit',
     image: `${MEDIA}/2019/10/02_Direct-150-225-White-1024x416.png`,
   },
   {
     title: 'Commercial Kits',
     desc: 'Custom kits for any size commercial project.',
-    href: 'https://crazy-seal.myshopify.com/pages/commercial-roofing-kits',
+    href: '/store#commercial-kits',
     image: `${MEDIA}/2019/10/03_Direct-225-300-White-1024x503.png`,
   },
   {
     title: 'Build Your Own Kit',
     desc: 'Build your own kit from our lineup of roofing products.',
-    href: 'https://buy.crazyseal.com/pages/build-your-own-kit',
+    href: '/store#products',
     image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
   },
 ]
@@ -139,7 +139,7 @@ export default function HomePage() {
                     straight to your door.
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-3">
-                    <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="lg" external>
+                    <LinkButton href="/store" variant="accent" size="lg">
                       <ShoppingCart className="w-5 h-5" />
                       Shop Kits
                     </LinkButton>
@@ -199,7 +199,7 @@ export default function HomePage() {
                   install yourself. Backed by a 50 year warranty.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
-                  <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="md" external>
+                  <LinkButton href="/store" variant="accent" size="md">
                     <ShoppingCart className="w-4 h-4" />
                     Shop Kits
                   </LinkButton>
@@ -302,7 +302,7 @@ export default function HomePage() {
                 area.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="md" external>
+                <LinkButton href="/store" variant="accent" size="md">
                   <ShoppingCart className="w-4 h-4" />
                   Visit Our Store
                 </LinkButton>

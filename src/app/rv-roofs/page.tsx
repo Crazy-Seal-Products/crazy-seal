@@ -88,25 +88,25 @@ const KIT_TYPES = [
   {
     title: 'Double Layer Kits',
     desc: 'Our most popular kit with double layer protection.',
-    href: 'https://buy.crazyseal.com/products/double-layer-kit',
+    href: '/store/double-layer-kit',
     image: `${MEDIA}/2019/05/Double-White-100-300-Crazy-Seal-Flat-Roofing-Project-Kit-1024x336.png`,
   },
   {
     title: 'Single Layer Kits',
     desc: 'A budget-friendly option with single layer coverage.',
-    href: 'https://buy.crazyseal.com/products/single-layer-kit',
+    href: '/store/single-layer-kit',
     image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
   },
   {
     title: 'Direct to Deck Kits',
     desc: 'A special kit for sealing directly over wood decking.',
-    href: 'https://buy.crazyseal.com/products/direct-to-deck-kit',
+    href: '/store/direct-to-deck-kit',
     image: `${MEDIA}/2019/10/02_Direct-150-225-White-1024x416.png`,
   },
   {
     title: 'Build Your Own Kit',
     desc: 'Build your own kit from our lineup of roofing products.',
-    href: 'https://buy.crazyseal.com/pages/build-your-own-kit',
+    href: '/store#products',
     image: `${MEDIA}/2019/10/03_Direct-225-300-White-1024x503.png`,
   },
 ]
@@ -204,7 +204,7 @@ export default function RvRoofsPage() {
                   year warranty and shipped straight to your door.
                 </p>
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="lg" external>
+                  <LinkButton href="/store" variant="accent" size="lg">
                     <ShoppingCart className="w-5 h-5" />
                     Shop RV Kits
                   </LinkButton>
@@ -245,7 +245,7 @@ export default function RvRoofsPage() {
             <div className="rounded-2xl border border-gray-200/80 p-6 md:p-8 text-center">
               <ShoppingCart className="w-10 h-10 text-accent mx-auto mb-4" />
               <h3 className="text-lg font-bold text-primary mb-3">Visit Our Online Store</h3>
-              <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="md" external>
+              <LinkButton href="/store" variant="accent" size="md">
                 Shop Kits
               </LinkButton>
             </div>
@@ -406,7 +406,7 @@ export default function RvRoofsPage() {
                 custom kit.
               </p>
               <div className="mt-auto flex flex-wrap justify-center gap-3">
-                <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="md" external>
+                <LinkButton href="/store" variant="accent" size="md">
                   <ShoppingCart className="w-4 h-4" />
                   Visit Our Store
                 </LinkButton>

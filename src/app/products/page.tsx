@@ -13,42 +13,42 @@ const PRODUCTS = [
   {
     name: 'Crazy Clean',
     image: `${MEDIA}/2019/05/Crazy-Clean-400x561.png`,
-    href: 'https://buy.crazyseal.com/products/crazy-clean/',
+    href: '/store/crazy-clean',
     description:
       'Crazy Clean is a highly effective concentrated cleaning solution specially formulated to remove surface contaminants such as oils, dirt and oxidation. Crazy Clean is environmentally safe, non-toxic and leaves no contaminating by-products or pollutants to damage the environment.',
   },
   {
     name: 'Crazy Caulk',
     image: `${MEDIA}/2019/04/Crazy-Caulk-1-Tube.png`,
-    href: 'https://buy.crazyseal.com/products/crazy-caulk/',
+    href: '/store/crazy-caulk',
     description:
       'Crazy Caulk is a fiber-infused silicone, moisture-curing sealant with excellent adhesion to most surfaces. Crazy Caulk is generally used to seal seams, such as the seams along the sides of an RV or seams created where components such as gutter systems attach to the roof.',
   },
   {
     name: 'Crazy Patch',
     image: `${MEDIA}/2019/05/Crazy-Patch-400x560.png`,
-    href: 'https://buy.crazyseal.com/products/crazy-patch/',
+    href: '/store/crazy-patch',
     description:
       'Crazy Patch is a fiber-infused silicone, moisture-curing mastic with excellent adhesion to most surfaces. Crazy Patch is generally used to seal all existing penetrations. Simply stated, wherever sealant was previously applied to cover penetrations, Crazy Patch will be used to ensure that penetrations are sealed. Crazy Patch can also be used alone as a single component repair product to patch leaks.',
   },
   {
     name: 'Crazy Seal',
     image: `${MEDIA}/2019/05/Crazy-Seal-5-Gal-Gray-Bottom-400x586.png`,
-    href: 'https://buy.crazyseal.com/products/crazy-seal/',
+    href: '/store/crazy-seal',
     description:
       'Crazy Seal is a weatherproof, fiber-infused silicone, fluid-applied membrane. Applying Crazy Seal to any weathered roof substrate will help ensure it is protected against degradation caused by harsh UV rays, severe weather, mold and mildew. It will not chalk or blister. The unique fiber-infused silicone makeup of Crazy Seal remains permanently flexible yet strong.',
   },
   {
     name: 'Crazy Tape',
     image: `${MEDIA}/2021/12/Crazy-Tape-1395x1395-1-768x768.png`,
-    href: 'https://buy.crazyseal.com/products/crazy-tape',
+    href: '/store/crazy-tape',
     description:
       'Crazy Tape is a special tape created for scenarios where repairs are required. Crazy Tape has a strong adhesive on one side and a fabric material on the other. This gives you the ability to add additional structural integrity to the seam with the adhesive, while the fabric on top is designed to allow the Crazy Seal System to adhere to it. This combination allows you many different possibilities for repair on your roof.',
   },
   {
     name: 'Crazy Cloth',
     image: `${MEDIA}/2019/07/Metal-Closeup-600x600.jpg`,
-    href: 'https://buy.crazyseal.com/products/crazy-cloth',
+    href: '/store/crazy-cloth',
     description:
       'Crazy Cloth is the roofing fabric layer of the Crazy Seal Roofing System. Sandwiched between coats of Crazy Seal, it delivers the strength of roofing fabric with the durability, flexibility, and longevity of silicone in one seamless, fiber-reinforced membrane.',
   },
@@ -58,13 +58,13 @@ const KITS = [
   {
     title: 'Double Layer Kits',
     desc: 'Our most popular kit with double layer protection.',
-    href: 'https://buy.crazyseal.com/products/double-layer-kit',
+    href: '/store/double-layer-kit',
     image: `${MEDIA}/2021/12/Double-Layer-Kit-Featured-Image-768x384.png`,
   },
   {
     title: 'Direct to Deck Kits',
     desc: 'A special kit for sealing directly over wood decking.',
-    href: 'https://buy.crazyseal.com/products/direct-to-deck-kit/',
+    href: '/store/direct-to-deck-kit',
     image: `${MEDIA}/2021/12/Direct-to-Deck-Layer-Kit-Featured-Image-768x384.png`,
   },
   {
@@ -76,7 +76,7 @@ const KITS = [
   {
     title: 'Crazy Good Repair Kit',
     desc: 'Kit for small repairs or adding a fixture to a Crazy Seal roof.',
-    href: 'https://buy.crazyseal.com/products/crazy-good-repair-kit',
+    href: '/store/crazy-good-repair-kit',
     image: `${MEDIA}/2021/12/Repair-Kit-Featured-Image-768x384.png`,
   },
   {
@@ -108,7 +108,7 @@ export default function ProductsPage() {
               $500.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="lg" external>
+              <LinkButton href="/store" variant="accent" size="lg">
                 <ShoppingCart className="w-5 h-5" />
                 Visit Our Store
               </LinkButton>
@@ -184,10 +184,10 @@ export default function ProductsPage() {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
             <LinkButton
-              href="https://buy.crazyseal.com/pages/rv-roofing-kits"
+              href="/store#rv-kits"
               variant="white"
               size="md"
-              external
+             
             >
               See All Kits On One Page
             </LinkButton>

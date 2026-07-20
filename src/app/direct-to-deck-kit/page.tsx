@@ -12,7 +12,7 @@ import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { VideoPlayer } from '../build-your-own-kit/VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_KIT = 'https://buy.crazyseal.com/products/direct-to-deck-kit/'
+const SHOP_KIT = '/store/direct-to-deck-kit'
 
 export const metadata: Metadata = {
   title: 'Direct To Deck Kit',
@@ -326,10 +326,10 @@ export default function DirectToDeckKitPage() {
                 hat, and one tote bag. A $50 value!
               </p>
               <LinkButton
-                href="https://buy.crazyseal.com/products/free-crazy-seal-swag-pack"
+                href="/store/free-crazy-seal-swag-pack"
                 variant="white"
                 size="lg"
-                external
+               
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart

@@ -160,7 +160,7 @@ export default function CrazySealSystemPage() {
                   silicone.
                 </p>
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="lg" external>
+                  <LinkButton href="/store" variant="accent" size="lg">
                     <ShoppingCart className="w-5 h-5" />
                     Shop Kits
                   </LinkButton>
@@ -279,7 +279,7 @@ export default function CrazySealSystemPage() {
                 All Crazy Seal products ship directly to your door.
               </p>
               <div className="flex flex-col gap-3">
-                <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="md" external>
+                <LinkButton href="/store" variant="accent" size="md">
                   <ShoppingCart className="w-4 h-4" />
                   Shop Product Kits
                 </LinkButton>
@@ -365,7 +365,7 @@ export default function CrazySealSystemPage() {
               Every kit includes 24/7 access to detailed installation videos and
               PDFs for applying our DIY system.
             </p>
-            <LinkButton href="https://buy.crazyseal.com/" variant="primary" size="md" external>
+            <LinkButton href="/store" variant="primary" size="md">
               <ShoppingCart className="w-4 h-4" />
               Shop Kits
             </LinkButton>

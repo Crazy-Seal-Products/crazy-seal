@@ -61,7 +61,7 @@ const MODULES = [
     title: 'Get the Products You Need',
     desc: 'We have pre-built kits for many jobs, or you can build your own kit from scratch!',
     cta: 'Building a Kit',
-    href: 'https://buy.crazyseal.com/pages/build-your-own-kit',
+    href: '/store#products',
     icon: Package,
   },
   {

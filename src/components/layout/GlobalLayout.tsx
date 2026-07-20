@@ -8,6 +8,8 @@ import { HolidayBanner } from '@/components/layout/HolidayBanner'
 import { Footer } from '@/components/layout/Footer'
 import { getLayoutConfig } from '@/lib/layout-config'
 import { QuoteModalProvider } from '@/contexts/QuoteModalContext'
+import { CartProvider } from '@/contexts/CartContext'
+import { CartDrawer } from '@/components/store/CartDrawer'
 
 interface GlobalLayoutProps {
   children: React.ReactNode
@@ -23,16 +25,19 @@ export function GlobalLayout({ children }: GlobalLayoutProps) {
 
   return (
     <QuoteModalProvider>
-      <div className="min-h-screen bg-gray-50 text-gray-900">
-        <HolidayBanner />
-        {layout.header && <Header />}
-        {layout.pageWrapper ? (
-          <PageLayout className="pb-0 sm:pt-4 sm:pb-8 md:py-8">{children}</PageLayout>
-        ) : (
-          children
-        )}
-        {layout.footer && <Footer />}
-      </div>
+      <CartProvider>
+        <div className="min-h-screen bg-gray-50 text-gray-900">
+          <HolidayBanner />
+          {layout.header && <Header />}
+          {layout.pageWrapper ? (
+            <PageLayout className="pb-0 sm:pt-4 sm:pb-8 md:py-8">{children}</PageLayout>
+          ) : (
+            children
+          )}
+          {layout.footer && <Footer />}
+        </div>
+        <CartDrawer />
+      </CartProvider>
     </QuoteModalProvider>
   )
 }

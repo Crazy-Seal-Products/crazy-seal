@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getPublishedProjects } from '@/lib/projects'
+import { getStoreProducts } from '@/lib/store/products'
 
 const BASE_URL = 'https://crazyseal.com'
 
@@ -104,8 +105,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const projects = await getPublishedProjects()
+  const storeProducts = await getStoreProducts().catch(() => [])
 
   return [
+    {
+      url: `${BASE_URL}/store/`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    ...storeProducts.map((p) => ({
+      url: `${BASE_URL}/store/${p.handle}/`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
     ...mainPages.map((page) => ({
       url: `${BASE_URL}${page.url}`,
       lastModified: now,

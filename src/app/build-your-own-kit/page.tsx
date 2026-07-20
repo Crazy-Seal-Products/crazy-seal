@@ -13,7 +13,7 @@ import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { VideoPlayer } from './VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_BYOK = 'https://buy.crazyseal.com/pages/build-your-own-kit'
+const SHOP_BYOK = '/store#products'
 
 export const metadata: Metadata = {
   title: 'Build Your Own Kit',
@@ -29,7 +29,7 @@ const PRODUCTS = [
     image: `${MEDIA}/2019/04/Crazy-Caulk-1-Tube.png`,
     youtubeId: 'pk-958WYDA8',
     videoLabel: 'Product Video (0:49)',
-    href: 'https://buy.crazyseal.com/products/crazy-caulk',
+    href: '/store/crazy-caulk',
     paragraphs: [
       'Crazy Caulk is a fiber infused, moisture-curing sealant with excellent adhesion to most roof surfaces. Crazy Caulk is a component of the Crazy Seal monolithic system.',
       'Coverage Rates: This depends on the size of the bead you run. On average, you can expect approximately 40 ft per tube. We also offer this in gallon form. A gallon is the equivalent of about 8 tubes of caulk.',
@@ -44,7 +44,7 @@ const PRODUCTS = [
     image: `${MEDIA}/2019/05/Crazy-Patch-400x560.png`,
     youtubeId: 'DW4FxoRinWg',
     videoLabel: 'Product Video (0:35)',
-    href: 'https://buy.crazyseal.com/products/crazy-patch',
+    href: '/store/crazy-patch',
     paragraphs: [
       'Crazy Patch is a fiber infused moisture-curing mastic with excellent adhesion to most roof surfaces. Crazy Patch is a component of the Crazy Seal monolithic silicone system. Crazy Patch can also be used alone as a single component repair product to patch leaks.',
       'Net Contents: 1 US GAL / 3.8 L',
@@ -59,7 +59,7 @@ const PRODUCTS = [
     image: `${MEDIA}/2019/04/Crazy-Seal-5-Gal-White-1000x1395-400x558.png`,
     youtubeId: '7UdhprChv1Q',
     videoLabel: 'Product Video (0:44)',
-    href: 'https://buy.crazyseal.com/products/crazy-seal',
+    href: '/store/crazy-seal',
     paragraphs: [
       'When properly applied, Crazy Seal provides a weatherproof monolithic silicone roof coating. Applying Crazy Seal to any weathered roof substrate will help ensure it is protected against degradation caused by harsh UV rays, severe weather, mold and mildew. It will not chalk or blister. The unique fiber-infused silicone makeup of Crazy Seal remains permanently flexible yet strong.',
       'Color Options: Available in White, Gray, or Tan',
@@ -74,7 +74,7 @@ const PRODUCTS = [
     image: `${MEDIA}/2019/05/Crazy-Clean-400x561.png`,
     youtubeId: 'mDrHEUH0K4I',
     videoLabel: 'Product Video (0:26)',
-    href: 'https://buy.crazyseal.com/products/crazy-clean',
+    href: '/store/crazy-clean',
     paragraphs: [
       'Crazy Clean is a highly effective concentrated cleaning solution specially formulated to remove surface contaminates such as oils, dirt and oxidation. Crazy Clean is environmentally safe, non-toxic and leaves no contaminating by-products or pollutants to damage the environment.',
       'Net Contents: 1 US GAL / 3.8 L',
@@ -88,7 +88,7 @@ const PRODUCTS = [
     image: `${MEDIA}/2021/12/Crazy-Tape-1395x1395-1-768x768.png`,
     youtubeId: 'zvmb4TqDXtI',
     videoLabel: 'Product Video (0:44)',
-    href: 'https://buy.crazyseal.com/products/crazy-tape',
+    href: '/store/crazy-tape',
     paragraphs: [
       'You will see Crazy Tape in our Direct to Deck Kits. If you are going directly to wood decking, Crazy Tape will help you permanently seal your seams.',
       'Crazy Tape is a special tape created for scenarios where repairs are required. Crazy Tape has a strong adhesive on one side and a fabric material on the other. This gives you the ability to add additional structural integrity to the seam with the adhesive, while the fabric on top is designed to allow the Crazy Seal System to adhere to it. This combination allows you many different possibilities for repair on your roof. Dimensions are 4\u2033 x 25\u2032.',
@@ -135,25 +135,25 @@ const OTHER_KITS = [
   {
     title: 'Double Layer Kit',
     desc: 'Our most popular kit with double layer protection.',
-    href: 'https://buy.crazyseal.com/products/double-layer-kit',
+    href: '/store/double-layer-kit',
     image: `${MEDIA}/2021/12/Double-Layer-Kit-Featured-Image-768x384.png`,
   },
   {
     title: 'Single Layer Kit',
     desc: 'A budget friendly option with single layer coverage.',
-    href: 'https://buy.crazyseal.com/products/single-layer-kit/',
+    href: '/store/single-layer-kit',
     image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
   },
   {
     title: 'Direct To Deck Kit',
     desc: 'A special kit for sealing directly over wood decking.',
-    href: 'https://buy.crazyseal.com/products/direct-to-deck-kit/',
+    href: '/store/direct-to-deck-kit',
     image: `${MEDIA}/2021/12/Direct-to-Deck-Layer-Kit-Featured-Image-768x384.png`,
   },
   {
     title: 'Crazy Good Repair Kit',
     desc: 'Kit for small repairs or adding a fixture to a Crazy Seal roof.',
-    href: 'https://buy.crazyseal.com/products/crazy-good-repair-kit',
+    href: '/store/crazy-good-repair-kit',
     image: `${MEDIA}/2021/12/Repair-Kit-Featured-Image-768x384.png`,
   },
 ]
@@ -359,10 +359,10 @@ export default function BuildYourOwnKitPage() {
                 hat, and one tote bag. A $50 value!
               </p>
               <LinkButton
-                href="https://buy.crazyseal.com/products/free-crazy-seal-swag-pack"
+                href="/store/free-crazy-seal-swag-pack"
                 variant="white"
                 size="lg"
-                external
+               
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart

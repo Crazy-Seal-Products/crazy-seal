@@ -15,8 +15,8 @@ export const REDIRECTS: Redirect[] = [
   // ============================================================
   // Legacy WordPress paths -> new routes
   // ============================================================
-  { source: '/store', destination: 'https://buy.crazyseal.com/', permanent: true },
-  { source: '/shop', destination: 'https://buy.crazyseal.com/', permanent: true },
+  // /store is now our own headless storefront; /shop canonicalizes to it
+  { source: '/shop', destination: '/store', permanent: true },
   { source: '/install', destination: '/installation', permanent: true },
   // Live site served marketing assets at both /marketing/* and
   // /resources/marketing/*; we canonicalize on /marketing/*

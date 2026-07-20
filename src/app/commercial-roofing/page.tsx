@@ -316,10 +316,10 @@ export default function CommercialRoofingPage() {
               <ShoppingCart className="w-10 h-10 text-accent mx-auto mb-4" />
               <h3 className="text-lg font-bold text-primary mb-3">Visit Our Online Store</h3>
               <LinkButton
-                href="https://crazy-seal.myshopify.com/pages/commercial-roofing-kits"
+                href="/store#commercial-kits"
                 variant="accent"
                 size="md"
-                external
+               
               >
                 Commercial Kits
               </LinkButton>

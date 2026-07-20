@@ -57,7 +57,7 @@ export default function MetalBuildingsPage() {
               Seal your own metal building roof with the Crazy Seal DIY Roofing System.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <LinkButton href="https://buy.crazyseal.com/" variant="accent" size="lg" external>
+              <LinkButton href="/store" variant="accent" size="lg">
                 <ShoppingCart className="w-5 h-5" />
                 Shop Kits
               </LinkButton>

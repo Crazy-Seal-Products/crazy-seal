@@ -30,10 +30,10 @@ const FOOTER_LINKS = {
     { href: '/contact', label: 'Contact' },
   ],
   shop: [
-    { href: 'https://buy.crazyseal.com/products/double-layer-kit', label: 'Double Layer Kits' },
-    { href: 'https://buy.crazyseal.com/products/direct-to-deck-kit', label: 'Direct to Deck Kits' },
-    { href: 'https://buy.crazyseal.com/pages/build-your-own-kit', label: 'Build Your Own Kit' },
-    { href: 'https://buy.crazyseal.com/', label: 'Shop All Products' },
+    { href: '/store/double-layer-kit', label: 'Double Layer Kits' },
+    { href: '/store/direct-to-deck-kit', label: 'Direct to Deck Kits' },
+    { href: '/store#products', label: 'Build Your Own Kit' },
+    { href: '/store', label: 'Shop All Products' },
   ],
 }
 

@@ -239,10 +239,10 @@ export default function WaysToEarnPage() {
           </Grid>
           <div className="flex justify-center pt-6 md:pt-10">
             <LinkButton
-              href="https://buy.crazyseal.com/"
+              href="/store"
               variant="accent"
               size="lg"
-              external
+             
             >
               <ShoppingCart className="w-5 h-5" />
               Shop Product Kits

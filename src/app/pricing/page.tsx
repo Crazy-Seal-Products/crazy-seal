@@ -49,27 +49,27 @@ const KIT_TYPES = [
   {
     title: 'Double Layer Kits',
     desc: 'Our most popular kit with double layer protection.',
-    href: 'https://buy.crazyseal.com/products/double-layer-kit',
+    href: '/store/double-layer-kit',
   },
   {
     title: 'Direct to Deck Kits',
     desc: 'A special kit for sealing directly over wood decking.',
-    href: 'https://buy.crazyseal.com/products/direct-to-deck-kit',
+    href: '/store/direct-to-deck-kit',
   },
   {
     title: 'Commercial Kits',
     desc: 'Custom kits for any size commercial or residential project.',
-    href: 'https://crazy-seal.myshopify.com/pages/commercial-roofing-kits',
+    href: '/store#commercial-kits',
   },
   {
     title: 'Build Your Own Kit',
     desc: 'Build your own custom kit from our lineup of roofing products.',
-    href: 'https://buy.crazyseal.com/pages/build-your-own-kit',
+    href: '/store#products',
   },
   {
     title: 'Crazy Good Repair Kit',
     desc: 'Kit for small repairs or adding a fixture to a Crazy Seal roof.',
-    href: 'https://buy.crazyseal.com/products/crazy-good-repair-kit',
+    href: '/store/crazy-good-repair-kit',
   },
   {
     title: 'Work With a Specialist',

@@ -17,37 +17,37 @@ const PRODUCTS = [
     heading: 'Crazy Clean',
     image: `${MEDIA}/2019/05/Crazy-Clean-731x1024.png`,
     desc: 'Crazy Clean is a highly effective concentrated cleaning solution specially formulated to remove surface contaminants such as oils, dirt and oxidation. Crazy Clean is environmentally safe, non-toxic and leaves no contaminating by-products or pollutants to damage the environment.',
-    href: 'https://buy.crazyseal.com/products/crazy-clean/',
+    href: '/store/crazy-clean',
   },
   {
     heading: 'Crazy Caulk',
     image: `${MEDIA}/2019/04/Crazy-Caulk-1-Tube-177x1024.png`,
     desc: 'Crazy Caulk is a fiber-infused silicone, moisture-curing sealant with excellent adhesion to most surfaces. Crazy Caulk is generally used to seal seams, such as the seams along the sides of an RV or seams created where components such as gutter systems attach to the roof.',
-    href: 'https://buy.crazyseal.com/products/crazy-caulk/',
+    href: '/store/crazy-caulk',
   },
   {
     heading: 'Crazy Patch',
     image: `${MEDIA}/2019/05/Crazy-Patch-731x1024.png`,
     desc: 'Crazy Patch is a fiber-infused silicone, moisture-curing mastic with excellent adhesion to most surfaces. Crazy Patch is generally used to seal all existing penetrations. Simply stated, wherever sealant was previously applied to cover penetrations, Crazy Patch will be used to ensure that penetrations are sealed. Crazy Patch can also be used alone as a single component repair product to patch leaks.',
-    href: 'https://buy.crazyseal.com/products/crazy-patch/',
+    href: '/store/crazy-patch',
   },
   {
     heading: 'Crazy Seal',
     image: `${MEDIA}/2019/05/Crazy-Seal-5-Gal-Gray-Bottom-699x1024.png`,
     desc: 'Crazy Seal is a weatherproof, fiber-infused silicone, fluid-applied membrane. Applying Crazy Seal to any weathered roof substrate will help ensure it is protected against degradation caused by harsh UV rays, severe weather, mold and mildew. It will not chalk or blister. The unique fiber-infused silicone makeup of Crazy Seal remains permanently flexible yet strong.',
-    href: 'https://buy.crazyseal.com/products/crazy-seal',
+    href: '/store/crazy-seal',
   },
   {
     heading: 'Crazy Tape',
     image: `${MEDIA}/2021/12/Crazy-Tape-1395x1395-1-1024x1024.png`,
     desc: 'Crazy Tape is a special tape created for scenarios where repairs are required. Crazy Tape has a strong adhesive on one side and a fabric material on the other. This gives you the ability to add additional structural integrity to the seam with the adhesive, while the fabric on top is designed to allow the Crazy Seal System to adhere to it. This combination allows you many different possibilities for repair on your roof.',
-    href: 'https://buy.crazyseal.com/products/crazy-tape/',
+    href: '/store/crazy-tape',
   },
   {
     heading: 'Crazy Cloth',
     image: `${MEDIA}/2021/12/Crazy-Cloth-1000x1395-1-734x1024.png`,
     desc: 'Crazy Cloth is a special roofing fabric used to seal large seams. Combining this with the fluid applied products allows you many different possibilities for repair on your roof.',
-    href: 'https://buy.crazyseal.com/products/crazy-cloth',
+    href: '/store/crazy-cloth',
   },
 ]
 
@@ -115,10 +115,10 @@ export default function BuildingAKitPage() {
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 text-center">
           <SectionHeading heading="See All Kits On One Page" />
           <LinkButton
-            href="https://buy.crazyseal.com/pages/kits/"
+            href="/store"
             variant="accent"
             size="lg"
-            external
+           
           >
             <ShoppingCart className="w-5 h-5" />
             All Project Kits
@@ -172,10 +172,10 @@ export default function BuildingAKitPage() {
               See All Products On One Page
             </h3>
             <LinkButton
-              href="https://buy.crazyseal.com/pages/build-your-own-kit/"
+              href="/store#products"
               variant="primary"
               size="lg"
-              external
+             
             >
               See All Products
               <ArrowRight className="w-4 h-4" />

@@ -13,7 +13,7 @@ import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { VideoPlayer } from '../build-your-own-kit/VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_KIT = 'https://buy.crazyseal.com/products/double-layer-kit'
+const SHOP_KIT = '/store/double-layer-kit'
 
 export const metadata: Metadata = {
   title: 'Double Layer Kit',
@@ -353,10 +353,10 @@ export default function DoubleLayerKitPage() {
                 hat, and one tote bag. A $50 value!
               </p>
               <LinkButton
-                href="https://buy.crazyseal.com/products/free-crazy-seal-swag-pack"
+                href="/store/free-crazy-seal-swag-pack"
                 variant="white"
                 size="lg"
-                external
+               
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
