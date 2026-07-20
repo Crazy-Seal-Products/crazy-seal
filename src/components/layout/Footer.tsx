@@ -18,6 +18,7 @@ const FOOTER_LINKS = {
     { href: '/commercial-roofing', label: 'Commercial Flat Roofs' },
     { href: '/residential', label: 'Residential Flat Roofs' },
     { href: '/transportation', label: 'Transportation' },
+    { href: '/projects', label: 'Customer Projects' },
     { href: '/professionals', label: 'Professionals' },
   ],
   support: [

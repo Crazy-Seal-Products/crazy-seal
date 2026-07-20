@@ -17,6 +17,15 @@ export const REDIRECTS: Redirect[] = [
   // ============================================================
   { source: '/store', destination: 'https://buy.crazyseal.com/', permanent: true },
   { source: '/shop', destination: 'https://buy.crazyseal.com/', permanent: true },
+  { source: '/install', destination: '/installation', permanent: true },
+  // Live site served marketing assets at both /marketing/* and
+  // /resources/marketing/*; we canonicalize on /marketing/*
+  { source: '/resources/marketing/videos/:path*', destination: '/marketing/videos/:path*', permanent: true },
+  { source: '/resources/marketing/images/:path*', destination: '/marketing/images/:path*', permanent: true },
+  { source: '/resources/marketing/ai-prompts', destination: '/marketing/ai-prompts', permanent: true },
+  { source: '/resources/marketing/email-templates', destination: '/marketing/email-templates', permanent: true },
+  { source: '/project-category/:category', destination: '/projects/?category=:category', permanent: true },
+  { source: '/view/warranty-downloads', destination: '/warranty', permanent: true },
   { source: '/testimonials', destination: '/reviews', permanent: true },
   { source: '/warranty-registration', destination: '/warranty', permanent: true },
   { source: '/feed', destination: '/', permanent: true },

@@ -27,6 +27,7 @@ const TOP_NAV = [
   { href: '/installation', label: 'Installation' },
   { href: '/warranty', label: 'Warranty' },
   { href: '/professionals', label: 'Professionals' },
+  { href: '/projects', label: 'Projects' },
   { href: '/reviews', label: 'Reviews' },
   { href: '/contact', label: 'Contact' },
 ]
