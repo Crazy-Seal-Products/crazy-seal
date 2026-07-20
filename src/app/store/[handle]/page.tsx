@@ -5,8 +5,7 @@ import { ChevronRight, Truck, ShieldCheck, Phone } from 'lucide-react'
 import { Container } from '@/lib/design-system'
 import { getStoreProducts, getStoreProduct, formatPrice } from '@/lib/store/products'
 import { STORE_CATEGORIES } from '@/lib/store/config'
-import { ProductPurchasePanel } from '@/components/store/ProductPurchasePanel'
-import { ProductImageGallery } from '@/components/store/ProductImageGallery'
+import { ProductDetail } from '@/components/store/ProductDetail'
 
 export const revalidate = 300
 
@@ -55,55 +54,44 @@ export default async function ProductPage({ params }: PageProps) {
         <span className="text-gray-900 font-medium">{product.displayTitle}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        <ProductImageGallery images={product.images} alt={product.displayTitle} />
-
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-4">
-            {product.displayTitle}
-          </h1>
-
-          <ProductPurchasePanel product={product} />
-
-          {/* Trust strip */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3">
-              <Truck className="w-5 h-5 text-[#5BA411] flex-shrink-0" />
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-900">Free shipping</span> on orders
-                over $500
-              </p>
-            </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3">
-              <ShieldCheck className="w-5 h-5 text-[#5BA411] flex-shrink-0" />
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-900">50 year warranty</span> when
-                registered
-              </p>
-            </div>
+      <ProductDetail product={product}>
+        {/* Trust strip */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <Truck className="w-5 h-5 text-[#5BA411] flex-shrink-0" />
+            <p className="text-xs text-gray-600">
+              <span className="font-semibold text-gray-900">Free shipping</span> on orders over
+              $500
+            </p>
           </div>
-
-          {/* Description */}
-          {product.descriptionHtml && (
-            <div
-              className="prose prose-sm max-w-none mt-8 text-gray-600 [&_h1]:text-lg [&_h2]:text-lg [&_h3]:text-base [&_strong]:text-gray-900"
-              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-            />
-          )}
-
-          {/* Help */}
-          <div className="mt-8 flex items-center gap-3 rounded-xl bg-blue-50 border border-blue-100 px-4 py-3.5">
-            <Phone className="w-5 h-5 text-[#003365] flex-shrink-0" />
-            <p className="text-sm text-gray-700">
-              Questions about sizing or installation?{' '}
-              <a href="tel:8009630131" className="font-semibold text-[#003365] hover:underline">
-                Call (800) 963-0131
-              </a>{' '}
-              — we&apos;ll make sure you get exactly what your roof needs.
+          <div className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <ShieldCheck className="w-5 h-5 text-[#5BA411] flex-shrink-0" />
+            <p className="text-xs text-gray-600">
+              <span className="font-semibold text-gray-900">50 year warranty</span> when registered
             </p>
           </div>
         </div>
-      </div>
+
+        {/* Description */}
+        {product.descriptionHtml && (
+          <div
+            className="prose prose-sm max-w-none mt-8 text-gray-600 [&_h1]:text-lg [&_h2]:text-lg [&_h3]:text-base [&_strong]:text-gray-900"
+            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+          />
+        )}
+
+        {/* Help */}
+        <div className="mt-8 flex items-center gap-3 rounded-xl bg-blue-50 border border-blue-100 px-4 py-3.5">
+          <Phone className="w-5 h-5 text-[#003365] flex-shrink-0" />
+          <p className="text-sm text-gray-700">
+            Questions about sizing or installation?{' '}
+            <a href="tel:8009630131" className="font-semibold text-[#003365] hover:underline">
+              Call (800) 963-0131
+            </a>{' '}
+            — we&apos;ll make sure you get exactly what your roof needs.
+          </p>
+        </div>
+      </ProductDetail>
 
       {/* Related products */}
       {related.length > 0 && (

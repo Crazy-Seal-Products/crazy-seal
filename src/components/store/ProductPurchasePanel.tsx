@@ -1,44 +1,29 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState } from 'react'
 import { Minus, Plus, ShoppingCart, Zap } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { formatPrice, type StoreProduct } from '@/lib/store/products'
+import type { ShopifyVariant } from '@/lib/shopify/catalog'
 
 interface ProductPurchasePanelProps {
   product: StoreProduct
+  selected: Record<string, string>
+  onSelectedChange: (next: Record<string, string>) => void
+  selectedVariant: ShopifyVariant
 }
 
-export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
+export function ProductPurchasePanel({
+  product,
+  selected,
+  onSelectedChange,
+  selectedVariant,
+}: ProductPurchasePanelProps) {
   const { addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [buyingNow, setBuyingNow] = useState(false)
 
   const hasOptions = product.options.some((o) => o.values.length > 1)
-
-  const [selected, setSelected] = useState<Record<string, string>>(() =>
-    Object.fromEntries(product.options.map((o) => [o.name, o.values[0]]))
-  )
-
-  // Support ?variant=<numeric id> deep links (e.g. from the quote calculator)
-  useEffect(() => {
-    const variantId = new URLSearchParams(window.location.search).get('variant')
-    if (!variantId) return
-    const match = product.variants.find(
-      (v) => v.id === variantId || v.id.endsWith(`/${variantId}`)
-    )
-    if (match) {
-      setSelected(Object.fromEntries(match.selectedOptions.map((o) => [o.name, o.value])))
-    }
-  }, [product.variants])
-
-  const selectedVariant = useMemo(() => {
-    return (
-      product.variants.find((v) =>
-        v.selectedOptions.every((opt) => selected[opt.name] === opt.value)
-      ) ?? product.variants[0]
-    )
-  }, [product.variants, selected])
 
   /** Option values that produce a valid variant given the other selections. */
   function isValueAvailable(optionName: string, value: string): boolean {
@@ -107,7 +92,7 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
                 return (
                   <button
                     key={value}
-                    onClick={() => setSelected((prev) => ({ ...prev, [option.name]: value }))}
+                    onClick={() => onSelectedChange({ ...selected, [option.name]: value })}
                     disabled={!available}
                     className={`rounded-full border-2 px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                       active

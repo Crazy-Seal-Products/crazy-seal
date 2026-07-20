@@ -164,16 +164,19 @@ export const PRODUCT_CURATION: ProductCuration[] = [
 
   // ─── Extras ───
   {
+    handle: 'crazy-seal-tote',
+    category: 'extras',
+    title: 'Crazy Seal Tote',
+    blurb: 'A large industrial tote filled with Crazy Seal — for big commercial jobs.',
+    order: 1,
+  },
+  {
     handle: 'free-crazy-seal-swag-pack',
     category: 'extras',
     title: 'Crazy Seal Swag Pack',
-    order: 1,
+    order: 2,
   },
 ]
 
-/**
- * Shopify handles never shown in the store.
- * crazy-seal-tote is priced at $43,312.50 in Shopify (bad data) — hidden
- * until the price is fixed.
- */
-export const HIDDEN_HANDLES = new Set(['test-product', 'crazy-seal-tote'])
+/** Shopify handles never shown in the store. */
+export const HIDDEN_HANDLES = new Set(['test-product'])
