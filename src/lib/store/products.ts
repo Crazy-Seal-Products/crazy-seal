@@ -14,6 +14,8 @@ export interface StoreProduct extends ShopifyProduct {
   order: number
   priceMin: number
   priceMax: number
+  /** YouTube video IDs curated from the legacy Shopify product pages */
+  youtubeIds: string[]
 }
 
 function truncate(text: string, max = 140): string {
@@ -32,12 +34,13 @@ function toStoreProduct(p: ShopifyProduct): StoreProduct {
     order: curation?.order ?? 999,
     priceMin: prices.length ? Math.min(...prices) : 0,
     priceMax: prices.length ? Math.max(...prices) : 0,
+    youtubeIds: curation?.youtubeIds ?? [],
   }
 }
 
 const getCachedCatalog = unstable_cache(
   async () => getShopifyProducts(),
-  ['shopify-catalog'],
+  ['shopify-catalog-v2'],
   { revalidate: 300 }
 )
 

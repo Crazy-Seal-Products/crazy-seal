@@ -5,6 +5,8 @@
  * everything the customer sees (names, categories, ordering, descriptions) is
  * controlled here. Products not listed still appear, uncurated, in "More from
  * Crazy Seal" so new Shopify products are never silently dropped.
+ *
+ * YouTube IDs were scraped from buy.crazyseal.com product pages (Jul 2026).
  */
 
 export type StoreCategory = 'rv-kits' | 'roof-kits' | 'commercial-kits' | 'products' | 'extras'
@@ -47,6 +49,8 @@ export interface ProductCuration {
   blurb?: string
   /** Sort order within category (lower first) */
   order: number
+  /** YouTube video IDs from the legacy Shopify product pages */
+  youtubeIds?: string[]
 }
 
 export const PRODUCT_CURATION: ProductCuration[] = [
@@ -57,6 +61,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'RV Roofing Kit',
     blurb: 'Our most popular kit. Double-layer seamless protection sized to your RV roof.',
     order: 1,
+    youtubeIds: ['DUt04pcOCYw', 'AJpCXi3hqOI'],
   },
   {
     handle: 'direct-to-deck-rv-roofing-kit',
@@ -64,6 +69,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Direct-to-Deck RV Roofing Kit',
     blurb: 'For RV roofs stripped to the wood deck — seal directly over the decking.',
     order: 2,
+    youtubeIds: ['ZNhBmVKJX7k'],
   },
   {
     handle: 'crazy-good-rv-repair-kit',
@@ -71,6 +77,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Good RV Repair Kit',
     blurb: 'Small repairs, resealing fixtures, or adding accessories to your RV roof.',
     order: 3,
+    youtubeIds: ['lRWZTz5utbU'],
   },
 
   // ─── Flat Roof Kits ───
@@ -80,6 +87,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Seamless Roofing Kit (Double Layer)',
     blurb: 'Our flagship double-layer system with Crazy Cloth reinforcement.',
     order: 1,
+    youtubeIds: ['DUt04pcOCYw', 'AJpCXi3hqOI'],
   },
   {
     handle: 'single-layer-kit',
@@ -87,6 +95,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Single Layer Kit',
     blurb: 'A single-layer silicone membrane for roofs in good structural condition.',
     order: 2,
+    youtubeIds: ['Y6a9SdQ7M8c'],
   },
   {
     handle: 'direct-to-deck-kit',
@@ -94,6 +103,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Direct-to-Deck Kit',
     blurb: 'Seal directly over plywood or OSB decking — no underlayment needed.',
     order: 3,
+    youtubeIds: ['ZNhBmVKJX7k'],
   },
   {
     handle: 'crazy-good-repair-kit',
@@ -101,15 +111,52 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Good Repair Kit',
     blurb: 'Patch leaks, seal penetrations, or add a fixture to any Crazy Seal roof.',
     order: 4,
+    youtubeIds: ['lRWZTz5utbU'],
   },
 
   // ─── Commercial Kits ───
-  { handle: '500-sq-ft-commercial-kit', category: 'commercial-kits', title: '500 SQ FT Commercial Kit', order: 1 },
-  { handle: '1000-sq-ft-commercial-kit', category: 'commercial-kits', title: '1,000 SQ FT Commercial Kit', order: 2 },
-  { handle: '1-500-sq-ft-commercial-kit', category: 'commercial-kits', title: '1,500 SQ FT Commercial Kit', order: 3 },
-  { handle: '2000-sq-ft-commercial-kit', category: 'commercial-kits', title: '2,000 SQ FT Commercial Kit', order: 4 },
-  { handle: '2500-sq-ft-commercial-kit', category: 'commercial-kits', title: '2,500 SQ FT Commercial Kit', order: 5 },
-  { handle: '3000-sq-ft-commercial-kit', category: 'commercial-kits', title: '3,000 SQ FT Commercial Kit', order: 6 },
+  {
+    handle: '500-sq-ft-commercial-kit',
+    category: 'commercial-kits',
+    title: '500 SQ FT Commercial Kit',
+    order: 1,
+    youtubeIds: ['XZrXvweEo-U'],
+  },
+  {
+    handle: '1000-sq-ft-commercial-kit',
+    category: 'commercial-kits',
+    title: '1,000 SQ FT Commercial Kit',
+    order: 2,
+    youtubeIds: ['XZrXvweEo-U'],
+  },
+  {
+    handle: '1-500-sq-ft-commercial-kit',
+    category: 'commercial-kits',
+    title: '1,500 SQ FT Commercial Kit',
+    order: 3,
+    youtubeIds: ['XZrXvweEo-U'],
+  },
+  {
+    handle: '2000-sq-ft-commercial-kit',
+    category: 'commercial-kits',
+    title: '2,000 SQ FT Commercial Kit',
+    order: 4,
+    youtubeIds: ['XZrXvweEo-U'],
+  },
+  {
+    handle: '2500-sq-ft-commercial-kit',
+    category: 'commercial-kits',
+    title: '2,500 SQ FT Commercial Kit',
+    order: 5,
+    youtubeIds: ['XZrXvweEo-U'],
+  },
+  {
+    handle: '3000-sq-ft-commercial-kit',
+    category: 'commercial-kits',
+    title: '3,000 SQ FT Commercial Kit',
+    order: 6,
+    youtubeIds: ['XZrXvweEo-U'],
+  },
 
   // ─── Individual Products ───
   {
@@ -118,6 +165,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Seal',
     blurb: 'The fiber-infused silicone membrane at the heart of the system.',
     order: 1,
+    youtubeIds: ['7UdhprChv1Q'],
   },
   {
     handle: 'crazy-patch',
@@ -125,6 +173,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Patch',
     blurb: 'Fiber-infused silicone mastic for sealing penetrations and patching leaks.',
     order: 2,
+    youtubeIds: ['DW4FxoRinWg'],
   },
   {
     handle: 'crazy-caulk',
@@ -132,6 +181,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Caulk',
     blurb: 'Fiber-infused silicone sealant for seams and attachment points.',
     order: 3,
+    youtubeIds: ['pk-958WYDA8'],
   },
   {
     handle: 'crazy-cloth',
@@ -146,6 +196,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Tape',
     blurb: 'Adhesive-backed repair tape that the Crazy Seal System bonds directly to.',
     order: 5,
+    youtubeIds: ['zvmb4TqDXtI'],
   },
   {
     handle: 'industrial-crazy-tape',
@@ -153,6 +204,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Industrial Crazy Tape',
     blurb: 'Heavy-duty 50 ft roll for industrial-scale seam repairs.',
     order: 6,
+    youtubeIds: ['zvmb4TqDXtI'],
   },
   {
     handle: 'crazy-clean',
@@ -160,6 +212,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Clean',
     blurb: 'Concentrated, eco-safe cleaner that preps your roof for adhesion.',
     order: 7,
+    youtubeIds: ['mDrHEUH0K4I'],
   },
 
   // ─── Extras ───
@@ -169,6 +222,7 @@ export const PRODUCT_CURATION: ProductCuration[] = [
     title: 'Crazy Seal Tote',
     blurb: 'A large industrial tote filled with Crazy Seal — for big commercial jobs.',
     order: 1,
+    youtubeIds: ['XZrXvweEo-U'],
   },
   {
     handle: 'free-crazy-seal-swag-pack',

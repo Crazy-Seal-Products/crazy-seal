@@ -148,6 +148,19 @@ export function ProductPurchasePanel({
           {buyingNow ? 'One Moment…' : 'Buy Now'}
         </button>
       </div>
+
+      {/* Per-variant contents (from Shopify Variant Description app) */}
+      {selectedVariant.descriptionHtml && (
+        <div className="rounded-2xl border border-[#5BA411]/30 bg-[#5BA411]/5 px-5 py-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#5BA411] mb-2">
+            What&apos;s Included
+          </p>
+          <div
+            className="prose prose-sm max-w-none text-gray-700 [&_strong]:text-gray-900 [&_p]:mb-2 [&_p:last-child]:mb-0"
+            dangerouslySetInnerHTML={{ __html: selectedVariant.descriptionHtml }}
+          />
+        </div>
+      )}
     </div>
   )
 }

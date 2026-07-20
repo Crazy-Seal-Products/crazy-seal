@@ -10,6 +10,12 @@ export interface ShopifyVariant {
   image: string | null
   /** e.g. [{ name: "Size", value: "1 Gallon" }, { name: "Color", value: "White" }] */
   selectedOptions: Array<{ name: string; value: string }>
+  /**
+   * Per-variant HTML from the Shopify "Variant Description" app
+   * (metafield custom-descriptions.variant-description-app). Kits use this
+   * to list exactly what's included for the selected size/color.
+   */
+  descriptionHtml: string | null
 }
 
 export interface ShopifyProduct {
@@ -24,6 +30,16 @@ export interface ShopifyProduct {
   /** Option groups, e.g. [{ name: "Size", values: ["1 Gallon", "3 Gallon"] }] */
   options: Array<{ name: string; values: string[] }>
   variants: ShopifyVariant[]
+}
+
+/** Strip editor junk the Variant Description app stores with each metafield. */
+function cleanVariantHtml(html: string | null | undefined): string | null {
+  if (!html) return null
+  const cleaned = html
+    .replace(/<meta[^>]*>/gi, '')
+    .replace(/&nbsp;/gi, ' ')
+    .trim()
+  return cleaned || null
 }
 
 const PRODUCTS_QUERY = /* GraphQL */ `
@@ -51,7 +67,7 @@ const PRODUCTS_QUERY = /* GraphQL */ `
             }
           }
         }
-        media(first: 20) {
+        media(first: 30) {
           nodes {
             preview {
               image {
@@ -73,6 +89,9 @@ const PRODUCTS_QUERY = /* GraphQL */ `
             }
             selectedOptions {
               name
+              value
+            }
+            metafield(namespace: "custom-descriptions", key: "variant-description-app") {
               value
             }
           }
@@ -105,6 +124,7 @@ interface ProductsQueryResult {
           availableForSale: boolean
           image: { url: string } | null
           selectedOptions: Array<{ name: string; value: string }>
+          metafield: { value: string } | null
         }>
       }
     }>
@@ -143,6 +163,7 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
           availableForSale: v.availableForSale,
           image: v.image?.url ?? null,
           selectedOptions: v.selectedOptions,
+          descriptionHtml: cleanVariantHtml(v.metafield?.value),
         })),
       })
     }

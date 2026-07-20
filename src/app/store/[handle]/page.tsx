@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ChevronRight, Truck, ShieldCheck, Phone } from 'lucide-react'
-import { Container } from '@/lib/design-system'
+import { Container, YouTubeEmbed } from '@/lib/design-system'
 import { getStoreProducts, getStoreProduct, formatPrice } from '@/lib/store/products'
 import { STORE_CATEGORIES } from '@/lib/store/config'
 import { ProductDetail } from '@/components/store/ProductDetail'
@@ -92,6 +92,24 @@ export default async function ProductPage({ params }: PageProps) {
           </p>
         </div>
       </ProductDetail>
+
+      {/* Product videos (from legacy Shopify pages) */}
+      {product.youtubeIds.length > 0 && (
+        <section className="mt-14">
+          <h2 className="text-2xl font-bold text-[#003365] tracking-tight mb-6">
+            See It In Action
+          </h2>
+          <div
+            className={`grid gap-6 ${
+              product.youtubeIds.length > 1 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl'
+            }`}
+          >
+            {product.youtubeIds.map((id) => (
+              <YouTubeEmbed key={id} videoId={id} variant="card" />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Related products */}
       {related.length > 0 && (
