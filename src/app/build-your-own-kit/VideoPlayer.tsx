@@ -2,15 +2,26 @@
 
 import { useState } from 'react'
 import { Play } from 'lucide-react'
+import {
+  handleYouTubeThumbFallback,
+  youtubeThumbnailUrl,
+} from '@/lib/youtube'
 
 interface VideoPlayerProps {
   youtubeId: string
   title: string
   caption?: string
+  thumbnail?: string
 }
 
-export function VideoPlayer({ youtubeId, title, caption }: VideoPlayerProps) {
+export function VideoPlayer({
+  youtubeId,
+  title,
+  caption,
+  thumbnail,
+}: VideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
+  const thumbnailUrl = thumbnail || youtubeThumbnailUrl(youtubeId)
 
   return (
     <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-900 shadow-xl">
@@ -22,9 +33,19 @@ export function VideoPlayer({ youtubeId, title, caption }: VideoPlayerProps) {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+            src={thumbnailUrl}
             alt={title}
             className="w-full h-full object-cover"
+            onLoad={
+              thumbnail
+                ? undefined
+                : (e) => handleYouTubeThumbFallback(e, youtubeId)
+            }
+            onError={
+              thumbnail
+                ? undefined
+                : (e) => handleYouTubeThumbFallback(e, youtubeId)
+            }
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
           <div className="absolute inset-0 flex items-center justify-center">

@@ -2,21 +2,28 @@
 import React, { useState } from 'react'
 import { clsx } from 'clsx'
 import { Play } from 'lucide-react'
+import {
+  handleYouTubeThumbFallback,
+  youtubeThumbnailUrl,
+} from '@/lib/youtube'
 
 interface YouTubeEmbedProps {
   videoId: string
+  /** Custom cover. Use when YouTube has no maxresdefault (e.g. C5FvTulPDaY). */
+  thumbnail?: string
   variant?: 'default' | 'card'
   className?: string
 }
 
 export function YouTubeEmbed({
   videoId,
+  thumbnail,
   variant = 'default',
   className,
 }: YouTubeEmbedProps) {
   const [loaded, setLoaded] = useState(false)
   const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+  const thumbnailUrl = thumbnail || youtubeThumbnailUrl(videoId)
 
   const handleClick = () => setLoaded(true)
 
@@ -39,6 +46,16 @@ export function YouTubeEmbed({
             src={thumbnailUrl}
             alt="Video thumbnail"
             className="absolute inset-0 h-full w-full object-cover"
+            onLoad={
+              thumbnail
+                ? undefined
+                : (e) => handleYouTubeThumbFallback(e, videoId)
+            }
+            onError={
+              thumbnail
+                ? undefined
+                : (e) => handleYouTubeThumbFallback(e, videoId)
+            }
           />
           <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#003365] text-white shadow-lg transition-transform hover:scale-110">
             <Play className="h-8 w-8 fill-current" />

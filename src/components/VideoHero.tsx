@@ -4,6 +4,10 @@ import { useState } from 'react'
 import { Play, ArrowRight } from 'lucide-react'
 import { LinkButton } from '@/lib/design-system'
 import { QuoteCta } from '@/components/QuoteButton'
+import {
+  handleYouTubeThumbFallback,
+  youtubeThumbnailUrl,
+} from '@/lib/youtube'
 
 interface VideoHeroProps {
   heading: string
@@ -95,9 +99,11 @@ export function VideoHero({
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                  src={youtubeThumbnailUrl(youtubeId)}
                   alt={imageAlt || 'Video thumbnail'}
                   className="w-full h-full object-cover"
+                  onLoad={(e) => handleYouTubeThumbFallback(e, youtubeId)}
+                  onError={(e) => handleYouTubeThumbFallback(e, youtubeId)}
                 />
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors" />
                 <div className="absolute inset-0 flex items-center justify-center">
