@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { ReactGoogleReviews, ReactGoogleReview } from 'react-google-reviews'
-import 'react-google-reviews/dist/index.css'
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export interface GoogleReviewsProps {
@@ -11,6 +9,29 @@ export interface GoogleReviewsProps {
   minRating?: number
   maxReviews?: number
   accentColor?: string
+}
+
+interface ReviewData {
+  reviewId: string
+  reviewer: { displayName: string; profilePhotoUrl?: string }
+  comment: string
+  starRating: number
+  createTime?: string
+}
+
+/** Featurable API v2 response (new widgets are v2-only) */
+interface FeaturableV2Response {
+  success: boolean
+  widget?: {
+    reviews: Array<{
+      id: string
+      author: { name: string; avatarUrl?: string }
+      text: string
+      rating: { value: number; max: number }
+      publishedAt?: string
+    }>
+    gbpLocationSummary?: { reviewsCount: number; rating: number }
+  }
 }
 
 function formatRelativeDate(dateString: string): string {
@@ -29,7 +50,7 @@ function formatRelativeDate(dateString: string): string {
 
 const CHAR_LIMIT = 150
 
-function ReviewCard({ review, accentColor }: { review: ReactGoogleReview; accentColor: string }) {
+function ReviewCard({ review, accentColor }: { review: ReviewData; accentColor: string }) {
   const [imageError, setImageError] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const rating = (review as any).starRating ?? (review as any).rating ?? 5
@@ -112,7 +133,7 @@ function ReviewCarousel({
   speed = 8000,
   accentColor,
 }: {
-  reviews: ReactGoogleReview[]
+  reviews: ReviewData[]
   speed: number
   accentColor: string
 }) {
@@ -206,17 +227,28 @@ export function GoogleReviews({
   maxReviews = 9,
   accentColor = '#003365',
 }: GoogleReviewsProps) {
+  const [reviews, setReviews] = useState<ReviewData[]>([])
   const [widgetData, setWidgetData] = useState<{ totalReviewCount: number; averageRating: number } | null>(null)
 
   useEffect(() => {
     if (!featurableId) return
-    fetch(`https://featurable.com/api/v1/widgets/${featurableId}`)
+    fetch(`https://api.featurable.com/v2/widgets/${featurableId}`)
       .then(res => res.json())
-      .then(data => {
-        if (data.success) {
+      .then((data: FeaturableV2Response) => {
+        if (!data.success || !data.widget) return
+        setReviews(
+          data.widget.reviews.map(r => ({
+            reviewId: r.id,
+            reviewer: { displayName: r.author.name, profilePhotoUrl: r.author.avatarUrl },
+            comment: r.text,
+            starRating: r.rating.value,
+            createTime: r.publishedAt,
+          }))
+        )
+        if (data.widget.gbpLocationSummary) {
           setWidgetData({
-            totalReviewCount: Number(data.totalReviewCount),
-            averageRating: Number(data.averageRating),
+            totalReviewCount: data.widget.gbpLocationSummary.reviewsCount,
+            averageRating: data.widget.gbpLocationSummary.rating,
           })
         }
       })
@@ -242,21 +274,38 @@ export function GoogleReviews({
     )
   }
 
-  const customRenderer = (reviews: ReactGoogleReview[]) => {
-    const filteredReviews = reviews
-      .filter(review => {
-        const rating = (review as any).starRating ?? (review as any).rating ?? 5
-        return rating >= minRating
-      })
-      .slice(0, maxReviews)
+  const filteredReviews = reviews
+    .filter(review => review.starRating >= minRating)
+    .slice(0, maxReviews)
 
-    const avgRating = widgetData?.averageRating
-      ?? (reviews.length > 0
-        ? reviews.reduce((sum, r) => sum + ((r as any).starRating ?? (r as any).rating ?? 5), 0) / reviews.length
-        : 4.9)
-    const totalCount = widgetData?.totalReviewCount ?? reviews.length
+  const avgRating = widgetData?.averageRating
+    ?? (reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.starRating, 0) / reviews.length
+      : 4.9)
+  const totalCount = widgetData?.totalReviewCount ?? reviews.length
 
-    return (
+  return (
+    <div className="w-full">
+      {totalCount > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Crazy Seal',
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: avgRating,
+                reviewCount: totalCount,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }),
+          }}
+        />
+      )}
+      {(
       <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8">
         <div className="flex flex-col items-center gap-1.5 flex-shrink-0 lg:w-[180px]">
           <p className="text-xl font-bold tracking-tight text-gray-900 uppercase">
@@ -295,19 +344,7 @@ export function GoogleReviews({
           />
         </div>
       </div>
-    )
-  }
-
-  return (
-    <div className="w-full">
-      <ReactGoogleReviews
-        featurableId={featurableId}
-        layout="custom"
-        renderer={customRenderer}
-        structuredData={true}
-        brandName="Crazy Seal"
-        accessibility={true}
-      />
+      )}
     </div>
   )
 }
