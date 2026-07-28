@@ -62,6 +62,8 @@ function photoLinksHtml(urls?: string[]): string | undefined {
 interface LeadNotificationData {
   name: string
   email: string
+  /** 'quote' = purchase lead, 'business' = dealer/pro network lead */
+  lead_type?: string
   phone?: string
   street_address?: string
   city?: string
@@ -103,10 +105,16 @@ function leadFieldRows(data: LeadNotificationData, includeMeta: boolean): string
   ].filter(Boolean).join('')
 }
 
+function isDealerLead(data: LeadNotificationData): boolean {
+  return data.lead_type === 'business'
+}
+
 export async function sendLeadNotification(data: LeadNotificationData) {
   await sendEmail({
     to: NOTIFY_TO,
-    subject: 'New Website Form Submission',
+    subject: isDealerLead(data)
+      ? `New Dealer / Partner Lead — ${data.name}`
+      : `New Purchase Lead — ${data.name}`,
     html: wrapFieldsTable(leadFieldRows(data, true)),
   })
 }
@@ -114,14 +122,21 @@ export async function sendLeadNotification(data: LeadNotificationData) {
 export async function sendLeadAutoReply(data: LeadNotificationData) {
   const firstName = data.name.split(' ')[0] || data.name
 
+  const intro = isDealerLead(data)
+    ? `<p>Thank you for your interest in partnering with Crazy Seal!</p>
+       <p>A member of our team will reach out shortly to talk about the dealer program, ways to earn, and how we support our partners. Please check your spam folder if you do not see a reply within 24 hours.</p>`
+    : `<p>Thank you for contacting Crazy Seal!</p>
+       <p>You're one step closer to a seamless roofing system backed by our 50 year warranty. One of our specialists will reach out as soon as possible. Please check your spam folder if you do not see a reply within 24 hours.</p>`
+
   await sendEmail({
     to: data.email,
-    subject: "We've Received Your Form Entry!",
+    subject: isDealerLead(data)
+      ? "We've Received Your Dealer Inquiry!"
+      : "We've Received Your Request — A Specialist Will Be In Touch!",
     html: `
       <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#333;max-width:600px;">
         <p>Hi ${firstName},</p>
-        <p>Thank you for contacting Crazy Seal!</p>
-        <p>You're one step closer to a seamless roofing system backed by our 50 year warranty. One of our specialists will reach out as soon as possible. Please check your spam folder if you do not see a reply within 24 hours.</p>
+        ${intro}
         <p>You can also give us a call if you have any questions: <strong>(800) 963-0131</strong> (M-F 9AM-6PM EST).</p>
         <p>Have a wonderful day!</p>
         <hr style="border:none;border-top:1px solid #ddd;margin:24px 0;" />

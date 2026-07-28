@@ -8,9 +8,16 @@ import { ContactForm } from '@/components/forms/ContactForm'
 interface ContactModalProps {
   open: boolean
   onClose: () => void
+  sourcePage?: string
+  initialMessage?: string
 }
 
-export function ContactModal({ open, onClose }: ContactModalProps) {
+export function ContactModal({
+  open,
+  onClose,
+  sourcePage = 'contact',
+  initialMessage,
+}: ContactModalProps) {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose()
   }, [onClose])
@@ -38,7 +45,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-5 sm:p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-[#003365]">Tell Us Your Story</h2>
+          <h2 className="text-xl font-bold text-[#003365]">Talk to a Specialist</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
@@ -48,7 +55,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
           </button>
         </div>
         <div className="p-5 sm:p-6 sm:pt-4">
-          <ContactForm />
+          <ContactForm sourcePage={sourcePage} initialMessage={initialMessage} />
         </div>
       </div>
     </div>,

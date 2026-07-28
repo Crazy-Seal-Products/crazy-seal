@@ -21,6 +21,11 @@ import {
   LinkButton,
 } from '@/lib/design-system'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { LeadCaptureSection } from '@/components/LeadCaptureSection'
+import {
+  handleYouTubeThumbFallback,
+  youtubeThumbnailUrl,
+} from '@/lib/youtube'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -36,6 +41,7 @@ function ClickToPlayVideo({
   caption?: string
 }) {
   const [playing, setPlaying] = useState(false)
+  const poster = thumbnail || youtubeThumbnailUrl(videoId)
 
   return (
     <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/10">
@@ -47,9 +53,19 @@ function ClickToPlayVideo({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+            src={poster}
             alt={title}
             className="w-full h-full object-cover"
+            onLoad={
+              thumbnail
+                ? undefined
+                : (e) => handleYouTubeThumbFallback(e, videoId)
+            }
+            onError={
+              thumbnail
+                ? undefined
+                : (e) => handleYouTubeThumbFallback(e, videoId)
+            }
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -823,32 +839,13 @@ export default function RvRoofsPage() {
         </div>
       </Container>
 
-      {/* ─── CONTACT CTA ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
-            Have Any Questions? Our Crazy Seal Specialists Can Help!
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-6">
-            Let&apos;s Get In Touch
-          </h2>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
-      </Container>
+      {/* ─── LEAD CAPTURE ─── */}
+      <LeadCaptureSection
+        sourcePage="rv-roofs"
+        defaultProjectType="RV Roof"
+        heading="Talk to a Specialist About Your RV Roof"
+        subheading="Tell us about your rig and we'll build the perfect kit with you — no pressure, no obligation."
+      />
     </>
   )
 }

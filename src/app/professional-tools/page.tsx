@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Download, ExternalLink, ArrowRight, Phone } from 'lucide-react'
 import { Container, SectionHeading, LinkButton, YouTubeEmbed } from '@/lib/design-system'
-import { ContactForm } from '@/components/forms/ContactForm'
+import { ProfessionalContactForm } from '@/components/forms/ProfessionalContactForm'
 import { CtaSection } from '@/components/CtaSection'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
@@ -319,7 +319,7 @@ export default function ProfessionalToolsPage() {
             subheading="Fill out the form below and one of our Crazy Seal specialists will be in touch with you shortly. We promise to be fun, informative, and will do our very best to help you!"
           />
           <div className="max-w-2xl mx-auto">
-            <ContactForm sourcePage="professional-tools" />
+            <ProfessionalContactForm sourcePage="professional-tools" />
           </div>
         </div>
       </Container>

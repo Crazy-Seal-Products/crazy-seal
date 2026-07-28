@@ -110,7 +110,7 @@ export function ContentRequestForm({
         pushDedupEventId('form_submission', eventId)
       }
 
-      router.push('/thank-you')
+      router.push('/thank-you?type=business')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
       turnstileRef.current?.reset()

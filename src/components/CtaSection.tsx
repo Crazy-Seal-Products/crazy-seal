@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { QuoteCta } from '@/components/QuoteButton'
 
 export function CtaSection() {
@@ -11,10 +12,21 @@ export function CtaSection() {
           Ready to Do It Once and Do It Right?
         </h2>
         <p className="text-gray-500 text-base sm:text-lg mb-6 md:mb-10 leading-relaxed">
-          Talk to a Crazy Seal specialist about your project, or get an instant
-          quote and have your kit shipped straight to your door.
+          Talk to a Crazy Seal specialist and we&apos;ll build the perfect kit
+          for your roof together — then ship it straight to your door.
         </p>
-        <QuoteCta />
+        <QuoteCta sourcePage="cta-section" />
+        <p className="mt-6 text-sm text-gray-400">
+          Prefer to do it yourself?{' '}
+          <Link href="/pricing" className="font-semibold text-[#003365] hover:text-accent transition-colors">
+            See kit pricing
+          </Link>{' '}
+          or{' '}
+          <Link href="/store" className="font-semibold text-[#003365] hover:text-accent transition-colors">
+            shop kits
+          </Link>
+          .
+        </p>
       </div>
     </section>
   )

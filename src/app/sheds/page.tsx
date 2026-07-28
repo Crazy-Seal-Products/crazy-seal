@@ -10,6 +10,7 @@ import {
 } from '@/lib/design-system'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
+import { LeadCaptureSection } from '@/components/LeadCaptureSection'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -725,32 +726,12 @@ export default function ShedsPage() {
         </div>
       </Container>
 
-      {/* ─── CONTACT CTA ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
-            Have Any Questions? Our Crazy Seal Specialists Can Help!
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-6">
-            Let&apos;s Get In Touch
-          </h2>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
-      </Container>
+      {/* ─── LEAD CAPTURE ─── */}
+      <LeadCaptureSection
+        sourcePage="sheds"
+        defaultProjectType="Other"
+        heading="Talk to a Specialist About Your Shed Roof"
+      />
     </>
   )
 }

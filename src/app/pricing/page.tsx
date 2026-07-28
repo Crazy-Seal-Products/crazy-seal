@@ -119,8 +119,9 @@ export default function PricingPage() {
               </h1>
               <p className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
                 On average, the Crazy Seal Roofing System ranges between
-                $3.00-$5.00 per square foot of coverage depending on your
-                application and coverage rate.
+                $3.00-$5.00 per square foot of coverage. Answer a few questions
+                for your kit recommendation, tell us where to send the quote to
+                unlock exact dollars — or talk to a specialist any time.
               </p>
             </div>
             <div className="max-w-3xl mx-auto">

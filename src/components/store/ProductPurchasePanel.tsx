@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Minus, Plus, ShoppingCart, Zap } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Zap, MessageSquare } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
+import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { formatPrice, type StoreProduct } from '@/lib/store/products'
 import type { ShopifyVariant } from '@/lib/shopify/catalog'
 
@@ -20,6 +21,7 @@ export function ProductPurchasePanel({
   selectedVariant,
 }: ProductPurchasePanelProps) {
   const { addItem } = useCart()
+  const { openQuoteModal } = useQuoteModal()
   const [quantity, setQuantity] = useState(1)
   const [buyingNow, setBuyingNow] = useState(false)
 
@@ -148,6 +150,21 @@ export function ProductPurchasePanel({
           {buyingNow ? 'One Moment…' : 'Buy Now'}
         </button>
       </div>
+
+      {/* Specialist assist — converts hesitant shoppers into sales leads */}
+      <button
+        type="button"
+        onClick={() =>
+          openQuoteModal({
+            sourcePage: `store/${product.handle}`,
+            initialMessage: `I'm looking at the ${product.displayTitle} (${selectedVariant.title}) and would like help making sure it's the right kit for my roof.`,
+          })
+        }
+        className="w-full flex items-center justify-center gap-2 rounded-full border-2 border-[#003365]/20 px-6 py-3 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors cursor-pointer"
+      >
+        <MessageSquare className="w-4 h-4" />
+        Not sure which kit? A specialist will build it with you — free
+      </button>
 
       {/* Per-variant contents (from Shopify Variant Description app) */}
       {selectedVariant.descriptionHtml && (

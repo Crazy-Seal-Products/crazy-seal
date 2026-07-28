@@ -17,6 +17,7 @@ const BUSINESS_TYPES = [
   'Dealership / Service Center',
   'Mobile Technician',
   'Sole Proprietor',
+  'Affiliate / Referrer',
   'Other Business Type',
 ]
 
@@ -109,7 +110,7 @@ export function ProfessionalContactForm({
         pushDedupEventId('form_submission', eventId)
       }
 
-      router.push('/thank-you')
+      router.push('/thank-you?type=business')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
       turnstileRef.current?.reset()

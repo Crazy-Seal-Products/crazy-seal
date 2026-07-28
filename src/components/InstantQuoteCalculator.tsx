@@ -1,8 +1,12 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { ArrowRight, Calculator, Phone, ShoppingCart } from 'lucide-react'
-import { LinkButton, Select, Input } from '@/lib/design-system'
+import { useMemo, useState, useRef } from 'react'
+import { ArrowRight, Calculator, Loader2, Lock, MessageSquare, Phone, ShoppingCart } from 'lucide-react'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import { LinkButton, Select, Input, Button } from '@/lib/design-system'
+import { useQuoteModal } from '@/contexts/QuoteModalContext'
+import { useTracking } from '@/components/tracking'
+import { trackMetaEvent, generateEventId } from '@/lib/tracking/meta-pixel'
 
 type ApplicationType = 'commercial' | 'residential' | 'rv' | 'transportation'
 type InstallMethod = 'over-existing' | 'direct-to-deck'
@@ -63,6 +67,15 @@ const PRICE_PER_GALLON_PATCH = 225
 const PRICE_PER_TUBE_CAULK = 25
 const PRICE_PER_GALLON_CLEAN = 45
 
+const APPLICATION_LABELS: Record<ApplicationType, string> = {
+  rv: 'RV',
+  commercial: 'Commercial Flat Roof',
+  residential: 'Residential Flat Roof',
+  transportation: 'Transportation',
+}
+
+const UNLOCK_KEY = 'cs_quote_unlocked'
+
 function usd(n: number): string {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 }
@@ -74,6 +87,17 @@ export function InstantQuoteCalculator() {
   const [sqft, setSqft] = useState('')
   const [seams, setSeams] = useState('')
   const [layers, setLayers] = useState<Layers>('double')
+
+  // Price gate: reveal exact dollars after a short lead capture (once per session)
+  const [unlocked, setUnlocked] = useState(
+    () => typeof window !== 'undefined' && sessionStorage.getItem(UNLOCK_KEY) === '1'
+  )
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileInstance>(null)
+  const { openQuoteModal } = useQuoteModal()
+  const { visitorId, sessionId, trackEvent } = useTracking()
 
   const isRv = applicationType === 'rv' || applicationType === 'transportation'
   const isDeck = installMethod === 'direct-to-deck'
@@ -108,6 +132,116 @@ export function InstantQuoteCalculator() {
 
   const needsCustomKit = !isRv && sqftNum > (isDeck ? 375 : 500)
 
+  const kitLabel = kit
+    ? `${kit.range} ${isDeck ? 'Direct to Deck' : layers === 'single' ? 'Single Layer' : 'Double Layer'} Kit`
+    : null
+
+  function quoteSummary(): string {
+    const lines = [
+      'Instant Quote details:',
+      applicationType ? `- Application: ${APPLICATION_LABELS[applicationType]}` : null,
+      installMethod ? `- Install: ${isDeck ? 'Direct to wood decking' : 'Over existing substrate'}` : null,
+      isRv && rvLength ? `- Roof length: ${rvLength} FT` : null,
+      !isRv && sqftNum ? `- Square footage: ${sqftNum}` : null,
+      seamsNum ? `- Seams: ${seamsNum} linear FT` : null,
+      kitLabel ? `- Recommended kit: ${kitLabel} (${usd(kit!.price)})` : null,
+      needsCustomKit && custom ? `- Custom kit estimate: ${usd(custom.price)}` : null,
+    ]
+    return lines.filter(Boolean).join('\n')
+  }
+
+  async function handleUnlock(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+
+    if (!turnstileToken) {
+      setError('Please complete the verification check.')
+      setSubmitting(false)
+      return
+    }
+
+    const formData = new FormData(e.currentTarget)
+    const eventId = generateEventId()
+
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('name') as string,
+          email: formData.get('email') as string,
+          phone: formData.get('phone') as string,
+          project_type: applicationType ? APPLICATION_LABELS[applicationType] : undefined,
+          square_footage: !isRv && sqftNum ? String(sqftNum) : undefined,
+          lead_type: 'quote',
+          message: quoteSummary(),
+          source_page: 'instant-quote',
+          visitor_id: visitorId,
+          session_id: sessionId,
+          turnstile_token: turnstileToken,
+          event_id: eventId,
+        }),
+      })
+
+      if (!res.ok) throw new Error('Failed to submit. Please try again.')
+
+      await trackEvent('form_submitted', { source_page: 'instant-quote' })
+      trackMetaEvent('Lead', { content_name: 'instant-quote' }, eventId)
+
+      sessionStorage.setItem(UNLOCK_KEY, '1')
+      setUnlocked(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong.')
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  function unlockForm(buttonLabel: string) {
+    return (
+      <form onSubmit={handleUnlock} className="mt-4 rounded-xl bg-white/10 ring-1 ring-white/15 p-4 sm:p-5">
+        <p className="flex items-center gap-2 text-sm font-semibold text-white mb-1">
+          <Lock className="w-4 h-4 text-highlight" />
+          See your exact price
+        </p>
+        <p className="text-white/70 text-sm mb-4">
+          Tell us where to send your quote and we&apos;ll unlock the exact
+          dollars — a specialist can also double-check the fit for free.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <Input name="name" size="md" placeholder="Name" required className="bg-white" />
+          <Input name="email" size="md" type="email" placeholder="Email" required className="bg-white" />
+          <Input name="phone" size="md" type="tel" placeholder="Phone" required className="bg-white" />
+        </div>
+        <div className="flex flex-wrap items-center gap-4">
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={setTurnstileToken}
+            onExpire={() => setTurnstileToken(null)}
+            options={{ theme: 'dark', size: 'normal' }}
+          />
+          <Button type="submit" variant="accent" size="md" disabled={submitting || !turnstileToken}>
+            {submitting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Unlocking...
+              </>
+            ) : (
+              buttonLabel
+            )}
+          </Button>
+        </div>
+        {error && (
+          <p className="mt-3 text-sm text-red-200 bg-red-500/20 px-4 py-2.5 rounded-lg">{error}</p>
+        )}
+      </form>
+    )
+  }
+
   return (
     <div className="rounded-2xl bg-white border border-gray-200/80 shadow-sm p-5 sm:p-6 lg:p-8">
       <div className="flex items-center gap-3 mb-2">
@@ -116,7 +250,7 @@ export function InstantQuoteCalculator() {
         </div>
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-primary">Instant Quote Tool</h2>
-          <p className="text-sm text-gray-500">A price and kit recommendation in 10 seconds.</p>
+          <p className="text-sm text-gray-500">A kit recommendation and quote in 10 seconds.</p>
         </div>
       </div>
 
@@ -199,58 +333,87 @@ export function InstantQuoteCalculator() {
         )}
       </div>
 
-      {/* Result */}
+      {/* Result: standard kit */}
       {kit && !needsCustomKit && (
         <div className="mt-6 rounded-xl bg-primary text-white p-5 sm:p-6">
           <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-2">
-            Kit Recommendation & Pricing
+            Your Kit Recommendation
           </p>
-          <p className="text-2xl sm:text-3xl font-bold mb-1">
-            {kit.range} {isDeck ? 'Direct to Deck' : layers === 'single' ? 'Single Layer' : 'Double Layer'} Kit
-          </p>
-          <p className="text-xl text-white/80 mb-4">{usd(kit.price)}</p>
-          <div className="flex flex-wrap gap-3">
-            <LinkButton href={kit.url} variant="accent" size="md" external>
-              <ShoppingCart className="w-4 h-4" />
-              Shop This Kit Now
-            </LinkButton>
-            <LinkButton href="/contact" variant="outline-white" size="md">
-              Work With a Specialist
-            </LinkButton>
-          </div>
+          <p className="text-2xl sm:text-3xl font-bold mb-1">{kitLabel}</p>
+
+          {unlocked ? (
+            <>
+              <p className="text-xl text-white/80 mb-4">{usd(kit.price)}</p>
+              <div className="flex flex-wrap gap-3">
+                <LinkButton href={kit.url} variant="accent" size="md" external>
+                  <ShoppingCart className="w-4 h-4" />
+                  Shop This Kit Now
+                </LinkButton>
+                <button
+                  type="button"
+                  onClick={() =>
+                    openQuoteModal({ sourcePage: 'instant-quote', initialMessage: quoteSummary() })
+                  }
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 px-5 py-2.5 text-sm sm:text-base font-semibold text-white hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Talk to a Specialist
+                </button>
+              </div>
+            </>
+          ) : (
+            unlockForm('Unlock My Price')
+          )}
         </div>
       )}
 
+      {/* Result: custom / large job — specialist first */}
       {needsCustomKit && custom && (
         <div className="mt-6 rounded-xl bg-primary text-white p-5 sm:p-6">
           <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-2">
-            Custom Kit Estimate
+            Custom Kit — Let&apos;s Build It Together
           </p>
-          <p className="text-2xl sm:text-3xl font-bold mb-3">{usd(custom.price)}</p>
-          <ul className="text-white/80 text-sm space-y-1 mb-4">
+          <ul className="text-white/80 text-sm space-y-1 mb-3">
             <li>{custom.sealGallons} gallons of Crazy Seal ({layers === 'double' ? 'double' : 'single'} layer)</li>
             {custom.patchGallons > 0 && <li>{custom.patchGallons} gallons of Crazy Patch (seams)</li>}
             <li>{custom.caulkTubes} tubes of Crazy Caulk</li>
             <li>{custom.cleanGallons} gallons of Crazy Clean</li>
           </ul>
-          <p className="text-white/60 text-sm mb-4">
-            Projects this size are built as custom kits. Use these material
-            guidelines on the Build Your Own Kit page, or talk to a specialist
-            about volume pricing.
+          <p className="text-white/60 text-sm mb-2">
+            Projects this size are built as custom kits — a specialist will
+            confirm materials and volume pricing with you.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <LinkButton href="/store#products" variant="accent" size="md">
-              Build Your Custom Kit
-              <ArrowRight className="w-4 h-4" />
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              (800) 963-0131
-            </a>
-          </div>
+
+          {unlocked ? (
+            <>
+              <p className="text-2xl sm:text-3xl font-bold mb-4">{usd(custom.price)} <span className="text-base font-normal text-white/60">estimated</span></p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    openQuoteModal({ sourcePage: 'instant-quote-custom', initialMessage: quoteSummary() })
+                  }
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm sm:text-base font-semibold text-white hover:bg-accent-dark transition-colors cursor-pointer"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Talk to a Specialist
+                </button>
+                <LinkButton href="/store#products" variant="outline-white" size="md">
+                  Build Your Custom Kit
+                  <ArrowRight className="w-4 h-4" />
+                </LinkButton>
+                <a
+                  href="tel:8009630131"
+                  className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
+                >
+                  <Phone className="w-4 h-4" />
+                  (800) 963-0131
+                </a>
+              </div>
+            </>
+          ) : (
+            unlockForm('Unlock My Estimate')
+          )}
         </div>
       )}
 

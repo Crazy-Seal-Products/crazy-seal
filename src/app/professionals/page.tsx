@@ -154,21 +154,24 @@ export default function ProfessionalsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="text-center lg:text-left">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight mb-3">
-                  Professionals
+                  Dealer Network
                 </p>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  Increase Profits With Our Seamless Roof System
+                  Join the Crazy Seal Dealer Network
                 </h1>
                 <p className="text-white/70 text-base sm:text-lg leading-relaxed mb-6">
-                  More and more people are asking for a professionally
-                  installed Crazy Seal roofing system every single day!
-                  We&apos;d love to have a conversation about your business to
-                  see how we can work together to increase your profits.
+                  No franchise fees. No inventory requirements. More and more
+                  people are asking for a professionally installed Crazy Seal
+                  roof every single day — sell and install the system and keep
+                  the profit.
                 </p>
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
                   <LinkButton href="#start-a-conversation" variant="accent" size="lg">
-                    Start a Conversation
+                    Become a Dealer
                     <ArrowRight className="w-4 h-4" />
+                  </LinkButton>
+                  <LinkButton href="/affiliates" variant="outline-white" size="lg">
+                    Prefer to Refer? Affiliates
                   </LinkButton>
                   <a
                     href="tel:8009630131"
@@ -503,9 +506,9 @@ export default function ProfessionalsPage() {
           className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 scroll-mt-24"
         >
           <SectionHeading
-            eyebrow="Let's Get in Touch"
-            heading="Start a Conversation"
-            subheading="Have any questions? Our Crazy Seal specialists can help!"
+            eyebrow="Join the Network"
+            heading="Become a Crazy Seal Dealer"
+            subheading="Tell us about your business and a member of our team will reach out to talk partnership, ways to earn, and next steps."
           />
           <div className="max-w-2xl mx-auto">
             <ProfessionalContactForm sourcePage="professionals" />

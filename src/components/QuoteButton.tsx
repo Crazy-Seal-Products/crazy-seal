@@ -1,6 +1,6 @@
 'use client'
 
-import { Calculator, Phone } from 'lucide-react'
+import { MessageSquare, Phone } from 'lucide-react'
 import { LinkButton } from '@/lib/design-system'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
 
@@ -8,6 +8,10 @@ interface QuoteButtonProps {
   children?: React.ReactNode
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  /** Attribution label sent with the lead (defaults to current pathname via context). */
+  sourcePage?: string
+  /** Prefills the contact form message, e.g. product or page context. */
+  initialMessage?: string
 }
 
 const SIZE_CLASSES = {
@@ -17,22 +21,24 @@ const SIZE_CLASSES = {
 }
 
 export function QuoteButton({
-  children = 'Get in Touch',
+  children = 'Talk to a Specialist',
   className,
   size = 'md',
+  sourcePage,
+  initialMessage,
 }: QuoteButtonProps) {
   const { openQuoteModal } = useQuoteModal()
 
   return (
     <button
-      onClick={openQuoteModal}
+      onClick={() => openQuoteModal({ sourcePage, initialMessage })}
       className={
         className ??
         `inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 bg-accent text-white hover:bg-accent-dark shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(91,164,17,0.3)] hover:-translate-y-0.5 cursor-pointer ${SIZE_CLASSES[size]}`
       }
     >
       {children}
-      <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
+      <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
     </button>
   )
 }
@@ -45,6 +51,7 @@ interface QuoteCtaProps {
   showPhone?: boolean
   phoneVariant?: 'outline' | 'outline-white'
   className?: string
+  sourcePage?: string
 }
 
 export function QuoteCta({
@@ -52,10 +59,11 @@ export function QuoteCta({
   showPhone = true,
   phoneVariant = 'outline',
   className,
+  sourcePage,
 }: QuoteCtaProps) {
   return (
     <div className={`flex flex-row flex-wrap items-center justify-center gap-3 ${className ?? ''}`}>
-      <QuoteButton size="md">{quoteText}</QuoteButton>
+      <QuoteButton size="md" sourcePage={sourcePage}>{quoteText}</QuoteButton>
       {showPhone && (
         <LinkButton href={`tel:${PHONE_NUMBER}`} variant={phoneVariant} size="md" className="sm:px-6 sm:py-3 sm:text-base">
           <Phone className="w-4 h-4 sm:w-5 sm:h-5" />

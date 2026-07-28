@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { VideoPlayer } from '../build-your-own-kit/VideoPlayer'
+import { ProfessionalContactForm } from '@/components/forms/ProfessionalContactForm'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 const AFFILIATE_PANEL = 'https://s2.affiliatly.com/af-1058995/affiliate.panel'
@@ -327,8 +328,8 @@ export default function AffiliatesPage() {
               <UserPlus className="w-5 h-5" />
               Sign Up
             </LinkButton>
-            <LinkButton href="/contact" variant="primary" size="lg">
-              Contact Us
+            <LinkButton href="#affiliate-inquiry" variant="primary" size="lg">
+              Have Questions First?
             </LinkButton>
             <a
               href="tel:8009630131"
@@ -337,6 +338,23 @@ export default function AffiliatesPage() {
               <Phone className="w-5 h-5" />
               (800) 963-0131
             </a>
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── AFFILIATE INQUIRY FORM ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div
+          id="affiliate-inquiry"
+          className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 scroll-mt-24"
+        >
+          <SectionHeading
+            eyebrow="Not Ready to Sign Up?"
+            heading="Talk to Us About Referring Crazy Seal"
+            subheading="Tell us about your audience or business and we'll help you pick the best way to earn — affiliate links, dealer program, or both."
+          />
+          <div className="max-w-2xl mx-auto">
+            <ProfessionalContactForm sourcePage="affiliates" />
           </div>
         </div>
       </Container>

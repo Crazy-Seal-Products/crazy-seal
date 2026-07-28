@@ -14,7 +14,7 @@ import {
   Phone,
 } from 'lucide-react'
 import { Container, Grid, SectionHeading, LinkButton, FeatureCard } from '@/lib/design-system'
-import { ContactForm } from '@/components/forms/ContactForm'
+import { ProfessionalContactForm } from '@/components/forms/ProfessionalContactForm'
 import { CtaSection } from '@/components/CtaSection'
 import { ProTestimonials } from '@/components/pro/ProSections'
 
@@ -267,7 +267,7 @@ export default function WaysToEarnPage() {
             subheading="Fill out the form below and one of our Crazy Seal specialists will be in touch with you shortly. We promise to be fun, informative, and will do our very best to help you!"
           />
           <div className="max-w-2xl mx-auto">
-            <ContactForm sourcePage="ways-to-earn" />
+            <ProfessionalContactForm sourcePage="ways-to-earn" />
           </div>
         </div>
       </Container>

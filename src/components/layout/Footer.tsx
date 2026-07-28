@@ -2,7 +2,8 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Phone, Mail, Truck } from 'lucide-react'
+import { Phone, Mail, Truck, Handshake } from 'lucide-react'
+import { QuoteButton } from '@/components/QuoteButton'
 
 const FOOTER_LINKS = {
   system: [
@@ -35,13 +36,51 @@ const FOOTER_LINKS = {
     { href: '/store#products', label: 'Build Your Own Kit' },
     { href: '/store', label: 'Shop All Products' },
   ],
+  partners: [
+    { href: '/professionals', label: 'Become a Dealer' },
+    { href: '/ways-to-earn', label: 'Ways to Earn' },
+    { href: '/business-accelerator-program', label: 'Business Accelerator' },
+    { href: '/professional-tools', label: 'Pro Tools' },
+    { href: '/affiliates', label: 'Affiliates' },
+  ],
 }
 
 export function Footer() {
   return (
     <footer className="bg-[#003365] text-white">
+      {/* Lead CTA band */}
+      <div className="border-b border-blue-400/20">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8 md:py-10 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div className="text-center md:text-left">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+              Still have a roof to fix — or want to sell Crazy Seal?
+            </h2>
+            <p className="mt-1 text-sm text-blue-200">
+              A specialist will build your kit with you, or walk you through the dealer program.
+            </p>
+          </div>
+          <div className="flex flex-row flex-wrap items-center justify-center gap-3">
+            <QuoteButton sourcePage="footer" />
+            <Link
+              href="/professionals"
+              className="inline-flex items-center gap-2 rounded-full border border-white/40 px-5 py-2.5 text-sm sm:text-base font-semibold text-white hover:bg-white/10 transition-colors"
+            >
+              <Handshake className="w-4 h-4 sm:w-5 sm:h-5" />
+              Become a Dealer
+            </Link>
+            <a
+              href="tel:8009630131"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-200 hover:text-white transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              (800) 963-0131
+            </a>
+          </div>
+        </div>
+      </div>
+
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-10">
           {/* Brand */}
           <div>
             <Link href="/" className="inline-block bg-white rounded-xl p-2">
@@ -122,6 +161,20 @@ export function Footer() {
                   <a href={link.href} className="text-sm text-blue-200 hover:text-white transition-colors">
                     {link.label}
                   </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Partners */}
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-300 mb-4">Partners</h3>
+            <ul className="space-y-2">
+              {FOOTER_LINKS.partners.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm text-blue-200 hover:text-white transition-colors">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>

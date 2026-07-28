@@ -26,7 +26,7 @@ import {
   GoogleReviews,
 } from '@/lib/design-system'
 import { CtaSection } from '@/components/CtaSection'
-import { QuoteCta } from '@/components/QuoteButton'
+import { QuoteButton } from '@/components/QuoteButton'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -134,25 +134,19 @@ export default function HomePage() {
                 {/* Subtext + CTA — hidden on mobile, shown on desktop below headline */}
                 <div className="hidden lg:block">
                   <p className="text-lg text-white/60 max-w-lg mx-auto mb-6 leading-relaxed">
-                    A patented, fluid-applied, seamless roofing system you can
-                    install yourself. Backed by a 50 year warranty and shipped
-                    straight to your door.
+                    A patented, fluid-applied, seamless roofing system backed
+                    by a 50 year warranty. A specialist will build your kit
+                    with you — or price it and shop on your own.
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-3">
-                    <LinkButton href="/store" variant="accent" size="lg">
+                    <QuoteButton size="lg" sourcePage="home-hero" />
+                    <LinkButton href="/pricing" variant="white" size="lg">
+                      See Kit Pricing
+                    </LinkButton>
+                    <LinkButton href="/store" variant="outline-white" size="lg">
                       <ShoppingCart className="w-5 h-5" />
                       Shop Kits
                     </LinkButton>
-                    <LinkButton href="/pricing" variant="white" size="lg">
-                      Get an Instant Quote
-                    </LinkButton>
-                    <a
-                      href="tel:8009630131"
-                      className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-                    >
-                      <Phone className="w-5 h-5" />
-                      (800) 963-0131
-                    </a>
                   </div>
                 </div>
               </div>
@@ -167,7 +161,7 @@ export default function HomePage() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="https://img.youtube.com/vi/C5FvTulPDaY/maxresdefault.jpg"
+                      src={`${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`}
                       alt="Crazy Seal Roofing System overview video"
                       className="w-full h-full object-cover"
                     />
@@ -195,16 +189,14 @@ export default function HomePage() {
               {/* Subtext + CTA — mobile only, below video */}
               <div className="text-center lg:hidden order-3">
                 <p className="text-lg text-white/60 max-w-lg mx-auto mb-5 leading-relaxed">
-                  A patented, fluid-applied, seamless roofing system you can
-                  install yourself. Backed by a 50 year warranty.
+                  A patented, fluid-applied, seamless roofing system backed by
+                  a 50 year warranty. A specialist will build your kit with
+                  you.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
-                  <LinkButton href="/store" variant="accent" size="md">
-                    <ShoppingCart className="w-4 h-4" />
-                    Shop Kits
-                  </LinkButton>
+                  <QuoteButton size="md" sourcePage="home-hero" />
                   <LinkButton href="/pricing" variant="white" size="md">
-                    Instant Quote
+                    See Kit Pricing
                   </LinkButton>
                 </div>
               </div>
@@ -269,45 +261,44 @@ export default function HomePage() {
         </div>
       </Container>
 
-      {/* ─── WHO IS CRAZY SEAL FOR ─── */}
+      {/* ─── PATH PICKER: BUYER OR DEALER ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
           <SectionHeading
-            heading="Who is Crazy Seal For?"
+            heading="Which Best Describes You?"
+            subheading="Whether you need a roof or want to build a business installing them, we've got you covered."
             variant="dark"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 lg:p-8 text-center">
-              <Building2 className="w-10 h-10 text-highlight mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-3">Professionals</h3>
+              <Hammer className="w-10 h-10 text-highlight mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-3">I Need to Fix a Roof</h3>
               <p className="text-white/60 leading-relaxed mb-6">
-                Crazy Seal was made by professionals for professionals. Make
-                (lots of) money installing our seamless roofing system.
+                RV, residential, commercial, or fleet — a Crazy Seal specialist
+                will size up your roof and build the perfect kit with you. Or
+                price it and shop on your own.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <LinkButton href="/professionals" variant="accent" size="md">
-                  Learn About Our Pro Network
-                </LinkButton>
-                <LinkButton href="/contact" variant="outline-white" size="md">
-                  Talk to Our Team
+                <QuoteButton size="md" sourcePage="home-path-picker" />
+                <LinkButton href="/pricing" variant="outline-white" size="md">
+                  See Kit Pricing
                 </LinkButton>
               </div>
             </div>
             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 lg:p-8 text-center">
-              <Hammer className="w-10 h-10 text-highlight mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-3">Do It Yourself</h3>
+              <Building2 className="w-10 h-10 text-highlight mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-3">I Want to Sell &amp; Install Crazy Seal</h3>
               <p className="text-white/60 leading-relaxed mb-6">
-                Use our professional system to do your roof once and do it
-                right! Build a custom kit or contact us to find a pro in your
-                area.
+                Join the Crazy Seal dealer network. No franchise fees, no
+                inventory requirements — make (lots of) money installing our
+                seamless roofing system.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <LinkButton href="/store" variant="accent" size="md">
-                  <ShoppingCart className="w-4 h-4" />
-                  Visit Our Store
+                <LinkButton href="/professionals" variant="accent" size="md">
+                  Become a Dealer
                 </LinkButton>
-                <LinkButton href="/pricing" variant="outline-white" size="md">
-                  Get an Instant Quote
+                <LinkButton href="/ways-to-earn" variant="outline-white" size="md">
+                  See Ways to Earn
                 </LinkButton>
               </div>
             </div>
@@ -421,7 +412,7 @@ export default function HomePage() {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
             <LinkButton href="/pricing" variant="white" size="md">
-              Get an Instant Quote Online
+              See Kit Pricing Online
             </LinkButton>
             <a
               href="tel:8009630131"

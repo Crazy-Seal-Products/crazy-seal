@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Check, Phone } from 'lucide-react'
 import { Container, SectionHeading, LinkButton, YouTubeEmbed } from '@/lib/design-system'
-import { ContactForm } from '@/components/forms/ContactForm'
+import { ProfessionalContactForm } from '@/components/forms/ProfessionalContactForm'
 import { CtaSection } from '@/components/CtaSection'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import {
@@ -200,7 +200,7 @@ export default function RvProfessionalsPage() {
             subheading="Fill out the form below and one of our Crazy Seal specialists will be in touch with you shortly. We promise to be fun, informative, and will do our very best to help you!"
           />
           <div className="max-w-2xl mx-auto">
-            <ContactForm sourcePage="professionals-rv" />
+            <ProfessionalContactForm sourcePage="professionals-rv" />
           </div>
         </div>
       </Container>

@@ -9,6 +9,8 @@ import {
   YouTubeEmbed,
 } from '@/lib/design-system'
 import { CrazySealFAQ } from './CrazySealFAQ'
+import { LeadCaptureSection } from '@/components/LeadCaptureSection'
+import { QuoteButton } from '@/components/QuoteButton'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -141,21 +143,21 @@ export default function FAQPage() {
         </div>
       </Container>
 
-      {/* ─── CONTACT CTA ─── */}
+      {/* ─── STILL HAVE QUESTIONS / INSTALLER TEASER ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
             Still Have Questions?
           </h2>
           <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
-            Have any questions? Our Crazy Seal specialists can help!
+            A Crazy Seal specialist can answer anything about your roof.
+            Wondering who installs near you — or want to become an installer
+            yourself? We can help with that too.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+            <QuoteButton size="lg" sourcePage="faq" />
+            <LinkButton href="/professionals" variant="outline-white" size="lg">
+              Become a Dealer
             </LinkButton>
             <a
               href="tel:8009630131"
@@ -167,6 +169,13 @@ export default function FAQPage() {
           </div>
         </div>
       </Container>
+
+      {/* ─── LEAD CAPTURE ─── */}
+      <LeadCaptureSection
+        sourcePage="faq"
+        heading="Planning a Roof Project?"
+        subheading="Tell us what you're working on and a specialist will answer your questions and build the right kit with you."
+      />
     </>
   )
 }

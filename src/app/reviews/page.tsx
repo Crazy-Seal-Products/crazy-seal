@@ -10,6 +10,7 @@ import {
   YouTubeEmbed,
 } from '@/lib/design-system'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { LeadCaptureSection } from '@/components/LeadCaptureSection'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -461,7 +462,7 @@ export default function ReviewsPage() {
               Warranty Form
             </LinkButton>
             <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+              See Kit Pricing
             </LinkButton>
             <a
               href="tel:8009630131"
@@ -473,6 +474,13 @@ export default function ReviewsPage() {
           </div>
         </div>
       </Container>
+
+      {/* ─── LEAD CAPTURE ─── */}
+      <LeadCaptureSection
+        sourcePage="reviews"
+        heading="Ready for a Roof Like These?"
+        subheading="Tell us about your project and a specialist will build the perfect kit with you — just like the customers above."
+      />
     </>
   )
 }

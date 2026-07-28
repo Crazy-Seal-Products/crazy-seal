@@ -2,14 +2,27 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { X, Minus, Plus, Trash2, ShoppingCart, Lock } from 'lucide-react'
+import { X, Minus, Plus, Trash2, ShoppingCart, Lock, MessageSquare } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
+import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { formatPrice } from '@/lib/store/products'
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
+  const { openQuoteModal } = useQuoteModal()
   const [checkingOut, setCheckingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  function handleSpecialistAssist() {
+    const cartSummary = items
+      .map((i) => `- ${i.productTitle}${i.variantTitle !== 'Default Title' ? ` (${i.variantTitle})` : ''} x${i.quantity}`)
+      .join('\n')
+    closeCart()
+    openQuoteModal({
+      sourcePage: 'cart-assist',
+      initialMessage: `I have these items in my cart and would like a specialist to double-check my kit before I order:\n${cartSummary}`,
+    })
+  }
 
   async function handleCheckout() {
     setCheckingOut(true)
@@ -163,6 +176,14 @@ export function CartDrawer() {
               <p className="text-[11px] text-gray-400 text-center">
                 Taxes and shipping calculated at checkout
               </p>
+              <button
+                type="button"
+                onClick={handleSpecialistAssist}
+                className="w-full flex items-center justify-center gap-2 rounded-full border border-[#003365]/25 px-6 py-2.5 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors cursor-pointer"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Prefer a specialist? We&apos;ll build your kit with you
+              </button>
             </div>
           </>
         )}

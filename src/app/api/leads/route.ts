@@ -161,6 +161,13 @@ export async function POST(request: NextRequest) {
     const firstName = nameParts[0] || ''
     const lastName = nameParts.slice(1).join(' ') || name
 
+    // 'quote' = purchase lead, 'business' = dealer/pro network lead
+    const resolvedLeadType = lead_type || 'contact'
+    const zohoLeadSource =
+      resolvedLeadType === 'business'
+        ? 'Website - Dealer Inquiry'
+        : 'Website - Purchase Quote'
+
     // Fire-and-forget: Meta Conversions API (server-side Lead)
     const fbpCookie = request.cookies.get('_fbp')?.value || null
     const fbcCookie =
@@ -200,9 +207,10 @@ export async function POST(request: NextRequest) {
       City: city || undefined,
       State: state || undefined,
       Zip_Code: zip_code || undefined,
-      Lead_Source: 'Website Lead form',
+      Lead_Source: zohoLeadSource,
       How_did_you_hear_about_us: how_heard || undefined,
       Lead_Form_Comments: [
+        `Lead type: ${resolvedLeadType}`,
         project_type ? `Project type: ${project_type}` : null,
         rv_length ? `RV length: ${rv_length} ft` : null,
         square_footage ? `Square footage: ${square_footage}` : null,
@@ -227,6 +235,7 @@ export async function POST(request: NextRequest) {
     // Fire-and-forget: email notifications
     sendLeadNotification({
       name, email, phone,
+      lead_type: resolvedLeadType,
       street_address, city, state, zip_code,
       project_type, rv_length, square_footage,
       business_name, business_type,
@@ -236,6 +245,7 @@ export async function POST(request: NextRequest) {
 
     sendLeadAutoReply({
       name, email, phone,
+      lead_type: resolvedLeadType,
       street_address, city, state, zip_code,
       project_type, rv_length, square_footage,
       business_name, business_type,

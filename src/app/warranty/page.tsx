@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Camera, FileText, ShieldCheck, Download, Check, X } from 'lucide-react'
 import { Container, Grid, SectionHeading, LinkButton } from '@/lib/design-system'
 import { CtaSection } from '@/components/CtaSection'
+import { QuoteButton } from '@/components/QuoteButton'
 import { WarrantyRegistrationForm } from '@/components/forms/WarrantyRegistrationForm'
 import { WarrantyTransferForm } from '@/components/forms/WarrantyTransferForm'
 import { WarrantyClaimForm } from '@/components/forms/WarrantyClaimForm'
@@ -194,6 +195,25 @@ export default function WarrantyPage() {
           />
           <div className="max-w-2xl mx-auto">
             <WarrantyClaimForm />
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── WARM TRAFFIC CTA ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
+            Planning Another Roof — or Want to Install Crazy Seal for Others?
+          </h2>
+          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
+            You already know the system. Talk to a specialist about your next
+            project, or join the dealer network and get paid to install it.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <QuoteButton size="lg" sourcePage="warranty" />
+            <LinkButton href="/professionals" variant="outline-white" size="lg">
+              Become a Dealer
+            </LinkButton>
           </div>
         </div>
       </Container>

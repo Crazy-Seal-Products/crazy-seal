@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2 } from 'lucide-react'
+import { Send, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
@@ -11,18 +11,45 @@ import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadFi
 
 interface ContactFormProps {
   sourcePage?: string
+  /** Prefills the message field with page/product context. Also expands the details section. */
+  initialMessage?: string
+  /** Preselects the project type, e.g. 'RV Roof' on RV pages. */
+  defaultProjectType?: string
 }
 
 const RV_LENGTHS = Array.from({ length: 38 }, (_, i) => `${i + 8}`)
 
 const SQ_FT_RANGES = Array.from({ length: 15 }, (_, i) => `${i * 100}-${(i + 1) * 100} SQ FT`)
 
-export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
+const PROJECT_TYPES = [
+  'RV Roof',
+  'Residential Flat Roof',
+  'Commercial Flat Roof',
+  'Transportation',
+  'Other',
+]
+
+const HOW_HEARD_OPTIONS = [
+  'Google Search',
+  'Facebook / Instagram',
+  'YouTube',
+  'Referral / Friend',
+  'Dealer / Installer',
+  'RV Show / Event',
+  'Other',
+]
+
+export function ContactForm({
+  sourcePage = 'contact',
+  initialMessage,
+  defaultProjectType = '',
+}: ContactFormProps) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
-  const [projectType, setProjectType] = useState('')
+  const [projectType, setProjectType] = useState(defaultProjectType)
+  const [showDetails, setShowDetails] = useState(Boolean(initialMessage))
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
   const { visitorId, sessionId, trackEvent, identify } = useTracking()
@@ -61,6 +88,9 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
       project_type: projectType,
       rv_length: formData.get('rv_length') as string,
       square_footage: formData.get('square_footage') as string,
+      zip_code: formData.get('zip_code') as string,
+      how_heard: formData.get('how_heard') as string,
+      texting_consent: formData.get('texting_consent') === 'on',
       lead_type: 'quote',
       photo_url: photo_urls[0] || undefined,
       photo_urls: photo_urls.length > 0 ? photo_urls : undefined,
@@ -106,7 +136,7 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
         pushDedupEventId('form_submission', eventId)
       }
 
-      router.push('/thank-you')
+      router.push('/thank-you?type=quote')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
       turnstileRef.current?.reset()
@@ -126,9 +156,9 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
 
         {/* Warm intro */}
         <p className="text-gray-600 text-[15px] leading-relaxed">
-          Whether you have a question, want help building the perfect kit, or
-          just want to talk roofing — fill out the form below and our team will
-          be in touch shortly!
+          Tell us a little about your project and a Crazy Seal specialist will
+          reach out to build the perfect kit with you — no pressure, no
+          obligation.
         </p>
 
         {/* Name */}
@@ -177,10 +207,7 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
               value={projectType}
               onChange={(e) => setProjectType(e.target.value)}
               placeholder="Please Select"
-              options={[
-                { value: 'RV Roof', label: 'RV Roof' },
-                { value: 'Other', label: 'Other' },
-              ]}
+              options={PROJECT_TYPES.map((t) => ({ value: t, label: t }))}
             />
           </div>
           {projectType === 'RV Roof' && (
@@ -197,7 +224,7 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
               />
             </div>
           )}
-          {projectType === 'Other' && (
+          {projectType !== '' && projectType !== 'RV Roof' && (
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">
                 What is the approximate square footage of your application? <span className="text-red-500">*</span>
@@ -213,25 +240,86 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
           )}
         </div>
 
-        {/* Photo Upload */}
-        <PhotoUploadField
-          label="If you would like to share photos, you can upload them here."
-          files={photoFiles}
-          onChange={setPhotoFiles}
-        />
-
-        {/* Message */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Please add a quick note about your application so we can best assist you.
-          </label>
-          <Textarea
-            name="message"
-            placeholder="Tell us about your roof, any questions you have, or just say hi!"
-            rows={4}
-            className="text-base px-5 py-4"
+        {/* Texting consent */}
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="texting_consent"
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent cursor-pointer"
           />
+          <span className="text-sm text-gray-600 leading-relaxed">
+            It&apos;s OK to text me about my project — often the fastest way to
+            get kit questions answered. (Message rates may apply. Opt out
+            anytime.)
+          </span>
+        </label>
+
+        {/* Optional details (progressive disclosure) */}
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowDetails((v) => !v)}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#003365] hover:text-accent transition-colors cursor-pointer"
+          >
+            {showDetails ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+            {showDetails ? 'Hide optional details' : 'Add optional details (ZIP, photos, notes)'}
+          </button>
         </div>
+
+        {showDetails && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  ZIP Code
+                </label>
+                <Input
+                  name="zip_code"
+                  size="lg"
+                  inputMode="numeric"
+                  autoComplete="postal-code"
+                  placeholder="12345"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  How did you hear about us?
+                </label>
+                <Select
+                  name="how_heard"
+                  size="lg"
+                  placeholder="Please Select"
+                  options={HOW_HEARD_OPTIONS.map((o) => ({ value: o, label: o }))}
+                />
+              </div>
+            </div>
+
+            {/* Photo Upload */}
+            <PhotoUploadField
+              label="If you would like to share photos, you can upload them here."
+              files={photoFiles}
+              onChange={setPhotoFiles}
+            />
+
+            {/* Message */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Please add a quick note about your application so we can best assist you.
+              </label>
+              <Textarea
+                name="message"
+                defaultValue={initialMessage}
+                placeholder="Tell us about your roof, any questions you have, or just say hi!"
+                rows={4}
+                className="text-base px-5 py-4"
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-center">
           <Turnstile
@@ -259,7 +347,7 @@ export function ContactForm({ sourcePage = 'contact' }: ContactFormProps) {
             ) : (
               <>
                 <Send className="w-5 h-5 mr-2" />
-                Send Message
+                Talk to a Specialist
               </>
             )}
           </Button>

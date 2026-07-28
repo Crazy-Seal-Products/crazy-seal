@@ -3,14 +3,17 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Phone, ChevronDown, ShoppingCart } from 'lucide-react'
+import { Menu, X, Phone, ChevronDown, ShoppingCart, MessageSquare } from 'lucide-react'
 import { clsx } from 'clsx'
 import { CartButton } from '@/components/store/CartButton'
+import { useQuoteModal } from '@/contexts/QuoteModalContext'
 
 const SYSTEM_DROPDOWN = [
   { href: '/crazy-seal', label: 'Our System' },
   { href: '/advantages', label: 'Advantages' },
   { href: '/products', label: 'Products' },
+  { href: '/installation', label: 'Installation' },
+  { href: '/warranty', label: 'Warranty' },
   { href: '/technical-data', label: 'Technical Data' },
   { href: '/about', label: 'About Us' },
   { href: '/faq', label: 'FAQ' },
@@ -21,20 +24,27 @@ const APPLICATIONS_DROPDOWN = [
   { href: '/commercial-roofing', label: 'Commercial Flat Roofs' },
   { href: '/residential', label: 'Residential Flat Roofs' },
   { href: '/transportation', label: 'Transportation' },
+  { href: '/projects', label: 'Customer Projects' },
 ]
 
+const PROFESSIONALS_DROPDOWN = [
+  { href: '/professionals', label: 'Become a Dealer' },
+  { href: '/ways-to-earn', label: 'Ways to Earn' },
+  { href: '/business-accelerator-program', label: 'Business Accelerator' },
+  { href: '/professional-tools', label: 'Pro Tools' },
+  { href: '/affiliates', label: 'Affiliates' },
+]
+
+// Keep top-level links to the highest-intent pages only; everything else
+// lives in the dropdowns (Contact is covered by the Talk to a Specialist CTA).
 const TOP_NAV = [
   { href: '/pricing', label: 'Pricing' },
-  { href: '/installation', label: 'Installation' },
-  { href: '/warranty', label: 'Warranty' },
-  { href: '/professionals', label: 'Professionals' },
-  { href: '/projects', label: 'Projects' },
   { href: '/reviews', label: 'Reviews' },
-  { href: '/contact', label: 'Contact' },
 ]
 
 const SYSTEM_PATHS = SYSTEM_DROPDOWN.map(l => l.href)
 const APPLICATION_PATHS = APPLICATIONS_DROPDOWN.map(l => l.href)
+const PROFESSIONAL_PATHS = PROFESSIONALS_DROPDOWN.map(l => l.href)
 
 function isActive(pathname: string | null, href: string): boolean {
   if (!pathname) return false
@@ -163,9 +173,11 @@ function MobileAccordion({ label, links, active, pathname, onNavigate }: MobileA
 export function Header() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { openQuoteModal } = useQuoteModal()
 
   const isSystemActive = SYSTEM_PATHS.some(p => isActive(pathname, p))
   const isApplicationsActive = APPLICATION_PATHS.some(p => isActive(pathname, p))
+  const isProfessionalsActive = PROFESSIONAL_PATHS.some(p => isActive(pathname, p))
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -180,23 +192,11 @@ export function Header() {
             />
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav — the logo covers Home */}
           <nav className="hidden lg:flex items-center gap-1">
-            <Link
-              href="/"
-              className={clsx(
-                'relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200',
-                'after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:bg-[#003365] after:rounded-full after:transition-all after:duration-200',
-                isActive(pathname, '/')
-                  ? 'text-[#003365] bg-blue-50 after:w-3/4'
-                  : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50 after:w-0 hover:after:w-3/4'
-              )}
-            >
-              Home
-            </Link>
-
             <DesktopDropdown label="Crazy Seal" links={SYSTEM_DROPDOWN} active={isSystemActive} pathname={pathname} />
             <DesktopDropdown label="Applications" links={APPLICATIONS_DROPDOWN} active={isApplicationsActive} pathname={pathname} />
+            <DesktopDropdown label="Professionals" links={PROFESSIONALS_DROPDOWN} active={isProfessionalsActive} pathname={pathname} />
 
             {TOP_NAV.map((link) => (
               <Link
@@ -216,21 +216,31 @@ export function Header() {
           </nav>
 
           {/* CTA + Phone */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            {/* Full number only on wide screens; icon still tappable below xl */}
             <a
               href="tel:8009630131"
               className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#003365] transition-colors"
+              aria-label="Call (800) 963-0131"
             >
               <Phone className="w-4 h-4" />
-              (800) 963-0131
+              <span className="hidden xl:inline">(800) 963-0131</span>
             </a>
             <Link
               href="/store"
-              className="flex items-center gap-2 rounded-full bg-[#5BA411] px-5 py-2 text-sm font-semibold text-white hover:bg-[#4A870E] transition-colors shadow-sm hover:shadow-md"
+              className="flex items-center gap-2 rounded-full border border-[#5BA411] px-4 py-2 text-sm font-semibold text-[#5BA411] hover:bg-[#5BA411]/10 transition-colors"
             >
               <ShoppingCart className="w-4 h-4" />
-              Shop Kits
+              Shop
             </Link>
+            <button
+              type="button"
+              onClick={() => openQuoteModal({ sourcePage: 'header' })}
+              className="flex items-center gap-2 rounded-full bg-[#5BA411] px-5 py-2 text-sm font-semibold text-white hover:bg-[#4A870E] transition-colors shadow-sm hover:shadow-md cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Talk to a Specialist
+            </button>
             <CartButton />
           </div>
 
@@ -280,6 +290,13 @@ export function Header() {
               pathname={pathname}
               onNavigate={() => setMobileMenuOpen(false)}
             />
+            <MobileAccordion
+              label="Professionals"
+              links={PROFESSIONALS_DROPDOWN}
+              active={isProfessionalsActive}
+              pathname={pathname}
+              onNavigate={() => setMobileMenuOpen(false)}
+            />
 
             {TOP_NAV.map((link) => (
               <Link
@@ -305,10 +322,21 @@ export function Header() {
                 <Phone className="w-5 h-5" />
                 (800) 963-0131
               </a>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  openQuoteModal({ sourcePage: 'header-mobile' })
+                }}
+                className="flex items-center justify-center gap-2 w-full text-center rounded-full bg-[#5BA411] px-5 py-3 text-base font-semibold text-white cursor-pointer"
+              >
+                <MessageSquare className="w-5 h-5" />
+                Talk to a Specialist
+              </button>
               <Link
                 href="/store"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full text-center rounded-full bg-[#5BA411] px-5 py-3 text-base font-semibold text-white"
+                className="flex items-center justify-center gap-2 w-full text-center rounded-full border border-[#5BA411] px-5 py-3 text-base font-semibold text-[#5BA411]"
               >
                 <ShoppingCart className="w-5 h-5" />
                 Shop Kits

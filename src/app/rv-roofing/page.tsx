@@ -9,6 +9,7 @@ import {
 } from '@/lib/design-system'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import { LeadCaptureSection } from '@/components/LeadCaptureSection'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -497,14 +498,37 @@ export default function RvRoofingPage() {
         </div>
       </Container>
 
-      {/* ─── DEALER CTA ─── */}
+      {/* ─── DUAL CLOSE: TALK TO US / BECOME A DEALER ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Contact your dealer for more information!
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+            Want This Roof on Your RV?
           </h2>
+          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
+            Talk to Crazy Seal directly and we&apos;ll connect you with the
+            right kit or installer. Installers: this system was built for your
+            business too.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <LinkButton href="/professionals" variant="outline-white" size="lg">
+              Become a Dealer
+            </LinkButton>
+            <a
+              href="tel:8009630131"
+              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
+            >
+              (800) 963-0131
+            </a>
+          </div>
         </div>
       </Container>
+
+      {/* ─── LEAD CAPTURE ─── */}
+      <LeadCaptureSection
+        sourcePage="rv-roofing"
+        defaultProjectType="RV Roof"
+        heading="Talk to Crazy Seal About Your RV Roof"
+      />
     </>
   )
 }
