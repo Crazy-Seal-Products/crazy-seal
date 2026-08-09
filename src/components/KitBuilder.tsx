@@ -7,11 +7,15 @@ import {
   Hammer,
   Loader2,
   MessageSquare,
+  PackageCheck,
   Phone,
+  ShieldCheck,
   ShoppingCart,
+  Truck,
 } from 'lucide-react'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Button, Input, LinkButton, Select } from '@/lib/design-system'
+import { Stars } from '@/components/store/Stars'
 import { useCart } from '@/contexts/CartContext'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { useTracking } from '@/components/tracking'
@@ -43,6 +47,25 @@ const LEAD_SUBMITTED_KEY = 'cs_kit_lead_submitted'
 
 function usd(n: number): string {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+}
+
+const KIT_ASSURANCES = [
+  { icon: PackageCheck, label: 'In-stock & ready to ship' },
+  { icon: Truck, label: 'Free shipping over $500' },
+  { icon: ShieldCheck, label: '50 year warranty' },
+] as const
+
+function KitAssurances() {
+  return (
+    <div className="flex flex-wrap gap-x-5 gap-y-2 mt-5">
+      {KIT_ASSURANCES.map((a) => (
+        <p key={a.label} className="flex items-center gap-1.5 text-xs font-semibold text-white/70">
+          <a.icon className="w-4 h-4 text-accent" />
+          {a.label}
+        </p>
+      ))}
+    </div>
+  )
 }
 
 export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
@@ -269,64 +292,135 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
 
       {/* Result: standard sized kit */}
       {kit && (
-        <div className="mt-6 rounded-xl bg-primary text-white p-5 sm:p-6">
-          <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-2">
-            Your Kit
-          </p>
-          <p className="text-2xl sm:text-3xl font-bold mb-1">
-            {kit.product.title} — {kit.sizeLabel}
-          </p>
-          <p className="text-xl text-white/80 mb-4">
-            {usd(kit.variant.price)} <span className="text-sm text-white/50">({color})</span>
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Button variant="accent" size="md" className="gap-2" onClick={addKitToCart}>
-              <ShoppingCart className="w-4 h-4" />
-              Add Kit to Cart
-            </Button>
-            <button
-              type="button"
-              onClick={() =>
-                openQuoteModal({ sourcePage: 'kit-builder', initialMessage: kitSummary() })
-              }
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 px-5 py-2.5 text-sm sm:text-base font-semibold text-white hover:bg-white/10 transition-colors cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Talk to a Specialist
-            </button>
+        <div className="relative mt-6 rounded-2xl bg-primary text-white overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(18,95,151,0.6),transparent_55%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_90%,rgba(91,164,17,0.18),transparent_45%)]" />
+          <div className="relative z-10 p-5 sm:p-6 lg:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-center">
+              {/* Kit image */}
+              {(kit.variant.image ?? kit.product.featuredImage) && (
+                <div className="rounded-2xl bg-white p-3 shadow-2xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={kit.variant.image ?? kit.product.featuredImage ?? undefined}
+                    alt={kit.product.title}
+                    className="w-full h-auto object-contain"
+                  />
+                </div>
+              )}
+
+              {/* Kit details */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-2">
+                  Your Kit Is Ready
+                </p>
+                <h3 className="text-2xl sm:text-3xl font-bold mb-1">{kit.product.title}</h3>
+                <p className="text-white/70 mb-3">
+                  {kit.sizeLabel} &middot; {color}
+                </p>
+                <div className="flex items-center gap-2 mb-4">
+                  <Stars className="w-3.5 h-3.5" />
+                  <span className="text-xs text-white/60">
+                    Thousands of successful installations
+                  </span>
+                </div>
+                <p className="text-3xl sm:text-4xl font-bold">{usd(kit.variant.price)}</p>
+                {kit.variant.price >= 100 && kit.variant.price <= 1000 && (
+                  <p className="text-xs text-white/50 mt-1">
+                    or 4 installments with Affirm at checkout
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-3 mt-5">
+                  <Button variant="accent" size="md" className="gap-2" onClick={addKitToCart}>
+                    <ShoppingCart className="w-4 h-4" />
+                    Add Kit to Cart
+                  </Button>
+                  <LinkButton
+                    href={`/store/${kit.product.handle}`}
+                    variant="outline-white"
+                    size="md"
+                  >
+                    View Full Kit Details
+                    <ArrowRight className="w-4 h-4" />
+                  </LinkButton>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    openQuoteModal({ sourcePage: 'kit-builder', initialMessage: kitSummary() })
+                  }
+                  className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition-colors cursor-pointer"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Talk to a Specialist about this kit
+                </button>
+                <KitAssurances />
+              </div>
+            </div>
+
+            {/* What's included — per-variant contents from Shopify */}
+            {kit.variant.descriptionHtml && (
+              <div className="mt-6 rounded-xl bg-white/10 ring-1 ring-white/15 p-4 sm:p-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-highlight mb-2">
+                  What&apos;s Included
+                </p>
+                <div
+                  className="prose prose-sm prose-invert max-w-none text-white/80 [&_strong]:text-white [&_p]:mb-2 [&_p:last-child]:mb-0"
+                  dangerouslySetInnerHTML={{ __html: kit.variant.descriptionHtml }}
+                />
+              </div>
+            )}
+
+            <KitLeadForm summary={kitSummary} />
           </div>
-          <KitLeadForm summary={kitSummary} />
         </div>
       )}
 
       {/* Result: custom itemized build for large flat roofs */}
       {custom && (
-        <div className="mt-6 rounded-xl bg-primary text-white p-5 sm:p-6">
+        <div className="relative mt-6 rounded-2xl bg-primary text-white overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(18,95,151,0.6),transparent_55%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_90%,rgba(91,164,17,0.18),transparent_45%)]" />
+          <div className="relative z-10 p-5 sm:p-6 lg:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-2">
-            Your Custom Kit
+            Your Custom Kit Is Ready
           </p>
-          <ul className="text-white/85 text-sm space-y-2 mb-4">
-            {custom.lines.map((line) => (
-              <li key={line.variant.id} className="flex items-baseline justify-between gap-3">
-                <span>
-                  {line.quantity} x {line.product.title}{' '}
-                  <span className="text-white/55">({line.variant.title})</span>
-                </span>
-                <span className="font-semibold whitespace-nowrap">
-                  {usd(line.variant.price * line.quantity)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <h3 className="text-2xl sm:text-3xl font-bold mb-1">
+            Custom {isDeck ? 'Direct-to-Deck' : 'Seamless Roofing'} Build
+          </h3>
+          <p className="text-white/70 mb-1">
+            {sqftNum.toLocaleString('en-US')} sq ft &middot; {color}
+          </p>
+          <div className="flex items-center gap-2 mb-4">
+            <Stars className="w-3.5 h-3.5" />
+            <span className="text-xs text-white/60">
+              Thousands of successful installations
+            </span>
+          </div>
+          <div className="rounded-xl bg-white/10 ring-1 ring-white/15 p-4 sm:p-5 mb-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-highlight mb-3">
+              What&apos;s In Your Build
+            </p>
+            <ul className="text-white/85 text-sm space-y-2">
+              {custom.lines.map((line) => (
+                <li key={line.variant.id} className="flex items-baseline justify-between gap-3">
+                  <span>
+                    {line.quantity} x {line.product.title}{' '}
+                    <span className="text-white/55">({line.variant.title})</span>
+                  </span>
+                  <span className="font-semibold whitespace-nowrap">
+                    {usd(line.variant.price * line.quantity)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
           {custom.missing.length > 0 && (
             <p className="text-sm text-white/60 mb-3">
               A specialist will confirm: {custom.missing.join(', ')}
             </p>
           )}
-          <p className="text-2xl sm:text-3xl font-bold mb-4">
-            {usd(custom.total)}{' '}
-            <span className="text-base font-normal text-white/60">({color})</span>
-          </p>
+          <p className="text-3xl sm:text-4xl font-bold mb-4">{usd(custom.total)}</p>
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="accent" size="md" className="gap-2" onClick={addCustomKitToCart}>
               <ShoppingCart className="w-4 h-4" />
@@ -350,6 +444,7 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
               (800) 963-0131
             </a>
           </div>
+          <KitAssurances />
 
           {commercialKit && (
             <div className="mt-5 rounded-xl bg-white/10 ring-1 ring-white/15 p-4 sm:p-5">
@@ -378,6 +473,7 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
           )}
 
           <KitLeadForm summary={kitSummary} />
+          </div>
         </div>
       )}
 

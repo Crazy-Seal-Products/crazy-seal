@@ -127,7 +127,7 @@ export default async function KitBuilderPage() {
                 specialist on standby to double-check the fit for free.
               </p>
             </div>
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               <KitBuilder catalog={catalog} />
             </div>
           </div>

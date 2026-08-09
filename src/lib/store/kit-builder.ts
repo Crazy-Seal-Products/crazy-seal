@@ -22,6 +22,8 @@ export interface KitVariant {
   image: string | null
   availableForSale: boolean
   selectedOptions: Array<{ name: string; value: string }>
+  /** Per-variant "what's included" HTML (Shopify Variant Description app). */
+  descriptionHtml: string | null
 }
 
 export interface KitProduct {

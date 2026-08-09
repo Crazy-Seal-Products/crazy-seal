@@ -24,6 +24,7 @@ export async function getKitBuilderCatalog(): Promise<KitBuilderCatalog> {
         image: v.image ?? p.featuredImage,
         availableForSale: v.availableForSale,
         selectedOptions: v.selectedOptions,
+        descriptionHtml: v.descriptionHtml,
       })),
     }
   }
