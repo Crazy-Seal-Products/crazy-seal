@@ -638,7 +638,7 @@ export default function CommercialRoofingPage() {
             })}
           </Grid>
           <div className="flex flex-row flex-wrap items-center justify-center gap-3 pt-6 md:pt-10">
-            <LinkButton href="/pricing" variant="primary" size="md">
+            <LinkButton href="/kit-builder" variant="primary" size="md">
               Pricing
             </LinkButton>
             <LinkButton href="/warranty" variant="outline" size="md" className="border-primary text-primary">

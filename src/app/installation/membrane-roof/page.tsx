@@ -193,8 +193,8 @@ export default function MembraneRoofPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="primary" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="primary" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

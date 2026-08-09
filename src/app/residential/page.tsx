@@ -103,19 +103,16 @@ const EXAMPLE_PROJECTS = [
   {
     title: "10' x 20' Over Existing Membrane",
     kit: '100 - 200 SQ FT Kit',
-    single: '$745 for a Single Layer System',
     double: '$1,195 for a Double Layer System',
   },
   {
     title: "10' x 28' Over Metal",
     kit: '200 - 300 SQ FT Kit',
-    single: '$970 for a Single Layer System',
     double: '$1,645 for a Double Layer System',
   },
   {
     title: "10' x 40' Over Existing Membrane",
     kit: '300 - 400 SQ FT Kit',
-    single: '$1,220 for a Single Layer System',
     double: '$2,120 for a Double Layer System',
   },
 ]
@@ -126,12 +123,6 @@ const KIT_TYPES = [
     desc: 'Our most popular kit with double layer protection.',
     href: '/store/double-layer-kit',
     image: `${MEDIA}/2019/05/Double-White-100-300-Crazy-Seal-Flat-Roofing-Project-Kit-1024x336.png`,
-  },
-  {
-    title: 'Single Layer Kits',
-    desc: 'A budget-friendly option with single layer coverage.',
-    href: '/store/single-layer-kit',
-    image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
   },
   {
     title: 'Direct to Deck Kits',
@@ -234,8 +225,8 @@ export default function ResidentialPage() {
                     <ShoppingCart className="w-5 h-5" />
                     Shop Kits
                   </LinkButton>
-                  <LinkButton href="/pricing" variant="white" size="lg">
-                    Get an Instant Quote
+                  <LinkButton href="/kit-builder" variant="white" size="lg">
+                    Build My Kit
                   </LinkButton>
                 </div>
               </div>
@@ -480,7 +471,7 @@ export default function ResidentialPage() {
           <SectionHeading
             eyebrow="Want a Quick Price Quote?"
             heading="How much does it cost and how do I buy a kit?"
-            subheading="All Crazy Seal products ship directly to your door. On average, the system ranges between $3.00-$5.00 per square foot of coverage depending on your application and coverage rate. Use our instant quote tool for a kit recommendation and pricing in under 10 seconds."
+            subheading="All Crazy Seal products ship directly to your door. On average, the system ranges between $3.00-$5.00 per square foot of coverage depending on your application and coverage rate. Use our Kit Builder to get a complete kit recommendation and pricing in under 10 seconds."
             variant="dark"
           />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
@@ -493,14 +484,13 @@ export default function ResidentialPage() {
                 <p className="text-sm font-semibold uppercase tracking-wide text-highlight mb-4">
                   {project.kit}
                 </p>
-                <p className="text-white/70 text-sm leading-relaxed">{project.single}</p>
                 <p className="text-white/70 text-sm leading-relaxed">{project.double}</p>
               </div>
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
-            <LinkButton href="/pricing" variant="white" size="md">
-              Instant Quote (In 10 Seconds)
+            <LinkButton href="/kit-builder" variant="white" size="md">
+              Build My Kit (In 10 Seconds)
             </LinkButton>
             <LinkButton href="/store" variant="accent" size="md">
               <ShoppingCart className="w-4 h-4" />
@@ -607,7 +597,7 @@ export default function ResidentialPage() {
             />
           </Grid>
           <div className="flex flex-row flex-wrap items-center justify-center gap-3 pt-6 md:pt-10">
-            <LinkButton href="/pricing" variant="primary" size="md">
+            <LinkButton href="/kit-builder" variant="primary" size="md">
               Pricing
             </LinkButton>
             <LinkButton href="/warranty" variant="outline" size="md" className="border-primary text-primary">

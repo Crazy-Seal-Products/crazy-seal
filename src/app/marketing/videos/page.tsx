@@ -40,6 +40,81 @@ const VIDEO_PACKAGES = [
     tags: ['15 Seconds', 'Generic Assets'],
     href: '/marketing/videos/video-package-6/',
   },
+  {
+    heading: 'Video Package 7',
+    tags: ['30 Seconds', 'Generic Assets'],
+    href: '/marketing/videos/video-package-7/',
+  },
+  {
+    heading: 'Video Package 8',
+    tags: ['30 Seconds', 'Generic Assets'],
+    href: '/marketing/videos/video-package-8/',
+  },
+  {
+    heading: 'Video Package 9',
+    tags: ['30 Seconds', 'Generic Assets'],
+    href: '/marketing/videos/video-package-9/',
+  },
+  {
+    heading: 'Video Package 10',
+    tags: ['30 Seconds', 'Generic Assets'],
+    href: '/marketing/videos/video-package-10/',
+  },
+  {
+    heading: 'Video Package 11',
+    tags: ['30 Seconds', 'Generic Assets'],
+    href: '/marketing/videos/video-package-11/',
+  },
+  {
+    heading: 'Video Package 12',
+    tags: ['30 Seconds', 'Generic Assets'],
+    href: '/marketing/videos/video-package-12/',
+  },
+  {
+    heading: 'Video Package 13',
+    tags: ['15 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-13/',
+  },
+  {
+    heading: 'Video Package 14',
+    tags: ['15 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-14/',
+  },
+  {
+    heading: 'Video Package 15',
+    tags: ['15 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-15/',
+  },
+  {
+    heading: 'Video Package 16',
+    tags: ['15 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-16/',
+  },
+  {
+    heading: 'Video Package 17',
+    tags: ['30 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-17/',
+  },
+  {
+    heading: 'Video Package 18',
+    tags: ['30 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-18/',
+  },
+  {
+    heading: 'Video Package 19',
+    tags: ['30 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-19/',
+  },
+  {
+    heading: 'Video Package 20',
+    tags: ['30 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-20/',
+  },
+  {
+    heading: 'Video Package 21',
+    tags: ['15 Seconds', 'Commercial Assets'],
+    href: '/marketing/videos/video-package-21/',
+  },
 ]
 
 const MODULE_LINKS = [

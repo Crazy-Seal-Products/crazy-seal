@@ -311,6 +311,15 @@ export default function AdminWarrantyPage() {
                               <p className="text-gray-500 text-xs">
                                 Photo display consent: {reg.photo_display_consent ? 'Yes' : 'No'}
                               </p>
+                              <a
+                                href={`/print/warranty-certificate/${reg.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#003365] hover:underline"
+                              >
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                                View warranty certificate
+                              </a>
                               <PhotoLinks urls={reg.photo_urls} />
                             </>
                           )

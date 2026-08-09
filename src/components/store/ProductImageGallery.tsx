@@ -27,12 +27,13 @@ export function ProductImageGallery({ images, alt, featuredImage }: ProductImage
 
   return (
     <div className="space-y-3">
-      <div className="aspect-square rounded-2xl border border-gray-200 bg-white overflow-hidden">
+      {/* Frame follows the image's natural aspect ratio instead of forcing a square */}
+      <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex items-center justify-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={images[safeActive]}
           alt={alt}
-          className="w-full h-full object-contain p-6"
+          className="w-full h-auto max-h-[32rem] object-contain p-2"
         />
       </div>
       {images.length > 1 && (

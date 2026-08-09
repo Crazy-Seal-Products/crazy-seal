@@ -461,7 +461,7 @@ export default function ReviewsPage() {
             <LinkButton href="/warranty" variant="accent" size="lg">
               Warranty Form
             </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
+            <LinkButton href="/kit-builder" variant="white" size="lg">
               See Kit Pricing
             </LinkButton>
             <a

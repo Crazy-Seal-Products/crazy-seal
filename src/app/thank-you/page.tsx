@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 const NEXT_STEPS = {
   quote: [
     {
-      href: '/pricing',
+      href: '/kit-builder',
       icon: Calculator,
-      title: 'See Kit Pricing',
+      title: 'Build Your Kit',
       desc: 'Get a feel for kit sizes and cost while you wait.',
     },
     {

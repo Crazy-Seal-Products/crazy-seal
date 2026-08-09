@@ -210,8 +210,8 @@ const QUICK_LINKS = [
     heading: 'Kits & Pricing',
     subheading: 'PRE-BUILT ROOFING KITS',
     desc: 'We have pre-built kits for many jobs, or you can build your own kit from scratch!',
-    linkText: 'Kits & Pricing',
-    href: '/pricing',
+    linkText: 'Build My Kit',
+    href: '/kit-builder',
   },
   {
     icon: Timer,

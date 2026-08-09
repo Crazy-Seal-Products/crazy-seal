@@ -43,12 +43,6 @@ const KIT_TYPES = [
     image: `${MEDIA}/2019/05/Double-White-100-300-Crazy-Seal-Flat-Roofing-Project-Kit-1024x336.png`,
   },
   {
-    title: 'Single Layer Kits',
-    desc: 'A budget-friendly option with single layer coverage.',
-    href: '/store/single-layer-kit',
-    image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
-  },
-  {
     title: 'Direct to Deck Kits',
     desc: 'A special kit for sealing directly over wood decking.',
     href: '/store/direct-to-deck-kit',
@@ -178,8 +172,8 @@ export default function TruckCampersPage() {
                     <ShoppingCart className="w-5 h-5" />
                     Shop Kits
                   </LinkButton>
-                  <LinkButton href="/pricing" variant="white" size="lg">
-                    Get an Instant Quote
+                  <LinkButton href="/kit-builder" variant="white" size="lg">
+                    Build My Kit
                   </LinkButton>
                 </div>
               </div>
@@ -529,7 +523,7 @@ export default function TruckCampersPage() {
           <SectionHeading
             eyebrow="Want a Quick Price Quote?"
             heading="How much does it cost and how do I buy a kit?"
-            subheading="All Crazy Seal products ship directly to your door. On average, the system ranges between $3.00-$5.00 per square foot of coverage depending on your application and coverage rate. Use our instant quote tool for a kit recommendation and pricing in under 10 seconds."
+            subheading="All Crazy Seal products ship directly to your door. On average, the system ranges between $3.00-$5.00 per square foot of coverage depending on your application and coverage rate. Use our Kit Builder to get a complete kit recommendation and pricing in under 10 seconds."
             variant="dark"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
@@ -537,12 +531,12 @@ export default function TruckCampersPage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2023/07/Curtis-Instant-Quote-1024x683.png`}
-                alt="Get an instant Crazy Seal quote"
+                alt="Build your Crazy Seal kit online"
                 className="rounded-xl w-full h-auto mb-4"
               />
               <div className="mt-auto">
-                <LinkButton href="/pricing" variant="white" size="md">
-                  Get an Instant Quote Online
+                <LinkButton href="/kit-builder" variant="white" size="md">
+                  Build My Kit Online
                 </LinkButton>
               </div>
             </div>
@@ -820,7 +814,7 @@ export default function TruckCampersPage() {
             />
           </Grid>
           <div className="flex flex-row flex-wrap items-center justify-center gap-3 pt-6 md:pt-10">
-            <LinkButton href="/pricing" variant="primary" size="md">
+            <LinkButton href="/kit-builder" variant="primary" size="md">
               Pricing
             </LinkButton>
             <LinkButton href="/installation" variant="outline" size="md" className="border-primary text-primary">
@@ -864,8 +858,8 @@ export default function TruckCampersPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="white" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

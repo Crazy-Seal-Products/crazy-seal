@@ -16,6 +16,12 @@ export interface StoreProduct extends ShopifyProduct {
   priceMax: number
   /** YouTube video IDs curated from the legacy Shopify product pages */
   youtubeIds: string[]
+  /** Marketing badge (e.g. "Most Popular") */
+  badge?: string
+  /** Curated cross-sell handles for "Complete Your System" */
+  companions?: string[]
+  /** Transcript-sourced detail bullets for the "Why This Kit Works" band */
+  whyItWorks?: Array<{ lead: string; text: string }>
 }
 
 function truncate(text: string, max = 140): string {
@@ -35,6 +41,9 @@ function toStoreProduct(p: ShopifyProduct): StoreProduct {
     priceMin: prices.length ? Math.min(...prices) : 0,
     priceMax: prices.length ? Math.max(...prices) : 0,
     youtubeIds: curation?.youtubeIds ?? [],
+    badge: curation?.badge,
+    companions: curation?.companions,
+    whyItWorks: curation?.whyItWorks,
   }
 }
 

@@ -100,12 +100,6 @@ const OTHER_KITS = [
     image: `${MEDIA}/2021/12/Double-Layer-Kit-Featured-Image-768x384.png`,
   },
   {
-    title: 'Single Layer Kit',
-    desc: 'A budget friendly option with single layer coverage.',
-    href: '/single-layer-kit',
-    image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
-  },
-  {
     title: 'Build Your Own Kit',
     desc: 'Build your own custom kit from our lineup of roofing products.',
     href: '/build-your-own-kit',
@@ -153,8 +147,8 @@ export default function DirectToDeckKitPage() {
                     <ShoppingCart className="w-5 h-5" />
                     Shop This Kit
                   </LinkButton>
-                  <LinkButton href="/pricing" variant="white" size="lg">
-                    Get an Instant Quote
+                  <LinkButton href="/kit-builder" variant="white" size="lg">
+                    Build My Kit
                   </LinkButton>
                 </div>
               </div>
@@ -400,8 +394,8 @@ export default function DirectToDeckKitPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="primary" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="primary" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

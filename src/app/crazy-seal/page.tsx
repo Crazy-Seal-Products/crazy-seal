@@ -283,8 +283,8 @@ export default function CrazySealSystemPage() {
                   <ShoppingCart className="w-4 h-4" />
                   Shop Product Kits
                 </LinkButton>
-                <LinkButton href="/pricing" variant="outline-white" size="md">
-                  Get an Instant Quote
+                <LinkButton href="/kit-builder" variant="outline-white" size="md">
+                  Build My Kit
                 </LinkButton>
               </div>
             </div>
@@ -470,8 +470,8 @@ export default function CrazySealSystemPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="white" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

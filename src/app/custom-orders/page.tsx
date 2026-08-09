@@ -7,7 +7,7 @@ const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 export const metadata: Metadata = {
   title: 'Custom Orders',
   description:
-    'Need assistance with a custom Crazy Seal kit? Get in touch with a specialist or get an instant quote online.',
+    'Need assistance with a custom Crazy Seal kit? Get in touch with a specialist or build your kit online.',
 }
 
 const OPTIONS = [
@@ -19,11 +19,11 @@ const OPTIONS = [
     cta: 'Contact Us',
   },
   {
-    title: 'Get an Instant Quote Online',
+    title: 'Build My Kit Online',
     desc: 'Answer a few quick questions about your roof and get instant pricing for your application.',
-    href: '/pricing',
+    href: '/kit-builder',
     image: `${MEDIA}/2022/01/Crazy-Seal-Instant-Quote-Image-768x768.png`,
-    cta: 'Get an Instant Quote',
+    cta: 'Build My Kit',
   },
 ]
 
@@ -95,8 +95,8 @@ export default function CustomOrdersPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="white" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWarrantyNotification, sendWarrantyAutoReply } from '@/lib/email/gmail'
 import { verifyTurnstile } from '@/lib/turnstile'
+import { certificateUrl } from '@/lib/warranty/certificate'
 
 export async function POST(request: NextRequest) {
   try {
@@ -104,10 +105,12 @@ export async function POST(request: NextRequest) {
       'Photo Display Consent': photo_display_consent ? 'Yes' : 'No',
     }
 
+    const certificate_url = certificateUrl(registration.id)
+
     sendWarrantyNotification({
       kind: 'registration',
       name, email,
-      fields: emailFields,
+      fields: { ...emailFields, Certificate: certificate_url },
       photo_urls,
     }).catch(err => console.error('[Gmail] Warranty notification error:', err))
 
@@ -115,9 +118,10 @@ export async function POST(request: NextRequest) {
       kind: 'registration',
       name, email,
       fields: {},
+      certificate_url,
     }).catch(err => console.error('[Gmail] Warranty auto-reply error:', err))
 
-    return NextResponse.json({ success: true, id: registration.id })
+    return NextResponse.json({ success: true, id: registration.id, certificate_url })
   } catch (err) {
     console.error('Warranty registration API error:', err)
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })

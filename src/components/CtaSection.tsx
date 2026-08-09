@@ -18,8 +18,8 @@ export function CtaSection() {
         <QuoteCta sourcePage="cta-section" />
         <p className="mt-6 text-sm text-gray-400">
           Prefer to do it yourself?{' '}
-          <Link href="/pricing" className="font-semibold text-[#003365] hover:text-accent transition-colors">
-            See kit pricing
+          <Link href="/kit-builder" className="font-semibold text-[#003365] hover:text-accent transition-colors">
+            Build your kit
           </Link>{' '}
           or{' '}
           <Link href="/store" className="font-semibold text-[#003365] hover:text-accent transition-colors">

@@ -10,7 +10,7 @@ const FOOTER_LINKS = {
     { href: '/crazy-seal', label: 'Our System' },
     { href: '/advantages', label: 'Advantages' },
     { href: '/products', label: 'Products' },
-    { href: '/pricing', label: 'Pricing' },
+    { href: '/kit-builder', label: 'Kit Builder' },
     { href: '/installation', label: 'Installation' },
     { href: '/technical-data', label: 'Technical Data' },
   ],

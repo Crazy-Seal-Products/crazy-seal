@@ -37,8 +37,8 @@ const FAQ_ITEMS: FAQItem[] = [
         to a job! By doing it yourself, you get an incredible seamless roof at
         a fraction of the cost because there is no labor involved. With our
         DIY application, you can save thousands or more. Check out our{' '}
-        <Link href="/pricing" className={linkClass}>
-          pricing page
+        <Link href="/kit-builder" className={linkClass}>
+          Kit Builder
         </Link>{' '}
         to learn more.
       </>
@@ -57,8 +57,8 @@ const FAQ_ITEMS: FAQItem[] = [
       <>
         Our system is very affordable, especially considering all of the
         alternatives out there that include labor! Visit our{' '}
-        <Link href="/pricing" className={linkClass}>
-          pricing page
+        <Link href="/kit-builder" className={linkClass}>
+          Kit Builder
         </Link>{' '}
         for more information on the cost to complete your specific project.
       </>

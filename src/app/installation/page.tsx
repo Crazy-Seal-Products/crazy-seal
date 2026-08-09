@@ -154,8 +154,8 @@ export default function InstallationPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="white" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

@@ -108,12 +108,6 @@ const KIT_TYPES = [
     image: `${MEDIA}/2019/05/Double-White-100-300-Crazy-Seal-Flat-Roofing-Project-Kit-1024x336.png`,
   },
   {
-    title: 'Single Layer Kits',
-    desc: 'A budget-friendly option with single layer coverage.',
-    href: '/store/single-layer-kit',
-    image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
-  },
-  {
     title: 'Direct to Deck Kits',
     desc: 'A special kit for sealing directly over wood decking.',
     href: '/store/direct-to-deck-kit',
@@ -224,8 +218,8 @@ export default function RvRoofsPage() {
                     <ShoppingCart className="w-5 h-5" />
                     Shop RV Kits
                   </LinkButton>
-                  <LinkButton href="/pricing" variant="white" size="lg">
-                    Get an Instant Quote
+                  <LinkButton href="/kit-builder" variant="white" size="lg">
+                    Build My Kit
                   </LinkButton>
                 </div>
               </div>
@@ -593,8 +587,8 @@ export default function RvRoofsPage() {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
-            <LinkButton href="/pricing" variant="white" size="md">
-              Get an Instant Quote Online
+            <LinkButton href="/kit-builder" variant="white" size="md">
+              Build My Kit Online
             </LinkButton>
             <LinkButton href="/contact" variant="outline-white" size="md">
               Get in Touch with a Specialist
@@ -807,7 +801,7 @@ export default function RvRoofsPage() {
             />
           </Grid>
           <div className="flex flex-row flex-wrap items-center justify-center gap-3 pt-6 md:pt-10">
-            <LinkButton href="/pricing" variant="primary" size="md">
+            <LinkButton href="/kit-builder" variant="primary" size="md">
               Pricing
             </LinkButton>
             <LinkButton href="/warranty" variant="outline" size="md" className="border-primary text-primary">

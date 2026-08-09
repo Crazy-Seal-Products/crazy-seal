@@ -1,0 +1,595 @@
+{
+  "generatedAt": "2026-08-09T13:26:51.271Z",
+  "routes": [
+    {
+      "path": "/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/about/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/admin/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/assets/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/entries/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/faq/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/gallery/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/leads/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/login/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/projects/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/redirects/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/sitemap/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/warranty/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/advantages/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/affiliates/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/applications/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/barns/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/boat-houses/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/box-trucks/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/build-your-own-kit/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/business-accelerator-program/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/commercial-roofing/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/contact/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/crazy-good-repair-kit/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/crazy-seal/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/custom-orders/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/dealers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/direct-to-deck-kit/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/double-layer-kit/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/facilities-overview/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/facilities/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/faq/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/industrial/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/installation/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/installation/direct-to-deck/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/installation/membrane-roof/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/kit-builder/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/ai-prompts/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/email-templates/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/images/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/images/commercial-images/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/images/residential-images/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/images/rv-images/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-1/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-10/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-11/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-12/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-13/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-14/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-15/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-16/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-17/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-18/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-19/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-2/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-20/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-21/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-3/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-4/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-5/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-6/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-7/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-8/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/marketing/videos/video-package-9/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/metal-buildings/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/ordering/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/outdoor-rooms/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/pop-up-campers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/porch-roofs/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/print/warranty-certificate/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/privacy-policy/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/products/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/products/crazy-caulk/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/products/crazy-clean/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/products/crazy-patch/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/products/crazy-seal-roof-membrane/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/products/crazy-tape/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/professional-tools/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/professionals/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/professionals/facilities/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/professionals/restaurants/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/professionals/rv/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/project/[slug]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/projects/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/residential/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/building-a-kit/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/installation/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/marketing/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/sales/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/sales/ai-prompts/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/sales/facilities/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/sales/loopable-videos/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/sales/rv/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/warranty/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/resources/welcome-to-crazy-seal/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/return-policy/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/reviews/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/roofing-applications/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/rv-roofing/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/rv-roofs/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/self-storage/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/sheds/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/shipping-containers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/shipping/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/store/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/store/[handle]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/sunrooms/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/technical-data/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/terms-and-conditions/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/thank-you/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/tiny-homes/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/tractor-trailers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/transportation/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/truck-campers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/warranty-transfer/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/warranty/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/ways-to-earn/",
+      "dynamic": false,
+      "admin": false
+    }
+  ]
+}

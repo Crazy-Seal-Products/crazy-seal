@@ -49,8 +49,8 @@ const TOP_ADVANTAGES = [
     title: 'Save Money',
     eyebrow: 'Do It Yourself & Save Big',
     desc: 'Much of the cost of a typical roofing installation comes with labor. Do it yourself and save big with raw materials factory direct from Crazy Seal!',
-    href: '/pricing',
-    cta: 'Pricing',
+    href: '/kit-builder',
+    cta: 'Build My Kit',
   },
   {
     icon: <Timer className="w-6 h-6 text-accent" />,
@@ -350,8 +350,8 @@ export default function AdvantagesPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/pricing" variant="white" size="lg">
-              Get an Instant Quote
+            <LinkButton href="/kit-builder" variant="white" size="lg">
+              Build My Kit
             </LinkButton>
             <a
               href="tel:8009630131"

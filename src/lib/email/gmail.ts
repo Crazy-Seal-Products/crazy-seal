@@ -157,6 +157,8 @@ interface WarrantyNotificationData {
   email: string
   fields: Record<string, string | null | undefined>
   photo_urls?: string[]
+  /** Signed link to the online warranty certificate (registrations only) */
+  certificate_url?: string
 }
 
 const WARRANTY_SUBJECTS = {
@@ -201,6 +203,16 @@ export async function sendWarrantyAutoReply(data: WarrantyNotificationData) {
   const firstName = data.name.split(' ')[0] || data.name
   const copy = WARRANTY_REPLY_COPY[data.kind]
 
+  const certificateBlock = data.certificate_url
+    ? `<p style="margin:24px 0;">
+         <a href="${data.certificate_url}" target="_blank"
+            style="display:inline-block;background:#003365;color:#fff;font-weight:bold;padding:12px 24px;border-radius:8px;text-decoration:none;">
+           View Your Warranty Certificate
+         </a>
+       </p>
+       <p style="font-size:12px;color:#888;">Save or bookmark this link — you can view and print your certificate any time.</p>`
+    : ''
+
   await sendEmail({
     to: data.email,
     subject: copy.subject,
@@ -208,6 +220,7 @@ export async function sendWarrantyAutoReply(data: WarrantyNotificationData) {
       <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#333;max-width:600px;">
         <p>Hi ${firstName},</p>
         ${copy.body}
+        ${certificateBlock}
         <p>Questions? Call us at <strong>(800) 963-0131</strong> (M-F 9AM-6PM EST) or reply to this email.</p>
         <p>— The Crazy Seal Team</p>
       </div>

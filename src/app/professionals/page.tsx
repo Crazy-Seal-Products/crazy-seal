@@ -76,8 +76,8 @@ const QUICK_LINKS = [
     eyebrow: 'Kits & Pricing',
     title: 'Pre-Built Roofing Kits',
     desc: 'We have pre-built kits for many jobs, or you can build your own kit from scratch!',
-    cta: 'Kits & Pricing',
-    href: '/pricing',
+    cta: 'Build My Kit',
+    href: '/kit-builder',
     icon: ShoppingCart,
   },
   {

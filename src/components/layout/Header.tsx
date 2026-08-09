@@ -38,7 +38,7 @@ const PROFESSIONALS_DROPDOWN = [
 // Keep top-level links to the highest-intent pages only; everything else
 // lives in the dropdowns (Contact is covered by the Talk to a Specialist CTA).
 const TOP_NAV = [
-  { href: '/pricing', label: 'Pricing' },
+  { href: '/kit-builder', label: 'Kit Builder' },
   { href: '/reviews', label: 'Reviews' },
 ]
 

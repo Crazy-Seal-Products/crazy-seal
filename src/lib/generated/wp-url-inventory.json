@@ -1,0 +1,1646 @@
+{
+  "generatedAt": "2026-08-09T13:03:32.399Z",
+  "source": "https://crazyseal.com",
+  "urls": [
+    {
+      "path": "/category/blog/",
+      "title": "Blog",
+      "type": "category"
+    },
+    {
+      "path": "/category/commercial/",
+      "title": "Commercial",
+      "type": "category"
+    },
+    {
+      "path": "/category/dealer/",
+      "title": "Dealer",
+      "type": "category"
+    },
+    {
+      "path": "/category/general/",
+      "title": "General",
+      "type": "category"
+    },
+    {
+      "path": "/category/kits/",
+      "title": "Kits",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/",
+      "title": "Marketing",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/15-seconds/",
+      "title": "15 Seconds",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/30-seconds/",
+      "title": "30 Seconds",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/commercial-assets/",
+      "title": "Commercial Assets",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/generic-assets/",
+      "title": "Generic Assets",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/generic-cta/",
+      "title": "Generic CTA",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/images/",
+      "title": "Images",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/rv-assets/",
+      "title": "RV Assets",
+      "type": "category"
+    },
+    {
+      "path": "/category/marketing/website-cta/",
+      "title": "Website CTA",
+      "type": "category"
+    },
+    {
+      "path": "/category/products/",
+      "title": "Products",
+      "type": "category"
+    },
+    {
+      "path": "/category/residential/",
+      "title": "Residential",
+      "type": "category"
+    },
+    {
+      "path": "/category/rv/",
+      "title": "RV",
+      "type": "category"
+    },
+    {
+      "path": "/category/transport/",
+      "title": "Transport",
+      "type": "category"
+    },
+    {
+      "path": "/view/warranty-downloads/",
+      "title": "",
+      "type": "gravityview"
+    },
+    {
+      "path": "/",
+      "title": "Home",
+      "type": "page"
+    },
+    {
+      "path": "/404-error-page/",
+      "title": "404 Error, content does not exist anymore",
+      "type": "page"
+    },
+    {
+      "path": "/about/",
+      "title": "About",
+      "type": "page"
+    },
+    {
+      "path": "/advantages/",
+      "title": "ADVANTAGES",
+      "type": "page"
+    },
+    {
+      "path": "/affiliates/",
+      "title": "Affiliates",
+      "type": "page"
+    },
+    {
+      "path": "/all-kits-and-products/",
+      "title": "All Kits And Products",
+      "type": "page"
+    },
+    {
+      "path": "/applications/",
+      "title": "Applications",
+      "type": "page"
+    },
+    {
+      "path": "/barns/",
+      "title": "Barns",
+      "type": "page"
+    },
+    {
+      "path": "/boat-houses/",
+      "title": "Boat Houses",
+      "type": "page"
+    },
+    {
+      "path": "/box-trucks/",
+      "title": "Box Trucks",
+      "type": "page"
+    },
+    {
+      "path": "/build-your-own-kit/",
+      "title": "Build Your Own Kit",
+      "type": "page"
+    },
+    {
+      "path": "/business-accelerator-program-registration/",
+      "title": "Business Accelerator Program Registration",
+      "type": "page"
+    },
+    {
+      "path": "/business-accelerator-program/",
+      "title": "Business Accelerator Program",
+      "type": "page"
+    },
+    {
+      "path": "/campers/",
+      "title": "Campers",
+      "type": "page"
+    },
+    {
+      "path": "/commercial-roofing/",
+      "title": "Commercial Roofing",
+      "type": "page"
+    },
+    {
+      "path": "/contact/",
+      "title": "Contact",
+      "type": "page"
+    },
+    {
+      "path": "/crazy-good-repair-kit/",
+      "title": "Crazy Good Repair Kit",
+      "type": "page"
+    },
+    {
+      "path": "/crazy-seal/",
+      "title": "CRAZY SEAL",
+      "type": "page"
+    },
+    {
+      "path": "/custom-orders/",
+      "title": "Custom Orders",
+      "type": "page"
+    },
+    {
+      "path": "/dashboard/",
+      "title": "Dashboard",
+      "type": "page"
+    },
+    {
+      "path": "/direct-to-deck-kit/",
+      "title": "Direct To Deck Kit",
+      "type": "page"
+    },
+    {
+      "path": "/double-layer-kit/",
+      "title": "Double Layer Kit",
+      "type": "page"
+    },
+    {
+      "path": "/facilities-overview/",
+      "title": "Facilities Overview",
+      "type": "page"
+    },
+    {
+      "path": "/faq/",
+      "title": "FAQ",
+      "type": "page"
+    },
+    {
+      "path": "/fb-free-quote/",
+      "title": "FB Free Quote",
+      "type": "page"
+    },
+    {
+      "path": "/fifth-wheels/",
+      "title": "Fifth Wheels",
+      "type": "page"
+    },
+    {
+      "path": "/form-test/",
+      "title": "Form Test",
+      "type": "page"
+    },
+    {
+      "path": "/hiring-a-contractor/",
+      "title": "Hiring A Contractor",
+      "type": "page"
+    },
+    {
+      "path": "/horse-trailers/",
+      "title": "Horse Trailers",
+      "type": "page"
+    },
+    {
+      "path": "/industrial/",
+      "title": "Industrial",
+      "type": "page"
+    },
+    {
+      "path": "/installation/",
+      "title": "Installation",
+      "type": "page"
+    },
+    {
+      "path": "/installation/direct-to-deck/",
+      "title": "Direct To Deck",
+      "type": "page"
+    },
+    {
+      "path": "/installation/membrane-roof/",
+      "title": "Membrane Roof",
+      "type": "page"
+    },
+    {
+      "path": "/instructor-registration/",
+      "title": "Instructor Registration",
+      "type": "page"
+    },
+    {
+      "path": "/metal-buildings/",
+      "title": "Metal Buildings",
+      "type": "page"
+    },
+    {
+      "path": "/mobile-homes/",
+      "title": "Mobile Homes",
+      "type": "page"
+    },
+    {
+      "path": "/motor-homes/",
+      "title": "Motor Homes",
+      "type": "page"
+    },
+    {
+      "path": "/ordering/",
+      "title": "ORDERING",
+      "type": "page"
+    },
+    {
+      "path": "/outdoor-rooms/",
+      "title": "Outdoor Rooms",
+      "type": "page"
+    },
+    {
+      "path": "/pop-up-campers/",
+      "title": "Pop Up Campers",
+      "type": "page"
+    },
+    {
+      "path": "/porch-roofs/",
+      "title": "Porch Roofs",
+      "type": "page"
+    },
+    {
+      "path": "/pricing/",
+      "title": "Pricing",
+      "type": "page"
+    },
+    {
+      "path": "/privacy-policy/",
+      "title": "PRIVACY POLICY",
+      "type": "page"
+    },
+    {
+      "path": "/products/",
+      "title": "Products",
+      "type": "page"
+    },
+    {
+      "path": "/products/crazy-caulk/",
+      "title": "Crazy Caulk",
+      "type": "page"
+    },
+    {
+      "path": "/products/crazy-clean/",
+      "title": "Crazy Clean",
+      "type": "page"
+    },
+    {
+      "path": "/products/crazy-cloth/",
+      "title": "Crazy Cloth",
+      "type": "page"
+    },
+    {
+      "path": "/products/crazy-patch/",
+      "title": "Crazy Patch",
+      "type": "page"
+    },
+    {
+      "path": "/products/crazy-seal-roof-membrane/",
+      "title": "Crazy Seal Roof Membrane",
+      "type": "page"
+    },
+    {
+      "path": "/products/crazy-tape/",
+      "title": "Crazy Tape",
+      "type": "page"
+    },
+    {
+      "path": "/professional-tools/",
+      "title": "Professional Tools",
+      "type": "page"
+    },
+    {
+      "path": "/professionals/",
+      "title": "Professionals",
+      "type": "page"
+    },
+    {
+      "path": "/professionals/facilities/",
+      "title": "Facilities",
+      "type": "page"
+    },
+    {
+      "path": "/professionals/restaurants/",
+      "title": "Restaurants",
+      "type": "page"
+    },
+    {
+      "path": "/professionals/rv/",
+      "title": "RV",
+      "type": "page"
+    },
+    {
+      "path": "/rep/",
+      "title": "Rep",
+      "type": "page"
+    },
+    {
+      "path": "/residential/",
+      "title": "Residential",
+      "type": "page"
+    },
+    {
+      "path": "/resources/",
+      "title": "Resources",
+      "type": "page"
+    },
+    {
+      "path": "/resources/building-a-kit/",
+      "title": "Building a Kit",
+      "type": "page"
+    },
+    {
+      "path": "/resources/installation/",
+      "title": "Installation",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/",
+      "title": "Marketing",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/ai-prompts/",
+      "title": "AI Prompts",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/assets/",
+      "title": "Assets",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/email-templates/",
+      "title": "Email Templates",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/images/",
+      "title": "Images",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/images/commercial-images/",
+      "title": "Commercial Images",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/images/residential-images/",
+      "title": "Residential Images",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/images/rv-images/",
+      "title": "RV Images",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/",
+      "title": "Videos",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-1/",
+      "title": "Video Package 1",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-10/",
+      "title": "Video Package 10",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-11/",
+      "title": "Video Package 11",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-12/",
+      "title": "Video Package 12",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-13/",
+      "title": "Video Package 13",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-14/",
+      "title": "Video Package 14",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-15/",
+      "title": "Video Package 15",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-16/",
+      "title": "Video Package 16",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-17/",
+      "title": "Video Package 17",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-18/",
+      "title": "Video Package 18",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-19/",
+      "title": "Video Package 19",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-2/",
+      "title": "Video Package 2",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-20/",
+      "title": "Video Package 20",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-21/",
+      "title": "Video Package 21",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-3/",
+      "title": "Video Package 3",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-4/",
+      "title": "Video Package 4",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-5/",
+      "title": "Video Package 5",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-6/",
+      "title": "Video Package 6",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-7/",
+      "title": "Video Package 7",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-8/",
+      "title": "Video Package 8",
+      "type": "page"
+    },
+    {
+      "path": "/resources/marketing/videos/video-package-9/",
+      "title": "Video Package 9",
+      "type": "page"
+    },
+    {
+      "path": "/resources/sales/",
+      "title": "Sales",
+      "type": "page"
+    },
+    {
+      "path": "/resources/sales/ai-prompts/",
+      "title": "AI Prompts",
+      "type": "page"
+    },
+    {
+      "path": "/resources/sales/facilities/",
+      "title": "Facilities",
+      "type": "page"
+    },
+    {
+      "path": "/resources/sales/loopable-videos/",
+      "title": "Loopable Videos",
+      "type": "page"
+    },
+    {
+      "path": "/resources/sales/rv/",
+      "title": "RV",
+      "type": "page"
+    },
+    {
+      "path": "/resources/warranty/",
+      "title": "Warranty",
+      "type": "page"
+    },
+    {
+      "path": "/resources/welcome-to-crazy-seal/",
+      "title": "Welcome to Crazy Seal",
+      "type": "page"
+    },
+    {
+      "path": "/return-policy/",
+      "title": "90 Day Return Policy",
+      "type": "page"
+    },
+    {
+      "path": "/reviews/",
+      "title": "Reviews",
+      "type": "page"
+    },
+    {
+      "path": "/roofing-applications/",
+      "title": "Roofing Applications",
+      "type": "page"
+    },
+    {
+      "path": "/rv-roofing-kits/",
+      "title": "RV Roofing Kits",
+      "type": "page"
+    },
+    {
+      "path": "/rv-roofing/",
+      "title": "RV Roofing",
+      "type": "page"
+    },
+    {
+      "path": "/rv-roofs/",
+      "title": "RV Roofs",
+      "type": "page"
+    },
+    {
+      "path": "/self-storage/",
+      "title": "Self Storage",
+      "type": "page"
+    },
+    {
+      "path": "/sheds/",
+      "title": "Sheds",
+      "type": "page"
+    },
+    {
+      "path": "/shipping-containers/",
+      "title": "Shipping Containers",
+      "type": "page"
+    },
+    {
+      "path": "/shipping/",
+      "title": "Shipping",
+      "type": "page"
+    },
+    {
+      "path": "/single-layer-kit/",
+      "title": "Single Layer Kit",
+      "type": "page"
+    },
+    {
+      "path": "/store/",
+      "title": "Store",
+      "type": "page"
+    },
+    {
+      "path": "/student-registration/",
+      "title": "Student Registration",
+      "type": "page"
+    },
+    {
+      "path": "/sunrooms/",
+      "title": "Sunrooms",
+      "type": "page"
+    },
+    {
+      "path": "/technical-data/",
+      "title": "Technical Data",
+      "type": "page"
+    },
+    {
+      "path": "/thank-you/",
+      "title": "Thank You",
+      "type": "page"
+    },
+    {
+      "path": "/tiny-homes/",
+      "title": "Tiny Homes",
+      "type": "page"
+    },
+    {
+      "path": "/tractor-trailers/",
+      "title": "Tractor Trailers",
+      "type": "page"
+    },
+    {
+      "path": "/transportation/",
+      "title": "Transportation",
+      "type": "page"
+    },
+    {
+      "path": "/travel-trailers/",
+      "title": "Travel Trailers",
+      "type": "page"
+    },
+    {
+      "path": "/truck-campers/",
+      "title": "Truck Campers",
+      "type": "page"
+    },
+    {
+      "path": "/tutor-certificate/",
+      "title": "Tutor Certificate",
+      "type": "page"
+    },
+    {
+      "path": "/warranty/",
+      "title": "Warranty",
+      "type": "page"
+    },
+    {
+      "path": "/ways-to-earn/",
+      "title": "Ways To Earn",
+      "type": "page"
+    },
+    {
+      "path": "/wpms-html-sitemap/",
+      "title": "WPMS HTML Sitemap",
+      "type": "page"
+    },
+    {
+      "path": "/project/order-2648-rv-hybrid-installation/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/order-4545-rv-roof-diy-install/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/order-5113-commercial-roof-professional-seamless-overlay/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/order-5344-residential-roof-diy-installation/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-2379-diy-rv-roof-upgrade-that-delivered-big-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-2472-confidence-sealed-in/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-2486-diy-rv-roof-success-with-a-seamless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3130-a-first-time-installers-seamless-success/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3199-a-smooth-finish-after-the-prep/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3236-built-to-outlast-the-build/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3257-a-great-product-with-even-better-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3261-slide-sealed-roof-reinforced/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3293-clean-lines-and-confident-coverage/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3329-a-seamless-upgrade/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3339-a-steady-prep-for-seamless-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3356-easy-instructions-impressive-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3371-diy-rv-gulfstream-roof-revamp-with-pro-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3373-one-line-review-full-scale-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3380-diy-rv-roof-refresh-with-a-seamless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3382-diy-rv-roof-protected-with-seamless-confidence/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3384-a-job-well-done/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3393-top-quality-materials-that-saved-the-roof/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3395-rain-or-shine-we-got-it-done/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3398-pro-level-diy-rv-roof-installation-backed-by-smart-prep/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3399-seamless-rv-roof-success-with-top-notch-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3410-a-confident-diy-roof-reseal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3414-seamless-diy-rv-roof-with-expert-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3438-well-prepped-well-sealed/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3452-a-roof-refresh-after-25-years-of-care/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3511-support-that-matches-the-product/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3524-residential-roof-transformation-with-diy-precision/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3532-hot-conditions-cool-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3542-easy-application-strong-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3557-diy-rv-roof-that-shines-despite-the-upload-glitch/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3572-2003-tiffin-rv-roof-reinforced-for-the-road-ahead/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3581-fast-track-rv-roof-revival-in-22-hours/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3618-rv-roof-full-roof-upgrade/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3625-rv-roof-full-reseal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3648-camper-roof-reinvented-by-a-first-time-diyer/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3650-shop-tested-rv-roofs-with-seamless-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3671-rv-roof-revamp-made-easy-with-crazy-seal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3682-worth-the-effort-ready-for-the-next/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3687-diy-confidence-professional-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3696-diy-rv-roof-glow-up-that-delivered-big-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3702-a-tough-job-a-satisfying-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3703-a-smooth-coating-and-a-smarter-approach/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3704-rv-inspectors-seal-of-approval-on-a-diy-roof-install/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3725-rv-roof-reseal-with-a-factory-finish-feel-2/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3752-dew-proof-protection-for-an-rv-roof/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3757-happy-with-the-results-sealed-for-the-road/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3777-radius-damage-repaired-and-sealed-with-confidence/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3786-diy-roof-revival-with-the-right-upgrade/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3793-from-grimy-to-gleaming-deans-rv-roof-renewal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3796-better-than-expected/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3811-a-4-star-trailer-with-a-5-star-roof/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3841-diy-success-with-a-seamless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3859-worn-rv-roof-to-like-new-diy-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3867-a-clean-finish-that-speaks-for-itself/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3878-from-video-guide-to-sealed-rv-success/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3890-seamless-results-made-simple/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3909-great-results-great-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3944-easy-application-impressive-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-3966-straightforward-success/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4017-diy-rv-roof-restoration-completed-at-just-the-right-time/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4026-a-smooth-process-with-solid-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4048-climbing-ladders-sealing-roofs/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4054-father-son-diy-roof-upgrade/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4063-weathered-rv-roof-reimagined-with-crazy-seal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4081-reinvented-rv-roof-with-full-deck-replacement/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4086-professional-rv-roof-install-backed-by-exceptional-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4087-seamless-rv-roof-transformation-with-a-pro-touch/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4100-clear-process-clean-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4109-boat-restoration-with-a-seamless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4110-a-clean-start-and-a-flawless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4112-great-product-even-better-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4127-a-lesson-in-prep-a-roof-that-performs/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4136-simple-steps-strong-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4143-rv-roof-confidence-installed-by-the-pros/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4145-reinforced-rv-roof-rebuild-that-left-no-gaps/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4155-a-roof-that-looks-as-good-as-it-performs/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4177-restored-and-ready-for-the-road/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4187-a-quick-and-easy-roof-upgrade/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4189-from-hidden-water-damage-to-seamless-rv-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4196-smooth-application-solid-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4229-seamless-rv-roof-transformation-that-speaks-for-itself/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4231-stock-trailer-transformation-with-reflective-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4273-roof-and-slideout-sealed-for-the-long-haul/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4308-a-perfectionists-project-with-lasting-peace-of-mind/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4312-complete-coverage-bugs-and-all/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4351-adhesive-cleanup-turned-seamless-rv-roof-success/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4363-uv-reflective-roof-upgrade-for-animal-comfort/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4385-finished-strong-rain-or-shine/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4402-trailer-roof-restoration-that-left-no-leak-behind/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4406-easier-than-expected/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4433-a-seal-that-works/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4438-from-worn-flat-roof-to-seamless-commercial-strength/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4447-diy-rv-roof-that-exceeded-expectations-2/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4447-diy-rv-roof-that-exceeded-expectations/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4464-smooth-process-strong-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4471-seamless-rv-roof-satisfaction-start-to-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4479-big-rv-bigger-results-a-seamless-36-foot-transformation/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4497-confidence-sealed-in-again/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4502-a-smooth-experience-with-a-seamless-result/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4509-a-smooth-process-backed-by-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4547-new-life-for-an-aging-rv-roof-diy-style/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4563-confident-waterproofing-for-a-22-year-old-travel-trailer/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4568-residential-roof-done-right-with-contractor-precision/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4569-seamless-small-repair-that-delivered-big-peace-of-mind/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4571-a-seamless-upgrade-with-a-professional-touch/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4604-from-prep-to-perfection-a-solo-roof-revival/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4625-seamless-alternative-to-tpo-roof-replacement/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4658-a-simple-application-with-serious-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4690-diy-rv-roof-success-backed-by-top-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4696-seamless-rv-roof-success-with-expert-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4710-a-fiberglass-roof-sealed-to-perfection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4739-smooth-application-smoother-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4742-sealed-for-the-long-haul/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4761-diy-5th-wheel-roof-that-beat-the-heat/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4766-a-stable-solution-for-a-failed-roof-seal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4778-no-issues-no-worries/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4780-seamless-shield-professionally-applied/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4814-four-installs-and-counting/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4825-from-tape-failure-to-seamless-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4831-a-true-weekend-warrior-roof-transformation/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4833-rv-roof-upgrade-with-cloth-reinforcement-and-seamless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4844-built-with-support-sealed-with-confidence/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4853-cook-trailer-roof-upgrade-ready-for-the-road/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4877-a-full-roof-overhaul-done-right/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4890-seamless-rv-roof-protection-that-speaks-for-itself/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4909-simple-feedback-strong-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4920-direct-to-wood-rv-roof-rebuild-for-long-term-strength/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4935-seamless-rv-roof-sealed-to-last/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4949-clean-coverage-confident-expectations/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4952-seamless-repair-after-rear-end-roof-damage/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4955-proactive-rv-roof-protection-with-crazy-seal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-4988-a-seamless-fix-for-failed-caulk/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5006-easy-to-use-built-to-last/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5029-confident-diy-with-seamless-once-and-done-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5055-diy-rv-roof-upgrade-built-to-beat-the-elements/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5067-a-uniform-seal-across-the-roof/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5069-diy-confidence-on-a-45-foot-challenge/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5094-seamless-overhaul-start-to-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5095-worry-free-roof-done-right/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5145-great-product-even-better-experience/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5148-seamless-rv-roof-restoration-that-saved-the-trailer/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5170-worry-free-roof-diy-savings/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5175-clean-finish-confident-coverage/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5183-seamless-protection-professionally-applied/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5200-a-durable-diy-finish-worth-the-prep/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5207-florida-lanai-sealed-and-reinforced-for-all-weather-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5210-slippery-coats-and-solid-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5218-simplicity-that-seals-the-deal/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5220-a-roof-thats-ready-for-the-road/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5237-a-rebuilt-roof-sealed-for-the-long-haul/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5239-repairing-and-recoating-with-confidence/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5241-rv-roof-seamless-restoration/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5272-guided-by-youtube-backed-by-support/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5282-hands-on-roof-upgrade-that-sparked-word-of-mouth/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5303-easy-two-coat-diy-roof-that-delivers-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5323-cooler-roof-cleaner-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5326-roof-upgrade-that-shouldve-happened-sooner/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5330-easy-install-great-results/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5331-simple-and-satisfying/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5339-planning-ahead-sealing-for-the-future/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5372-reinforced-edges-seamless-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5413-seamless-results-backed-by-video-guidance/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5427-more-than-enough-to-get-the-job-done/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5432-a-fresh-finish-with-lasting-protection/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5453-restored-reinforced-and-ready-to-roll/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5456-slide-outs-sealed-tight/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5483-professional-grade-warranty-backed/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5491-pro-installed-rv-roof-that-gets-better-every-time/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5502-seamless-rv-roof-upgrade-with-professional-precision/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5504-a-smooth-finish-that-says-it-all/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5507-confidence-sealed-in-with-one-coat/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5542-pro-level-rv-roof-makeover-that-looks-factory-fresh/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5550-a-great-experience-from-start-to-finish/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5552-a-low-maintenance-upgrade-over-an-aging-roof/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-5554-full-reseal-for-a-30ft-motorhome-done-right/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-diy-rv-roof-that-looks-like-a-pro-job/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-spotlight-from-instruction-to-installation-garys-diy-rv-roof-transformation/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project/project-spotlight-rv-roof-installation-trusted-by-a-professional-installer/",
+      "title": "",
+      "type": "project"
+    },
+    {
+      "path": "/project-category/commercial/",
+      "title": "",
+      "type": "project-category"
+    },
+    {
+      "path": "/project-category/direct-to-deck/",
+      "title": "",
+      "type": "project-category"
+    },
+    {
+      "path": "/project-category/residential/",
+      "title": "",
+      "type": "project-category"
+    },
+    {
+      "path": "/project-category/rv/",
+      "title": "",
+      "type": "project-category"
+    },
+    {
+      "path": "/project-category/transportation/",
+      "title": "",
+      "type": "project-category"
+    }
+  ]
+}

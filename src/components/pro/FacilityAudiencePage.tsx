@@ -107,8 +107,8 @@ const QUICK_LINKS = [
     heading: 'Save Money',
     subheading: 'INSTALL YOURSELF & SAVE BIG',
     desc: 'Much of the cost of a typical roofing installation comes with labor. Do it yourself and save big with raw materials factory direct from Crazy Seal!',
-    linkText: 'Pricing',
-    href: '/pricing',
+    linkText: 'Build My Kit',
+    href: '/kit-builder',
   },
   {
     icon: Timer,

@@ -12,6 +12,7 @@ const RV_LENGTHS = Array.from({ length: 38 }, (_, i) => `${i + 8}`)
 export function WarrantyRegistrationForm() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [certificateUrl, setCertificateUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [projectType, setProjectType] = useState('')
@@ -89,6 +90,9 @@ export function WarrantyRegistrationForm() {
         throw new Error(data?.error || 'Failed to submit. Please try again.')
       }
 
+      const data = await res.json().catch(() => null)
+      if (data?.certificate_url) setCertificateUrl(data.certificate_url)
+
       await trackEvent('warranty_registered', { order_number: body.order_number })
       setSubmitted(true)
     } catch (err) {
@@ -109,6 +113,16 @@ export function WarrantyRegistrationForm() {
           Your warranty registration has been received. Your application is
           covered for 50 years! A confirmation email is on its way.
         </p>
+        {certificateUrl && (
+          <a
+            href={certificateUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[#003365] text-white font-semibold rounded-lg hover:bg-[#00284f] transition-colors"
+          >
+            View Your Warranty Certificate
+          </a>
+        )}
       </div>
     )
   }

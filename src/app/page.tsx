@@ -140,7 +140,7 @@ export default function HomePage() {
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     <QuoteButton size="lg" sourcePage="home-hero" />
-                    <LinkButton href="/pricing" variant="white" size="lg">
+                    <LinkButton href="/kit-builder" variant="white" size="lg">
                       See Kit Pricing
                     </LinkButton>
                     <LinkButton href="/store" variant="outline-white" size="lg">
@@ -195,7 +195,7 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <QuoteButton size="md" sourcePage="home-hero" />
-                  <LinkButton href="/pricing" variant="white" size="md">
+                  <LinkButton href="/kit-builder" variant="white" size="md">
                     See Kit Pricing
                   </LinkButton>
                 </div>
@@ -280,7 +280,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <QuoteButton size="md" sourcePage="home-path-picker" />
-                <LinkButton href="/pricing" variant="outline-white" size="md">
+                <LinkButton href="/kit-builder" variant="outline-white" size="md">
                   See Kit Pricing
                 </LinkButton>
               </div>
@@ -411,7 +411,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
-            <LinkButton href="/pricing" variant="white" size="md">
+            <LinkButton href="/kit-builder" variant="white" size="md">
               See Kit Pricing Online
             </LinkButton>
             <a

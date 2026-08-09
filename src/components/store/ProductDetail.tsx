@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, type ReactNode } from 'react'
 import { ProductImageGallery } from '@/components/store/ProductImageGallery'
 import { ProductPurchasePanel } from '@/components/store/ProductPurchasePanel'
+import { Stars } from '@/components/store/Stars'
 import type { StoreProduct } from '@/lib/store/products'
 
 /**
@@ -57,9 +58,21 @@ export function ProductDetail({
         featuredImage={selectedVariant.image}
       />
       <div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-4">
+        {product.badge && (
+          <span className="inline-block rounded-full bg-[#5BA411] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white mb-3">
+            {product.badge}
+          </span>
+        )}
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-2">
           {product.displayTitle}
         </h1>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
+          <Stars />
+          <p className="text-sm text-gray-600">
+            <span className="font-semibold text-gray-900">Thousands</span> of
+            successful installations
+          </p>
+        </div>
         <ProductPurchasePanel
           product={product}
           selected={selected}

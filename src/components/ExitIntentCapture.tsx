@@ -10,7 +10,7 @@ import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId } from '@/lib/tracking/meta-pixel'
 
 /** Pages where abandoning visitors are worth a capture attempt. */
-const TARGET_PATHS = ['/pricing', '/store']
+const TARGET_PATHS = ['/kit-builder', '/store']
 
 const SESSION_KEY = 'cs_exit_capture_shown'
 const IDLE_MS = 45_000

@@ -1,37 +1,38 @@
 import type { Metadata } from 'next'
 import { ArrowRight, Phone } from 'lucide-react'
-import { Container, Grid, SectionHeading, LinkButton } from '@/lib/design-system'
+import { Container, Grid, SectionHeading } from '@/lib/design-system'
 import { CtaSection } from '@/components/CtaSection'
-import { InstantQuoteCalculator } from '@/components/InstantQuoteCalculator'
+import { KitBuilder } from '@/components/KitBuilder'
+import { getKitBuilderCatalog } from '@/lib/store/kit-builder-data'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
 export const metadata: Metadata = {
-  title: 'Crazy Seal Pricing',
+  title: 'Crazy Seal Kit Builder',
   description:
-    'Get an instant quote for your Crazy Seal roofing kit. On average, the Crazy Seal Roofing System ranges between $3.00-$5.00 per square foot of coverage depending on your application.',
+    'Build your custom Crazy Seal roofing kit in seconds. Answer a few questions about your roof and get a complete kit — priced with live pricing and ready to order, or reviewed free by a specialist.',
 }
 
 const EXAMPLE_PROJECTS = [
   {
     title: "24' Over Existing Membrane",
     kit: '100 - 200 SQ FT Kit',
-    pricing: '$745 single layer / $1,195 double layer',
+    pricing: '$1,195 double layer system',
   },
   {
     title: "37' Over Existing Membrane",
     kit: '200 - 300 SQ FT Kit',
-    pricing: '$970 single layer / $1,645 double layer',
+    pricing: '$1,645 double layer system',
   },
   {
     title: "45' Over Existing Membrane",
     kit: '300 - 400 SQ FT Kit',
-    pricing: '$1,220 single layer / $2,120 double layer',
+    pricing: '$2,120 double layer system',
   },
   {
     title: "10' x 28' Over Existing Metal",
     kit: '200 - 300 SQ FT Kit',
-    pricing: '$970 single layer / $1,645 double layer',
+    pricing: '$1,645 double layer system',
   },
   {
     title: "18' Direct To Deck",
@@ -105,27 +106,29 @@ const APPLICATIONS = [
   },
 ]
 
-export default function PricingPage() {
+export default async function KitBuilderPage() {
+  const catalog = await getKitBuilderCatalog()
+
   return (
     <>
-      {/* ─── HERO + CALCULATOR ─── */}
+      {/* ─── HERO + KIT BUILDER ─── */}
       <Container size="xl">
         <div className="relative section-bleed bg-primary overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
           <div className="relative z-10 px-5 py-8 sm:px-6 sm:py-10 md:px-6 md:py-14 lg:px-8">
             <div className="text-center mb-8">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3">
-                Pricing
+                Kit Builder
               </h1>
               <p className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
                 On average, the Crazy Seal Roofing System ranges between
                 $3.00-$5.00 per square foot of coverage. Answer a few questions
-                for your kit recommendation, tell us where to send the quote to
-                unlock exact dollars — or talk to a specialist any time.
+                and we&apos;ll build your custom kit — ready to order, with a
+                specialist on standby to double-check the fit for free.
               </p>
             </div>
             <div className="max-w-3xl mx-auto">
-              <InstantQuoteCalculator />
+              <KitBuilder catalog={catalog} />
             </div>
           </div>
         </div>
@@ -171,7 +174,7 @@ export default function PricingPage() {
                 <h3 className="font-bold text-white mb-2">{kit.title}</h3>
                 <p className="text-sm text-white/60 leading-relaxed mb-3">{kit.desc}</p>
                 <span className="inline-flex items-center gap-1 text-sm font-semibold text-highlight group-hover:gap-2 transition-all">
-                  {kit.href.startsWith('http') ? 'Shop Now' : 'Get in Touch'}
+                  {kit.href.startsWith('/store') ? 'Shop Now' : 'Get in Touch'}
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </a>

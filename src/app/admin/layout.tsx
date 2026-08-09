@@ -16,6 +16,9 @@ import {
   ImageIcon,
   FolderOpen,
   Hammer,
+  Inbox,
+  Map,
+  Shuffle,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -38,6 +41,7 @@ const adminNavSections: NavSection[] = [
     items: [
       { name: 'Leads', href: '/admin/leads', icon: Users },
       { name: 'Warranty', href: '/admin/warranty', icon: ShieldCheck },
+      { name: 'Form Entries', href: '/admin/entries', icon: Inbox },
       { name: 'Projects', href: '/admin/projects', icon: Hammer },
       { name: 'FAQ Manager', href: '/admin/faq', icon: HelpCircle },
       { name: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
@@ -47,6 +51,13 @@ const adminNavSections: NavSection[] = [
     label: 'Media',
     items: [
       { name: 'Site Assets', href: '/admin/assets', icon: FolderOpen },
+    ],
+  },
+  {
+    label: 'Site',
+    items: [
+      { name: 'Sitemap', href: '/admin/sitemap', icon: Map },
+      { name: 'Redirects', href: '/admin/redirects', icon: Shuffle },
     ],
   },
 ]

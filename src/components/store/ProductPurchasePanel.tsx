@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Minus, Plus, ShoppingCart, Zap, MessageSquare } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Zap, MessageSquare, ChevronRight } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { formatPrice, type StoreProduct } from '@/lib/store/products'
@@ -160,10 +160,21 @@ export function ProductPurchasePanel({
             initialMessage: `I'm looking at the ${product.displayTitle} (${selectedVariant.title}) and would like help making sure it's the right kit for my roof.`,
           })
         }
-        className="w-full flex items-center justify-center gap-2 rounded-full border-2 border-[#003365]/20 px-6 py-3 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors cursor-pointer"
+        className="group w-full flex items-center gap-4 rounded-2xl border-2 border-[#003365]/15 bg-blue-50/60 px-4 py-3.5 sm:px-5 text-left shadow-sm hover:border-[#003365] hover:shadow-md hover:bg-blue-50 active:scale-[0.99] transition-all cursor-pointer"
       >
-        <MessageSquare className="w-4 h-4" />
-        Not sure which kit? A specialist will build it with you — free
+        <span className="flex-shrink-0 rounded-full bg-[#003365] p-3 group-hover:scale-105 transition-transform">
+          <MessageSquare className="w-5 h-5 text-white" />
+        </span>
+        <span className="flex-1 min-w-0">
+          <span className="block text-sm font-bold text-[#003365]">
+            Not sure which kit? Ask a specialist — free
+          </span>
+          <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">
+            Opens a quick form. We&apos;ll size the kit to your exact roof and
+            get right back to you.
+          </span>
+        </span>
+        <ChevronRight className="w-5 h-5 flex-shrink-0 text-[#003365]/40 group-hover:text-[#003365] group-hover:translate-x-0.5 transition-all" />
       </button>
 
       {/* Per-variant contents (from Shopify Variant Description app) */}

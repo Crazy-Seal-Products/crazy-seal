@@ -45,3 +45,6 @@ Wordpress Files/
 *.tsbuildinfo
 next-env.d.ts
 supabase/.temp/
+
+# Legacy Gravity Forms dumps (PII - never commit)
+/scripts/gf-dump/
