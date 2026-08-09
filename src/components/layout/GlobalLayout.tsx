@@ -11,7 +11,6 @@ import { QuoteModalProvider } from '@/contexts/QuoteModalContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { CartDrawer } from '@/components/store/CartDrawer'
 import { MobileStickyCta } from '@/components/layout/MobileStickyCta'
-import { ExitIntentCapture } from '@/components/ExitIntentCapture'
 
 interface GlobalLayoutProps {
   children: React.ReactNode
@@ -40,7 +39,6 @@ export function GlobalLayout({ children }: GlobalLayoutProps) {
           {layout.header && <MobileStickyCta />}
         </div>
         <CartDrawer />
-        <ExitIntentCapture />
       </CartProvider>
     </QuoteModalProvider>
   )

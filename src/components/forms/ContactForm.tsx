@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
+import { Send, Loader2 } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
@@ -11,7 +11,7 @@ import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadFi
 
 interface ContactFormProps {
   sourcePage?: string
-  /** Prefills the message field with page/product context. Also expands the details section. */
+  /** Prefills the message field with page/product context. */
   initialMessage?: string
   /** Preselects the project type, e.g. 'RV Roof' on RV pages. */
   defaultProjectType?: string
@@ -29,16 +29,6 @@ const PROJECT_TYPES = [
   'Other',
 ]
 
-const HOW_HEARD_OPTIONS = [
-  'Google Search',
-  'Facebook / Instagram',
-  'YouTube',
-  'Referral / Friend',
-  'Dealer / Installer',
-  'RV Show / Event',
-  'Other',
-]
-
 export function ContactForm({
   sourcePage = 'contact',
   initialMessage,
@@ -49,7 +39,6 @@ export function ContactForm({
   const [error, setError] = useState<string | null>(null)
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [projectType, setProjectType] = useState(defaultProjectType)
-  const [showDetails, setShowDetails] = useState(Boolean(initialMessage))
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
   const { visitorId, sessionId, trackEvent, identify } = useTracking()
@@ -88,8 +77,6 @@ export function ContactForm({
       project_type: projectType,
       rv_length: formData.get('rv_length') as string,
       square_footage: formData.get('square_footage') as string,
-      zip_code: formData.get('zip_code') as string,
-      how_heard: formData.get('how_heard') as string,
       texting_consent: formData.get('texting_consent') === 'on',
       lead_type: 'quote',
       photo_url: photo_urls[0] || undefined,
@@ -254,72 +241,26 @@ export function ContactForm({
           </span>
         </label>
 
-        {/* Optional details (progressive disclosure) */}
+        {/* Photo Upload */}
+        <PhotoUploadField
+          label="If you would like to share photos, you can upload them here."
+          files={photoFiles}
+          onChange={setPhotoFiles}
+        />
+
+        {/* Message */}
         <div>
-          <button
-            type="button"
-            onClick={() => setShowDetails((v) => !v)}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#003365] hover:text-accent transition-colors cursor-pointer"
-          >
-            {showDetails ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-            {showDetails ? 'Hide optional details' : 'Add optional details (ZIP, photos, notes)'}
-          </button>
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            Please add a quick note about your application so we can best assist you.
+          </label>
+          <Textarea
+            name="message"
+            defaultValue={initialMessage}
+            placeholder="Tell us about your roof, any questions you have, or just say hi!"
+            rows={4}
+            className="text-base px-5 py-4"
+          />
         </div>
-
-        {showDetails && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  ZIP Code
-                </label>
-                <Input
-                  name="zip_code"
-                  size="lg"
-                  inputMode="numeric"
-                  autoComplete="postal-code"
-                  placeholder="12345"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  How did you hear about us?
-                </label>
-                <Select
-                  name="how_heard"
-                  size="lg"
-                  placeholder="Please Select"
-                  options={HOW_HEARD_OPTIONS.map((o) => ({ value: o, label: o }))}
-                />
-              </div>
-            </div>
-
-            {/* Photo Upload */}
-            <PhotoUploadField
-              label="If you would like to share photos, you can upload them here."
-              files={photoFiles}
-              onChange={setPhotoFiles}
-            />
-
-            {/* Message */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Please add a quick note about your application so we can best assist you.
-              </label>
-              <Textarea
-                name="message"
-                defaultValue={initialMessage}
-                placeholder="Tell us about your roof, any questions you have, or just say hi!"
-                rows={4}
-                className="text-base px-5 py-4"
-              />
-            </div>
-          </div>
-        )}
 
         <div className="flex justify-center">
           <Turnstile
