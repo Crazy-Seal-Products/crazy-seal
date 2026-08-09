@@ -63,8 +63,9 @@ const adminNavSections: NavSection[] = [
 ]
 
 function isNavItemActive(item: NavItem, pathname: string): boolean {
-  if (item.href === '/admin') return pathname === '/admin'
-  return pathname.startsWith(item.href)
+  const normalized = pathname.replace(/\/+$/, '') || '/'
+  if (item.href === '/admin') return normalized === '/admin'
+  return normalized.startsWith(item.href)
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -75,7 +76,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [authChecked, setAuthChecked] = useState(false)
   const [staffName, setStaffName] = useState<string | null>(null)
 
-  const isLoginPage = pathname === '/admin/login'
+  // Site uses trailingSlash, so the pathname arrives as /admin/login/
+  const isLoginPage = pathname.replace(/\/+$/, '') === '/admin/login'
 
   useEffect(() => {
     if (isLoginPage) {
