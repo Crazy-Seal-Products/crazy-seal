@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback } from 'react'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2, CheckCircle } from 'lucide-react'
+import { Send, Loader2, CheckCircle, Star } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
@@ -17,6 +17,8 @@ export function WarrantyRegistrationForm() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [projectType, setProjectType] = useState('')
   const [installType, setInstallType] = useState('')
+  const [rating, setRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
   const { visitorId, sessionId, trackEvent } = useTracking()
@@ -40,6 +42,12 @@ export function WarrantyRegistrationForm() {
 
     if (photoFiles.length < 2) {
       setError('Please upload before AND after photos of your application.')
+      setSubmitting(false)
+      return
+    }
+
+    if (!rating) {
+      setError('Please rate your experience with Crazy Seal.')
       setSubmitting(false)
       return
     }
@@ -68,6 +76,7 @@ export function WarrantyRegistrationForm() {
       installer_phone: formData.get('installer_phone') as string,
       installer_email: formData.get('installer_email') as string,
       photo_urls,
+      rating,
       experience_notes: formData.get('experience_notes') as string,
       contractor_notes: formData.get('contractor_notes') as string,
       warranty_consent: formData.get('warranty_consent') === 'on',
@@ -270,6 +279,44 @@ export function WarrantyRegistrationForm() {
           files={photoFiles}
           onChange={setPhotoFiles}
         />
+
+        {/* Experience rating */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            How would you rate your experience with Crazy Seal? <span className="text-red-500">*</span>
+          </label>
+          <div
+            className="flex items-center gap-1"
+            role="radiogroup"
+            aria-label="Rate your experience from 1 to 5 stars"
+            onMouseLeave={() => setHoverRating(0)}
+          >
+            {[1, 2, 3, 4, 5].map((star) => {
+              const active = star <= (hoverRating || rating)
+              return (
+                <button
+                  key={star}
+                  type="button"
+                  role="radio"
+                  aria-checked={rating === star}
+                  aria-label={`${star} star${star > 1 ? 's' : ''}`}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  className="p-1 cursor-pointer transition-transform hover:scale-110"
+                >
+                  <Star
+                    className={`w-8 h-8 transition-colors ${
+                      active ? 'text-amber-400 fill-amber-400' : 'text-gray-300'
+                    }`}
+                  />
+                </button>
+              )
+            })}
+            {rating > 0 && (
+              <span className="ml-2 text-sm font-medium text-gray-600">{rating} / 5</span>
+            )}
+          </div>
+        </div>
 
         {/* Notes */}
         <div>

@@ -5,7 +5,7 @@ import { Container, Heading, Text, Card, Stack } from '@/lib/design-system'
 import { createClient } from '@/lib/supabase/client'
 import {
   Search, ChevronDown, ChevronUp, Phone, Mail,
-  RefreshCw, X, ShieldCheck, ArrowLeftRight, AlertTriangle,
+  RefreshCw, X, ShieldCheck, ArrowLeftRight, AlertTriangle, Star,
 } from 'lucide-react'
 
 type Tab = 'registrations' | 'transfers' | 'claims'
@@ -22,6 +22,7 @@ interface Registration {
   installer_phone: string | null
   installer_email: string | null
   photo_urls: string[] | null
+  rating: number | null
   experience_notes: string | null
   contractor_notes: string | null
   photo_display_consent: boolean | null
@@ -300,6 +301,24 @@ export default function AdminWarrantyPage() {
                                   <strong>Installed:</strong>{' '}
                                   {reg.install_type === 'diy' ? 'Self installed (DIY)' : 'Dealer / contractor'}
                                   {reg.installer_name && ` — ${reg.installer_name} ${reg.installer_phone || ''} ${reg.installer_email || ''}`}
+                                </p>
+                              )}
+                              {reg.rating != null && (
+                                <p className="flex items-center gap-1.5 text-gray-700">
+                                  <strong>Rating:</strong>
+                                  <span className="inline-flex items-center gap-0.5">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <Star
+                                        key={star}
+                                        className={`w-4 h-4 ${
+                                          star <= reg.rating!
+                                            ? 'text-amber-400 fill-amber-400'
+                                            : 'text-gray-300'
+                                        }`}
+                                      />
+                                    ))}
+                                  </span>
+                                  <span className="text-xs text-gray-500">{reg.rating} / 5</span>
                                 </p>
                               )}
                               {reg.experience_notes && (
