@@ -22,6 +22,8 @@ export interface StoreProduct extends ShopifyProduct {
   companions?: string[]
   /** Transcript-sourced detail bullets for the "Why This Kit Works" band */
   whyItWorks?: Array<{ lead: string; text: string }>
+  /** Hand-picked project slugs for the "Real Projects" section */
+  featuredProjects?: string[]
 }
 
 function truncate(text: string, max = 140): string {
@@ -44,6 +46,7 @@ function toStoreProduct(p: ShopifyProduct): StoreProduct {
     badge: curation?.badge,
     companions: curation?.companions,
     whyItWorks: curation?.whyItWorks,
+    featuredProjects: curation?.featuredProjects,
   }
 }
 

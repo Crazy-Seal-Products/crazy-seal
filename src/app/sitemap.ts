@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mainPages = [
     { url: '/', changeFrequency: 'weekly' as const, priority: 1.0 },
     { url: '/crazy-seal/', changeFrequency: 'monthly' as const, priority: 0.9 },
-    { url: '/kit-builder/', changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: '/kit-builder/', changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: '/advantages/', changeFrequency: 'monthly' as const, priority: 0.8 },
     { url: '/products/', changeFrequency: 'monthly' as const, priority: 0.8 },
     { url: '/applications/', changeFrequency: 'monthly' as const, priority: 0.8 },
@@ -53,7 +53,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: '/products/crazy-patch/', changeFrequency: 'monthly' as const, priority: 0.6 },
     { url: '/products/crazy-clean/', changeFrequency: 'monthly' as const, priority: 0.6 },
     // Application landing pages
-    { url: '/roofing-applications/', changeFrequency: 'monthly' as const, priority: 0.6 },
     { url: '/barns/', changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: '/boat-houses/', changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: '/box-trucks/', changeFrequency: 'monthly' as const, priority: 0.5 },
@@ -106,12 +105,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const storeProducts = await getStoreProducts().catch(() => [])
 
   return [
-    {
-      url: `${BASE_URL}/store/`,
-      lastModified: now,
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    },
     ...storeProducts.map((p) => ({
       url: `${BASE_URL}/store/${p.handle}/`,
       lastModified: now,

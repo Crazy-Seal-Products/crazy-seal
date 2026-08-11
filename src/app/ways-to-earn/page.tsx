@@ -239,7 +239,7 @@ export default function WaysToEarnPage() {
           </Grid>
           <div className="flex justify-center pt-6 md:pt-10">
             <LinkButton
-              href="/store"
+              href="/kit-builder"
               variant="accent"
               size="lg"
              

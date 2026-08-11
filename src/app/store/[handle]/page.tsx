@@ -29,7 +29,7 @@ import {
   COMPANION_REASONS,
   defaultCompanionsFor,
 } from '@/lib/store/social-proof'
-import { getPublishedProjects, categoryLabel } from '@/lib/projects'
+import { getPublishedProjects, categoryLabel, type Project } from '@/lib/projects'
 import { ProductDetail } from '@/components/store/ProductDetail'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import { Stars } from '@/components/store/Stars'
@@ -112,10 +112,21 @@ export default async function ProductPage({ params }: PageProps) {
     }))
 
   // ─── Real customer projects, matched to this product's audience ───
+  // Hand-picked slugs win; otherwise pick the newest projects in the matching
+  // category, preferring ones with a photo and a real customer quote.
   const projectCategory = projectCategoryFor(product)
-  const projects = projectCategory
-    ? (await getPublishedProjects(projectCategory)).slice(0, 3)
-    : []
+  let projects: Project[] = []
+  if (product.featuredProjects?.length) {
+    const all = await getPublishedProjects()
+    projects = product.featuredProjects
+      .map((slug) => all.find((p) => p.slug === slug))
+      .filter((p): p is Project => Boolean(p))
+      .slice(0, 3)
+  } else if (projectCategory) {
+    const pool = await getPublishedProjects(projectCategory)
+    const isStrong = (p: Project) => Boolean(p.cover_photo && p.quote && p.quote.trim().length > 20)
+    projects = [...pool.filter(isStrong), ...pool.filter((p) => !isStrong(p))].slice(0, 3)
+  }
 
   const whyPoints = whyItWorksFor(product)
   // The primary product video is featured in the "Why This Kit Works" band;
@@ -131,13 +142,13 @@ export default async function ProductPage({ params }: PageProps) {
     <Container size="xl" className="py-8 sm:py-10">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6 flex-wrap">
-        <Link href="/store" className="hover:text-[#003365] font-medium">
+        <Link href="/kit-builder" className="hover:text-[#003365] font-medium">
           Store
         </Link>
         {category && (
           <>
             <ChevronRight className="w-4 h-4" />
-            <Link href={`/store#${category.id}`} className="hover:text-[#003365] font-medium">
+            <Link href={`/kit-builder#${category.id}`} className="hover:text-[#003365] font-medium">
               {category.label}
             </Link>
           </>

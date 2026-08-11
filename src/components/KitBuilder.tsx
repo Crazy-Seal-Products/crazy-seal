@@ -4,7 +4,9 @@ import { useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   CheckCircle2,
+  ChevronRight,
   Hammer,
+  ImagePlus,
   Loader2,
   MessageSquare,
   PackageCheck,
@@ -12,9 +14,11 @@ import {
   ShieldCheck,
   ShoppingCart,
   Truck,
+  X,
 } from 'lucide-react'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Button, Input, LinkButton, Select } from '@/lib/design-system'
+import { Button, Input, LinkButton, Select, Textarea } from '@/lib/design-system'
+import { uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { Stars } from '@/components/store/Stars'
 import { useCart } from '@/contexts/CartContext'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
@@ -478,17 +482,28 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
       )}
 
       {!kit && !custom && (
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-400 mb-3">
-            Answer the questions above and we&apos;ll build your kit with live pricing.
+        <div className="mt-6">
+          <p className="text-sm text-gray-400 text-center mb-4">
+            Answer the questions above and your kit appears here with live pricing.
           </p>
           <button
             type="button"
             onClick={() => openQuoteModal({ sourcePage: 'kit-builder' })}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent-dark transition-colors cursor-pointer"
+            className="group w-full flex items-center gap-4 rounded-2xl border-2 border-[#003365]/15 bg-blue-50/60 px-4 py-3.5 sm:px-5 text-left shadow-sm hover:border-[#003365] hover:shadow-md hover:bg-blue-50 active:scale-[0.99] transition-all cursor-pointer"
           >
-            <MessageSquare className="w-4 h-4" />
-            Not sure where to start? A specialist will build it with you — free
+            <span className="flex-shrink-0 rounded-full bg-[#003365] p-3 group-hover:scale-105 transition-transform">
+              <MessageSquare className="w-5 h-5 text-white" />
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-sm font-bold text-[#003365]">
+                Not sure where to start? Ask a specialist — free
+              </span>
+              <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">
+                Opens a quick form. We&apos;ll build the kit for your exact roof
+                and get right back to you.
+              </span>
+            </span>
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-[#003365]/40 group-hover:text-[#003365] group-hover:translate-x-0.5 transition-all" />
           </button>
         </div>
       )}
@@ -506,9 +521,17 @@ function KitLeadForm({ summary }: { summary: () => string }) {
   )
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+  const [dragging, setDragging] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
+  const photoInputRef = useRef<HTMLInputElement>(null)
   const { visitorId, sessionId, trackEvent } = useTracking()
+
+  function addPhotos(incoming: FileList) {
+    const images = Array.from(incoming).filter((f) => f.type.startsWith('image/'))
+    if (images.length) setPhotoFiles((prev) => [...prev, ...images])
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -524,6 +547,9 @@ function KitLeadForm({ summary }: { summary: () => string }) {
     const formData = new FormData(e.currentTarget)
     const eventId = generateEventId()
 
+    const note = (formData.get('comments') as string || '').trim()
+    const photo_urls = await uploadPhotos(photoFiles, 'lead-photos')
+
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
@@ -533,7 +559,9 @@ function KitLeadForm({ summary }: { summary: () => string }) {
           email: formData.get('email') as string,
           phone: formData.get('phone') as string,
           lead_type: 'quote',
-          message: summary(),
+          message: note ? `${summary()}\n\nCustomer note: ${note}` : summary(),
+          photo_url: photo_urls[0] || undefined,
+          photo_urls: photo_urls.length > 0 ? photo_urls : undefined,
           source_page: 'kit-builder',
           visitor_id: visitorId,
           session_id: sessionId,
@@ -589,25 +617,88 @@ function KitLeadForm({ summary }: { summary: () => string }) {
         <Input name="email" size="md" type="email" placeholder="Email" required className="bg-white" />
         <Input name="phone" size="md" type="tel" placeholder="Phone" required className="bg-white" />
       </div>
-      <div className="flex flex-wrap items-center gap-4">
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onSuccess={setTurnstileToken}
-          onExpire={() => setTurnstileToken(null)}
-          options={{ theme: 'dark', size: 'normal' }}
+      <Textarea
+        name="comments"
+        rows={2}
+        placeholder="Anything we should know about your roof? (optional)"
+        className="bg-white mb-3 min-h-0 py-2.5"
+      />
+      <div className="mb-4">
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files) addPhotos(e.target.files)
+            if (photoInputRef.current) photoInputRef.current.value = ''
+          }}
         />
-        <Button type="submit" variant="accent" size="md" disabled={submitting || !turnstileToken}>
-          {submitting ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Sending...
-            </>
-          ) : (
-            'Talk to Us About My Kit'
-          )}
-        </Button>
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault()
+            setDragging(false)
+            if (e.dataTransfer.files) addPhotos(e.dataTransfer.files)
+          }}
+          onClick={() => photoInputRef.current?.click()}
+          className={`flex items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2.5 text-sm transition-colors cursor-pointer ${
+            dragging
+              ? 'border-white/80 bg-white/15 text-white'
+              : 'border-white/30 text-white/70 hover:border-white/60 hover:text-white'
+          }`}
+        >
+          <ImagePlus className="w-4 h-4 shrink-0" />
+          <span>
+            Drag &amp; drop roof photos or <span className="font-semibold underline underline-offset-2">browse</span> (optional)
+          </span>
+        </div>
+        {photoFiles.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            {photoFiles.map((file, i) => (
+              <div
+                key={i}
+                className="relative group w-11 h-11 rounded-lg overflow-hidden ring-1 ring-white/25"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`Roof photo ${i + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  aria-label={`Remove photo ${i + 1}`}
+                  onClick={() => setPhotoFiles((prev) => prev.filter((_, idx) => idx !== i))}
+                  className="absolute inset-0 flex items-center justify-center bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+      {/* Invisible unless Cloudflare requires an interactive challenge */}
+      <Turnstile
+        ref={turnstileRef}
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+        onSuccess={setTurnstileToken}
+        onExpire={() => setTurnstileToken(null)}
+        options={{ theme: 'dark', size: 'flexible', appearance: 'interaction-only' }}
+      />
+      <Button type="submit" variant="accent" size="md" disabled={submitting || !turnstileToken}>
+        {submitting ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Sending...
+          </>
+        ) : (
+          'Talk to Us About My Kit'
+        )}
+      </Button>
       {error && (
         <p className="mt-3 text-sm text-red-200 bg-red-500/20 px-4 py-2.5 rounded-lg">{error}</p>
       )}

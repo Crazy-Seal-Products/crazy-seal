@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { ArrowRight, Phone } from 'lucide-react'
 import {
   Container,
@@ -7,6 +8,7 @@ import {
   TestimonialCard,
   LinkButton,
 } from '@/lib/design-system'
+import { APPLICATIONS, FAMILIES, type ApplicationFamily } from '@/lib/applications/config'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -47,24 +49,7 @@ const MAIN_APPLICATIONS = [
   },
 ]
 
-const SPECIFIC_APPLICATIONS = [
-  { label: 'Pop Up Campers', href: '/rv-roofs' },
-  { label: 'Tractor Trailers', href: '/transportation' },
-  { label: 'Truck Campers', href: '/rv-roofs' },
-  { label: 'Self Storage', href: '/commercial-roofing' },
-  { label: 'Barns', href: '/residential' },
-  { label: 'Boat Houses', href: '/residential' },
-  { label: 'Industrial', href: '/commercial-roofing' },
-  { label: 'Metal Buildings', href: '/commercial-roofing' },
-  { label: 'Sheds', href: '/residential' },
-  { label: 'Porch Roofs', href: '/residential' },
-  { label: 'Outdoor Rooms', href: '/residential' },
-  { label: 'Shipping Containers', href: '/commercial-roofing' },
-  { label: 'Tiny Homes', href: '/residential' },
-  { label: 'Sunrooms', href: '/residential' },
-  { label: 'Box Trucks', href: '/transportation' },
-  { label: 'Other Applications', href: '/contact' },
-]
+const FAMILY_ORDER: ApplicationFamily[] = ['rv', 'residential', 'commercial', 'transportation']
 
 const TESTIMONIALS = [
   {
@@ -141,25 +126,64 @@ export default function ApplicationsPage() {
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
           <SectionHeading
-            eyebrow="Or"
-            heading="Choose a Specific Application Below to Get Started"
+            eyebrow="Get Specific"
+            heading="Or Choose Your Exact Application"
+            subheading="Every roof fails differently. Each guide below covers the failure points, the right kit, and real installs for that exact application."
             variant="dark"
           />
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {SPECIFIC_APPLICATIONS.map((app) => (
-              <a
-                key={app.label}
-                href={app.href}
-                className="rounded-xl bg-white/10 ring-1 ring-white/10 py-4 px-3 text-center font-bold uppercase tracking-wide text-sm text-white hover:bg-white/20 transition-colors"
-              >
-                {app.label}
-              </a>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {FAMILY_ORDER.map((familyId) => {
+              const family = FAMILIES[familyId]
+              const apps = APPLICATIONS.filter((a) => a.family === familyId)
+              return (
+                <div
+                  key={familyId}
+                  className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5"
+                >
+                  <Link
+                    href={family.hubHref}
+                    className="group flex items-center justify-between gap-2 mb-3"
+                  >
+                    <h3 className="font-bold text-highlight uppercase tracking-wide text-sm">
+                      {family.label}
+                    </h3>
+                    <ArrowRight className="w-4 h-4 text-highlight group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                  <ul className="space-y-1.5">
+                    {apps.map((app) => (
+                      <li key={app.slug}>
+                        <Link
+                          href={`/${app.slug}`}
+                          className="block rounded-lg px-3 py-2 text-sm font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          {app.label}
+                        </Link>
+                      </li>
+                    ))}
+                    <li>
+                      <Link
+                        href={family.hubHref}
+                        className="block rounded-lg px-3 py-2 text-sm font-semibold text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                      >
+                        All {family.hubLabel} &rarr;
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )
+            })}
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-6 md:pt-8">
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-highlight hover:gap-2.5 transition-all"
+            >
+              Another Application? Talk to Us
+              <ArrowRight className="w-4 h-4" />
+            </Link>
             <a
               href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
+              className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-semibold transition-colors"
             >
               <Phone className="w-5 h-5" />
               Not sure where to start? Call (800) 963-0131

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-09T22:37:18.023Z",
+  "generatedAt": "2026-08-10T14:37:15.451Z",
   "routes": [
     {
       "path": "/",
@@ -488,11 +488,6 @@
     },
     {
       "path": "/reviews/",
-      "dynamic": false,
-      "admin": false
-    },
-    {
-      "path": "/roofing-applications/",
       "dynamic": false,
       "admin": false
     },

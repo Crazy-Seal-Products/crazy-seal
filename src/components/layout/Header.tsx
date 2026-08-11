@@ -24,6 +24,7 @@ const APPLICATIONS_DROPDOWN = [
   { href: '/commercial-roofing', label: 'Commercial Flat Roofs' },
   { href: '/residential', label: 'Residential Flat Roofs' },
   { href: '/transportation', label: 'Transportation' },
+  { href: '/applications', label: 'All Applications' },
   { href: '/projects', label: 'Customer Projects' },
 ]
 
@@ -37,8 +38,11 @@ const PROFESSIONALS_DROPDOWN = [
 
 // Keep top-level links to the highest-intent pages only; everything else
 // lives in the dropdowns (Contact is covered by the Talk to a Specialist CTA).
+// Kit Builder + Pricing share the main shop; Shop CTA also lands there.
 const TOP_NAV = [
   { href: '/kit-builder', label: 'Kit Builder' },
+  { href: '/kit-builder#pricing', label: 'Pricing' },
+  { href: '/warranty', label: 'Warranty' },
   { href: '/reviews', label: 'Reviews' },
 ]
 
@@ -48,6 +52,8 @@ const PROFESSIONAL_PATHS = PROFESSIONALS_DROPDOWN.map(l => l.href)
 
 function isActive(pathname: string | null, href: string): boolean {
   if (!pathname) return false
+  // Hash deep-links (e.g. Pricing → /kit-builder#pricing) are not path-active
+  if (href.includes('#')) return false
   if (href === '/') return pathname === '/'
   return pathname === href || pathname.startsWith(href + '/')
 }
@@ -200,7 +206,7 @@ export function Header() {
 
             {TOP_NAV.map((link) => (
               <Link
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 className={clsx(
                   'relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200',
@@ -227,7 +233,7 @@ export function Header() {
               <span className="hidden xl:inline">(800) 963-0131</span>
             </a>
             <Link
-              href="/store"
+              href="/kit-builder"
               className="flex items-center gap-2 rounded-full border border-[#5BA411] px-4 py-2 text-sm font-semibold text-[#5BA411] hover:bg-[#5BA411]/10 transition-colors"
             >
               <ShoppingCart className="w-4 h-4" />
@@ -300,7 +306,7 @@ export function Header() {
 
             {TOP_NAV.map((link) => (
               <Link
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={clsx(
@@ -334,7 +340,7 @@ export function Header() {
                 Talk to a Specialist
               </button>
               <Link
-                href="/store"
+                href="/kit-builder"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 w-full text-center rounded-full border border-[#5BA411] px-5 py-3 text-base font-semibold text-[#5BA411]"
               >

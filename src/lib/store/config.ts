@@ -62,6 +62,12 @@ export interface ProductCuration {
    * product video transcripts. Falls back to category defaults.
    */
   whyItWorks?: Array<{ lead: string; text: string }>
+  /**
+   * Hand-picked customer project slugs for the "Real Projects" section,
+   * shown in order. Falls back to the best quote-backed projects in the
+   * product's matching category.
+   */
+  featuredProjects?: string[]
 }
 
 /** Shared "Why It Works" bullets, sourced from the kit video transcripts. */
@@ -224,6 +230,11 @@ export const PRODUCT_CURATION: ProductCuration[] = [
         lead: '50-year no-hassle warranty.',
         text: 'Finish the install, fill out a simple form, and your roof is covered.',
       },
+    ],
+    featuredProjects: [
+      'order-5344-residential-roof-diy-installation',
+      'project-4438-from-worn-flat-roof-to-seamless-commercial-strength',
+      'project-3524-residential-roof-transformation-with-diy-precision',
     ],
   },
   {

@@ -15,14 +15,17 @@ export const REDIRECTS: Redirect[] = [
   // ============================================================
   // Legacy WordPress paths -> new routes
   // ============================================================
-  // /store is now our own headless storefront; /shop canonicalizes to it
-  { source: '/shop', destination: '/store', permanent: true },
+  // Main shop is /kit-builder (quiz + catalog); /shop and /store canonicalize to it
+  { source: '/shop', destination: '/kit-builder', permanent: true },
+  { source: '/store', destination: '/kit-builder', permanent: true },
   { source: '/install', destination: '/installation', permanent: true },
   // Instant Quote retired in favor of the Kit Builder (Aug 2026)
   { source: '/pricing', destination: '/kit-builder', permanent: true },
   // Single Layer Kits retired from the lineup (Aug 2026)
   { source: '/single-layer-kit', destination: '/store/double-layer-kit', permanent: true },
   { source: '/store/single-layer-kit', destination: '/store/double-layer-kit', permanent: true },
+  // Was a generic clone page; /applications is the real directory (Aug 2026)
+  { source: '/roofing-applications', destination: '/applications', permanent: true },
   // Live site served marketing assets at both /marketing/* and
   // /resources/marketing/*; we canonicalize on /marketing/*
   { source: '/resources/marketing/videos/:path*', destination: '/marketing/videos/:path*', permanent: true },
@@ -50,9 +53,9 @@ export const REDIRECTS: Redirect[] = [
   { source: '/mobile-homes', destination: '/rv-roofs', permanent: true },
   { source: '/horse-trailers', destination: '/transportation', permanent: true },
   { source: '/hiring-a-contractor', destination: '/professionals', permanent: true },
-  // Kit/product listings now live in the headless store
-  { source: '/rv-roofing-kits', destination: '/store', permanent: true },
-  { source: '/all-kits-and-products', destination: '/store', permanent: true },
+  // Kit/product listings now live on the main shop (/kit-builder)
+  { source: '/rv-roofing-kits', destination: '/kit-builder', permanent: true },
+  { source: '/all-kits-and-products', destination: '/kit-builder', permanent: true },
   { source: '/products/crazy-cloth', destination: '/store/crazy-cloth', permanent: true },
   // Lead-gen landing pages
   { source: '/fb-free-quote', destination: '/contact', permanent: true },

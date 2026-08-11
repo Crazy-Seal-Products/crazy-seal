@@ -115,7 +115,7 @@ export default function BuildingAKitPage() {
         <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 text-center">
           <SectionHeading heading="See All Kits On One Page" />
           <LinkButton
-            href="/store"
+            href="/kit-builder"
             variant="accent"
             size="lg"
            
@@ -172,7 +172,7 @@ export default function BuildingAKitPage() {
               See All Products On One Page
             </h3>
             <LinkButton
-              href="/store#products"
+              href="/kit-builder#products"
               variant="primary"
               size="lg"
              

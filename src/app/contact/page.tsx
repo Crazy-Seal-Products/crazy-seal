@@ -18,8 +18,8 @@ const CONTACT_INFO = [
   {
     icon: ShoppingCart,
     label: 'Online Store',
-    value: 'crazyseal.com/store',
-    href: '/store',
+    value: 'crazyseal.com/kit-builder',
+    href: '/kit-builder',
   },
 ]
 

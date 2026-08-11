@@ -46,13 +46,13 @@ const KIT_TYPES = [
   {
     title: 'Commercial Kits',
     desc: 'Custom kits for any size commercial project.',
-    href: '/store#commercial-kits',
+    href: '/kit-builder#commercial-kits',
     image: `${MEDIA}/2019/10/03_Direct-225-300-White-1024x503.png`,
   },
   {
     title: 'Build Your Own Kit',
     desc: 'Build your own kit from our lineup of roofing products.',
-    href: '/store#products',
+    href: '/kit-builder#products',
     image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,
   },
 ]
@@ -143,7 +143,7 @@ export default function HomePage() {
                     <LinkButton href="/kit-builder" variant="white" size="lg">
                       See Kit Pricing
                     </LinkButton>
-                    <LinkButton href="/store" variant="outline-white" size="lg">
+                    <LinkButton href="/kit-builder" variant="outline-white" size="lg">
                       <ShoppingCart className="w-5 h-5" />
                       Shop Kits
                     </LinkButton>
@@ -386,7 +386,7 @@ export default function HomePage() {
           <SectionHeading
             eyebrow="Want a Quick Price?"
             heading="Choose a Kit Type to Get Started"
-            subheading="All Crazy Seal products ship directly to your door. On average, the system ranges between $3.00-$5.00 per square foot of coverage."
+            subheading="All Crazy Seal products ship directly to your door. Every kit is sized and priced to your exact roof — from a single tube of caulk to a complete system."
             variant="dark"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

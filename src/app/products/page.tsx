@@ -108,7 +108,7 @@ export default function ProductsPage() {
               $500.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <LinkButton href="/store" variant="accent" size="lg">
+              <LinkButton href="/kit-builder" variant="accent" size="lg">
                 <ShoppingCart className="w-5 h-5" />
                 Visit Our Store
               </LinkButton>
@@ -184,7 +184,7 @@ export default function ProductsPage() {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-6 md:pt-8">
             <LinkButton
-              href="/store#rv-kits"
+              href="/kit-builder#rv-kits"
               variant="white"
               size="md"
              

@@ -13,7 +13,7 @@ import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { VideoPlayer } from './VideoPlayer'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const SHOP_BYOK = '/store#products'
+const SHOP_BYOK = '/kit-builder#products'
 
 export const metadata: Metadata = {
   title: 'Build Your Own Kit',

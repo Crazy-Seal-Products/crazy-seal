@@ -19,11 +19,7 @@ export function CtaSection() {
         <p className="mt-6 text-sm text-gray-400">
           Prefer to do it yourself?{' '}
           <Link href="/kit-builder" className="font-semibold text-[#003365] hover:text-accent transition-colors">
-            Build your kit
-          </Link>{' '}
-          or{' '}
-          <Link href="/store" className="font-semibold text-[#003365] hover:text-accent transition-colors">
-            shop kits
+            Build your kit or shop the catalog
           </Link>
           .
         </p>

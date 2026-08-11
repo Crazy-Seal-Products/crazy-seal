@@ -81,7 +81,7 @@ export function CartDrawer() {
             <ShoppingCart className="w-12 h-12 text-gray-300" />
             <p className="text-gray-500">Your cart is empty.</p>
             <Link
-              href="/store"
+              href="/kit-builder"
               onClick={closeCart}
               className="rounded-full bg-[#5BA411] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#4A870E] transition-colors"
             >

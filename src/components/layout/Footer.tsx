@@ -19,6 +19,7 @@ const FOOTER_LINKS = {
     { href: '/commercial-roofing', label: 'Commercial Flat Roofs' },
     { href: '/residential', label: 'Residential Flat Roofs' },
     { href: '/transportation', label: 'Transportation' },
+    { href: '/applications', label: 'All Applications' },
     { href: '/projects', label: 'Customer Projects' },
     { href: '/professionals', label: 'Professionals' },
   ],
@@ -33,8 +34,8 @@ const FOOTER_LINKS = {
   shop: [
     { href: '/store/double-layer-kit', label: 'Double Layer Kits' },
     { href: '/store/direct-to-deck-kit', label: 'Direct to Deck Kits' },
-    { href: '/store#products', label: 'Build Your Own Kit' },
-    { href: '/store', label: 'Shop All Products' },
+    { href: '/kit-builder#products', label: 'Build Your Own Kit' },
+    { href: '/kit-builder', label: 'Shop All Products' },
   ],
   partners: [
     { href: '/professionals', label: 'Become a Dealer' },
