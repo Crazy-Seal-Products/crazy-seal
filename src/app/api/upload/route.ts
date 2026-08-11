@@ -13,6 +13,24 @@ const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.crazyseal.com'}`
 
 const ALLOWED_FOLDERS = ['lead-photos', 'warranty', 'content-requests'] as const
+const EXT_TO_MIME: Record<string, string> = {
+  heic: 'image/heic', heif: 'image/heif', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+  png: 'image/png', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp',
+  tif: 'image/tiff', tiff: 'image/tiff',
+}
+
+/**
+ * Files with a MIME type the browser doesn't recognize (common for HEIC)
+ * arrive as application/octet-stream, so fall back to the extension.
+ */
+function imageContentType(file: File): string | null {
+  if (file.type.startsWith('image/')) return file.type
+  if (!file.type || file.type === 'application/octet-stream') {
+    const ext = file.name.split('.').pop()?.toLowerCase() || ''
+    return EXT_TO_MIME[ext] || null
+  }
+  return null
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +48,8 @@ export async function POST(request: NextRequest) {
     const urls: string[] = []
 
     for (const file of files) {
-      if (!file.type.startsWith('image/')) continue
+      const contentType = imageContentType(file)
+      if (!contentType) continue
 
       const key = `user-uploads/${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
       const buffer = Buffer.from(await file.arrayBuffer())
@@ -39,7 +58,7 @@ export async function POST(request: NextRequest) {
         Bucket: BUCKET,
         Key: key,
         Body: buffer,
-        ContentType: file.type,
+        ContentType: contentType,
       }))
 
       urls.push(`${CDN_URL}/${key}`)

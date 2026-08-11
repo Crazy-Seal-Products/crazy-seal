@@ -15,7 +15,7 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
   const [dragging, setDragging] = useState(false)
 
   function addFiles(incoming: FileList | File[]) {
-    const images = Array.from(incoming).filter(f => f.type.startsWith('image/'))
+    const images = Array.from(incoming).filter(isImageFile)
     onChange([...files, ...images])
   }
 
@@ -80,14 +80,97 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
   )
 }
 
-/** Uploads image files to S3 via /api/upload and returns their CDN URLs. */
+const IMAGE_EXT_RE = /\.(heic|heif|jpe?g|png|gif|webp|bmp|tiff?)$/i
+
+/** Some browsers report an empty MIME type (common for HEIC), so fall back to the extension. */
+function isImageFile(file: File): boolean {
+  return file.type.startsWith('image/') || (!file.type && IMAGE_EXT_RE.test(file.name))
+}
+
+function imageContentType(file: File): string {
+  if (file.type) return file.type
+  if (/\.hei[cf]$/i.test(file.name)) return 'image/heic'
+  return 'image/jpeg'
+}
+
+// Serverless routes reject bodies over ~4.5MB, so larger files must be
+// compressed below this or uploaded directly to S3.
+const UPLOAD_LIMIT = 4 * 1024 * 1024
+
+/**
+ * Re-encodes an oversized photo as a downscaled JPEG so it fits within the
+ * serverless upload limit. Returns null if the browser can't decode the file
+ * (e.g. HEIC on some non-Safari browsers).
+ */
+async function compressImage(file: File): Promise<File | null> {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+    const MAX_DIM = 2400
+    const scale = Math.min(1, MAX_DIM / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return null
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    bitmap.close()
+    const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85))
+    if (!blob) return null
+    const name = file.name.replace(/\.\w+$/, '') + '.jpg'
+    return new File([blob], name, { type: 'image/jpeg' })
+  } catch {
+    return null
+  }
+}
+
+async function uploadViaPresign(file: File, folder: string): Promise<string | null> {
+  const contentType = imageContentType(file)
+  const res = await fetch('/api/upload/presign/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fileName: file.name, fileType: contentType, fileSize: file.size, folder }),
+  })
+  if (!res.ok) return null
+  const { presignedUrl, publicUrl } = await res.json()
+
+  const put = await fetch(presignedUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': contentType },
+    body: file,
+  })
+  return put.ok ? publicUrl : null
+}
+
+async function uploadViaApi(file: File, folder: string): Promise<string | null> {
+  const data = new FormData()
+  data.append('files', file)
+  data.append('folder', folder)
+  const res = await fetch('/api/upload/', { method: 'POST', body: data })
+  if (!res.ok) return null
+  const { urls } = await res.json()
+  return urls?.[0] || null
+}
+
+/**
+ * Uploads image files to S3 and returns their CDN URLs.
+ * Files are uploaded one at a time. Oversized photos are compressed in the
+ * browser to fit the serverless request-body limit; if the browser can't
+ * re-encode them they fall back to a presigned direct-to-S3 PUT.
+ * Returns [] if any upload fails.
+ */
 export async function uploadPhotos(files: File[], folder: string): Promise<string[]> {
   if (!files.length) return []
-  const data = new FormData()
-  for (const file of files) data.append('files', file)
-  data.append('folder', folder)
-  const res = await fetch('/api/upload', { method: 'POST', body: data })
-  if (!res.ok) return []
-  const { urls } = await res.json()
-  return urls || []
+  const urls: string[] = []
+  for (const original of files) {
+    let file = original
+    if (file.size > UPLOAD_LIMIT) {
+      file = (await compressImage(file)) ?? file
+    }
+    const url = file.size > UPLOAD_LIMIT
+      ? await uploadViaPresign(file, folder)
+      : await uploadViaApi(file, folder)
+    if (!url) return []
+    urls.push(url)
+  }
+  return urls
 }
