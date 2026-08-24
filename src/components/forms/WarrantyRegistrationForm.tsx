@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import React, { useState, useRef } from 'react'
+import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send, Loader2, CheckCircle, Star } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
+import { FormTurnstile } from '@/components/forms/FormTurnstile'
 
 const RV_LENGTHS = Array.from({ length: 38 }, (_, i) => `${i + 8}`)
 
@@ -23,71 +24,63 @@ export function WarrantyRegistrationForm() {
   const turnstileRef = useRef<TurnstileInstance>(null)
   const { visitorId, sessionId, trackEvent } = useTracking()
 
-  const handleTurnstileSuccess = useCallback((token: string) => {
-    setTurnstileToken(token)
-  }, [])
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSubmitting(true)
     setError(null)
 
-    const formData = new FormData(e.currentTarget)
-
-    if (!turnstileToken) {
-      setError('Please complete the verification check.')
-      setSubmitting(false)
-      return
-    }
-
-    if (photoFiles.length < 2) {
-      setError('Please upload before AND after photos of your application.')
-      setSubmitting(false)
-      return
-    }
-
-    if (!rating) {
-      setError('Please rate your experience with Crazy Seal.')
-      setSubmitting(false)
-      return
-    }
-
-    const photo_urls = await uploadPhotos(photoFiles, 'warranty')
-    if (!photo_urls.length) {
-      setError('Photo upload failed. Please try again.')
-      setSubmitting(false)
-      return
-    }
-
-    const firstName = (formData.get('first_name') as string || '').trim()
-    const lastName = (formData.get('last_name') as string || '').trim()
-
-    const body = {
-      name: `${firstName} ${lastName}`.trim(),
-      email: formData.get('email') as string,
-      phone: formData.get('phone') as string,
-      customer_details: formData.get('customer_details') as string,
-      order_number: formData.get('order_number') as string,
-      project_type: projectType,
-      rv_length: formData.get('rv_length') as string,
-      square_footage: formData.get('square_footage') as string,
-      install_type: installType,
-      installer_name: formData.get('installer_name') as string,
-      installer_phone: formData.get('installer_phone') as string,
-      installer_email: formData.get('installer_email') as string,
-      photo_urls,
-      rating,
-      experience_notes: formData.get('experience_notes') as string,
-      contractor_notes: formData.get('contractor_notes') as string,
-      warranty_consent: formData.get('warranty_consent') === 'on',
-      photo_display_consent: formData.get('photo_display_consent') === 'on',
-      visitor_id: visitorId,
-      session_id: sessionId,
-      turnstile_token: turnstileToken,
-      website: formData.get('website') as string,
-    }
-
     try {
+      const formData = new FormData(e.currentTarget)
+
+      if (!turnstileToken) {
+        setError('Please complete the verification check.')
+        return
+      }
+
+      if (photoFiles.length < 2) {
+        setError('Please upload before AND after photos of your application.')
+        return
+      }
+
+      if (!rating) {
+        setError('Please rate your experience with Crazy Seal.')
+        return
+      }
+
+      const photo_urls = await uploadPhotos(photoFiles, 'warranty')
+      if (!photo_urls.length) {
+        setError('Photo upload failed. Please try a smaller JPEG or PNG, or try again.')
+        return
+      }
+
+      const firstName = (formData.get('first_name') as string || '').trim()
+      const lastName = (formData.get('last_name') as string || '').trim()
+
+      const body = {
+        name: `${firstName} ${lastName}`.trim(),
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        customer_details: formData.get('customer_details') as string,
+        order_number: formData.get('order_number') as string,
+        project_type: projectType,
+        rv_length: formData.get('rv_length') as string,
+        square_footage: formData.get('square_footage') as string,
+        install_type: installType,
+        installer_name: formData.get('installer_name') as string,
+        installer_phone: formData.get('installer_phone') as string,
+        installer_email: formData.get('installer_email') as string,
+        photo_urls,
+        rating,
+        experience_notes: formData.get('experience_notes') as string,
+        contractor_notes: formData.get('contractor_notes') as string,
+        warranty_consent: formData.get('warranty_consent') === 'on',
+        photo_display_consent: formData.get('photo_display_consent') === 'on',
+        visitor_id: visitorId,
+        session_id: sessionId,
+        turnstile_token: turnstileToken,
+        website: formData.get('website') as string,
+      }
+
       const res = await fetch('/api/warranty/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -360,13 +353,11 @@ export function WarrantyRegistrationForm() {
           </span>
         </label>
 
-        <div className="flex justify-center">
-          <Turnstile
-            ref={turnstileRef}
-            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-            onSuccess={handleTurnstileSuccess}
-            onExpire={() => setTurnstileToken(null)}
-            options={{ theme: 'light', size: 'normal' }}
+        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+          <FormTurnstile
+            id="turnstile-warranty-register"
+            turnstileRef={turnstileRef}
+            onToken={setTurnstileToken}
           />
         </div>
 
@@ -375,7 +366,7 @@ export function WarrantyRegistrationForm() {
         )}
 
         <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting || !turnstileToken}>
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />

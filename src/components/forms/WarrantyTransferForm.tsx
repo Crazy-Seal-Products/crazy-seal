@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import React, { useState, useRef } from 'react'
+import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send, Loader2, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from '@/lib/design-system'
+import { FormTurnstile } from '@/components/forms/FormTurnstile'
 
 export function WarrantyTransferForm() {
   const [submitting, setSubmitting] = useState(false)
@@ -11,10 +12,6 @@ export function WarrantyTransferForm() {
   const [error, setError] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
-
-  const handleTurnstileSuccess = useCallback((token: string) => {
-    setTurnstileToken(token)
-  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -139,13 +136,11 @@ export function WarrantyTransferForm() {
           <Textarea name="transfer_notes" rows={4} />
         </div>
 
-        <div className="flex justify-center">
-          <Turnstile
-            ref={turnstileRef}
-            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-            onSuccess={handleTurnstileSuccess}
-            onExpire={() => setTurnstileToken(null)}
-            options={{ theme: 'light', size: 'normal' }}
+        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+          <FormTurnstile
+            id="turnstile-warranty-transfer"
+            turnstileRef={turnstileRef}
+            onToken={setTurnstileToken}
           />
         </div>
 
@@ -154,7 +149,7 @@ export function WarrantyTransferForm() {
         )}
 
         <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting || !turnstileToken}>
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />

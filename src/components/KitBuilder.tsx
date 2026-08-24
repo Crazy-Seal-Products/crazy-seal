@@ -16,8 +16,9 @@ import {
   Truck,
   X,
 } from 'lucide-react'
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Button, Input, LinkButton, Select, Textarea } from '@/lib/design-system'
+import { FormTurnstile } from '@/components/forms/FormTurnstile'
 import { uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { Stars } from '@/components/store/Stars'
 import { useCart } from '@/contexts/CartContext'
@@ -682,14 +683,14 @@ function KitLeadForm({ summary }: { summary: () => string }) {
         )}
       </div>
       {/* Invisible unless Cloudflare requires an interactive challenge */}
-      <Turnstile
-        ref={turnstileRef}
-        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-        onSuccess={setTurnstileToken}
-        onExpire={() => setTurnstileToken(null)}
-        options={{ theme: 'dark', size: 'flexible', appearance: 'interaction-only' }}
+      <FormTurnstile
+        id="turnstile-kit-builder"
+        turnstileRef={turnstileRef}
+        onToken={setTurnstileToken}
+        theme="dark"
+        appearance="interaction-only"
       />
-      <Button type="submit" variant="accent" size="md" disabled={submitting || !turnstileToken}>
+      <Button type="submit" variant="accent" size="md" disabled={submitting}>
         {submitting ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

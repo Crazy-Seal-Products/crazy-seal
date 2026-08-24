@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import React, { useState, useRef } from 'react'
+import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send, Loader2, CheckCircle } from 'lucide-react'
 import { Input, Textarea, Button } from '@/lib/design-system'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
+import { FormTurnstile } from '@/components/forms/FormTurnstile'
 
 export function WarrantyClaimForm() {
   const [submitting, setSubmitting] = useState(false)
@@ -13,10 +14,6 @@ export function WarrantyClaimForm() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
-
-  const handleTurnstileSuccess = useCallback((token: string) => {
-    setTurnstileToken(token)
-  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -31,23 +28,22 @@ export function WarrantyClaimForm() {
       return
     }
 
-    const photo_urls = await uploadPhotos(photoFiles, 'warranty')
-
-    const firstName = (formData.get('first_name') as string || '').trim()
-    const lastName = (formData.get('last_name') as string || '').trim()
-
-    const body = {
-      name: `${firstName} ${lastName}`.trim(),
-      email: formData.get('email') as string,
-      phone: formData.get('phone') as string,
-      order_number: formData.get('order_number') as string,
-      failure_description: formData.get('failure_description') as string,
-      photo_urls,
-      turnstile_token: turnstileToken,
-      website: formData.get('website') as string,
-    }
-
     try {
+      const photo_urls = await uploadPhotos(photoFiles, 'warranty')
+      const firstName = (formData.get('first_name') as string || '').trim()
+      const lastName = (formData.get('last_name') as string || '').trim()
+
+      const body = {
+        name: `${firstName} ${lastName}`.trim(),
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        order_number: formData.get('order_number') as string,
+        failure_description: formData.get('failure_description') as string,
+        photo_urls,
+        turnstile_token: turnstileToken,
+        website: formData.get('website') as string,
+      }
+
       const res = await fetch('/api/warranty/claim', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -141,13 +137,11 @@ export function WarrantyClaimForm() {
           onChange={setPhotoFiles}
         />
 
-        <div className="flex justify-center">
-          <Turnstile
-            ref={turnstileRef}
-            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-            onSuccess={handleTurnstileSuccess}
-            onExpire={() => setTurnstileToken(null)}
-            options={{ theme: 'light', size: 'normal' }}
+        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+          <FormTurnstile
+            id="turnstile-warranty-claim"
+            turnstileRef={turnstileRef}
+            onToken={setTurnstileToken}
           />
         </div>
 
@@ -156,7 +150,7 @@ export function WarrantyClaimForm() {
         )}
 
         <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting || !turnstileToken}>
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />

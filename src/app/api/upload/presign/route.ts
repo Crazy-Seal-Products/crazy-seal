@@ -15,6 +15,20 @@ const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env
 
 const ALLOWED_FOLDERS = ['lead-photos', 'warranty', 'content-requests'] as const
 const MAX_FILE_SIZE = 30 * 1024 * 1024
+const EXT_TO_MIME: Record<string, string> = {
+  heic: 'image/heic', heif: 'image/heif', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+  png: 'image/png', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp',
+  tif: 'image/tiff', tiff: 'image/tiff',
+}
+
+function resolveImageType(fileName: string, fileType: string): string | null {
+  if (fileType.startsWith('image/')) return fileType
+  if (!fileType || fileType === 'application/octet-stream') {
+    const ext = fileName.split('.').pop()?.toLowerCase() || ''
+    return EXT_TO_MIME[ext] || null
+  }
+  return null
+}
 
 /**
  * Issues a presigned S3 PUT URL so form photos can bypass the serverless
@@ -25,10 +39,11 @@ export async function POST(request: NextRequest) {
   try {
     const { fileName, fileType, fileSize, folder: folderInput } = await request.json()
 
-    if (!fileName || !fileType) {
-      return NextResponse.json({ error: 'fileName and fileType are required' }, { status: 400 })
+    if (!fileName) {
+      return NextResponse.json({ error: 'fileName is required' }, { status: 400 })
     }
-    if (!fileType.startsWith('image/')) {
+    const contentType = resolveImageType(String(fileName), String(fileType || ''))
+    if (!contentType) {
       return NextResponse.json({ error: 'Only image uploads are allowed' }, { status: 400 })
     }
     if (typeof fileSize === 'number' && fileSize > MAX_FILE_SIZE) {
@@ -43,7 +58,7 @@ export async function POST(request: NextRequest) {
     const command = new PutObjectCommand({
       Bucket: BUCKET,
       Key: key,
-      ContentType: fileType,
+      ContentType: contentType,
     })
 
     const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 600 })

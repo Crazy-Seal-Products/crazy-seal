@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send, Loader2 } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
+import { FormTurnstile } from '@/components/forms/FormTurnstile'
 
 interface ProfessionalContactFormProps {
   sourcePage?: string
@@ -31,10 +32,6 @@ export function ProfessionalContactForm({
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
   const { visitorId, sessionId, trackEvent, identify } = useTracking()
-
-  const handleTurnstileSuccess = useCallback((token: string) => {
-    setTurnstileToken(token)
-  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -209,13 +206,11 @@ export function ProfessionalContactForm({
           />
         </div>
 
-        <div className="flex justify-center">
-          <Turnstile
-            ref={turnstileRef}
-            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-            onSuccess={handleTurnstileSuccess}
-            onExpire={() => setTurnstileToken(null)}
-            options={{ theme: 'light', size: 'normal' }}
+        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+          <FormTurnstile
+            id="turnstile-pro-contact"
+            turnstileRef={turnstileRef}
+            onToken={setTurnstileToken}
           />
         </div>
 
@@ -226,7 +221,7 @@ export function ProfessionalContactForm({
         )}
 
         <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting || !turnstileToken}>
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />

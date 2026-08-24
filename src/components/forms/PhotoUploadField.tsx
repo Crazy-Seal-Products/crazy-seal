@@ -10,12 +10,27 @@ interface PhotoUploadFieldProps {
   onChange: (files: File[]) => void
 }
 
+const IMAGE_EXT_RE = /\.(heic|heif|jpe?g|png|gif|webp|bmp|tiff?)$/i
+const EXT_TO_MIME: Record<string, string> = {
+  heic: 'image/heic',
+  heif: 'image/heif',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  bmp: 'image/bmp',
+  tif: 'image/tiff',
+  tiff: 'image/tiff',
+}
+
 export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFieldProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
   function addFiles(incoming: FileList | File[]) {
     const images = Array.from(incoming).filter(isImageFile)
+    if (!images.length) return
     onChange([...files, ...images])
   }
 
@@ -26,27 +41,32 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
         onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); if (e.dataTransfer.files) addFiles(e.dataTransfer.files) }}
-        onClick={() => fileRef.current?.click()}
         className={`
-          w-full rounded-xl border-2 border-dashed cursor-pointer transition-colors
+          relative w-full rounded-xl border-2 border-dashed cursor-pointer transition-colors
           ${dragging
             ? 'border-[#003365] bg-blue-50'
             : 'border-gray-300 hover:border-[#003365] hover:bg-gray-50'
           }
         `}
       >
+        {/*
+          Overlay the native file input instead of display:none + .click().
+          iOS Safari often ignores programmatic clicks on hidden file inputs,
+          so tapping "browse" did nothing on iPhone.
+        */}
         <input
           ref={fileRef}
           type="file"
-          accept="image/*"
+          accept="image/*,image/heic,image/heif,.heic,.heif"
           multiple
           onChange={(e) => {
             if (e.target.files) addFiles(e.target.files)
             if (fileRef.current) fileRef.current.value = ''
           }}
-          className="hidden"
+          className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+          aria-label="Upload photos"
         />
-        <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+        <div className="pointer-events-none flex flex-col items-center justify-center py-10 px-4 text-center">
           <Upload className={`w-8 h-8 mb-2 ${dragging ? 'text-[#003365]' : 'text-gray-400'}`} />
           <p className="text-sm text-gray-600">
             Drag and drop photos here, or <span className="text-[#003365] font-medium">browse</span>
@@ -58,7 +78,7 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
       {files.length > 0 && (
         <div className="flex flex-wrap gap-3 mt-3">
           {files.map((file, i) => (
-            <div key={i} className="relative group w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
+            <div key={`${file.name}-${file.size}-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={URL.createObjectURL(file)}
@@ -67,8 +87,9 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
               />
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); onChange(files.filter((_, idx) => idx !== i)) }}
-                className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => onChange(files.filter((_, idx) => idx !== i))}
+                className="absolute top-0.5 right-0.5 z-20 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center"
+                aria-label={`Remove photo ${i + 1}`}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -80,17 +101,19 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
   )
 }
 
-const IMAGE_EXT_RE = /\.(heic|heif|jpe?g|png|gif|webp|bmp|tiff?)$/i
-
-/** Some browsers report an empty MIME type (common for HEIC), so fall back to the extension. */
+/**
+ * Some browsers report HEIC as an empty MIME, application/octet-stream, or
+ * image/heic. Accept all of those when the filename looks like an image.
+ */
 function isImageFile(file: File): boolean {
-  return file.type.startsWith('image/') || (!file.type && IMAGE_EXT_RE.test(file.name))
+  if (file.type.startsWith('image/')) return true
+  return IMAGE_EXT_RE.test(file.name)
 }
 
 function imageContentType(file: File): string {
-  if (file.type) return file.type
-  if (/\.hei[cf]$/i.test(file.name)) return 'image/heic'
-  return 'image/jpeg'
+  if (file.type.startsWith('image/')) return file.type
+  const ext = file.name.split('.').pop()?.toLowerCase() || ''
+  return EXT_TO_MIME[ext] || 'image/jpeg'
 }
 
 // Serverless routes reject bodies over ~4.5MB, so larger files must be

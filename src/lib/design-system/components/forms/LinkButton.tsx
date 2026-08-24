@@ -49,7 +49,15 @@ export function LinkButton({
     className
   )
 
-  if (external || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('mailto:')) {
+  // Same-page hash links must be a native <a>. Next.js <Link> intercepts the
+  // click and often does nothing on iOS Safari (no scroll, no hash change).
+  if (
+    external ||
+    href.startsWith('#') ||
+    href.startsWith('http') ||
+    href.startsWith('tel:') ||
+    href.startsWith('mailto:')
+  ) {
     return (
       <a
         href={href}
