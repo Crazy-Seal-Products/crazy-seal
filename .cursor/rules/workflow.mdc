@@ -1,0 +1,32 @@
+---
+description: How Tim and Jordan push code — machine branch, then dev, then main
+alwaysApply: true
+---
+
+# Workflow
+
+This repo is shared by two machines. Never commit or push straight to `main` or `dev`.
+
+## Branches
+
+| Machine | Push only to |
+|---|---|
+| Tim's MacBook Pro | `tims-macbook-pro` |
+| Jordan's MacBook Pro | `jordans-macbook-pro` |
+
+Promotion path:
+
+`tims-macbook-pro` or `jordans-macbook-pro` → `dev` (collaborate) → `main` (go live)
+
+## Agent rules
+
+- If this clone is on `main` or `dev`, switch to the machine branch for this computer before making changes.
+- Create commits only on the machine branch.
+- `git push` must update the machine branch, never `origin/main` or `origin/dev`.
+- After pushing, open or update a pull request into `dev`. Do not merge it unless the user asks.
+- Going live is a separate pull request: `dev` → `main`. Never treat a machine-branch push as production.
+- Do not force-push `dev` or `main`. Do not fast-forward local `main` with unreviewed machine-branch work.
+
+## This computer
+
+Tim's MacBook Pro: work on `tims-macbook-pro`. Jordan uses `jordans-macbook-pro` on his machine.
