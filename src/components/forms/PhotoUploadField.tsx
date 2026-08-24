@@ -8,6 +8,7 @@ interface PhotoUploadFieldProps {
   hint?: string
   files: File[]
   onChange: (files: File[]) => void
+  inputLabel?: string
 }
 
 const IMAGE_EXT_RE = /\.(heic|heif|jpe?g|png|gif|webp|bmp|tiff?)$/i
@@ -24,7 +25,7 @@ const EXT_TO_MIME: Record<string, string> = {
   tiff: 'image/tiff',
 }
 
-export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFieldProps) {
+export function PhotoUploadField({ label, hint, files, onChange, inputLabel }: PhotoUploadFieldProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
@@ -64,7 +65,7 @@ export function PhotoUploadField({ label, hint, files, onChange }: PhotoUploadFi
             if (fileRef.current) fileRef.current.value = ''
           }}
           className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-          aria-label="Upload photos"
+          aria-label={inputLabel || 'Upload photos'}
         />
         <div className="pointer-events-none flex flex-col items-center justify-center py-10 px-4 text-center">
           <Upload className={`w-8 h-8 mb-2 ${dragging ? 'text-[#003365]' : 'text-gray-400'}`} />

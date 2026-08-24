@@ -15,7 +15,8 @@ export function WarrantyRegistrationForm() {
   const [submitted, setSubmitted] = useState(false)
   const [certificateUrl, setCertificateUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+  const [beforeFiles, setBeforeFiles] = useState<File[]>([])
+  const [afterFiles, setAfterFiles] = useState<File[]>([])
   const [projectType, setProjectType] = useState('')
   const [installType, setInstallType] = useState('')
   const [rating, setRating] = useState(0)
@@ -37,8 +38,8 @@ export function WarrantyRegistrationForm() {
         return
       }
 
-      if (photoFiles.length < 2) {
-        setError('Please upload before AND after photos of your application.')
+      if (!beforeFiles.length || !afterFiles.length) {
+        setError('Please upload at least one before photo and one after photo.')
         return
       }
 
@@ -47,11 +48,15 @@ export function WarrantyRegistrationForm() {
         return
       }
 
-      const photo_urls = await uploadPhotos(photoFiles, 'warranty')
-      if (!photo_urls.length) {
+      const [before_photo_urls, after_photo_urls] = await Promise.all([
+        uploadPhotos(beforeFiles, 'warranty'),
+        uploadPhotos(afterFiles, 'warranty'),
+      ])
+      if (!before_photo_urls.length || !after_photo_urls.length) {
         setError('Photo upload failed. Please try a smaller JPEG or PNG, or try again.')
         return
       }
+      const photo_urls = [...before_photo_urls, ...after_photo_urls]
 
       const firstName = (formData.get('first_name') as string || '').trim()
       const lastName = (formData.get('last_name') as string || '').trim()
@@ -70,6 +75,8 @@ export function WarrantyRegistrationForm() {
         installer_phone: formData.get('installer_phone') as string,
         installer_email: formData.get('installer_email') as string,
         photo_urls,
+        before_photo_urls,
+        after_photo_urls,
         rating,
         experience_notes: formData.get('experience_notes') as string,
         contractor_notes: formData.get('contractor_notes') as string,
@@ -265,12 +272,19 @@ export function WarrantyRegistrationForm() {
           </div>
         )}
 
-        {/* Photos */}
         <PhotoUploadField
-          label={<>Please upload before &amp; after images of your application <span className="text-red-500">*</span></>}
-          hint="Both before AND after photos are required for warranty coverage."
-          files={photoFiles}
-          onChange={setPhotoFiles}
+          label={<>Before photos of your application <span className="text-red-500">*</span></>}
+          hint="Show the roof before Crazy Seal was applied. JPG, PNG, or HEIC."
+          inputLabel="Upload before photos"
+          files={beforeFiles}
+          onChange={setBeforeFiles}
+        />
+        <PhotoUploadField
+          label={<>After photos of your application <span className="text-red-500">*</span></>}
+          hint="Show the finished roof. JPG, PNG, or HEIC."
+          inputLabel="Upload after photos"
+          files={afterFiles}
+          onChange={setAfterFiles}
         />
 
         {/* Experience rating */}

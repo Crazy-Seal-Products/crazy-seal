@@ -22,6 +22,8 @@ interface Registration {
   installer_phone: string | null
   installer_email: string | null
   photo_urls: string[] | null
+  before_photo_urls: string[] | null
+  after_photo_urls: string[] | null
   rating: number | null
   experience_notes: string | null
   contractor_notes: string | null
@@ -92,22 +94,27 @@ function formatDate(iso: string) {
   })
 }
 
-function PhotoLinks({ urls }: { urls: string[] | null }) {
+function PhotoLinks({ urls, label }: { urls: string[] | null; label?: string }) {
   if (!urls?.length) return null
   return (
-    <div className="flex flex-wrap gap-2 mt-2">
-      {urls.map((url, i) => (
-        <a
-          key={url}
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-16 h-16 rounded-lg overflow-hidden border border-gray-200 hover:ring-2 hover:ring-[#003365] transition-all"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-        </a>
-      ))}
+    <div className="mt-2">
+      {label && (
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">{label}</p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {urls.map((url, i) => (
+          <a
+            key={url}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-16 h-16 rounded-lg overflow-hidden border border-gray-200 hover:ring-2 hover:ring-[#003365] transition-all"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt={`${label || 'Photo'} ${i + 1}`} className="w-full h-full object-cover" />
+          </a>
+        ))}
+      </div>
     </div>
   )
 }
@@ -339,7 +346,14 @@ export default function AdminWarrantyPage() {
                                 <ShieldCheck className="w-3.5 h-3.5" />
                                 View warranty certificate
                               </a>
-                              <PhotoLinks urls={reg.photo_urls} />
+                              {reg.before_photo_urls?.length || reg.after_photo_urls?.length ? (
+                                <div className="space-y-3">
+                                  <PhotoLinks urls={reg.before_photo_urls} label="Before" />
+                                  <PhotoLinks urls={reg.after_photo_urls} label="After" />
+                                </div>
+                              ) : (
+                                <PhotoLinks urls={reg.photo_urls} />
+                              )}
                             </>
                           )
                         })()}

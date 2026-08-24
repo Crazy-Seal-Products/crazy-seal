@@ -49,9 +49,9 @@ function wrapFieldsTable(rows: string): string {
   return `<table style="border-collapse:collapse;width:100%;max-width:600px;font-family:Arial,sans-serif;font-size:14px;">${rows}</table>`
 }
 
-function photoLinksHtml(urls?: string[]): string | undefined {
+function photoLinksHtml(urls?: string[], prefix = 'Photo'): string | undefined {
   return urls?.length
-    ? urls.map((url, i) => `<a href="${url}" target="_blank">Photo ${i + 1}</a>`).join(', ')
+    ? urls.map((url, i) => `<a href="${url}" target="_blank">${prefix} ${i + 1}</a>`).join(', ')
     : undefined
 }
 
@@ -157,6 +157,8 @@ interface WarrantyNotificationData {
   email: string
   fields: Record<string, string | null | undefined>
   photo_urls?: string[]
+  before_photo_urls?: string[]
+  after_photo_urls?: string[]
   /** Signed link to the online warranty certificate (registrations only) */
   certificate_url?: string
 }
@@ -172,7 +174,14 @@ export async function sendWarrantyNotification(data: WarrantyNotificationData) {
     formatFieldRow('Name', data.name),
     formatFieldRow('Email', data.email),
     ...Object.entries(data.fields).map(([label, value]) => formatFieldRow(label, value)),
-    formatFieldRow('Photos', photoLinksHtml(data.photo_urls)),
+    formatFieldRow('Before Photos', photoLinksHtml(data.before_photo_urls, 'Before')),
+    formatFieldRow('After Photos', photoLinksHtml(data.after_photo_urls, 'After')),
+    formatFieldRow(
+      'Photos',
+      data.before_photo_urls?.length || data.after_photo_urls?.length
+        ? undefined
+        : photoLinksHtml(data.photo_urls),
+    ),
   ].filter(Boolean).join('')
 
   await sendEmail({

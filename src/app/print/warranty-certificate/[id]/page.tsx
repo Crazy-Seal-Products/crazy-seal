@@ -30,6 +30,8 @@ interface Registration {
   installer_phone: string | null
   installer_email: string | null
   photo_urls: string[] | null
+  before_photo_urls: string[] | null
+  after_photo_urls: string[] | null
   created_at: string
 }
 
@@ -69,6 +71,26 @@ function Field({ label, value }: { label: string; value: string | null | undefin
   )
 }
 
+function PhotoGroup({ label, urls }: { label: string; urls: string[] | null }) {
+  if (!urls?.length) return null
+  return (
+    <div>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{label}</p>
+      <div className="grid grid-cols-2 gap-2">
+        {urls.map((url, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={url}
+            src={url}
+            alt={`${label} photo ${i + 1}`}
+            className="w-full aspect-square object-cover rounded border border-gray-200"
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default async function WarrantyCertificatePage({ params, searchParams }: PageProps) {
   const { id } = await params
   const { t } = await searchParams
@@ -83,7 +105,7 @@ export default async function WarrantyCertificatePage({ params, searchParams }: 
   const supabase = createAdminClient()
   const { data } = await supabase
     .from('warranty_registrations')
-    .select('id, name, email, phone, customer_details, order_number, install_type, installer_name, installer_phone, installer_email, photo_urls, created_at')
+    .select('id, name, email, phone, customer_details, order_number, install_type, installer_name, installer_phone, installer_email, photo_urls, before_photo_urls, after_photo_urls, created_at')
     .eq('id', id)
     .single()
 
@@ -166,7 +188,12 @@ export default async function WarrantyCertificatePage({ params, searchParams }: 
           </div>
 
           {/* Photos */}
-          {reg.photo_urls && reg.photo_urls.length > 0 && (
+          {(reg.before_photo_urls?.length || reg.after_photo_urls?.length) ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <PhotoGroup label="Before" urls={reg.before_photo_urls} />
+              <PhotoGroup label="After" urls={reg.after_photo_urls} />
+            </div>
+          ) : reg.photo_urls && reg.photo_urls.length > 0 ? (
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                 Application Photos on File
@@ -183,7 +210,7 @@ export default async function WarrantyCertificatePage({ params, searchParams }: 
                 ))}
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Coverage summary */}
           <div className="text-xs text-gray-500 leading-relaxed space-y-2">

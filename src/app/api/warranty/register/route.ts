@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       order_number,
       project_type, rv_length, square_footage,
       install_type, installer_name, installer_phone, installer_email,
-      photo_urls,
+      before_photo_urls, after_photo_urls,
       rating,
       experience_notes, contractor_notes,
       warranty_consent, photo_display_consent,
@@ -31,7 +31,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name, email, and order number are required.' }, { status: 400 })
     }
 
-    if (!photo_urls?.length) {
+    const beforeUrls = Array.isArray(before_photo_urls) ? before_photo_urls.filter(Boolean) : []
+    const afterUrls = Array.isArray(after_photo_urls) ? after_photo_urls.filter(Boolean) : []
+    const combinedUrls = [...beforeUrls, ...afterUrls]
+
+    if (!beforeUrls.length || !afterUrls.length) {
       return NextResponse.json({ error: 'Before and after photos are required.' }, { status: 400 })
     }
 
@@ -74,7 +78,9 @@ export async function POST(request: NextRequest) {
         installer_name: installer_name || null,
         installer_phone: installer_phone || null,
         installer_email: installer_email || null,
-        photo_urls: photo_urls,
+        photo_urls: combinedUrls,
+        before_photo_urls: beforeUrls,
+        after_photo_urls: afterUrls,
         rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : null,
         experience_notes: experience_notes || null,
         contractor_notes: contractor_notes || null,
@@ -114,7 +120,9 @@ export async function POST(request: NextRequest) {
       kind: 'registration',
       name, email,
       fields: { ...emailFields, Certificate: certificate_url },
-      photo_urls,
+      photo_urls: combinedUrls,
+      before_photo_urls: beforeUrls,
+      after_photo_urls: afterUrls,
     }).catch(err => console.error('[Gmail] Warranty notification error:', err))
 
     sendWarrantyAutoReply({
