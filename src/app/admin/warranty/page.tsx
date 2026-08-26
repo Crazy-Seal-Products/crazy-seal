@@ -35,6 +35,7 @@ interface Registration {
   image_type: string | null
   reviews_for_marketing: string | null
   lucid_link: string | null
+  favorite_photo_urls: string[] | null
   created_at: string
 }
 
@@ -198,7 +199,7 @@ export default function AdminWarrantyPage() {
 
   async function updateRegistration(
     id: string,
-    patch: Partial<Pick<Registration, 'image_type' | 'reviews_for_marketing' | 'status' | 'lucid_link'>>
+    patch: Partial<Pick<Registration, 'image_type' | 'reviews_for_marketing' | 'status' | 'lucid_link' | 'before_photo_urls' | 'after_photo_urls' | 'favorite_photo_urls'>>
   ) {
     const supabase = createClient()
     const { error } = await supabase
@@ -531,6 +532,10 @@ export default function AdminWarrantyPage() {
           startId={reviewStartId}
           onClose={() => { setReviewQueue(null); setReviewStartId(null) }}
           onSave={async (id, patch) => {
+            await updateRegistration(id, patch)
+            setReviewQueue((queue) => queue?.map((row) => (row.id === id ? { ...row, ...patch } : row)) ?? null)
+          }}
+          onUpdatePhotos={async (id, patch) => {
             await updateRegistration(id, patch)
             setReviewQueue((queue) => queue?.map((row) => (row.id === id ? { ...row, ...patch } : row)) ?? null)
           }}

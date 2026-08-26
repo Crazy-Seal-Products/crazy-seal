@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, ExternalLink, Star, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star, X } from 'lucide-react'
 import {
   IMAGE_TYPES,
   REVIEW_CLASSIFICATIONS,
@@ -24,6 +24,7 @@ export interface ReviewRegistration {
   lucid_link: string | null
   experience_notes: string | null
   rating: number | null
+  favorite_photo_urls?: string[] | null
 }
 
 interface Slide {
@@ -53,10 +54,37 @@ const TONE_ACTIVE: Record<string, string> = {
 }
 
 function slidesFor(reg: ReviewRegistration): Slide[] {
-  const before = (reg.before_photo_urls || []).filter(Boolean).map((url) => ({ url, label: 'Before' as const }))
-  const after = (reg.after_photo_urls || []).filter(Boolean).map((url) => ({ url, label: 'After' as const }))
-  if (before.length || after.length) return [...before, ...after]
-  return (reg.photo_urls || []).filter(Boolean).map((url) => ({ url, label: 'Photo' as const }))
+  const before = (reg.before_photo_urls || []).filter(Boolean)
+  const after = (reg.after_photo_urls || []).filter(Boolean)
+  const labeled = new Set([...before, ...after])
+  const unlabeled = (reg.photo_urls || []).filter((url) => url && !labeled.has(url))
+  return [
+    ...before.map((url) => ({ url, label: 'Before' as const })),
+    ...after.map((url) => ({ url, label: 'After' as const })),
+    ...unlabeled.map((url) => ({ url, label: 'Photo' as const })),
+  ]
+}
+
+function assignPhotoKind(
+  reg: ReviewRegistration,
+  url: string,
+  kind: 'Before' | 'After' | null,
+): Pick<ReviewRegistration, 'before_photo_urls' | 'after_photo_urls'> {
+  return {
+    before_photo_urls: [
+      ...(reg.before_photo_urls || []).filter((item) => item !== url),
+      ...(kind === 'Before' ? [url] : []),
+    ],
+    after_photo_urls: [
+      ...(reg.after_photo_urls || []).filter((item) => item !== url),
+      ...(kind === 'After' ? [url] : []),
+    ],
+  }
+}
+
+function toggleFavorite(reg: ReviewRegistration, url: string): string[] {
+  const current = reg.favorite_photo_urls || []
+  return current.includes(url) ? current.filter((item) => item !== url) : [...current, url]
 }
 
 function PhotoStage({
@@ -65,25 +93,32 @@ function PhotoStage({
   index,
   onIndex,
   onZoom,
+  favorite,
+  onFavorite,
+  onAssign,
 }: {
   label: string
   slides: Slide[]
   index: number
   onIndex: (next: number) => void
   onZoom: () => void
+  favorite?: boolean
+  onFavorite?: () => void
+  onAssign?: (kind: 'Before' | 'After' | null) => void
 }) {
   const slide = slides[index]
+  const unlabeled = slide?.label === 'Photo'
   return (
-    <div className="relative min-h-0 flex-1 flex flex-col rounded-2xl overflow-hidden bg-zinc-950 ring-1 ring-white/10">
+    <div className="relative min-h-0 h-full flex-1 flex flex-col rounded-2xl overflow-hidden bg-zinc-950 ring-1 ring-white/10">
       <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
         <span className={`text-[11px] font-bold uppercase tracking-[0.18em] backdrop-blur-sm px-2.5 py-1 rounded-full ${
-          label === 'Before'
+          (unlabeled ? label : slide?.label) === 'Before'
             ? 'bg-amber-400 text-amber-950'
-            : label === 'After'
+            : (unlabeled ? label : slide?.label) === 'After'
               ? 'bg-emerald-400 text-emerald-950'
               : 'bg-black/70'
         }`}>
-          {label}
+          {unlabeled ? label : slide?.label || label}
         </span>
         {slides.length > 1 && (
           <span className="text-[11px] text-white/70 bg-black/50 px-2 py-1 rounded-full">
@@ -91,6 +126,40 @@ function PhotoStage({
           </span>
         )}
       </div>
+      {slide && (onAssign || onFavorite) && (
+        <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+          {onAssign && unlabeled && (
+            <div className="flex rounded-full overflow-hidden bg-black/70 text-[11px] font-bold uppercase tracking-[0.12em]">
+              {(['Before', 'After'] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onAssign(option) }}
+                  className={`px-2.5 py-1 ${
+                    option === 'Before'
+                      ? 'hover:bg-amber-400 hover:text-amber-950'
+                      : 'hover:bg-emerald-400 hover:text-emerald-950'
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+          {onFavorite && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onFavorite() }}
+              title={favorite ? 'Remove favorite' : 'Mark as favorite'}
+              className={`p-1.5 rounded-full ${
+                favorite ? 'bg-amber-400 text-amber-950' : 'bg-black/70 text-white/80 hover:text-white'
+              }`}
+            >
+              <Star className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
+            </button>
+          )}
+        </div>
+      )}
       <button
         type="button"
         onClick={onZoom}
@@ -102,7 +171,7 @@ function PhotoStage({
           <img
             src={slide.url}
             alt={`${label} photo`}
-            className="max-h-full max-w-full object-contain drop-shadow-2xl"
+            className="h-full w-full max-h-full max-w-full object-contain drop-shadow-2xl"
           />
         ) : (
           <p className="text-sm text-white/40">No {label.toLowerCase()} photos</p>
@@ -139,6 +208,7 @@ export function WarrantyReviewLightbox({
   startId,
   onClose,
   onSave,
+  onUpdatePhotos,
 }: {
   registrations: ReviewRegistration[]
   startId: string
@@ -147,43 +217,47 @@ export function WarrantyReviewLightbox({
     id: string,
     patch: { image_type: string | null; reviews_for_marketing: string | null; status: string; lucid_link: string | null }
   ) => Promise<void>
+  onUpdatePhotos: (
+    id: string,
+    patch: Partial<Pick<ReviewRegistration, 'before_photo_urls' | 'after_photo_urls' | 'favorite_photo_urls'>>
+  ) => Promise<void>
 }) {
   const startIndex = Math.max(0, registrations.findIndex((r) => r.id === startId))
   const [index, setIndex] = useState(startIndex)
   const [beforeIndex, setBeforeIndex] = useState(0)
   const [afterIndex, setAfterIndex] = useState(0)
   const [photoIndex, setPhotoIndex] = useState(0)
+  const [unlabeledIndex, setUnlabeledIndex] = useState(0)
   const [zoom, setZoom] = useState<Slide | null>(null)
   const [saving, setSaving] = useState(false)
   const [imageType, setImageType] = useState('RV')
   const [reviews, setReviews] = useState('')
-  const [lucidLink, setLucidLink] = useState('')
   const current = registrations[index]
   const savingRef = useRef(false)
   const indexRef = useRef(index)
   const currentRef = useRef(current)
   const imageTypeRef = useRef(imageType)
-  const lucidLinkRef = useRef(lucidLink)
   const classifyRef = useRef<(value: string) => Promise<void>>(async () => {})
   indexRef.current = index
   currentRef.current = current
   imageTypeRef.current = imageType
-  lucidLinkRef.current = lucidLink
 
   const slides = useMemo(() => (current ? slidesFor(current) : []), [current])
   const beforeSlides = slides.filter((s) => s.label === 'Before')
   const afterSlides = slides.filter((s) => s.label === 'After')
+  const unlabeledSlides = slides.filter((s) => s.label === 'Photo')
   const compare = beforeSlides.length > 0 || afterSlides.length > 0
+  const safeUnlabeledIndex = Math.min(unlabeledIndex, Math.max(0, unlabeledSlides.length - 1))
   const progress = registrations.length ? ((index + 1) / registrations.length) * 100 : 0
 
   useEffect(() => {
     if (!current) return
     setImageType(current.image_type || 'RV')
     setReviews(current.reviews_for_marketing || '')
-    setLucidLink(current.lucid_link || '')
     setBeforeIndex(0)
     setAfterIndex(0)
     setPhotoIndex(0)
+    setUnlabeledIndex(0)
     setZoom(null)
   }, [current])
 
@@ -260,7 +334,7 @@ export function WarrantyReviewLightbox({
         image_type: type,
         reviews_for_marketing: value,
         status: nextStatus,
-        lucid_link: lucidLinkRef.current.trim() || null,
+        lucid_link: entry.lucid_link,
       })
       if (i < registrations.length - 1) setIndex(i + 1)
       else onClose()
@@ -328,13 +402,21 @@ export function WarrantyReviewLightbox({
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 px-4 sm:px-5 pb-4">
         <section className="flex-1 min-h-[42vh] lg:min-h-0 min-w-0 flex flex-col gap-2">
           {compare ? (
-            <div className="flex-1 min-h-[240px] grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className={`flex-1 min-h-0 overflow-y-auto grid gap-3 ${
+              unlabeledSlides.length > 0
+                ? 'grid-cols-1 lg:grid-cols-3 auto-rows-[minmax(320px,1fr)]'
+                : 'grid-cols-1 sm:grid-cols-2'
+            }`}>
               <PhotoStage
                 label="Before"
                 slides={beforeSlides}
                 index={Math.min(beforeIndex, Math.max(0, beforeSlides.length - 1))}
                 onIndex={setBeforeIndex}
                 onZoom={() => beforeSlides[beforeIndex] && setZoom(beforeSlides[beforeIndex])}
+                favorite={!!beforeSlides[beforeIndex] && (current.favorite_photo_urls || []).includes(beforeSlides[beforeIndex].url)}
+                onFavorite={() => beforeSlides[beforeIndex] && onUpdatePhotos(current.id, {
+                  favorite_photo_urls: toggleFavorite(current, beforeSlides[beforeIndex].url),
+                })}
               />
               <PhotoStage
                 label="After"
@@ -342,7 +424,25 @@ export function WarrantyReviewLightbox({
                 index={Math.min(afterIndex, Math.max(0, afterSlides.length - 1))}
                 onIndex={setAfterIndex}
                 onZoom={() => afterSlides[afterIndex] && setZoom(afterSlides[afterIndex])}
+                favorite={!!afterSlides[afterIndex] && (current.favorite_photo_urls || []).includes(afterSlides[afterIndex].url)}
+                onFavorite={() => afterSlides[afterIndex] && onUpdatePhotos(current.id, {
+                  favorite_photo_urls: toggleFavorite(current, afterSlides[afterIndex].url),
+                })}
               />
+              {unlabeledSlides.length > 0 && (
+                <PhotoStage
+                  label="Unlabeled"
+                  slides={unlabeledSlides}
+                  index={safeUnlabeledIndex}
+                  onIndex={setUnlabeledIndex}
+                  onZoom={() => unlabeledSlides[safeUnlabeledIndex] && setZoom(unlabeledSlides[safeUnlabeledIndex])}
+                  favorite={!!unlabeledSlides[safeUnlabeledIndex] && (current.favorite_photo_urls || []).includes(unlabeledSlides[safeUnlabeledIndex].url)}
+                  onFavorite={() => unlabeledSlides[safeUnlabeledIndex] && onUpdatePhotos(current.id, {
+                    favorite_photo_urls: toggleFavorite(current, unlabeledSlides[safeUnlabeledIndex].url),
+                  })}
+                  onAssign={(kind) => unlabeledSlides[safeUnlabeledIndex] && onUpdatePhotos(current.id, assignPhotoKind(current, unlabeledSlides[safeUnlabeledIndex].url, kind))}
+                />
+              )}
             </div>
           ) : (
             <PhotoStage
@@ -351,15 +451,21 @@ export function WarrantyReviewLightbox({
               index={photoIndex}
               onIndex={setPhotoIndex}
               onZoom={() => slides[photoIndex] && setZoom(slides[photoIndex])}
+              favorite={!!slides[photoIndex] && (current.favorite_photo_urls || []).includes(slides[photoIndex].url)}
+              onFavorite={() => slides[photoIndex] && onUpdatePhotos(current.id, {
+                favorite_photo_urls: toggleFavorite(current, slides[photoIndex].url),
+              })}
+              onAssign={(kind) => slides[photoIndex] && onUpdatePhotos(current.id, assignPhotoKind(current, slides[photoIndex].url, kind))}
             />
           )}
 
-          {slides.length > 2 && (
+          {(slides.length > 2 || (compare && unlabeledSlides.length > 0)) && (
             <div className="flex gap-2 overflow-x-auto pb-1 w-full min-w-0">
               {slides.map((slide, i) => {
                 const active = compare
-                  ? (slide.label === 'Before' && beforeSlides[beforeIndex]?.url === slide.url && beforeSlides[beforeIndex] === slide)
-                    || (slide.label === 'After' && afterSlides[afterIndex] === slide)
+                  ? (slide.label === 'Before' && beforeSlides[beforeIndex]?.url === slide.url)
+                    || (slide.label === 'After' && afterSlides[afterIndex]?.url === slide.url)
+                    || (slide.label === 'Photo' && unlabeledSlides[safeUnlabeledIndex]?.url === slide.url)
                   : i === photoIndex
                 return (
                   <button
@@ -368,6 +474,7 @@ export function WarrantyReviewLightbox({
                     onClick={() => {
                       if (slide.label === 'Before') setBeforeIndex(beforeSlides.indexOf(slide))
                       else if (slide.label === 'After') setAfterIndex(afterSlides.indexOf(slide))
+                      else if (compare) setUnlabeledIndex(unlabeledSlides.indexOf(slide))
                       else setPhotoIndex(i)
                     }}
                     className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden ring-2 transition ${
@@ -376,6 +483,9 @@ export function WarrantyReviewLightbox({
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={slide.url} alt="" className="w-full h-full object-cover" />
+                    {(current.favorite_photo_urls || []).includes(slide.url) && (
+                      <Star className="absolute top-0.5 right-0.5 w-3 h-3 text-amber-300 fill-amber-300" />
+                    )}
                     {slide.label !== 'Photo' && (
                       <span
                         className={`absolute bottom-0.5 left-0.5 text-[8px] font-bold uppercase tracking-wide px-1 py-px rounded ${
@@ -412,42 +522,6 @@ export function WarrantyReviewLightbox({
                   {type}
                 </button>
               ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/40 mb-2">Lucid Link</p>
-            <div className="flex gap-1.5">
-              <input
-                type="url"
-                value={lucidLink}
-                onChange={(e) => setLucidLink(e.target.value)}
-                onBlur={async () => {
-                  const entry = currentRef.current
-                  if (!entry) return
-                  const next = lucidLink.trim() || null
-                  if ((entry.lucid_link || null) === next) return
-                  await onSave(entry.id, {
-                    image_type: imageTypeRef.current || null,
-                    reviews_for_marketing: reviews || null,
-                    status: entry.status,
-                    lucid_link: next,
-                  })
-                }}
-                placeholder="Paste LucidLink folder URL"
-                className="flex-1 min-w-0 px-3 py-2 text-sm rounded-xl bg-white/8 border border-white/12 text-white placeholder:text-white/30 outline-none focus:border-white/30"
-              />
-              {lucidLink.trim() && (
-                <a
-                  href={lucidLink.trim()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 p-2 rounded-xl bg-white/8 hover:bg-white/14"
-                  aria-label="Open Lucid Link"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              )}
             </div>
           </div>
 
@@ -522,6 +596,36 @@ export function WarrantyReviewLightbox({
 
       {zoom && (
         <div className="absolute inset-0 z-20 bg-black/92 flex items-center justify-center">
+          {zoom.label === 'Photo' && (
+            <div className="absolute top-4 left-4 z-10 flex rounded-full overflow-hidden bg-black/70 text-[11px] font-bold uppercase tracking-[0.12em]">
+              {(['Before', 'After'] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => onUpdatePhotos(current.id, assignPhotoKind(current, zoom.url, option))}
+                  className={`px-3 py-1.5 ${
+                    option === 'Before'
+                      ? 'hover:bg-amber-400 hover:text-amber-950'
+                      : 'hover:bg-emerald-400 hover:text-emerald-950'
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => onUpdatePhotos(current.id, { favorite_photo_urls: toggleFavorite(current, zoom.url) })}
+            className={`absolute top-4 right-16 p-2.5 rounded-full ${
+              (current.favorite_photo_urls || []).includes(zoom.url)
+                ? 'bg-amber-400 text-amber-950'
+                : 'bg-white/10 hover:bg-white/20'
+            }`}
+            aria-label="Toggle favorite"
+          >
+            <Star className={`w-5 h-5 ${(current.favorite_photo_urls || []).includes(zoom.url) ? 'fill-current' : ''}`} />
+          </button>
           <button
             type="button"
             onClick={() => setZoom(null)}
