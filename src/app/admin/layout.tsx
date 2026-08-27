@@ -11,6 +11,7 @@ import {
   ExternalLink,
   LogOut,
   Users,
+  Handshake,
   ShieldCheck,
   HelpCircle,
   ImageIcon,
@@ -19,6 +20,7 @@ import {
   Inbox,
   Map,
   Shuffle,
+  ShoppingBag,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -40,6 +42,8 @@ const adminNavSections: NavSection[] = [
     label: 'Content',
     items: [
       { name: 'Leads', href: '/admin/leads', icon: Users },
+      { name: 'Customers / Pros', href: '/admin/pros', icon: Handshake },
+      { name: 'Shopify data', href: '/admin/commerce', icon: ShoppingBag },
       { name: 'Warranty', href: '/admin/warranty', icon: ShieldCheck },
       { name: 'Form Entries', href: '/admin/entries', icon: Inbox },
       { name: 'Projects', href: '/admin/projects', icon: Hammer },

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T15:09:52.193Z",
+  "generatedAt": "2026-08-27T15:00:41.025Z",
   "routes": [
     {
       "path": "/",
@@ -48,6 +48,11 @@
     },
     {
       "path": "/admin/projects/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/pros/",
       "dynamic": false,
       "admin": true
     },
@@ -360,6 +365,41 @@
       "path": "/privacy-policy/",
       "dynamic": false,
       "admin": false
+    },
+    {
+      "path": "/pro/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/jobs/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/login/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/orders/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/perks/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/tools/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/warranty/",
+      "dynamic": false,
+      "admin": true
     },
     {
       "path": "/products/",

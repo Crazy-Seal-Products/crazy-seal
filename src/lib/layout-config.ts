@@ -6,14 +6,14 @@
  * about the current page's layout context.
  */
 
-export type LayoutZone = 'marketing' | 'admin' | 'bare'
+export type LayoutZone = 'marketing' | 'admin' | 'pro' | 'bare'
 
 export interface LayoutConfig {
   zone: LayoutZone
   header: boolean
   footer: boolean
   pageWrapper: boolean
-  sidebar: 'none' | 'admin'
+  sidebar: 'none' | 'admin' | 'pro'
   tracking: boolean
 }
 
@@ -31,6 +31,17 @@ const ZONE_RULES: ZoneRule[] = [
       footer: false,
       pageWrapper: false,
       sidebar: 'admin',
+      tracking: false,
+    },
+  },
+  {
+    match: (p) => p.startsWith('/pro'),
+    config: {
+      zone: 'pro',
+      header: false,
+      footer: false,
+      pageWrapper: false,
+      sidebar: 'pro',
       tracking: false,
     },
   },

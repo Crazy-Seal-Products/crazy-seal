@@ -170,8 +170,8 @@ export default function ProfessionalsPage() {
                     Become a Dealer
                     <ArrowRight className="w-4 h-4" />
                   </LinkButton>
-                  <LinkButton href="/affiliates" variant="outline-white" size="lg">
-                    Prefer to Refer? Affiliates
+                  <LinkButton href="/pro" variant="outline-white" size="lg">
+                    Already a Pro? Sign in
                   </LinkButton>
                   <a
                     href="tel:8009630131"
