@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { after, NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWarrantyNotification } from '@/lib/email/gmail'
 import { sendWarrantyRegistrationConfirmations } from '@/lib/email/warranty'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { certificateUrl } from '@/lib/warranty/certificate'
+
+export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {
@@ -136,17 +138,23 @@ export async function POST(request: NextRequest) {
       certificate_url,
     }
 
-    sendWarrantyNotification({
-      kind: 'registration',
-      name, email,
-      fields: { ...emailFields, Certificate: certificate_url },
-      photo_urls: combinedUrls,
-      before_photo_urls: beforeUrls,
-      after_photo_urls: afterUrls,
-    }).catch(err => console.error('[Gmail] Warranty notification error:', err))
-
-    sendWarrantyRegistrationConfirmations(confirmation)
-      .catch(err => console.error('[Gmail] Warranty confirmation error:', err))
+    after(async () => {
+      try {
+        await Promise.all([
+          sendWarrantyNotification({
+            kind: 'registration',
+            name, email,
+            fields: { ...emailFields, Certificate: certificate_url },
+            photo_urls: combinedUrls,
+            before_photo_urls: beforeUrls,
+            after_photo_urls: afterUrls,
+          }),
+          sendWarrantyRegistrationConfirmations(confirmation),
+        ])
+      } catch (err) {
+        console.error('[Gmail] Warranty confirmation error:', err)
+      }
+    })
 
     return NextResponse.json({ success: true, id: registration.id, certificate_url })
   } catch (err) {

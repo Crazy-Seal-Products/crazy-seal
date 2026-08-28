@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { after, NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWarrantyNotification, sendWarrantyAutoReply } from '@/lib/email/gmail'
 import { verifyTurnstile } from '@/lib/turnstile'
+
+export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,23 +66,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save claim.' }, { status: 500 })
     }
 
-    sendWarrantyNotification({
-      kind: 'claim',
-      name, email,
-      fields: {
-        Phone: phone,
-        'Order Number': order_number,
-        'Issue Description': failure_description,
-        'Matched Registration': registrationId ? 'Yes' : 'No match found',
-      },
-      photo_urls,
-    }).catch(err => console.error('[Gmail] Claim notification error:', err))
-
-    sendWarrantyAutoReply({
-      kind: 'claim',
-      name, email,
-      fields: {},
-    }).catch(err => console.error('[Gmail] Claim auto-reply error:', err))
+    after(async () => {
+      try {
+        await Promise.all([
+          sendWarrantyNotification({
+            kind: 'claim',
+            name, email,
+            fields: {
+              Phone: phone,
+              'Order Number': order_number,
+              'Issue Description': failure_description,
+              'Matched Registration': registrationId ? 'Yes' : 'No match found',
+            },
+            photo_urls,
+          }),
+          sendWarrantyAutoReply({
+            kind: 'claim',
+            name, email,
+            fields: {},
+          }),
+        ])
+      } catch (err) {
+        console.error('[Gmail] Claim email error:', err)
+      }
+    })
 
     return NextResponse.json({ success: true, id: claim.id })
   } catch (err) {
