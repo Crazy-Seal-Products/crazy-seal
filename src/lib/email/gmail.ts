@@ -14,7 +14,15 @@ function createTransport() {
       clientSecret: process.env.GMAIL_CLIENT_SECRET,
       refreshToken: process.env.GMAIL_REFRESH_TOKEN,
     },
+    connectionTimeout: 12_000,
+    greetingTimeout: 12_000,
+    socketTimeout: 25_000,
   })
+}
+
+function isRetryableMailError(err: unknown): boolean {
+  const code = typeof err === 'object' && err && 'code' in err ? String((err as { code?: string }).code) : ''
+  return ['ETIMEDOUT', 'ECONNECTION', 'ESOCKET', 'EAI_AGAIN', 'ECONNRESET'].includes(code)
 }
 
 interface SendEmailOptions {
@@ -25,19 +33,32 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail({ to, subject, html, replyTo }: SendEmailOptions) {
-  const transport = createTransport()
   const toList = Array.isArray(to) ? to.join(', ') : to
+  let lastError: unknown
 
-  const result = await transport.sendMail({
-    from: `${FROM_NAME} <${GMAIL_USER}>`,
-    to: toList,
-    subject,
-    html,
-    replyTo: replyTo || undefined,
-  })
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const transport = createTransport()
+    try {
+      const result = await transport.sendMail({
+        from: `${FROM_NAME} <${GMAIL_USER}>`,
+        to: toList,
+        subject,
+        html,
+        replyTo: replyTo || undefined,
+      })
+      console.log(`[Gmail] Email sent to ${toList}: ${result.messageId}`)
+      return result
+    } catch (err) {
+      lastError = err
+      console.error(`[Gmail] Send attempt ${attempt} to ${toList} failed:`, err)
+      if (!isRetryableMailError(err) || attempt === 2) throw err
+      await new Promise((resolve) => setTimeout(resolve, 750 * attempt))
+    } finally {
+      transport.close()
+    }
+  }
 
-  console.log(`[Gmail] Email sent to ${toList}: ${result.messageId}`)
-  return result
+  throw lastError
 }
 
 function formatFieldRow(label: string, value: string | null | undefined): string {

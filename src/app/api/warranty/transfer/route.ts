@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { after, NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWarrantyNotification, sendWarrantyAutoReply } from '@/lib/email/gmail'
 import { verifyTurnstile } from '@/lib/turnstile'
+
+export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,25 +63,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save transfer request.' }, { status: 500 })
     }
 
-    sendWarrantyNotification({
-      kind: 'transfer',
-      name: new_owner_name,
-      email: new_owner_email,
-      fields: {
-        Phone: new_owner_phone,
-        'Order Number': order_number,
-        'Original Owner Email': original_owner_email,
-        'Transfer Notes': transfer_notes,
-        'Matched Registration': existing?.id ? 'Yes' : 'No match found',
-      },
-    }).catch(err => console.error('[Gmail] Transfer notification error:', err))
-
-    sendWarrantyAutoReply({
-      kind: 'transfer',
-      name: new_owner_name,
-      email: new_owner_email,
-      fields: {},
-    }).catch(err => console.error('[Gmail] Transfer auto-reply error:', err))
+    after(async () => {
+      try {
+        await Promise.all([
+          sendWarrantyNotification({
+            kind: 'transfer',
+            name: new_owner_name,
+            email: new_owner_email,
+            fields: {
+              Phone: new_owner_phone,
+              'Order Number': order_number,
+              'Original Owner Email': original_owner_email,
+              'Transfer Notes': transfer_notes,
+              'Matched Registration': existing?.id ? 'Yes' : 'No match found',
+            },
+          }),
+          sendWarrantyAutoReply({
+            kind: 'transfer',
+            name: new_owner_name,
+            email: new_owner_email,
+            fields: {},
+          }),
+        ])
+      } catch (err) {
+        console.error('[Gmail] Transfer email error:', err)
+      }
+    })
 
     return NextResponse.json({ success: true, id: transfer.id })
   } catch (err) {
