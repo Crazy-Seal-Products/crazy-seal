@@ -24,7 +24,7 @@ interface SendEmailOptions {
   replyTo?: string
 }
 
-async function sendEmail({ to, subject, html, replyTo }: SendEmailOptions) {
+export async function sendEmail({ to, subject, html, replyTo }: SendEmailOptions) {
   const transport = createTransport()
   const toList = Array.isArray(to) ? to.join(', ') : to
 
