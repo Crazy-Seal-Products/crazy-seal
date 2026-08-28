@@ -1,5 +1,5 @@
 import { Container, Heading, Text, Card, Stack } from '@/lib/design-system'
-import { Users, ShieldCheck, MousePointerClick, FolderOpen } from 'lucide-react'
+import { Users, ShieldCheck, MousePointerClick, FolderOpen, Handshake, ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminDashboardPage() {
@@ -24,6 +24,34 @@ export default function AdminDashboardPage() {
                   <div>
                     <Text className="text-sm text-gray-500">Leads</Text>
                     <Text className="text-xl font-bold text-gray-900">View All</Text>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+
+            <Link href="/admin/pros">
+              <Card variant="elevated" className="p-6 hover:border-[#003365] transition-colors cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <Handshake className="w-6 h-6 text-[#003365]" />
+                  </div>
+                  <div>
+                    <Text className="text-sm text-gray-500">Customers / Pros</Text>
+                    <Text className="text-xl font-bold text-gray-900">Find & invite</Text>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+
+            <Link href="/admin/commerce">
+              <Card variant="elevated" className="p-6 hover:border-[#003365] transition-colors cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center">
+                    <ShoppingBag className="w-6 h-6 text-[#003365]" />
+                  </div>
+                  <div>
+                    <Text className="text-sm text-gray-500">Shopify data</Text>
+                    <Text className="text-xl font-bold text-gray-900">Customers & orders</Text>
                   </div>
                 </div>
               </Card>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { sendWarrantyNotification, sendWarrantyAutoReply } from '@/lib/email/gmail'
+import { sendWarrantyNotification } from '@/lib/email/gmail'
+import { sendWarrantyRegistrationConfirmations } from '@/lib/email/warranty'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { certificateUrl } from '@/lib/warranty/certificate'
 
@@ -115,6 +116,25 @@ export async function POST(request: NextRequest) {
     }
 
     const certificate_url = certificateUrl(registration.id)
+    const confirmation = {
+      name,
+      email,
+      phone,
+      order_number,
+      project_type,
+      rv_length: rv_length ? `${rv_length} ft` : null,
+      square_footage,
+      customer_details,
+      install_type,
+      installer_name,
+      installer_phone,
+      installer_email,
+      rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : null,
+      experience_notes,
+      contractor_notes,
+      photo_urls: combinedUrls,
+      certificate_url,
+    }
 
     sendWarrantyNotification({
       kind: 'registration',
@@ -125,12 +145,8 @@ export async function POST(request: NextRequest) {
       after_photo_urls: afterUrls,
     }).catch(err => console.error('[Gmail] Warranty notification error:', err))
 
-    sendWarrantyAutoReply({
-      kind: 'registration',
-      name, email,
-      fields: {},
-      certificate_url,
-    }).catch(err => console.error('[Gmail] Warranty auto-reply error:', err))
+    sendWarrantyRegistrationConfirmations(confirmation)
+      .catch(err => console.error('[Gmail] Warranty confirmation error:', err))
 
     return NextResponse.json({ success: true, id: registration.id, certificate_url })
   } catch (err) {

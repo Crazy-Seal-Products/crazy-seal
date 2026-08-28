@@ -57,5 +57,5 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // Skip Next internals, API routes, and static files
-  matcher: ['/((?!_next/|api/|admin|.*\\.).*)'],
+  matcher: ['/((?!_next/|api/|admin|pro|.*\\.).*)'],
 }

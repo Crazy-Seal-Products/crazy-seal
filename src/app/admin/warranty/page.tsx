@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Container, Heading, Text, Card, Stack } from '@/lib/design-system'
 import { createClient } from '@/lib/supabase/client'
 import {
-  Search, ChevronDown, ChevronUp, Phone, Mail,
+  Search, ChevronDown, ChevronUp, Phone, Mail, Send,
   RefreshCw, X, ShieldCheck, ArrowLeftRight, AlertTriangle, Star,
 } from 'lucide-react'
 import { WarrantyReviewLightbox, type ReviewRegistration } from '@/components/admin/WarrantyReviewLightbox'
@@ -109,6 +109,13 @@ function formatDate(iso: string) {
   })
 }
 
+function installerRecipient(reg: Registration): string | null {
+  const installer = reg.installer_email?.trim()
+  if (!installer || !installer.includes('@')) return null
+  if (installer.toLowerCase() === reg.email.trim().toLowerCase()) return null
+  return installer
+}
+
 function PhotoLinks({
   urls,
   label,
@@ -150,6 +157,7 @@ export default function AdminWarrantyPage() {
   const [classifyFilter, setClassifyFilter] = useState<ClassifyFilter>('needs_review')
   const [reviewQueue, setReviewQueue] = useState<ReviewRegistration[] | null>(null)
   const [reviewStartId, setReviewStartId] = useState<string | null>(null)
+  const [notifyState, setNotifyState] = useState<Record<string, { loading: boolean; message: string | null; ok?: boolean }>>({})
 
   const fetchRows = useCallback(async () => {
     setLoading(true)
@@ -233,6 +241,36 @@ export default function AdminWarrantyPage() {
   const needsReviewCount = tab === 'registrations'
     ? rows.filter((row) => needsClassification(row as Registration)).length
     : 0
+
+  async function resendConfirmations(reg: Registration) {
+    setNotifyState(prev => ({ ...prev, [reg.id]: { loading: true, message: null } }))
+    try {
+      const res = await fetch('/api/admin/warranty/notify/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: reg.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setNotifyState(prev => ({
+          ...prev,
+          [reg.id]: { loading: false, message: data.error || 'Failed to send emails.', ok: false },
+        }))
+        return
+      }
+      const recipients = ['customer']
+      if (data.sent?.installer) recipients.push('installer')
+      setNotifyState(prev => ({
+        ...prev,
+        [reg.id]: { loading: false, message: `Sent to ${recipients.join(' and ')}.`, ok: true },
+      }))
+    } catch {
+      setNotifyState(prev => ({
+        ...prev,
+        [reg.id]: { loading: false, message: 'Failed to send emails.', ok: false },
+      }))
+    }
+  }
 
   function openReview(id: string) {
     const queue = filtered.filter((row): row is Registration => tab === 'registrations' && 'email' in row)
@@ -476,6 +514,38 @@ export default function AdminWarrantyPage() {
                                 >
                                   Open photo review
                                 </button>
+                              </div>
+                              <div className="rounded-lg border border-gray-200 bg-white p-3 space-y-2">
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Confirmation emails</p>
+                                <p className="text-gray-700 text-sm">
+                                  Customer: <a href={`mailto:${reg.email}`} className="hover:text-[#003365]">{reg.email}</a>
+                                </p>
+                                {installerRecipient(reg) ? (
+                                  <p className="text-gray-700 text-sm">
+                                    Installer{reg.installer_name ? ` (${reg.installer_name})` : ''}:{' '}
+                                    <a href={`mailto:${reg.installer_email}`} className="hover:text-[#003365]">{reg.installer_email}</a>
+                                  </p>
+                                ) : (
+                                  <p className="text-gray-500 text-sm">No installer email on file — customer only.</p>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => resendConfirmations(reg)}
+                                  disabled={notifyState[reg.id]?.loading}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#003365] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                >
+                                  {notifyState[reg.id]?.loading ? (
+                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <Send className="w-3.5 h-3.5" />
+                                  )}
+                                  {notifyState[reg.id]?.loading ? 'Sending…' : 'Resend confirmation emails'}
+                                </button>
+                                {notifyState[reg.id]?.message && (
+                                  <p className={`text-xs ${notifyState[reg.id]?.ok ? 'text-green-700' : 'text-red-600'}`}>
+                                    {notifyState[reg.id]?.message}
+                                  </p>
+                                )}
                               </div>
                               {reg.before_photo_urls?.length || reg.after_photo_urls?.length ? (
                                 <div className="space-y-3">
