@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T15:09:52.193Z",
+  "generatedAt": "2026-09-08T19:57:26.861Z",
   "routes": [
     {
       "path": "/",
@@ -53,6 +53,11 @@
     },
     {
       "path": "/admin/redirects/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/reset-password/",
       "dynamic": false,
       "admin": true
     },

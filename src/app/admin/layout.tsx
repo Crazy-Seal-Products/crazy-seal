@@ -23,6 +23,12 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
+import {
+  hasAuthHash,
+  hasAuthSearch,
+  isPublicAdminAuthPath,
+  resetPasswordPath,
+} from '@/lib/auth/recovery'
 
 interface NavItem {
   name: string
@@ -77,11 +83,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [staffName, setStaffName] = useState<string | null>(null)
 
   // Site uses trailingSlash, so the pathname arrives as /admin/login/
-  const isLoginPage = pathname.replace(/\/+$/, '') === '/admin/login'
+  const isPublicAuthPage = isPublicAdminAuthPath(pathname)
 
   useEffect(() => {
-    if (isLoginPage) {
+    if (isPublicAuthPage) {
       setAuthChecked(true)
+      return
+    }
+
+    if (hasAuthHash(window.location.hash) || hasAuthSearch(window.location.search, pathname)) {
+      window.location.replace(resetPasswordPath(window.location.search, window.location.hash))
       return
     }
 
@@ -108,7 +119,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       setStaffName(staffRecord.full_name)
       setAuthChecked(true)
     })
-  }, [isLoginPage, router])
+  }, [isPublicAuthPage, router])
 
   useEffect(() => { setMobileOpen(false) }, [pathname])
 
@@ -118,7 +129,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
-  if (isLoginPage) return <>{children}</>
+  if (isPublicAuthPage) return <>{children}</>
 
   if (!authChecked) {
     return (

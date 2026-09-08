@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { hasAuthSearch } from '@/lib/auth/recovery'
 
 // Admin-managed redirects (managed_redirects table), applied at request time
 // so redirects added in /admin/redirects work without a deploy. Rules are
@@ -43,6 +44,13 @@ async function getRules(): Promise<Map<string, Rule>> {
 }
 
 export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl
+  if (normalize(pathname) === '/' && hasAuthSearch(search)) {
+    const dest = request.nextUrl.clone()
+    dest.pathname = '/admin/reset-password/'
+    return NextResponse.redirect(dest)
+  }
+
   const rules = await getRules()
   if (rules.size === 0) return NextResponse.next()
 
