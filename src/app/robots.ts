@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/', '/internal/'],
+        disallow: ['/admin/', '/pro/', '/api/', '/internal/'],
       },
     ],
     sitemap: 'https://crazyseal.com/sitemap.xml',

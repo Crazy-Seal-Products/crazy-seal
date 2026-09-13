@@ -39,6 +39,7 @@ const FOOTER_LINKS = {
   ],
   partners: [
     { href: '/professionals', label: 'Become a Dealer' },
+    { href: '/pro', label: 'Pro Hub' },
     { href: '/ways-to-earn', label: 'Ways to Earn' },
     { href: '/business-accelerator-program', label: 'Business Accelerator' },
     { href: '/professional-tools', label: 'Pro Tools' },

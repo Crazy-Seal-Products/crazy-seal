@@ -35,7 +35,7 @@ const routes = collectRoutes(APP_DIR)
     return {
       path,
       dynamic: segments.some((s) => s.startsWith('[')),
-      admin: segments[0] === 'admin',
+      admin: segments[0] === 'admin' || segments[0] === 'pro',
     }
   })
   .sort((a, b) => a.path.localeCompare(b.path))
