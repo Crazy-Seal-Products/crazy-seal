@@ -9,7 +9,39 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState<'signin' | 'forgot'>('signin')
+
+  const resetPasswordPath = () => {
+    const origin = window.location.origin
+    return `${origin}/admin/reset-password/`
+  }
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    setNotice(null)
+
+    try {
+      const supabase = createClient()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: resetPasswordPath(),
+      })
+
+      if (resetError) {
+        setError(resetError.message)
+        return
+      }
+
+      setNotice('If that email has an account, we sent a reset link. It should open the password page, not the public site.')
+    } catch {
+      setError('An unexpected error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,11 +92,18 @@ export default function AdminLoginPage() {
           <div className="w-12 h-12 rounded-xl bg-[#003365] flex items-center justify-center mb-3">
             <span className="text-white text-lg font-bold">CS</span>
           </div>
-          <h1 className="text-xl font-bold text-gray-900">Admin Login</h1>
-          <p className="text-sm text-gray-500 mt-1">Sign in to the admin panel</p>
+          <h1 className="text-xl font-bold text-gray-900">
+            {mode === 'forgot' ? 'Reset password' : 'Admin Login'}
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {mode === 'forgot' ? 'We will email a link to set a new password' : 'Sign in to the admin panel'}
+          </p>
         </div>
 
-        <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4">
+        <form
+          onSubmit={mode === 'forgot' ? handleForgot : handleLogin}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4"
+        >
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
@@ -80,19 +119,21 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#003365] focus:ring-1 focus:ring-[#003365]/20 transition-colors"
-              placeholder="Enter your password"
-            />
-          </div>
+          {mode === 'signin' && (
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#003365] focus:ring-1 focus:ring-[#003365]/20 transition-colors"
+                placeholder="Enter your password"
+              />
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -100,12 +141,32 @@ export default function AdminLoginPage() {
             </div>
           )}
 
+          {notice && (
+            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+              <p className="text-sm text-green-700">{notice}</p>
+            </div>
+          )}
+
           <button
             type="submit"
-            disabled={loading || !email || !password}
+            disabled={loading || !email || (mode === 'signin' && !password)}
             className="w-full py-2.5 px-4 bg-[#003365] hover:bg-[#002A54] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading
+              ? (mode === 'forgot' ? 'Sending...' : 'Signing in...')
+              : (mode === 'forgot' ? 'Send reset link' : 'Sign in')}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setMode(mode === 'forgot' ? 'signin' : 'forgot')
+              setError(null)
+              setNotice(null)
+            }}
+            className="w-full text-sm text-gray-500 hover:text-[#003365] transition-colors"
+          >
+            {mode === 'forgot' ? 'Back to sign in' : 'Forgot password?'}
           </button>
         </form>
       </div>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T15:00:41.025Z",
+  "generatedAt": "2026-09-13T18:06:10.139Z",
   "routes": [
     {
       "path": "/",
@@ -18,6 +18,11 @@
     },
     {
       "path": "/admin/assets/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/commerce/",
       "dynamic": false,
       "admin": true
     },
@@ -58,6 +63,11 @@
     },
     {
       "path": "/admin/redirects/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/admin/reset-password/",
       "dynamic": false,
       "admin": true
     },
@@ -372,6 +382,11 @@
       "admin": true
     },
     {
+      "path": "/pro/forgot/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
       "path": "/pro/jobs/",
       "dynamic": false,
       "admin": true
@@ -388,6 +403,16 @@
     },
     {
       "path": "/pro/perks/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/reset/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/signup/",
       "dynamic": false,
       "admin": true
     },

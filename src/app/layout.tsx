@@ -4,6 +4,7 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { GlobalLayout } from "@/components/layout/GlobalLayout";
 import { TrackingProvider, MetaPixel, ClickCease } from "@/components/tracking";
+import { AuthRedirectCatcher } from "@/components/auth/AuthRedirectCatcher";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -64,8 +65,14 @@ export default function RootLayout({
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
       )}
       <body className={`${inter.variable} font-sans antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var p=location.pathname.replace(/\\/+$/,'')||'/';if(p==='/admin/reset-password'||p==='/admin/login')return;var h=location.hash||'';var auth=/access_token=/.test(h)&&/type=(recovery|invite|signup|magiclink|email)/.test(h);var err=/error=/.test(h)&&(/error_code=/.test(h)||/error_description=/.test(h));if(auth||err){location.replace('/admin/reset-password/'+location.search+location.hash);}})();`,
+          }}
+        />
         <MetaPixel />
         <ClickCease />
+        <AuthRedirectCatcher />
         <TrackingProvider>
           <GlobalLayout>{children}</GlobalLayout>
         </TrackingProvider>
