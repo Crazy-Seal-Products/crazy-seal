@@ -112,3 +112,102 @@ export async function createZohoLead(leadData: ZohoLeadData): Promise<{ id: stri
     return null
   }
 }
+
+export class ZohoScopeError extends Error {
+  constructor(message = 'Zoho token is missing Contacts module scopes') {
+    super(message)
+    this.name = 'ZohoScopeError'
+  }
+}
+
+function assertContactsScope(status: number, body: string) {
+  if (status === 401 && /OAUTH_SCOPE_MISMATCH|invalid oauth scope/i.test(body)) {
+    throw new ZohoScopeError(
+      'Zoho token cannot read Contacts. Generate a new Self Client grant with scopes ZohoCRM.modules.contacts.READ,ZohoCRM.modules.contacts.UPDATE (plus the existing Leads scopes) and exchange it via scripts/zoho-setup.mjs.'
+    )
+  }
+}
+
+export interface ZohoContactReview {
+  id: string
+  email: string
+  name: string | null
+  reviews_for_marketing: string | null
+}
+
+async function zohoGet(path: string) {
+  const accessToken = await getAccessToken()
+  const response = await fetch(`${ZOHO_API_DOMAIN}${path}`, {
+    headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
+  })
+  const text = await response.text()
+  assertContactsScope(response.status, text)
+  let json: Record<string, unknown> = {}
+  try { json = text ? JSON.parse(text) : {} } catch { /* non-JSON error page */ }
+  return { ok: response.ok, status: response.status, json, text }
+}
+
+/**
+ * Page through Contacts that have a Reviews_for_Marketing picklist value set.
+ * One search per picklist option (Zoho search cannot easily exclude "-None-").
+ */
+export async function listContactMarketingReviews(values: readonly string[]): Promise<ZohoContactReview[]> {
+  const byEmail = new Map<string, ZohoContactReview>()
+
+  for (const value of values) {
+    for (let page = 1; page <= 10; page++) {
+      const criteria = encodeURIComponent(`(Reviews_for_Marketing:equals:${value})`)
+      const { ok, status, json, text } = await zohoGet(
+        `/crm/v7/Contacts/search?criteria=${criteria}&fields=Email,Full_Name,Reviews_for_Marketing&page=${page}&per_page=200`
+      )
+      if (status === 204 || (json as { data?: unknown }).data == null) break
+      if (!ok) {
+        throw new Error(`Zoho Contacts search failed (${status}): ${text.slice(0, 400)}`)
+      }
+      const rows = (json as { data?: Array<Record<string, string | null>> }).data || []
+      for (const row of rows) {
+        const email = row.Email?.trim().toLowerCase()
+        if (!email) continue
+        byEmail.set(email, {
+          id: String(row.id),
+          email,
+          name: row.Full_Name || null,
+          reviews_for_marketing: row.Reviews_for_Marketing || value,
+        })
+      }
+      const more = (json as { info?: { more_records?: boolean } }).info?.more_records
+      if (!more || rows.length < 200) break
+    }
+  }
+
+  return [...byEmail.values()]
+}
+
+export async function updateContactMarketingReview(email: string, value: string | null): Promise<boolean> {
+  const criteria = encodeURIComponent(`(Email:equals:${email.trim()})`)
+  const found = await zohoGet(
+    `/crm/v7/Contacts/search?criteria=${criteria}&fields=id,Email,Reviews_for_Marketing&per_page=2`
+  )
+  if (found.status === 204 || !found.ok) return false
+  const contact = (found.json as { data?: Array<{ id: string }> }).data?.[0]
+  if (!contact?.id) return false
+
+  const accessToken = await getAccessToken()
+  const response = await fetch(`${ZOHO_API_DOMAIN}/crm/v7/Contacts`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Zoho-oauthtoken ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      data: [{ id: contact.id, Reviews_for_Marketing: value || null }],
+    }),
+  })
+  const text = await response.text()
+  assertContactsScope(response.status, text)
+  if (!response.ok) {
+    console.error('[Zoho] Update contact review failed:', response.status, text.slice(0, 400))
+    return false
+  }
+  return true
+}
