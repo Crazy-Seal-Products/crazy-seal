@@ -13,8 +13,7 @@ const s3 = new S3Client({
 const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.crazyseal.com'}`
 
-const ALLOWED_FOLDERS = ['lead-photos', 'warranty', 'content-requests'] as const
-const MAX_FILE_SIZE = 30 * 1024 * 1024
+const ALLOWED_FOLDERS = ['lead-photos', 'warranty', 'warranty-edited', 'content-requests'] as const
 const EXT_TO_MIME: Record<string, string> = {
   heic: 'image/heic', heif: 'image/heif', jpg: 'image/jpeg', jpeg: 'image/jpeg',
   png: 'image/png', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp',
@@ -37,7 +36,7 @@ function resolveImageType(fileName: string, fileType: string): string | null {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { fileName, fileType, fileSize, folder: folderInput } = await request.json()
+    const { fileName, fileType, folder: folderInput } = await request.json()
 
     if (!fileName) {
       return NextResponse.json({ error: 'fileName is required' }, { status: 400 })
@@ -45,9 +44,6 @@ export async function POST(request: NextRequest) {
     const contentType = resolveImageType(String(fileName), String(fileType || ''))
     if (!contentType) {
       return NextResponse.json({ error: 'Only image uploads are allowed' }, { status: 400 })
-    }
-    if (typeof fileSize === 'number' && fileSize > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: 'File too large (max 30MB)' }, { status: 400 })
     }
 
     const folder = ALLOWED_FOLDERS.includes(folderInput as typeof ALLOWED_FOLDERS[number])
@@ -61,7 +57,7 @@ export async function POST(request: NextRequest) {
       ContentType: contentType,
     })
 
-    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 600 })
+    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 })
 
     return NextResponse.json({ presignedUrl, publicUrl: `${CDN_URL}/${key}` })
   } catch (error) {

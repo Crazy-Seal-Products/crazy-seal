@@ -11,7 +11,7 @@
  * (from a Self Client at https://api-console.zoho.com while logged into the Crazy Seal Zoho account).
  *
  * Required scope when generating the grant code:
- *   ZohoCRM.modules.leads.CREATE,ZohoCRM.modules.leads.READ,ZohoCRM.settings.fields.READ,ZohoCRM.users.READ
+ *   ZohoCRM.modules.leads.CREATE,ZohoCRM.modules.leads.READ,ZohoCRM.settings.fields.READ,ZohoCRM.users.READ,ZohoCRM.modules.contacts.READ,ZohoCRM.modules.contacts.UPDATE
  */
 
 import { readFileSync } from 'node:fs'
