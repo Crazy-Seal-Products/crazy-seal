@@ -22,7 +22,7 @@ const GCLID_MAX_AGE = 90 * 24 * 60 * 60
 
 declare global {
   interface Window {
-    dataLayer?: unknown[]
+    dataLayer?: Record<string, unknown>[]
     gtag?: (...args: unknown[]) => void
   }
 }
@@ -33,7 +33,7 @@ function ensureGtag(): void {
     window.gtag = function gtag() {
       // gtag.js reads `arguments`, not a rest array.
       // eslint-disable-next-line prefer-rest-params
-      window.dataLayer!.push(arguments)
+      window.dataLayer!.push(arguments as unknown as Record<string, unknown>)
     }
   }
 }

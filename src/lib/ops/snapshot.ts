@@ -16,7 +16,7 @@ async function shopifyPaidTotal(fromDay: string) {
   let total = 0
   const query = `created_at:>=${fromDay} financial_status:paid`
   for (let i = 0; i < 20; i++) {
-    const data = await shopifyAdminGraphql<OrdersPage>(
+    const data: OrdersPage = await shopifyAdminGraphql<OrdersPage>(
       `query Orders($query: String!, $cursor: String) {
         orders(first: 100, query: $query, after: $cursor) {
           pageInfo { hasNextPage endCursor }
