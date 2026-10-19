@@ -25,6 +25,7 @@ import { useCart } from '@/contexts/CartContext'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId } from '@/lib/tracking/meta-pixel'
+import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
 import {
   KIT_COLORS,
   RV_LENGTH_BUCKETS,
@@ -575,6 +576,11 @@ function KitLeadForm({ summary }: { summary: () => string }) {
 
       await trackEvent('form_submitted', { source_page: 'kit-builder' })
       trackMetaEvent('Lead', { content_name: 'kit-builder' }, eventId)
+      await reportLeadToGoogleAds(res, {
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        eventId,
+      })
 
       sessionStorage.setItem(LEAD_SUBMITTED_KEY, '1')
       setSubmitted(true)

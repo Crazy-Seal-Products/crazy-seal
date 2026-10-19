@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import Link from 'next/link'
 import { Container, Heading, Text, Card, Stack } from '@/lib/design-system'
 import { createClient } from '@/lib/supabase/client'
 import {
   Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  RefreshCw, X, FileText, Paperclip,
+  RefreshCw, X, FileText, Paperclip, Send,
 } from 'lucide-react'
+import { isWarrantyRegistrationForm } from '@/lib/warranty/legacy'
 
 const PAGE_SIZE = 50
 
@@ -67,6 +69,7 @@ export default function AdminEntriesPage() {
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [notifyState, setNotifyState] = useState<Record<string, { loading: boolean; message: string | null; ok?: boolean }>>({})
 
   // Build the form filter list once (dedupe client-side; archive is bounded)
   useEffect(() => {
@@ -125,16 +128,50 @@ export default function AdminEntriesPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
+  async function resendConfirmations(entry: LegacyEntry) {
+    setNotifyState(prev => ({ ...prev, [entry.id]: { loading: true, message: null } }))
+    try {
+      const res = await fetch('/api/admin/warranty/notify/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ legacy_id: entry.id, gf_entry_id: entry.gf_entry_id }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setNotifyState(prev => ({
+          ...prev,
+          [entry.id]: { loading: false, message: data.error || 'Failed to send emails.', ok: false },
+        }))
+        return
+      }
+      const recipients = ['customer']
+      if (data.sent?.installer) recipients.push('installer')
+      setNotifyState(prev => ({
+        ...prev,
+        [entry.id]: { loading: false, message: `Sent to ${recipients.join(' and ')}.`, ok: true },
+      }))
+    } catch {
+      setNotifyState(prev => ({
+        ...prev,
+        [entry.id]: { loading: false, message: 'Failed to send emails.', ok: false },
+      }))
+    }
+  }
+
   return (
     <div className="p-4 md:p-6 lg:p-8">
       <Container size="xl">
         <Stack gap="md">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <Heading level={1} className="text-2xl font-bold text-gray-900 mb-1">Form Entries</Heading>
+              <Heading level={1} className="text-2xl font-bold text-gray-900 mb-1">Legacy Forms</Heading>
               <Text className="text-gray-500 !mb-0">
-                Legacy Gravity Forms archive — {total.toLocaleString()} entries
+                Gravity Forms archive — {total.toLocaleString()} entries
                 {formId !== 'all' && forms.find(f => f.gf_form_id === formId) ? ` in ${forms.find(f => f.gf_form_id === formId)!.form_title}` : ''}
+                . Live submissions are under{' '}
+                <Link href="/admin/leads" className="text-[#003365] hover:underline">Leads</Link>
+                {' '}and{' '}
+                <Link href="/admin/warranty" className="text-[#003365] hover:underline">Warranty</Link>.
               </Text>
             </div>
             <button
@@ -266,6 +303,37 @@ export default function AdminEntriesPage() {
                                 </a>
                               ))}
                             </div>
+                          </div>
+                        )}
+
+                        {isWarrantyRegistrationForm(row.gf_form_id) && (
+                          <div className="rounded-lg border border-gray-200 bg-white p-3 space-y-2">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Confirmation emails</p>
+                            {email ? (
+                              <p className="text-gray-700 text-sm">
+                                Customer: <a href={`mailto:${email}`} className="hover:text-[#003365]">{email}</a>
+                              </p>
+                            ) : (
+                              <p className="text-gray-500 text-sm">No customer email on this entry.</p>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => resendConfirmations(row)}
+                              disabled={!email || notifyState[row.id]?.loading}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#003365] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            >
+                              {notifyState[row.id]?.loading ? (
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <Send className="w-3.5 h-3.5" />
+                              )}
+                              {notifyState[row.id]?.loading ? 'Sending…' : 'Resend confirmation emails'}
+                            </button>
+                            {notifyState[row.id]?.message && (
+                              <p className={`text-xs ${notifyState[row.id]?.ok ? 'text-green-700' : 'text-red-600'}`}>
+                                {notifyState[row.id]?.message}
+                              </p>
+                            )}
                           </div>
                         )}
 

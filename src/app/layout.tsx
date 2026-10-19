@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { GlobalLayout } from "@/components/layout/GlobalLayout";
-import { TrackingProvider, MetaPixel, ClickCease } from "@/components/tracking";
+import { TrackingProvider, MetaPixel, ClickCease, GoogleAds } from "@/components/tracking";
 import { AuthRedirectCatcher } from "@/components/auth/AuthRedirectCatcher";
 
 const inter = Inter({
@@ -72,6 +72,7 @@ export default function RootLayout({
         />
         <MetaPixel />
         <ClickCease />
+        <GoogleAds />
         <AuthRedirectCatcher />
         <TrackingProvider>
           <GlobalLayout>{children}</GlobalLayout>

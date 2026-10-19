@@ -7,6 +7,7 @@ import { Send, Loader2 } from 'lucide-react'
 import { Input, Textarea, Select, Button } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
+import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
 
@@ -108,6 +109,11 @@ export function ContactForm({
 
       // Browser Pixel Lead — shares event_id with the server CAPI event above.
       trackMetaEvent('Lead', { content_name: sourcePage }, eventId)
+      await reportLeadToGoogleAds(res, {
+        email: body.email,
+        phone: body.phone,
+        eventId,
+      })
 
       if (typeof window !== 'undefined' && window.dataLayer) {
         window.dataLayer.push({
