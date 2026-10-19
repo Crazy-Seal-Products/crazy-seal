@@ -4,14 +4,31 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Container, Heading, Text, Card, Stack } from '@/lib/design-system'
 import { createClient } from '@/lib/supabase/client'
 import {
-  Search, ChevronDown, ChevronUp, Phone, Mail, Send,
+  Search, ChevronDown, ChevronUp, Phone, Mail, Send, Pencil, Save,
   RefreshCw, X, ShieldCheck, ArrowLeftRight, AlertTriangle, Star,
 } from 'lucide-react'
 import { WarrantyReviewLightbox, type ReviewRegistration } from '@/components/admin/WarrantyReviewLightbox'
+import { EditedPhotosField } from '@/components/admin/EditedPhotosField'
 import { needsClassification } from '@/lib/warranty/classification'
 
 type Tab = 'registrations' | 'transfers' | 'claims'
-type ClassifyFilter = 'needs_review' | 'classified' | 'all'
+type ClassifyFilter = 'needs_review' | 'classified' | 'legacy' | 'edited' | 'needs_edits' | 'all'
+
+const EDIT_CLASSIFICATIONS = new Set([
+  'Use For Marketing/Website',
+  'Good Photos & Review',
+  'Good Photos',
+])
+
+function hasEditedPhotos(reg: Registration): boolean {
+  return (reg.edited_photo_urls || []).length > 0
+}
+
+function needsEditedPhotos(reg: Registration): boolean {
+  return !!reg.reviews_for_marketing
+    && EDIT_CLASSIFICATIONS.has(reg.reviews_for_marketing)
+    && !hasEditedPhotos(reg)
+}
 
 interface Registration {
   id: string
@@ -36,6 +53,8 @@ interface Registration {
   reviews_for_marketing: string | null
   lucid_link: string | null
   favorite_photo_urls: string[] | null
+  edited_photo_urls: string[] | null
+  gf_entry_id: number | null
   created_at: string
 }
 
@@ -116,6 +135,52 @@ function installerRecipient(reg: Registration): string | null {
   return installer
 }
 
+function emptyToNull(value: string | undefined): string | null {
+  const trimmed = value?.trim() ?? ''
+  return trimmed ? trimmed : null
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  required,
+  multiline,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  type?: string
+  required?: boolean
+  multiline?: boolean
+}) {
+  const classes = 'w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-[#003365]/20 focus:border-[#003365] outline-none'
+  return (
+    <label className="block space-y-1">
+      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+        {label}{required ? ' *' : ''}
+      </span>
+      {multiline ? (
+        <textarea
+          rows={3}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={classes}
+        />
+      ) : (
+        <input
+          type={type}
+          required={required}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={classes}
+        />
+      )}
+    </label>
+  )
+}
+
 function PhotoLinks({
   urls,
   label,
@@ -158,6 +223,9 @@ export default function AdminWarrantyPage() {
   const [reviewQueue, setReviewQueue] = useState<ReviewRegistration[] | null>(null)
   const [reviewStartId, setReviewStartId] = useState<string | null>(null)
   const [notifyState, setNotifyState] = useState<Record<string, { loading: boolean; message: string | null; ok?: boolean }>>({})
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [draft, setDraft] = useState<Record<string, string>>({})
+  const [saveState, setSaveState] = useState<{ loading: boolean; message: string | null; ok?: boolean }>({ loading: false, message: null })
 
   const fetchRows = useCallback(async () => {
     setLoading(true)
@@ -207,16 +275,127 @@ export default function AdminWarrantyPage() {
 
   async function updateRegistration(
     id: string,
-    patch: Partial<Pick<Registration, 'image_type' | 'reviews_for_marketing' | 'status' | 'lucid_link' | 'before_photo_urls' | 'after_photo_urls' | 'favorite_photo_urls'>>
-  ) {
+    patch: Partial<Pick<Registration, 'image_type' | 'reviews_for_marketing' | 'status' | 'lucid_link' | 'before_photo_urls' | 'after_photo_urls' | 'favorite_photo_urls' | 'edited_photo_urls'>>
+  ): Promise<boolean> {
     const supabase = createClient()
     const { error } = await supabase
       .from('warranty_registrations')
       .update(patch)
       .eq('id', id)
-    if (!error) {
-      setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)))
+    if (error) return false
+    setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)))
+    return true
+  }
+
+  function setDraftField(key: string, value: string) {
+    setDraft((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function startEdit(row: Registration | Transfer | Claim) {
+    setSaveState({ loading: false, message: null })
+    setEditingId(row.id)
+    if (tab === 'transfers') {
+      const tr = row as Transfer
+      setDraft({
+        new_owner_name: tr.new_owner_name || '',
+        new_owner_email: tr.new_owner_email || '',
+        new_owner_phone: tr.new_owner_phone || '',
+        original_owner_email: tr.original_owner_email || '',
+        order_number: tr.order_number || '',
+        transfer_notes: tr.transfer_notes || '',
+      })
+      return
     }
+    if (tab === 'claims') {
+      const cl = row as Claim
+      setDraft({
+        name: cl.name || '',
+        email: cl.email || '',
+        phone: cl.phone || '',
+        order_number: cl.order_number || '',
+        failure_description: cl.failure_description || '',
+        resolution_notes: cl.resolution_notes || '',
+      })
+      return
+    }
+    const reg = row as Registration
+    setDraft({
+      name: reg.name || '',
+      email: reg.email || '',
+      phone: reg.phone || '',
+      order_number: reg.order_number || '',
+      customer_details: reg.customer_details || '',
+      install_type: reg.install_type || '',
+      installer_name: reg.installer_name || '',
+      installer_phone: reg.installer_phone || '',
+      installer_email: reg.installer_email || '',
+      experience_notes: reg.experience_notes || '',
+      contractor_notes: reg.contractor_notes || '',
+    })
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setDraft({})
+    setSaveState({ loading: false, message: null })
+  }
+
+  async function saveEdit(id: string) {
+    const name = (draft.name || draft.new_owner_name || '').trim()
+    const email = (draft.email || draft.new_owner_email || '').trim().toLowerCase()
+    if (!name || !email || !email.includes('@')) {
+      setSaveState({ loading: false, message: 'Name and a valid email are required.', ok: false })
+      return
+    }
+
+    const patch = tab === 'transfers'
+      ? {
+          new_owner_name: name,
+          new_owner_email: email,
+          new_owner_phone: emptyToNull(draft.new_owner_phone),
+          original_owner_email: emptyToNull(draft.original_owner_email)?.toLowerCase() ?? null,
+          order_number: emptyToNull(draft.order_number),
+          transfer_notes: emptyToNull(draft.transfer_notes),
+        }
+      : tab === 'claims'
+        ? {
+            name,
+            email,
+            phone: emptyToNull(draft.phone),
+            order_number: emptyToNull(draft.order_number),
+            failure_description: emptyToNull(draft.failure_description),
+            resolution_notes: emptyToNull(draft.resolution_notes),
+          }
+        : {
+            name,
+            email,
+            phone: emptyToNull(draft.phone),
+            order_number: emptyToNull(draft.order_number),
+            customer_details: emptyToNull(draft.customer_details),
+            install_type: emptyToNull(draft.install_type),
+            installer_name: emptyToNull(draft.installer_name),
+            installer_phone: emptyToNull(draft.installer_phone),
+            installer_email: emptyToNull(draft.installer_email)?.toLowerCase() ?? null,
+            experience_notes: emptyToNull(draft.experience_notes),
+            contractor_notes: emptyToNull(draft.contractor_notes),
+          }
+
+    setSaveState({ loading: true, message: null })
+    const supabase = createClient()
+    const { error } = await supabase
+      .from(TABLES[tab])
+      .update(patch)
+      .eq('id', id)
+
+    if (error) {
+      setSaveState({ loading: false, message: error.message || 'Failed to save changes.', ok: false })
+      return
+    }
+
+    setRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)))
+    setEditingId(null)
+    setDraft({})
+    setSaveState({ loading: false, message: 'Saved.', ok: true })
   }
 
   const filtered = rows.filter((row) => {
@@ -234,12 +413,24 @@ export default function AdminWarrantyPage() {
       const reg = row as Registration
       if (classifyFilter === 'needs_review') return needsClassification(reg)
       if (classifyFilter === 'classified') return !needsClassification(reg)
+      if (classifyFilter === 'legacy') return !!reg.gf_entry_id
+      if (classifyFilter === 'edited') return hasEditedPhotos(reg)
+      if (classifyFilter === 'needs_edits') return needsEditedPhotos(reg)
     }
     return true
   })
 
   const needsReviewCount = tab === 'registrations'
     ? rows.filter((row) => needsClassification(row as Registration)).length
+    : 0
+  const legacyCount = tab === 'registrations'
+    ? rows.filter((row) => !!(row as Registration).gf_entry_id).length
+    : 0
+  const editedCount = tab === 'registrations'
+    ? rows.filter((row) => hasEditedPhotos(row as Registration)).length
+    : 0
+  const needsEditsCount = tab === 'registrations'
+    ? rows.filter((row) => needsEditedPhotos(row as Registration)).length
     : 0
 
   async function resendConfirmations(reg: Registration) {
@@ -313,7 +504,7 @@ export default function AdminWarrantyPage() {
             {TABS.map((t) => (
               <button
                 key={t.id}
-                onClick={() => { setTab(t.id); setExpandedId(null) }}
+                onClick={() => { setTab(t.id); setExpandedId(null); setEditingId(null); setSaveState({ loading: false, message: null }) }}
                 className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   tab === t.id
                     ? 'bg-[#003365] text-white'
@@ -331,6 +522,9 @@ export default function AdminWarrantyPage() {
               {([
                 { id: 'needs_review', label: `Needs review${needsReviewCount ? ` (${needsReviewCount})` : ''}` },
                 { id: 'classified', label: 'Classified' },
+                { id: 'needs_edits', label: `Needs edits${needsEditsCount ? ` (${needsEditsCount})` : ''}` },
+                { id: 'edited', label: `Edited${editedCount ? ` (${editedCount})` : ''}` },
+                { id: 'legacy', label: `Legacy${legacyCount ? ` (${legacyCount})` : ''}` },
                 { id: 'all', label: 'All' },
               ] as const).map((option) => (
                 <button
@@ -386,7 +580,10 @@ export default function AdminWarrantyPage() {
                 return (
                   <Card key={row.id} className="!p-0 overflow-hidden">
                     <button
-                      onClick={() => setExpandedId(isOpen ? null : row.id)}
+                      onClick={() => {
+                        setExpandedId(isOpen ? null : row.id)
+                        if (isOpen || editingId) cancelEdit()
+                      }}
                       className="w-full text-left px-4 py-3 sm:px-5 sm:py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex-1 min-w-0">
@@ -410,11 +607,21 @@ export default function AdminWarrantyPage() {
                               Lucid
                             </span>
                           )}
+                          {reg && hasEditedPhotos(reg) && (
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-teal-100 text-teal-800">
+                              Edited {(reg.edited_photo_urls || []).length}
+                            </span>
+                          )}
                           {row.order_number && (
                             <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
                               #{row.order_number}
                             </span>
                           )}
+                          {reg?.gf_entry_id ? (
+                            <span className="text-[10px] font-medium bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
+                              Legacy #{reg.gf_entry_id}
+                            </span>
+                          ) : null}
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
                           <span>{email}</span>
@@ -429,6 +636,105 @@ export default function AdminWarrantyPage() {
 
                     {isOpen && (
                       <div className="border-t border-gray-100 px-4 py-4 sm:px-5 sm:py-5 bg-gray-50/50 text-sm space-y-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                            {editingId === row.id ? 'Edit entry' : 'Details'}
+                          </p>
+                          {editingId === row.id ? (
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => saveEdit(row.id)}
+                                disabled={saveState.loading}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#003365] rounded-lg hover:bg-[#002A54] disabled:opacity-50"
+                              >
+                                {saveState.loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                                {saveState.loading ? 'Saving…' : 'Save'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={cancelEdit}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => startEdit(row)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#003365] bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              Edit
+                            </button>
+                          )}
+                        </div>
+
+                        {saveState.message && (
+                          <p className={`text-xs ${saveState.ok ? 'text-green-700' : 'text-red-600'}`}>{saveState.message}</p>
+                        )}
+
+                        {editingId === row.id ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {tab === 'transfers' ? (
+                              <>
+                                <Field label="New owner name" required value={draft.new_owner_name || ''} onChange={(v) => setDraftField('new_owner_name', v)} />
+                                <Field label="New owner email" type="email" required value={draft.new_owner_email || ''} onChange={(v) => setDraftField('new_owner_email', v)} />
+                                <Field label="New owner phone" type="tel" value={draft.new_owner_phone || ''} onChange={(v) => setDraftField('new_owner_phone', v)} />
+                                <Field label="Original owner email" type="email" value={draft.original_owner_email || ''} onChange={(v) => setDraftField('original_owner_email', v)} />
+                                <Field label="Order number" value={draft.order_number || ''} onChange={(v) => setDraftField('order_number', v)} />
+                                <div className="sm:col-span-2">
+                                  <Field label="Transfer notes" multiline value={draft.transfer_notes || ''} onChange={(v) => setDraftField('transfer_notes', v)} />
+                                </div>
+                              </>
+                            ) : tab === 'claims' ? (
+                              <>
+                                <Field label="Name" required value={draft.name || ''} onChange={(v) => setDraftField('name', v)} />
+                                <Field label="Email" type="email" required value={draft.email || ''} onChange={(v) => setDraftField('email', v)} />
+                                <Field label="Phone" type="tel" value={draft.phone || ''} onChange={(v) => setDraftField('phone', v)} />
+                                <Field label="Order number" value={draft.order_number || ''} onChange={(v) => setDraftField('order_number', v)} />
+                                <div className="sm:col-span-2">
+                                  <Field label="Issue" multiline value={draft.failure_description || ''} onChange={(v) => setDraftField('failure_description', v)} />
+                                </div>
+                                <div className="sm:col-span-2">
+                                  <Field label="Resolution notes" multiline value={draft.resolution_notes || ''} onChange={(v) => setDraftField('resolution_notes', v)} />
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <Field label="Name" required value={draft.name || ''} onChange={(v) => setDraftField('name', v)} />
+                                <Field label="Email" type="email" required value={draft.email || ''} onChange={(v) => setDraftField('email', v)} />
+                                <Field label="Phone" type="tel" value={draft.phone || ''} onChange={(v) => setDraftField('phone', v)} />
+                                <Field label="Order number" value={draft.order_number || ''} onChange={(v) => setDraftField('order_number', v)} />
+                                <div className="sm:col-span-2">
+                                  <Field label="Customer details" multiline value={draft.customer_details || ''} onChange={(v) => setDraftField('customer_details', v)} />
+                                </div>
+                                <label className="block space-y-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Install type</span>
+                                  <select
+                                    value={draft.install_type || ''}
+                                    onChange={(e) => setDraftField('install_type', e.target.value)}
+                                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-[#003365]/20 focus:border-[#003365] outline-none cursor-pointer"
+                                  >
+                                    <option value="">Not specified</option>
+                                    <option value="diy">Self installed (DIY)</option>
+                                    <option value="contractor">Dealer / contractor</option>
+                                  </select>
+                                </label>
+                                <Field label="Installer name" value={draft.installer_name || ''} onChange={(v) => setDraftField('installer_name', v)} />
+                                <Field label="Installer phone" type="tel" value={draft.installer_phone || ''} onChange={(v) => setDraftField('installer_phone', v)} />
+                                <Field label="Installer email" type="email" value={draft.installer_email || ''} onChange={(v) => setDraftField('installer_email', v)} />
+                                <div className="sm:col-span-2">
+                                  <Field label="Experience notes" multiline value={draft.experience_notes || ''} onChange={(v) => setDraftField('experience_notes', v)} />
+                                </div>
+                                <div className="sm:col-span-2">
+                                  <Field label="Contractor notes" multiline value={draft.contractor_notes || ''} onChange={(v) => setDraftField('contractor_notes', v)} />
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Contact</p>
@@ -457,8 +763,9 @@ export default function AdminWarrantyPage() {
                             </select>
                           </div>
                         </div>
+                        )}
 
-                        {tab === 'registrations' && reg && (
+                        {tab === 'registrations' && reg && editingId !== row.id && (
                             <>
                               {reg.customer_details && (
                                 <p className="text-gray-700 whitespace-pre-wrap"><strong>Details:</strong> {reg.customer_details}</p>
@@ -558,7 +865,18 @@ export default function AdminWarrantyPage() {
                             </>
                         )}
 
-                        {tab === 'transfers' && (() => {
+                        {tab === 'registrations' && reg && (
+                          <EditedPhotosField
+                            urls={reg.edited_photo_urls || []}
+                            favoriteUrls={reg.favorite_photo_urls || []}
+                            onSave={async (urls) => {
+                              const ok = await updateRegistration(reg.id, { edited_photo_urls: urls })
+                              if (!ok) throw new Error('Failed to save edited photos.')
+                            }}
+                          />
+                        )}
+
+                        {tab === 'transfers' && editingId !== row.id && (() => {
                           const tr = row as Transfer
                           return (
                             <>
@@ -572,7 +890,7 @@ export default function AdminWarrantyPage() {
                           )
                         })()}
 
-                        {tab === 'claims' && (() => {
+                        {tab === 'claims' && editingId !== row.id && (() => {
                           const cl = row as Claim
                           return (
                             <>

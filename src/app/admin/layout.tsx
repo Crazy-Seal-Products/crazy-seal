@@ -51,7 +51,7 @@ const adminNavSections: NavSection[] = [
       { name: 'Customers / Pros', href: '/admin/pros', icon: Handshake },
       { name: 'Shopify data', href: '/admin/commerce', icon: ShoppingBag },
       { name: 'Warranty', href: '/admin/warranty', icon: ShieldCheck },
-      { name: 'Form Entries', href: '/admin/entries', icon: Inbox },
+      { name: 'Legacy Forms', href: '/admin/entries', icon: Inbox },
       { name: 'Projects', href: '/admin/projects', icon: Hammer },
       { name: 'FAQ Manager', href: '/admin/faq', icon: HelpCircle },
       { name: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
