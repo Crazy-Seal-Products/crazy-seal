@@ -44,7 +44,7 @@ export function WarrantyClaimForm() {
         website: formData.get('website') as string,
       }
 
-      const res = await fetch('/api/warranty/claim', {
+      const res = await fetch('/api/warranty/claim/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
