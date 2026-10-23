@@ -1,11 +1,15 @@
 import type { Metadata } from 'next'
 import {
+  ArrowRight,
   Building2,
   CalendarCheck,
+  Check,
   Download,
   Headset,
+  Layers,
   Leaf,
   PaintRoller,
+  Phone,
   PiggyBank,
   Recycle,
   Sun,
@@ -23,6 +27,7 @@ import {
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
 import { LeadCaptureSection } from '@/components/LeadCaptureSection'
+import { GlowOrb } from '@/components/motion'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -147,41 +152,80 @@ const ADVANTAGES = [
   },
 ]
 
+const HERO_TRUST = [
+  { icon: Layers, label: 'Apply in stages' },
+  { icon: CalendarCheck, label: '50-Year Product Warranty' },
+  { icon: Headset, label: 'In-house support team' },
+]
+
+const CONTROL_POINTS = [
+  'Professionally handle problem areas — and know exactly which system solved them.',
+  'Expand on it over time: repairs on small areas bond to each other.',
+  'End up with a full seamless roof that will stand the test of time.',
+  'No more endless, insanely expensive commercial roofing quotes.',
+]
+
+// CSS entrance (runs before hydration, so the hero never flashes empty)
+const enter = (delayMs: number) => ({ style: { animationDelay: `${delayMs}ms` } })
+
+const SLIDER_CARD =
+  'rounded-3xl bg-gradient-to-b from-slate-50 to-white p-2 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl'
+
 export default function FacilitiesOverviewPage() {
   return (
     <>
       {/* ─── HERO / PRESENTATION VIDEO ─── */}
       <Container size="xl">
         <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-12 md:px-6 md:py-14 lg:px-8 lg:py-18">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+          <GlowOrb className="-left-32 top-10 h-96 w-96" color="rgb(26 123 196 / 0.45)" />
+          <GlowOrb className="-right-24 -bottom-24 h-80 w-80" color="rgb(91 164 17 / 0.25)" />
+          <div
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
+          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-12 md:px-8 md:py-14 lg:px-12 lg:py-18">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-8 lg:gap-12 items-center">
               <div className="text-center lg:text-left">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
-                  The Crazy Seal Roofing System
-                </p>
-                <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-4">
+                <h1
+                  {...enter(80)}
+                  className="animate-fade-up text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-white tracking-tight leading-[1.08] mb-3"
+                >
                   Facilities
                 </h1>
-                <p className="text-xl sm:text-2xl font-semibold text-highlight mb-4">
-                  No one stretches your budget like Crazy Seal!
+                <p
+                  {...enter(160)}
+                  className="animate-fade-up text-xl sm:text-2xl font-extrabold mb-4"
+                >
+                  <span className="text-shimmer-highlight">No one stretches your budget like Crazy Seal!</span>
                 </p>
-                <p className="text-white/60 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                  Facility owners and operators choose Crazy Seal to stretch
-                  their roofing budgets. Our one and done system can be applied
-                  in stages, ultimately resulting in a full seamless roof.
-                  We&apos;d love to have a conversation to see how we can help
-                  stretch your budget!
+                <p
+                  {...enter(240)}
+                  className="animate-fade-up text-white/70 text-base sm:text-lg leading-relaxed max-w-lg mx-auto lg:mx-0"
+                >
+                  Our one and done system can be applied in stages, ultimately resulting in
+                  a full seamless roof. Let&apos;s talk about stretching your budget.
                 </p>
+                <ul
+                  {...enter(320)}
+                  className="animate-fade-up mt-7 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2"
+                >
+                  {HERO_TRUST.map(({ icon: Icon, label }) => (
+                    <li key={label} className="flex items-center gap-2 text-sm font-medium text-white/75">
+                      <span className="grid h-7 w-7 place-items-center rounded-full bg-accent/20 ring-1 ring-accent/40">
+                        <Icon className="h-3.5 w-3.5 text-accent-light" />
+                      </span>
+                      {label}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div>
+              <div {...enter(200)} className="animate-fade-up">
                 <ProVimeoEmbed
                   videoId="935230279"
                   thumbnail={`${MEDIA}/2024/03/IFMA-Cover.jpg`}
                   title="Crazy Seal professional facilities installation"
                 />
-                <p className="text-center text-white/70 text-sm font-medium mt-3">
+                <p className="text-center text-white/60 text-sm font-medium mt-3">
                   Click to watch the facilities video
                 </p>
               </div>
@@ -192,54 +236,65 @@ export default function FacilitiesOverviewPage() {
 
       {/* ─── INSTALL IN STAGES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Install Crazy Seal in stages to stretch your budget:" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {PHASES.map((phase) => (
-              <div
-                key={phase.number}
-                className="rounded-2xl border border-gray-200/80 p-5 flex flex-col text-center"
-              >
-                <div className="w-12 h-12 rounded-full bg-primary text-white font-bold text-xl flex items-center justify-center mx-auto mb-4">
-                  {phase.number}
-                </div>
-                <h3 className="text-lg font-bold text-primary uppercase tracking-wide mb-2">
-                  {phase.title}
-                </h3>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                  {phase.desc}
-                </p>
-                <div className="mt-auto">
-                  <p className="text-xs font-semibold text-gray-500 mb-2">
-                    {phase.caption}
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading
+            eyebrow="Budget Friendly"
+            heading="Install Crazy Seal in stages to stretch your budget:"
+          />
+          <div className="relative">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-6 hidden h-0.5 bg-gradient-to-r from-accent/10 via-accent/50 to-accent/10 lg:block"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+              {PHASES.map((phase) => (
+                <div
+                  key={phase.number}
+                  className="group relative flex flex-col rounded-3xl bg-gradient-to-b from-slate-50 to-white p-5 text-center shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+                >
+                  <div className="relative mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-primary-light to-primary text-xl font-extrabold text-white shadow-glow-primary ring-4 ring-white transition-transform duration-500 group-hover:scale-110">
+                    {phase.number}
+                  </div>
+                  <h3 className="text-lg font-extrabold text-primary uppercase tracking-wide mb-2">
+                    {phase.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    {phase.desc}
                   </p>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={phase.image}
-                    alt={`Crazy Seal facility installation phase ${phase.number}`}
-                    className="rounded-xl shadow-md w-full h-auto"
-                  />
+                  <div className="mt-auto">
+                    <p className="text-xs font-bold uppercase tracking-wider text-accent-dark mb-2">
+                      {phase.caption}
+                    </p>
+                    <div className="overflow-hidden rounded-xl shadow-md ring-1 ring-primary/[0.08]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={phase.image}
+                        alt={`Crazy Seal facility installation phase ${phase.number}`}
+                        className="w-full h-auto transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </Container>
 
       {/* ─── RFMA FEATURE ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                Featured in RFMA Facilitator Magazine
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-4">
-                Read the Article
-              </h2>
-              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-4 md:mb-8">
-                Download an article on roofing from Crazy Seal&apos;s President
-                in Restaurant Facility Managers Association magazine.
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center">
+            <div className="text-center md:text-left">
+              <SectionHeading
+                eyebrow="Featured in RFMA Facilitator Magazine"
+                heading="Read the Article"
+                align="left"
+                className="mb-4 text-center md:text-left"
+              />
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-6 md:mb-8">
+                An article on roofing from Crazy Seal&apos;s President in Restaurant
+                Facility Managers Association magazine.
               </p>
               <LinkButton
                 href={`${MEDIA}/2022/02/Crazy-Seal-President-in-Facilitator-February_March-2022.pdf`}
@@ -251,18 +306,22 @@ export default function FacilitiesOverviewPage() {
                 See PDF
               </LinkButton>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="relative grid grid-cols-2 gap-4 sm:gap-6">
+              <div
+                aria-hidden="true"
+                className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-secondary/15 via-transparent to-accent/20 blur-xl"
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2022/01/RFMA-Facilitator-1.jpg`}
                 alt="RFMA Facilitator Magazine article page 1"
-                className="rounded-2xl shadow-lg w-full h-auto"
+                className="relative rounded-2xl shadow-xl ring-1 ring-primary/10 w-full h-auto -rotate-2 transition-transform duration-500 hover:rotate-0 hover:scale-[1.02]"
               />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2022/01/RFMA-Facilitator-2.jpg`}
                 alt="RFMA Facilitator Magazine article page 2"
-                className="rounded-2xl shadow-lg w-full h-auto"
+                className="relative mt-6 rounded-2xl shadow-xl ring-1 ring-primary/10 w-full h-auto rotate-2 transition-transform duration-500 hover:rotate-0 hover:scale-[1.02]"
               />
             </div>
           </div>
@@ -271,29 +330,36 @@ export default function FacilitiesOverviewPage() {
 
       {/* ─── COMMERCIAL INSTALLATION EXAMPLES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
           <SectionHeading
+            eyebrow="Before & After"
             heading="Commercial Roof Installation Examples"
-            subheading="Slide the center bar back and forth to see the before and after transformations!"
+            subheading="Slide the center bar back and forth to see the transformations!"
           />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {COMMERCIAL_TRANSFORMATIONS.map((t) => (
-              <BeforeAfterSlider
-                key={t.label}
-                beforeSrc={t.before}
-                afterSrc={t.after}
-                aspectRatio={t.aspect}
-              />
+              <div key={t.label} className={SLIDER_CARD}>
+                <div className="overflow-hidden rounded-2xl">
+                  <BeforeAfterSlider
+                    beforeSrc={t.before}
+                    afterSrc={t.after}
+                    aspectRatio={t.aspect}
+                  />
+                </div>
+              </div>
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
             {COMMERCIAL_TRANSFORMATIONS_WIDE.map((t) => (
-              <BeforeAfterSlider
-                key={t.label}
-                beforeSrc={t.before}
-                afterSrc={t.after}
-                aspectRatio={t.aspect}
-              />
+              <div key={t.label} className={SLIDER_CARD}>
+                <div className="overflow-hidden rounded-2xl">
+                  <BeforeAfterSlider
+                    beforeSrc={t.before}
+                    afterSrc={t.after}
+                    aspectRatio={t.aspect}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -301,59 +367,60 @@ export default function FacilitiesOverviewPage() {
 
       {/* ─── TWO PURPOSES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="Crazy Seal serves two purposes. It's a roof repair system and a full roofing system!"
-            variant="dark"
-          />
-          <p className="text-white/60 leading-relaxed max-w-3xl mx-auto text-center mb-8">
-            Nothing is more frustrating than doing the same thing over and over
-            again to the same end result. Spot patching problem areas with
-            sealants only kicks the can down the road to a future more expensive
-            problem. Ultimately, patch jobs have to be removed, creating even
-            more expense when the roof is replaced. This expensive cycle has
-            gone on way too long for millions of facilities all over the world.
-          </p>
-          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
-            <div className="text-center">
-              <Wrench className="w-12 h-12 text-highlight mx-auto mb-3" />
-              <p className="font-bold uppercase tracking-wide text-white">Repair</p>
-            </div>
-            <div className="text-center">
-              <Wrench className="w-12 h-12 text-highlight mx-auto mb-3" />
-              <p className="font-bold uppercase tracking-wide text-white">Repair</p>
-            </div>
-            <div className="text-center">
-              <RefreshCw className="w-12 h-12 text-highlight mx-auto mb-3" />
-              <p className="font-bold uppercase tracking-wide text-white">Replace</p>
-            </div>
-          </div>
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-white/60 leading-relaxed mb-4">
-              It&apos;s time to take back control of your roof! With Crazy Seal,
-              a patch doesn&apos;t just have to be a patch. You can now
-              professionally handle problem areas on your roof, know the system
-              that was used to solve the problem, and expand on it until you
-              have a full seamless roofing system installed that will stand the
-              test of time! Gone are the days of feeling out of control, at the
-              mercy of the endless stream of insanely expensive commercial
-              roofing quotes.
+        <div className="relative section-bleed bg-primary overflow-hidden px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <GlowOrb className="-left-24 -top-24 h-80 w-80" color="rgb(26 123 196 / 0.4)" />
+          <GlowOrb className="-right-20 -bottom-24 h-72 w-72" color="rgb(91 164 17 / 0.22)" />
+          <div className="relative">
+            <SectionHeading
+              eyebrow="Repair System + Full Roof System"
+              heading="Crazy Seal serves two purposes. It's a roof repair system and a full roofing system!"
+              variant="dark"
+            />
+            <p className="text-white/70 leading-relaxed max-w-3xl mx-auto text-center mb-8">
+              Spot patching problem areas with sealants only kicks the can down the road to
+              a more expensive problem — patch jobs eventually have to be removed, adding
+              expense when the roof is replaced. Millions of facilities are stuck in this
+              cycle:
             </p>
-            <p className="text-white/60 leading-relaxed">
-              Instead of continually putting band-aids on problems and hoping
-              they stick, begin with the Crazy Seal Roofing System on a small
-              area of your roof. As you continue to do repairs on small areas,
-              they bond to each other until you ultimately end up with a
-              completed seamless roof.
-            </p>
+            <div className="mx-auto mb-10 flex max-w-2xl items-center justify-center gap-2 sm:gap-4">
+              {[
+                { icon: Wrench, label: 'Repair' },
+                { icon: Wrench, label: 'Repair' },
+                { icon: RefreshCw, label: 'Replace' },
+              ].map(({ icon: Icon, label }, i) => (
+                <div key={`${label}-${i}`} className="flex items-center gap-2 sm:gap-4">
+                  {i > 0 && <ArrowRight className="h-5 w-5 flex-shrink-0 text-white/40" />}
+                  <div className="group flex w-20 flex-col items-center rounded-2xl bg-white/[0.06] px-2 py-4 ring-1 ring-white/10 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.09] hover:ring-white/25 sm:w-32 sm:py-5">
+                    <Icon className="mb-2 h-8 w-8 text-highlight transition-transform duration-500 group-hover:-rotate-12 sm:h-10 sm:w-10" />
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-white sm:text-sm">{label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mx-auto max-w-3xl rounded-3xl bg-white/[0.06] p-5 ring-1 ring-white/10 backdrop-blur-sm sm:p-8">
+              <p className="mb-5 text-center text-lg font-extrabold text-white sm:text-xl">
+                It&apos;s time to take back control of your roof! With Crazy Seal, a patch
+                doesn&apos;t just have to be a patch.
+              </p>
+              <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {CONTROL_POINTS.map((point) => (
+                  <li key={point} className="flex items-start gap-3 text-sm leading-relaxed text-white/80">
+                    <span className="mt-0.5 grid h-5 w-5 flex-shrink-0 place-items-center rounded-full bg-accent/25 text-accent-light ring-1 ring-accent/40">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </Container>
 
       {/* ─── ADVANTAGES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Crazy Seal Advantages" />
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="Why Facilities Choose Us" heading="Crazy Seal Advantages" />
           <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="lg">
             {ADVANTAGES.map((adv) => (
               <FeatureCard
@@ -369,24 +436,28 @@ export default function FacilitiesOverviewPage() {
 
       {/* ─── DUAL CLOSE: TALK TO US / BECOME A DEALER ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
-            Ready to Take Back Control of Your Roof?
-          </h2>
-          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
-            Talk to Crazy Seal directly about your facility — or join our
-            dealer network and install the system professionally.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/professionals" variant="outline-white" size="lg">
-              Become a Dealer
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              (800) 963-0131
-            </a>
+        <div className="relative section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
+          <GlowOrb className="-left-24 -top-24 h-80 w-80" color="rgb(26 123 196 / 0.4)" />
+          <div className="relative">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+              Ready to Take Back Control of Your Roof?
+            </h2>
+            <p className="text-white/70 text-base sm:text-lg mb-7 max-w-xl mx-auto">
+              Talk to Crazy Seal directly about your facility — or join our dealer network
+              and install the system professionally.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <LinkButton href="/professionals" variant="outline-white" size="lg">
+                Become a Dealer
+              </LinkButton>
+              <a
+                href="tel:8009630131"
+                className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
+              >
+                <Phone className="h-5 w-5 text-accent-light" />
+                (800) 963-0131
+              </a>
+            </div>
           </div>
         </div>
       </Container>

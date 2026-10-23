@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { Container, Grid, SectionHeading } from '@/lib/design-system'
 import { CtaSection } from '@/components/CtaSection'
+import { CountUp, GlowOrb } from '@/components/motion'
 import { KitBuilder } from '@/components/KitBuilder'
 import { Stars } from '@/components/store/Stars'
 import { StoreCatalog } from '@/components/store/StoreCatalog'
@@ -105,6 +106,11 @@ const APPLICATIONS = [
   },
 ]
 
+// CSS entrance (runs before hydration, so the hero never flashes empty)
+const enter = (delayMs: number) => ({
+  style: { animationDelay: `${delayMs}ms` },
+})
+
 export default async function KitBuilderPage() {
   const [catalog, storeProducts] = await Promise.all([
     getKitBuilderCatalog(),
@@ -116,49 +122,69 @@ export default async function KitBuilderPage() {
       {/* ─── HERO + KIT BUILDER ─── */}
       <Container size="xl">
         <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
+          <GlowOrb className="-left-32 top-10 h-96 w-96" color="rgb(26 123 196 / 0.45)" />
+          <GlowOrb className="-right-24 top-1/3 h-80 w-80" color="rgb(91 164 17 / 0.22)" />
+          <div
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]"
+          />
           <div className="relative z-10 px-5 py-8 sm:px-6 sm:py-10 md:px-6 md:py-14 lg:px-8">
-            <div className="text-center mb-8">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                Sized to Your Exact Roof
-              </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3">
-                Build Your Kit in 60 Seconds
+            <div className="text-center mb-8 md:mb-10">
+              <h1
+                {...enter(80)}
+                className="animate-fade-up text-3xl sm:text-4xl lg:text-5xl xl:text-[3.4rem] font-extrabold text-white tracking-tight leading-[1.08] mb-4 text-balance"
+              >
+                Build Your Kit in{' '}
+                <span className="text-shimmer-highlight">60 Seconds</span>
               </h1>
-              <p className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed mb-8">
-                Answer a few questions and get a complete kit with live pricing —
-                everything your roof needs in one box, nothing it doesn&apos;t.
+              <p
+                {...enter(160)}
+                className="animate-fade-up text-base sm:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed mb-8"
+              >
+                Answer a few questions for a complete kit with live pricing — everything
+                your roof needs in one box, nothing it doesn&apos;t.
               </p>
 
               {/* Stats strip */}
-              <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-                <div className="flex flex-col items-center">
+              <div
+                {...enter(240)}
+                className="animate-fade-up mx-auto grid max-w-3xl grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3"
+              >
+                <div className="flex flex-col items-center justify-center rounded-2xl bg-white/[0.06] px-3 py-3.5 ring-1 ring-white/10 backdrop-blur-sm">
                   <Stars />
-                  <span className="mt-1 text-xs text-white/50 uppercase tracking-wider">
+                  <span className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/55">
                     rated by DIYers
                   </span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-white leading-none">1,000s</span>
-                  <span className="mt-1 text-xs text-white/50 uppercase tracking-wider">
+                <div className="flex flex-col items-center justify-center rounded-2xl bg-white/[0.06] px-3 py-3.5 ring-1 ring-white/10 backdrop-blur-sm">
+                  <span className="text-2xl font-extrabold leading-none text-white font-[family-name:var(--font-display)]">1,000s</span>
+                  <span className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/55">
                     of roofs sealed
                   </span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-white leading-none">Live</span>
-                  <span className="mt-1 text-xs text-white/50 uppercase tracking-wider">
+                <div className="flex flex-col items-center justify-center rounded-2xl bg-white/[0.06] px-3 py-3.5 ring-1 ring-white/10 backdrop-blur-sm">
+                  <span className="inline-flex items-center gap-2 text-2xl font-extrabold leading-none text-white font-[family-name:var(--font-display)]">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-accent-light opacity-75 animate-ping" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent-light" />
+                    </span>
+                    Live
+                  </span>
+                  <span className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/55">
                     pricing on your kit
                   </span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-white leading-none">50 yr</span>
-                  <span className="mt-1 text-xs text-white/50 uppercase tracking-wider">
+                <div className="flex flex-col items-center justify-center rounded-2xl bg-white/[0.06] px-3 py-3.5 ring-1 ring-white/10 backdrop-blur-sm">
+                  <span className="text-2xl font-extrabold leading-none text-white font-[family-name:var(--font-display)]">
+                    <CountUp value={50} suffix=" yr" />
+                  </span>
+                  <span className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/55">
                     warranty
                   </span>
                 </div>
               </div>
             </div>
-            <div className="max-w-5xl mx-auto">
+            <div {...enter(320)} className="animate-fade-up max-w-5xl mx-auto">
               <KitBuilder catalog={catalog} />
             </div>
           </div>
@@ -170,7 +196,7 @@ export default async function KitBuilderPage() {
 
       {/* ─── OR BROWSE BY APPLICATION ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
           <SectionHeading
             eyebrow="See It On Roofs Like Yours"
             heading="Or Browse by Application"
@@ -180,13 +206,24 @@ export default async function KitBuilderPage() {
               <a
                 key={app.title}
                 href={app.href}
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="group relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={app.image} alt={app.title} className="w-full h-auto object-cover" />
-                <div className="p-5 text-center">
-                  <h3 className="font-bold text-primary mb-1">{app.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{app.desc}</p>
+                <div className="overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={app.image}
+                    alt={app.title}
+                    className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3 p-5">
+                  <div>
+                    <h3 className="text-lg font-extrabold text-primary">{app.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{app.desc}</p>
+                  </div>
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:rotate-45">
+                    <ArrowUpRight className="h-5 w-5" />
+                  </span>
                 </div>
               </a>
             ))}
@@ -198,12 +235,12 @@ export default async function KitBuilderPage() {
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div
           id="pricing"
-          className="section-bleed scroll-mt-24 bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8"
+          className="section-bleed scroll-mt-24 bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12"
         >
           <SectionHeading
             eyebrow="Real Numbers"
             heading="Example Projects & What They Cost"
-            subheading="These examples will provide a precise idea on cost based on the application."
+            subheading="Real kits at live prices — see what projects like yours cost."
           />
           <Grid responsiveCols={{ mobile: 1, tablet: 2, desktop: 3 }} gap="lg">
             {EXAMPLE_PROJECTS.map((project) => {
@@ -212,38 +249,43 @@ export default async function KitBuilderPage() {
                 <a
                   key={project.title}
                   href={`/store/${project.handle}`}
-                  className="group flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-[#003365]/30"
+                  className="group flex flex-col overflow-hidden rounded-3xl bg-white p-2 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl hover:ring-primary/15"
                 >
                   {kit?.image && (
-                    <div className="bg-gray-50 overflow-hidden">
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-accent/10">
+                      <div aria-hidden="true" className="pointer-events-none absolute inset-x-10 bottom-3 h-6 rounded-full bg-primary/10 blur-xl" />
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={kit.image}
                         alt={kit.title}
-                        className="w-full h-auto object-contain px-2 pt-2 pb-1 group-hover:scale-105 transition-transform duration-300"
+                        className="relative w-full h-auto object-contain px-2 pt-2 pb-1 transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                         loading="lazy"
                       />
                     </div>
                   )}
-                  <div className="flex flex-col flex-1 p-5">
-                    <h3 className="font-bold text-gray-900 group-hover:text-[#003365] transition-colors">
+                  <div className="flex flex-col flex-1 px-3.5 pb-3.5 pt-4">
+                    <h3 className="font-extrabold text-primary">
                       {project.title}
                     </h3>
-                    <p className="mt-1 text-sm font-semibold text-accent">
+                    <p className="mt-1 text-sm font-semibold text-accent-dark">
                       {kit?.title ?? 'Crazy Seal Kit'} — {project.size} Kit
                     </p>
-                    <div className="mt-3 flex items-end justify-between flex-1">
+                    <div className="mt-4 flex flex-1 items-end justify-between gap-3 border-t border-primary/[0.06] pt-4">
                       <div>
                         {kit?.price != null && (
-                          <span className="text-lg font-bold text-[#003365]">
+                          <span className="text-lg font-extrabold text-primary font-[family-name:var(--font-display)]">
                             {formatPrice(kit.price)}
                           </span>
                         )}
                         <p className="text-[13px] text-gray-500">{project.note}</p>
                       </div>
-                      <span className="flex items-center gap-1 text-sm font-semibold text-[#5BA411] group-hover:gap-2 transition-all">
+                      <span className="relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-b from-accent-light to-accent px-4 py-2 text-sm font-bold text-white shadow-[0_6px_16px_-6px_rgb(91_164_17/0.6)] transition-shadow duration-300 group-hover:shadow-glow-accent">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[130%]"
+                        />
                         Shop This Kit
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                       </span>
                     </div>
                   </div>

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
-import { ArrowRight, PlayCircle } from 'lucide-react'
-import { Container, SectionHeading, LinkButton, Badge } from '@/lib/design-system'
-import { ContentRequestForm } from '@/components/forms/ContentRequestForm'
+import Link from 'next/link'
+import { ArrowUpRight, Clock, Play, PlayCircle } from 'lucide-react'
+import { Container, SectionHeading } from '@/lib/design-system'
+import { AssetPageFooter } from '@/components/marketing-assets/AssetPageFooter'
+import { ModuleHero, ModuleNav } from '@/components/pro/ProgramModule'
 
 export const metadata: Metadata = {
   title: 'Video Packages',
@@ -117,135 +119,99 @@ const VIDEO_PACKAGES = [
   },
 ]
 
-const MODULE_LINKS = [
-  { number: 1, label: 'Welcome', href: '/resources/welcome-to-crazy-seal' },
-  { number: 2, label: 'Marketing', href: '/resources/marketing' },
-  { number: 3, label: 'Sales', href: '/resources/sales' },
-  { number: 4, label: 'Build a Kit', href: '/resources/building-a-kit' },
-  { number: 5, label: 'Installation', href: '/resources/installation' },
-  { number: 6, label: 'Warranty', href: '/resources/warranty' },
-]
-
 export default function MarketingVideosPage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-12 md:px-6 md:py-16 lg:px-8 text-center">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <PlayCircle className="w-4 h-4 text-highlight" />
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                Marketing Assets
-              </p>
-            </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              Video <span className="text-highlight">Packages</span>
-            </h1>
-          </div>
-        </div>
-      </Container>
+      <ModuleHero
+        module={2}
+        kicker="Marketing Assets"
+        icon={PlayCircle}
+        title={
+          <>
+            Video <span className="text-shimmer-highlight">Packages</span>
+          </>
+        }
+        intro={`${VIDEO_PACKAGES.length} pre-built video ads ready for your immediate use.`}
+        chips={['15 & 30 second ads', 'Generic, RV & commercial assets', '1080p downloads']}
+      />
+
+      <ModuleNav current={2} />
 
       {/* ─── VIDEO PACKAGES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-            {VIDEO_PACKAGES.map((pkg) => (
-              <a
-                key={pkg.heading}
-                href={pkg.href}
-                className="group rounded-2xl border border-gray-200 bg-white p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center"
-              >
-                <PlayCircle className="w-10 h-10 text-primary mb-4" />
-                <h2 className="text-lg font-bold text-primary mb-3">
-                  {pkg.heading}
-                </h2>
-                <div className="flex flex-wrap justify-center gap-2 mb-4">
-                  {pkg.tags.map((tag) => (
-                    <Badge key={tag}>{tag}</Badge>
-                  ))}
-                </div>
-                <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-accent group-hover:gap-2 transition-all">
-                  View Marketing Asset
-                  <ArrowRight className="w-4 h-4" />
-                </span>
-              </a>
-            ))}
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="Pick a Package" heading="Video Ads, Ready to Run" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+            {VIDEO_PACKAGES.map((pkg, i) => {
+              const [duration, ...assets] = pkg.tags
+              return (
+                <Link
+                  key={pkg.heading}
+                  href={pkg.href}
+                  className="group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white p-3 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+                >
+                  <div className="relative grid aspect-video place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary-light to-secondary">
+                    <div aria-hidden="true" className="hairline-grid absolute inset-0 opacity-60" />
+                    <div
+                      aria-hidden="true"
+                      className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-accent/40 blur-2xl transition-transform duration-700 group-hover:scale-150"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-3 top-1 text-6xl font-extrabold text-white/15 font-[family-name:var(--font-display)]"
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="relative grid h-12 w-12 place-items-center rounded-full bg-white text-primary shadow-2xl transition-transform duration-300 group-hover:scale-110">
+                      <Play className="ml-0.5 h-5 w-5 fill-primary/10" />
+                    </span>
+                    <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-highlight px-2.5 py-1 text-[11px] font-extrabold text-primary shadow-sm">
+                      <Clock className="h-3 w-3" />
+                      {duration}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col px-2 pb-1 pt-4">
+                    <h2 className="text-lg font-extrabold text-primary">{pkg.heading}</h2>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {assets.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-primary/[0.06] px-2.5 py-1 text-xs font-semibold text-primary/80"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="mt-4 flex items-center justify-between gap-3 border-t border-primary/[0.07] pt-3 text-sm font-bold text-primary">
+                      View Marketing Asset
+                      <span className="grid h-8 w-8 place-items-center rounded-full bg-primary/[0.06] transition-all duration-300 group-hover:rotate-45 group-hover:bg-accent group-hover:text-white">
+                        <ArrowUpRight className="h-4 w-4" />
+                      </span>
+                    </span>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </Container>
 
-      {/* ─── BACK / CONTINUE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 text-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight mb-4">
-                Back to Main Marketing Page
-              </h2>
-              <LinkButton href="/resources/marketing" variant="white" size="md">
-                Marketing
-              </LinkButton>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight mb-4">
-                Continue On to Sales
-              </h2>
-              <LinkButton href="/resources/sales" variant="accent" size="md">
-                Sales
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── MODULE QUICK LINKS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Business Accelerator Program"
-            heading="Module Quick Links"
-          />
-          <div className="flex flex-wrap justify-center gap-3">
-            {MODULE_LINKS.map((mod) => (
-              <a
-                key={mod.number}
-                href={mod.href}
-                className="group flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {mod.number}
-                </span>
-                <span className="text-sm font-semibold text-primary group-hover:text-accent transition-colors">
-                  {mod.label}
-                </span>
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center pt-6">
-            <LinkButton href="/business-accelerator-program" variant="primary" size="md">
-              Business Accelerator Home
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── CONTENT / FEATURE REQUEST ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Content | Feature Request"
-            heading="Request Content or a Feature"
-            subheading="Have a request for marketing materials, sales resources, or something else that would support you in your business? Drop it in this form and the request will go directly to our asset creation team!"
-          />
-          <div className="max-w-2xl mx-auto">
-            <ContentRequestForm sourcePage="marketing-videos" />
-          </div>
-        </div>
-      </Container>
+      {/* ─── BACK / CONTINUE + QUICK LINKS + CONTENT REQUEST ─── */}
+      <AssetPageFooter
+        module={2}
+        sourcePage="marketing-videos"
+        back={{
+          heading: 'Back to Main Marketing Page',
+          label: 'Marketing',
+          href: '/resources/marketing',
+        }}
+        next={{
+          heading: 'Continue On to Sales',
+          label: 'Sales',
+          href: '/resources/sales',
+        }}
+      />
     </>
   )
 }

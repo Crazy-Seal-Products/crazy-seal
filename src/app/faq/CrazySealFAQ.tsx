@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, Hammer, HelpCircle, Layers, ShieldCheck, Truck } from 'lucide-react'
 
 interface FAQItem {
   id: string
@@ -18,9 +18,8 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'Can I do this myself?',
     answer: (
       <>
-        Yes! That is the beauty of our simple DIY roofing system. You can do
-        it yourself! To see videos and PDF&apos;s that show you step by step
-        how to get the job done, visit our{' '}
+        Yes! That&apos;s the beauty of our simple DIY roofing system. Step-by-step
+        videos and PDF&apos;s are on our{' '}
         <Link href="/installation" className={linkClass}>
           installation page
         </Link>
@@ -33,10 +32,9 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'How much can I really save by doing it myself?',
     answer: (
       <>
-        In roofing, labor is often times one of the biggest expenses there is
-        to a job! By doing it yourself, you get an incredible seamless roof at
-        a fraction of the cost because there is no labor involved. With our
-        DIY application, you can save thousands or more. Check out our{' '}
+        Labor is often one of the biggest costs in roofing. Do it yourself and
+        you get a seamless roof at a fraction of the cost — saving thousands or
+        more. Check out our{' '}
         <Link href="/kit-builder" className={linkClass}>
           Kit Builder
         </Link>{' '}
@@ -48,19 +46,19 @@ const FAQ_ITEMS: FAQItem[] = [
     id: 'contractors',
     question: 'Do contractors use Crazy Seal?',
     answer:
-      'Absolutely! Contractors love our system because it is simple to install and solves thousands of different roofing problems for people. In fact, many contractors actually prefer our system to others because it is quick and efficient to apply, comes with a 50 year warranty, and offers a real, lasting solution to the challenges they face for their clients.',
+      'Absolutely! Contractors love that it is quick and simple to install, solves thousands of different roofing problems, and comes with a 50 year warranty — a real, lasting solution for their clients.',
   },
   {
     id: 'cost',
     question: 'What will my roofing system cost?',
     answer: (
       <>
-        Our system is very affordable, especially considering all of the
-        alternatives out there that include labor! Visit our{' '}
+        Very affordable — especially compared to alternatives that include
+        labor. Visit our{' '}
         <Link href="/kit-builder" className={linkClass}>
           Kit Builder
         </Link>{' '}
-        for more information on the cost to complete your specific project.
+        for the cost of your specific project.
       </>
     ),
   },
@@ -69,9 +67,8 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'What kinds of roofs can Crazy Seal be applied to?',
     answer: (
       <>
-        Crazy Seal can be applied to fiberglass, rubber / EPDM, TPO, metal,
-        wood, or virtually any other type of roof. To see videos and
-        PDF&apos;s of how it is applied to these kinds of roofs, check out{' '}
+        Fiberglass, rubber / EPDM, TPO, metal, wood, or virtually any other
+        type of roof. Videos and PDF&apos;s for each are on{' '}
         <Link href="/installation" className={linkClass}>
           Installation
         </Link>
@@ -89,13 +86,13 @@ const FAQ_ITEMS: FAQItem[] = [
     id: 'install-time',
     question: 'How long does it take to install a Crazy Seal System?',
     answer:
-      'It depends on the size of the job you are completing. Most people can get the first coat of Crazy Seal onto their application within a few hours of receiving their kit. This is expedited if you have watched our installation tutorials and done some of the prep work in advance! Watch the time-lapse video below to see the entire Crazy Seal System being applied to an RV roof.',
+      'It depends on the size of the job. Most people get the first coat of Crazy Seal on within a few hours of receiving their kit — faster if you have watched our installation tutorials and done some prep work in advance. Watch the time-lapse video below to see the entire system applied to an RV roof.',
   },
   {
     id: 'rubber-in-a-can',
     question: 'Is this like the "rubber in a can" products I can buy at the store?',
     answer:
-      'No. Crazy Seal (patented) is a high performance, commercial grade, fiber-infused silicone membrane roofing system. Junk products in a can that you buy at big box stores are usually temporary solutions. We give you the ability to custom manufacture your new roof on site, rather than in sheets at a factory, thus eliminating seams and exposed sealants. Do it right and do it once!',
+      'No. Crazy Seal (patented) is a high performance, commercial grade, fiber-infused silicone membrane roofing system. Big box store products in a can are usually temporary solutions. Crazy Seal lets you custom manufacture your new roof on site, rather than in sheets at a factory, eliminating seams and exposed sealants. Do it right and do it once!',
   },
   {
     id: 'warranty-cost',
@@ -138,55 +135,153 @@ const FAQ_ITEMS: FAQItem[] = [
   },
 ]
 
+type CategoryId = 'getting-started' | 'cost-warranty' | 'compatibility' | 'shipping-returns'
+
+const CATEGORIES: { id: CategoryId; label: string; icon: typeof Hammer }[] = [
+  { id: 'getting-started', label: 'Getting Started', icon: Hammer },
+  { id: 'cost-warranty', label: 'Cost & Warranty', icon: ShieldCheck },
+  { id: 'compatibility', label: 'Roofs & Install', icon: Layers },
+  { id: 'shipping-returns', label: 'Shipping & Returns', icon: Truck },
+]
+
+const ITEM_CATEGORY: Record<string, CategoryId> = {
+  diy: 'getting-started',
+  savings: 'cost-warranty',
+  contractors: 'getting-started',
+  cost: 'cost-warranty',
+  'roof-types': 'compatibility',
+  'all-rvs': 'compatibility',
+  'install-time': 'compatibility',
+  'rubber-in-a-can': 'getting-started',
+  'warranty-cost': 'cost-warranty',
+  'shipping-damage': 'shipping-returns',
+  returns: 'shipping-returns',
+}
+
 export function CrazySealFAQ() {
   const [openId, setOpenId] = useState<string | null>(null)
+  const [filter, setFilter] = useState<CategoryId | 'all'>('all')
 
   useEffect(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash.slice(1) : ''
     if (hash && FAQ_ITEMS.some((item) => item.id === hash)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- open the deep-linked answer once on load
       setOpenId(hash)
       document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])
 
+  const visible =
+    filter === 'all' ? FAQ_ITEMS : FAQ_ITEMS.filter((item) => ITEM_CATEGORY[item.id] === filter)
+
+  const chips: { id: CategoryId | 'all'; label: string; count: number }[] = [
+    { id: 'all', label: 'All questions', count: FAQ_ITEMS.length },
+    ...CATEGORIES.map((c) => ({
+      id: c.id,
+      label: c.label,
+      count: FAQ_ITEMS.filter((item) => ITEM_CATEGORY[item.id] === c.id).length,
+    })),
+  ]
+
   return (
-    <div className="space-y-4">
-      {FAQ_ITEMS.map((item) => {
-        const isOpen = openId === item.id
-        return (
-          <div
-            key={item.id}
-            id={item.id}
-            className="border border-gray-200 rounded-2xl overflow-hidden bg-white"
-          >
+    <div>
+      {/* Category chips */}
+      <div
+        role="toolbar"
+        aria-label="Filter questions by topic"
+        className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible"
+      >
+        {chips.map((chip) => {
+          const active = filter === chip.id
+          return (
             <button
+              key={chip.id}
               type="button"
-              onClick={() => setOpenId(isOpen ? null : item.id)}
-              className="w-full flex items-center justify-between gap-4 px-4 py-4 sm:px-6 text-left hover:bg-gray-50 transition-colors"
-              aria-expanded={isOpen}
-              aria-controls={`faq-answer-${item.id}`}
-              id={`faq-question-${item.id}`}
+              aria-pressed={active}
+              onClick={() => setFilter(chip.id)}
+              className={`inline-flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 cursor-pointer ${
+                active
+                  ? 'bg-gradient-to-b from-primary-light to-primary text-white shadow-[0_6px_16px_-6px_rgb(0_51_101/0.55)]'
+                  : 'bg-white text-primary shadow-sm ring-1 ring-primary/[0.08] hover:-translate-y-0.5 hover:shadow-md hover:ring-accent/40'
+              }`}
             >
-              <span className="font-semibold text-gray-900">{item.question}</span>
-              {isOpen ? (
-                <ChevronUp className="w-5 h-5 flex-shrink-0 text-primary" />
-              ) : (
-                <ChevronDown className="w-5 h-5 flex-shrink-0 text-gray-400" />
-              )}
+              {chip.label}
+              <span
+                className={`grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-bold ${
+                  active ? 'bg-white/20 text-white' : 'bg-primary/[0.06] text-primary/70'
+                }`}
+              >
+                {chip.count}
+              </span>
             </button>
+          )
+        })}
+      </div>
+
+      <div className="space-y-3">
+        {visible.map((item, index) => {
+          const isOpen = openId === item.id
+          const category = CATEGORIES.find((c) => c.id === ITEM_CATEGORY[item.id])
+          const Icon = category?.icon ?? HelpCircle
+          return (
             <div
-              id={`faq-answer-${item.id}`}
-              role="region"
-              aria-labelledby={`faq-question-${item.id}`}
-              className={isOpen ? 'block' : 'hidden'}
+              key={item.id}
+              id={item.id}
+              className={`animate-fade-up scroll-mt-28 overflow-hidden rounded-2xl transition-all duration-300 ${
+                isOpen
+                  ? 'bg-white shadow-lg ring-1 ring-accent/30'
+                  : 'bg-gradient-to-b from-slate-50/80 to-white ring-1 ring-primary/[0.08] hover:shadow-md hover:ring-primary/15'
+              }`}
+              style={{ animationDelay: `${Math.min(index, 8) * 45}ms` }}
             >
-              <div className="px-4 pb-4 sm:px-6 sm:pb-6 pt-4 border-t border-gray-100">
-                <p className="text-gray-600 leading-relaxed">{item.answer}</p>
+              <button
+                type="button"
+                onClick={() => setOpenId(isOpen ? null : item.id)}
+                className="group flex w-full items-center gap-4 px-4 py-4 text-left sm:px-5 cursor-pointer"
+                aria-expanded={isOpen}
+                aria-controls={`faq-answer-${item.id}`}
+                id={`faq-question-${item.id}`}
+              >
+                <span
+                  className={`grid h-9 w-9 flex-shrink-0 place-items-center rounded-xl transition-all duration-300 ${
+                    isOpen
+                      ? 'bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent'
+                      : 'bg-primary/[0.06] text-primary group-hover:-rotate-6'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className={`flex-1 font-semibold transition-colors ${isOpen ? 'text-primary' : 'text-gray-900'}`}>
+                  {item.question}
+                </span>
+                <span
+                  className={`grid h-8 w-8 flex-shrink-0 place-items-center rounded-full transition-all duration-300 ${
+                    isOpen ? 'rotate-180 bg-accent text-white' : 'bg-primary/[0.06] text-primary/60 group-hover:text-primary'
+                  }`}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </span>
+              </button>
+              {/* grid-rows 0fr → 1fr animates to the answer's natural height; content stays in the DOM */}
+              <div
+                id={`faq-answer-${item.id}`}
+                role="region"
+                aria-labelledby={`faq-question-${item.id}`}
+                inert={!isOpen}
+                className={`grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="px-4 pb-5 sm:px-5 sm:pl-[4.25rem]">
+                    <p className="border-l-2 border-accent/40 pl-4 text-gray-600 leading-relaxed">{item.answer}</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }

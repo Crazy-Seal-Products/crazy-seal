@@ -5,9 +5,9 @@ import { twMerge } from 'tailwind-merge'
 
 const variantStyles = {
   default:
-    'bg-white border border-gray-200/80 shadow-sm hover:shadow-md',
+    'bg-white border border-primary/[0.08] shadow-sm hover:shadow-md',
   elevated:
-    'bg-white shadow-md hover:shadow-xl',
+    'bg-white border border-primary/[0.06] shadow-md hover:shadow-xl',
   outlined:
     'bg-white border-2 border-gray-200',
   dark:
@@ -34,7 +34,7 @@ export function Card({
         clsx(
           'rounded-2xl p-6 md:p-8 transition-all duration-300',
           variantStyles[variant],
-          hoverLift && 'hover:-translate-y-1'
+          hoverLift && 'hover:-translate-y-1.5'
         ),
         className
       )}

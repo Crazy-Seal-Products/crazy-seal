@@ -11,6 +11,7 @@ import { QuoteModalProvider } from '@/contexts/QuoteModalContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { CartDrawer } from '@/components/store/CartDrawer'
 import { MobileStickyCta } from '@/components/layout/MobileStickyCta'
+import { SiteMotion } from '@/components/layout/SiteMotion'
 
 interface GlobalLayoutProps {
   children: React.ReactNode
@@ -27,14 +28,15 @@ export function GlobalLayout({ children }: GlobalLayoutProps) {
   return (
     <QuoteModalProvider>
       <CartProvider>
-        <div className="min-h-screen bg-gray-50 text-gray-900">
+        <div className="site-canvas min-h-screen text-gray-900">
           <HolidayBanner />
           {layout.header && <Header />}
           {layout.pageWrapper ? (
-            <PageLayout className="pb-0 sm:pt-4 sm:pb-8 md:py-8">{children}</PageLayout>
+            <PageLayout id="site-main" className="pb-0 sm:pt-4 sm:pb-8 md:py-8">{children}</PageLayout>
           ) : (
             children
           )}
+          {layout.pageWrapper && <SiteMotion rootId="site-main" />}
           {layout.footer && <Footer />}
           {layout.header && <MobileStickyCta />}
         </div>

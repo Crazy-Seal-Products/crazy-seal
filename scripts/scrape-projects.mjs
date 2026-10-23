@@ -5,8 +5,9 @@
 // Usage: node scripts/scrape-projects.mjs
 
 import { writeFileSync, readFileSync, existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
-const OUT = new URL('./projects-scraped.json', import.meta.url).pathname
+const OUT = fileURLToPath(new URL('./projects-scraped.json', import.meta.url))
 const CDN = 'https://media.crazyseal.com/site-assets/wp-media'
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))

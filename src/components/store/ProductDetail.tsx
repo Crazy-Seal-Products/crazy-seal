@@ -31,6 +31,7 @@ export function ProductDetail({
       (v) => v.id === variantId || v.id.endsWith(`/${variantId}`)
     )
     if (match) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from the ?variant= deep link
       setSelected(Object.fromEntries(match.selectedOptions.map((o) => [o.name, o.value])))
     }
   }, [product.variants])
@@ -51,7 +52,7 @@ export function ProductDetail({
   }, [selectedVariant.image, product.images])
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16">
       <ProductImageGallery
         images={galleryImages}
         alt={product.displayTitle}
@@ -59,26 +60,36 @@ export function ProductDetail({
       />
       <div>
         {product.badge && (
-          <span className="inline-block rounded-full bg-[#5BA411] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white mb-3">
+          <span
+            className="animate-fade-up mb-3 inline-flex items-center rounded-full bg-highlight px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary shadow-glow-highlight"
+          >
             {product.badge}
           </span>
         )}
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-2">
+        <h1
+          className="animate-fade-up mb-3 text-3xl font-extrabold leading-[1.1] tracking-tight text-primary sm:text-4xl lg:text-[2.6rem] text-balance"
+          style={{ animationDelay: '80ms' }}
+        >
           {product.displayTitle}
         </h1>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
+        <div
+          className="animate-fade-up mb-5 flex flex-wrap items-center gap-x-3 gap-y-1"
+          style={{ animationDelay: '160ms' }}
+        >
           <Stars />
           <p className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-900">Thousands</span> of
+            <span className="font-semibold text-primary">Thousands</span> of
             successful installations
           </p>
         </div>
-        <ProductPurchasePanel
-          product={product}
-          selected={selected}
-          onSelectedChange={setSelected}
-          selectedVariant={selectedVariant}
-        />
+        <div className="animate-fade-up" style={{ animationDelay: '240ms' }}>
+          <ProductPurchasePanel
+            product={product}
+            selected={selected}
+            onSelectedChange={setSelected}
+            selectedVariant={selectedVariant}
+          />
+        </div>
         {children}
       </div>
     </div>

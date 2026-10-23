@@ -7,7 +7,7 @@ const config: HubPageConfig = {
   tagline: 'Fix your flat roof once. Yourself.',
   installsLine: 'Thousands of successful installations',
   pitch: [
-    "Crazy Seal is a seamless, fiber-infused silicone membrane for the flat and low-slope roofs regular roofers won't touch — sunrooms, porches, additions, mobile homes. One continuous layer over the whole roof, no tear-off, no seams for standing water to find.",
+    "A seamless, fiber-infused silicone membrane for the flat and low-slope roofs regular roofers won't touch — sunrooms, porches, additions, mobile homes. One continuous layer, no tear-off, no seams for standing water to find.",
     'Kits are sized by square footage and ship free to your door with every product, tool, and instruction you need.',
   ],
   priceNote:

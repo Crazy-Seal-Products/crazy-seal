@@ -1,14 +1,23 @@
 import type { Metadata } from 'next'
-import { Download, Phone, ShieldCheck } from 'lucide-react'
+import { Clock, FileText, Flag, Play, PlayCircle } from 'lucide-react'
 import {
   Container,
-  Grid,
   SectionHeading,
-  LinkButton,
   YouTubeEmbed,
 } from '@/lib/design-system'
-
-const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
+import {
+  ContactCta,
+  HERO_H1,
+  HeroChips,
+  HeroShell,
+  MEDIA,
+  PdfCards,
+  SECTION_NAVY,
+  SECTION_WHITE,
+  WarrantySubmitBand,
+  fadeDelay,
+} from '@/components/system-pages/blocks'
+import { ChapterRail } from '@/components/system-pages/motion-blocks'
 
 export const metadata: Metadata = {
   title: 'Membrane Roof Installation',
@@ -52,73 +61,91 @@ const BREAKOUT_VIDEOS = [
   { id: 'd4pSSqrQ55s', title: 'Finalizing the Installation' },
 ]
 
+/** Groups the breakout videos (by index) into the installation's chapters. */
+const CHAPTERS = [
+  { node: <Play className="h-4 w-4 md:h-5 md:w-5" />, eyebrow: 'Before You Begin', title: 'Getting Started', range: [0, 1] },
+  { node: '1', eyebrow: 'Step 1', title: 'Inspection', range: [1, 2] },
+  { node: '2', eyebrow: 'Step 2', title: 'Clean & Prep', range: [2, 6] },
+  { node: '3', eyebrow: 'Step 3', title: 'Seal the Roof', range: [6, 11] },
+  { node: <Flag className="h-4 w-4 md:h-5 md:w-5" />, eyebrow: 'Wrap Up', title: 'Finalizing the Installation', range: [11, 12] },
+] as const
+
+function VideoCard({ index }: { index: number }) {
+  const video = BREAKOUT_VIDEOS[index]
+  return (
+    <div className="group overflow-hidden rounded-2xl bg-white ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
+      <YouTubeEmbed videoId={video.id} />
+      <div className="flex items-center gap-3 p-4">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent/15 text-xs font-extrabold text-accent-dark tabular-nums">
+          {index + 1}
+        </span>
+        <div className="min-w-0 text-left">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">Video {index + 1}</p>
+          <p className="font-bold text-primary leading-snug">{video.title}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function MembraneRoofPage() {
   return (
     <>
       {/* ─── HERO ─── */}
       <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-              Installation Guide
-            </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              Membrane Roof Installation Instructions
-            </h1>
-          </div>
-        </div>
+        <HeroShell innerClassName="text-center">
+          <h1 className={HERO_H1} style={fadeDelay(80)}>
+            Membrane Roof <span className="text-shimmer-highlight">Installation Instructions</span>
+          </h1>
+          <p
+            className="animate-fade-up text-base sm:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed"
+            style={fadeDelay(160)}
+          >
+            Downloadable PDFs, a full installation video, and breakout videos you can watch as you get to
+            each step.
+          </p>
+          <HeroChips
+            delay={260}
+            className="mt-7 justify-center"
+            items={[
+              { icon: FileText, label: 'Downloadable PDFs' },
+              { icon: Clock, label: 'Full video under 23½ minutes' },
+              { icon: PlayCircle, label: `${BREAKOUT_VIDEOS.length} breakout videos` },
+            ]}
+          />
+        </HeroShell>
       </Container>
 
       {/* ─── DOWNLOADABLE PDFS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Downloadable PDF's" />
-          <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="lg">
-            {PDFS.map((pdf) => (
-              <a
-                key={pdf.title}
-                href={pdf.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="aspect-[16/10] overflow-hidden bg-gray-50">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={pdf.image}
-                    alt={pdf.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-5 text-center">
-                  <h3 className="font-bold text-primary mb-1">{pdf.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-3">{pdf.desc}</p>
-                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-accent group-hover:gap-2 transition-all">
-                    <Download className="w-4 h-4" />
-                    Download PDF
-                  </span>
-                </div>
-              </a>
-            ))}
-          </Grid>
+        <div className={SECTION_WHITE}>
+          <SectionHeading eyebrow="Free Downloads" heading="Downloadable PDF's" />
+          <PdfCards pdfs={PDFS} />
         </div>
       </Container>
 
       {/* ─── FULL INSTALLATION VIDEO ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className={SECTION_NAVY}>
           <SectionHeading
             eyebrow="Installation Videos"
             heading="Full Installation Video"
-            subheading="There is a full installation video that will take you through the entire installation process as well as breakout videos you can watch as you get to each step."
+            subheading="One full video takes you through the entire installation process, plus breakout videos below for each step."
             variant="dark"
           />
-          <div className="max-w-3xl mx-auto">
-            <YouTubeEmbed videoId="ttfgscV2Dzw" variant="card" />
-            <p className="text-center text-white/60 text-sm font-medium mt-3">
-              Click to watch the full video (less than 23&frac12; minutes)
+          <div className="relative max-w-4xl mx-auto">
+            <div
+              aria-hidden="true"
+              className="absolute -inset-3 rounded-[1.75rem] bg-gradient-to-br from-highlight/25 via-secondary/20 to-accent/30 blur-2xl"
+            />
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/15">
+              <YouTubeEmbed videoId="ttfgscV2Dzw" variant="card" />
+            </div>
+            <p className="relative mt-5 flex justify-center">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/80 ring-1 ring-white/15">
+                <Clock className="h-4 w-4 text-highlight" />
+                Click to watch the full video (less than 23&frac12; minutes)
+              </span>
             </p>
           </div>
         </div>
@@ -126,85 +153,38 @@ export default function MembraneRoofPage() {
 
       {/* ─── BREAKOUT VIDEOS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Breakout Videos" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-            {BREAKOUT_VIDEOS.map((video, index) => (
-              <div
-                key={video.id}
-                className="rounded-2xl border border-gray-200/80 bg-white shadow-sm overflow-hidden"
-              >
-                <YouTubeEmbed videoId={video.id} />
-                <div className="p-4 text-center">
-                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-1">
-                    Video {index + 1}
-                  </p>
-                  <p className="font-semibold text-primary">{video.title}</p>
+        <div className={SECTION_WHITE}>
+          <SectionHeading
+            eyebrow="Step by Step"
+            heading="Breakout Videos"
+            subheading="Watch each one as you get to that step."
+          />
+          <ChapterRail
+            className="max-w-6xl mx-auto"
+            chapters={CHAPTERS.map((chapter) => ({
+              node: chapter.node,
+              eyebrow: chapter.eyebrow,
+              title: chapter.title,
+              children: (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: chapter.range[1] - chapter.range[0] }, (_, k) => (
+                    <VideoCard key={chapter.range[0] + k} index={chapter.range[0] + k} />
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              ),
+            }))}
+          />
         </div>
       </Container>
 
       {/* ─── WARRANTY ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 items-center">
-            <div className="flex justify-center md:justify-start">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2019/06/50-Year-Warranty-Space-600x600.png`}
-                alt="Crazy Seal 50 year warranty badge"
-                className="w-full max-w-[220px] h-auto"
-              />
-            </div>
-            <div className="text-center md:text-left">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-4">
-                Finished With Your Installation? Great Job! Now It&apos;s Time
-                to Submit Your Warranty!
-              </h2>
-              <p className="text-white/70 leading-relaxed mb-6">
-                We stand behind our products with a 50 year product warranty.
-                Once you&apos;ve purchased a kit, you have 90 days to apply
-                your new Crazy Seal system to your application. Within 90 days
-                of purchase, simply fill out our warranty form with before and
-                after pictures of your project and you will be covered!
-              </p>
-              <LinkButton href="/warranty" variant="accent" size="lg">
-                <ShieldCheck className="w-5 h-5" />
-                Submit Warranty Form
-              </LinkButton>
-            </div>
-          </div>
-        </div>
+        <WarrantySubmitBand />
       </Container>
 
       {/* ─── CONTACT CTA ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-3">
-            Let&apos;s Get in Touch
-          </h2>
-          <p className="text-gray-500 text-base sm:text-lg mb-6 max-w-xl mx-auto">
-            Have any questions? Our Crazy Seal specialists can help!
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/kit-builder" variant="primary" size="lg">
-              Build My Kit
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-gray-600 hover:text-primary font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
+        <ContactCta />
       </Container>
     </>
   )

@@ -65,15 +65,65 @@
   --color-error: #DC2626;
 
   /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Courier New', monospace;
 
-  /* Container sizes */
-  --container-sm: 48rem;
-  --container-md: 64rem;
-  --container-lg: 80rem;
-  --container-xl: 88rem;
-  --container-2xl: 100rem;
+  /* Container sizes: Tailwind's defaults. The scaffold used to override
+     these (sm 48rem … 2xl 100rem), which silently turned every max-w-sm/md/
+     lg/xl/2xl into a near-full-width box. Page widths come from the
+     Container component, not these tokens. */
+}
+
+/* Brand-tinted, layered elevation. Overrides Tailwind's defaults so every
+   existing shadow-* class across the site picks up the navy-tinted depth. */
+@theme {
+  --shadow-xs: 0 1px 2px rgb(0 32 67 / 0.06);
+  --shadow-sm: 0 1px 2px rgb(0 32 67 / 0.05), 0 3px 8px -2px rgb(0 32 67 / 0.07);
+  --shadow-md: 0 2px 4px -1px rgb(0 32 67 / 0.06), 0 10px 22px -8px rgb(0 32 67 / 0.16);
+  --shadow-lg: 0 4px 8px -2px rgb(0 32 67 / 0.07), 0 20px 40px -14px rgb(0 32 67 / 0.24);
+  --shadow-xl: 0 8px 16px -4px rgb(0 32 67 / 0.09), 0 30px 60px -18px rgb(0 32 67 / 0.30);
+  --shadow-2xl: 0 12px 24px -8px rgb(0 32 67 / 0.14), 0 44px 88px -28px rgb(0 32 67 / 0.42);
+  --shadow-card: 0 1px 2px rgb(0 32 67 / 0.04), 0 14px 34px -16px rgb(0 32 67 / 0.16);
+  --shadow-glow-accent: 0 10px 28px -8px rgb(91 164 17 / 0.55);
+  --shadow-glow-primary: 0 10px 28px -8px rgb(0 51 101 / 0.5);
+  --shadow-glow-highlight: 0 10px 30px -8px rgb(249 234 28 / 0.55);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-float: cs-float 7s ease-in-out infinite;
+  --animate-float-slow: cs-float 11s ease-in-out infinite;
+  --animate-drift: cs-drift 18s ease-in-out infinite alternate;
+  --animate-marquee: cs-marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-shimmer: cs-shimmer 3.2s ease-in-out infinite;
+  --animate-pulse-ring: cs-pulse-ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-spin-slow: spin 24s linear infinite;
+  --animate-fade-up: cs-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes cs-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -10px, 0); }
+  }
+  @keyframes cs-drift {
+    0% { transform: translate3d(-4%, -2%, 0) scale(1); }
+    100% { transform: translate3d(4%, 3%, 0) scale(1.08); }
+  }
+  @keyframes cs-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+  @keyframes cs-shimmer {
+    0% { background-position: 200% 50%; }
+    100% { background-position: -200% 50%; }
+  }
+  @keyframes cs-pulse-ring {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  @keyframes cs-fade-up {
+    from { opacity: 0; transform: translate3d(0, 18px, 0); }
+    to { opacity: 1; transform: none; }
+  }
 }
 
 /* Dark Mode - Optional for admin/staff areas */
@@ -192,14 +242,304 @@ body {
   background: linear-gradient(135deg, var(--cs-primary), var(--cs-secondary), var(--cs-accent));
 }
 
+/* Display face for headings; utilities (font-sans etc.) still win. */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+/* Marketing canvas: soft cool-grey with a faint brand glow at the top. */
+.site-canvas {
+  background-color: #f2f5f9;
+  background-image:
+    radial-gradient(60rem 28rem at 15% -6rem, rgb(18 95 151 / 0.10), transparent 70%),
+    radial-gradient(50rem 24rem at 95% -4rem, rgb(91 164 17 / 0.07), transparent 70%);
+  background-repeat: no-repeat;
+}
+
 /* Full-bleed section cards on mobile, rounded cards on sm+ */
 .section-bleed {
   margin-inline: -1.25rem;
   border-radius: 0;
 }
+/* A clipping section must also be the containing block, or absolutely
+   positioned decoration (glows, textures) escapes the clip and widens the
+   page on mobile. */
+.section-bleed.overflow-hidden {
+  position: relative;
+}
 @media (min-width: 640px) {
   .section-bleed {
     margin-inline: 0;
-    border-radius: 1.5rem;
+    border-radius: 1.75rem;
+    box-shadow: var(--shadow-card);
   }
+  .section-bleed.bg-white {
+    border-color: rgb(0 51 101 / 0.07);
+  }
+}
+
+/* Navy section cards: richer depth — a lit corner, a green under-glow and a
+   faint dot texture layered over the brand navy. */
+.section-bleed.bg-primary {
+  background-color: var(--cs-primary);
+  background-image:
+    radial-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1.4px),
+    radial-gradient(110% 80% at 0% 0%, rgb(26 123 196 / 0.42), transparent 55%),
+    radial-gradient(80% 70% at 100% 100%, rgb(91 164 17 / 0.17), transparent 60%),
+    linear-gradient(160deg, #013b75 0%, #003365 45%, #00244a 100%);
+  background-size: 22px 22px, auto, auto, auto;
+}
+@media (min-width: 640px) {
+  .section-bleed.bg-primary {
+    box-shadow:
+      0 30px 60px -30px rgb(0 32 67 / 0.55),
+      inset 0 1px 0 rgb(255 255 255 / 0.08);
+  }
+}
+
+/* ── Scroll reveal (driven by SiteMotion) ──
+   Only applied to content that starts below the fold, and the classes are
+   removed once the transition finishes so no transform lingers. */
+@media (prefers-reduced-motion: no-preference) {
+  .cs-reveal {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0) scale(0.985);
+  }
+  .cs-reveal.cs-reveal-item {
+    transform: translate3d(0, 22px, 0);
+  }
+  .cs-reveal.cs-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--cs-delay, 0ms),
+      transform 0.95s cubic-bezier(0.16, 1, 0.3, 1) var(--cs-delay, 0ms);
+  }
+}
+
+/* Light sweep across a button on hover */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%);
+  transform: translateX(-130%);
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.btn-sheen:hover::after {
+  transform: translateX(130%);
+}
+
+/* Animated highlight text (hero accents) */
+.text-shimmer-highlight {
+  background: linear-gradient(90deg, #F9EA1C 0%, #FDF388 25%, #F9EA1C 50%, #FDF388 75%, #F9EA1C 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: cs-shimmer 6s linear infinite;
+}
+
+/* Gradient hairline border that lights up on hover */
+.ring-glow {
+  position: relative;
+}
+.ring-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgb(91 164 17 / 0.7), rgb(18 95 151 / 0.25) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.ring-glow:hover::before {
+  opacity: 1;
+}
+
+/* Fine grid texture for dark panels */
+.hairline-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Edge fade for marquees and horizontal scrollers */
+.mask-fade-x {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Minimal stand-in for tailwindcss-animate's enter classes used by Lightbox */
+@keyframes cs-enter {
+  from { opacity: 0; transform: scale(var(--cs-enter-scale, 1)); }
+  to { opacity: 1; transform: none; }
+}
+.animate-in {
+  animation: cs-enter 0.2s ease-out both;
+}
+.animate-in.zoom-in-95 {
+  --cs-enter-scale: 0.95;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Dealer network intro (/professionals hero) ──
+   Every element carries --dn-delay (seconds) so the network assembles as a
+   wave from the middle of the map. All CSS, so it runs on first paint. */
+@property --dn-count {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}
+@keyframes dn-count { from { --dn-count: 0; } to { --dn-count: 100; } }
+@keyframes dn-fade-up { from { opacity: 0; transform: translate3d(0, 14px, 0); } to { opacity: 1; transform: none; } }
+@keyframes dn-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dn-reveal { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes dn-ripple {
+  0% { transform: scale(0.02); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 0; }
+}
+@keyframes dn-base-pop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes dn-person-pop {
+  0% { transform: translate3d(0, 14px, 0) scale(0.2); opacity: 0; }
+  60% { transform: translate3d(0, -4px, 0) scale(1.12); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes dn-flash {
+  0% { transform: scale(0.3); opacity: 0.95; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+@keyframes dn-ping {
+  0% { transform: scale(0.4); opacity: 0.9; }
+  18% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes dn-you-pop {
+  0% { transform: scale(0); opacity: 0; }
+  65% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes dn-breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes dn-cta-in {
+  from { opacity: 0; transform: translate(-50%, calc(-100% + 10px)); }
+  to { opacity: 1; transform: translate(-50%, -100%); }
+}
+
+.dn-copy {
+  animation: dn-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--dn-delay, 0s);
+}
+.dn-count {
+  counter-reset: dn var(--dn-count);
+  animation: dn-count 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+.dn-count::before {
+  content: counter(dn);
+}
+.dn-plus {
+  display: inline-block;
+  animation: dn-fade-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 1.6s both;
+}
+.dn-stage svg { contain: layout paint; }
+.dn-reveal {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dn-reveal 1.6s cubic-bezier(0.33, 1, 0.68, 1) 0.1s both;
+}
+.dn-ripple {
+  fill: none;
+  stroke: rgb(249 234 28 / 0.55);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dn-ripple 1.7s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+}
+.dn-base {
+  fill: rgb(255 255 255 / 0.2);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dn-base-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--dn-delay, 0s);
+}
+.dn-flash {
+  fill: none;
+  stroke: #F9EA1C;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: dn-flash 0.7s ease-out forwards;
+  animation-delay: calc(var(--dn-delay, 0s) + 0.05s);
+}
+.dn-person {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: dn-person-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--dn-delay, 0s) + 0.08s);
+}
+.dn-ping {
+  fill: none;
+  stroke: rgb(183 243 107 / 0.9);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: dn-ping 6s ease-out infinite;
+}
+.dn-you {
+  animation: dn-appear 0.01s linear 1.9s both;
+}
+.dn-you > * {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dn-you-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.9s both;
+}
+.dn-you-ring {
+  fill: none;
+  stroke: #F9EA1C;
+  stroke-width: 2;
+}
+.dn-you > .dn-you-ring {
+  opacity: 0;
+  animation: dn-ping 2.4s ease-out 2.4s infinite;
+}
+.dn-you > .dn-you-glow {
+  animation: dn-breathe 2.4s ease-in-out 2.4s infinite both;
+}
+.dn-you-cta {
+  animation: dn-cta-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 2.2s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dn-pulses { display: none; }
 }

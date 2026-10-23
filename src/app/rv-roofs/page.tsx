@@ -7,7 +7,7 @@ const config: HubPageConfig = {
   tagline: 'The last roof your RV will ever need.',
   installsLine: 'Thousands of successful RV installations',
   pitch: [
-    'Crazy Seal is a seamless, fiber-infused silicone membrane you roll over your entire RV roof — every seam, vent, and skylight sealed under one continuous layer. No more seasonal re-caulking, no more watching the ceiling for stains.',
+    'A seamless, fiber-infused silicone membrane you roll over your entire RV roof — every seam, vent, and skylight sealed under one continuous layer. No more seasonal re-caulking.',
     'Kits are sized to your rig and ship free to your door with everything down to the brushes. Most owners install in a weekend.',
   ],
   priceNote:
@@ -22,7 +22,7 @@ const config: HubPageConfig = {
   },
   kitsHeading: 'Pick a Pre-Built RV Kit',
   kitsNote:
-    "Most RVs fit a standard kit — pick your roof size and color, and the whole system ships to your door. Not sure which one? The Kit Builder sizes it from your rig's length.",
+    "Most RVs fit a standard kit — pick your roof size and color. Not sure which? The Kit Builder sizes it from your rig's length.",
   projectsHeading: 'Real RV Roofs, Documented Start to Finish',
   sourcePage: 'rv-roofs',
   leadHeading: 'Talk to a Specialist About Your RV Roof',

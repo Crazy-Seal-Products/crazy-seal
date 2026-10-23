@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import {
   ArrowRight,
-  Phone,
+  ArrowUpRight,
   DollarSign,
   Timer,
   ShieldCheck,
@@ -25,17 +25,29 @@ import {
   SunDim,
   Store,
   Waves,
+  Check,
+  Thermometer,
 } from 'lucide-react'
 import {
   Container,
   Grid,
   SectionHeading,
-  FeatureCard,
   TestimonialCard,
   LinkButton,
 } from '@/lib/design-system'
-
-const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
+import { CountUp } from '@/components/motion'
+import {
+  ColorSwatches,
+  ContactCta,
+  DARK_CARD,
+  HERO_H1,
+  HeroShell,
+  IconTile,
+  MEDIA,
+  SECTION_NAVY,
+  SECTION_WHITE,
+  fadeDelay,
+} from '@/components/system-pages/blocks'
 
 export const metadata: Metadata = {
   title: 'Crazy Seal Advantages',
@@ -45,26 +57,26 @@ export const metadata: Metadata = {
 
 const TOP_ADVANTAGES = [
   {
-    icon: <DollarSign className="w-6 h-6 text-accent" />,
+    icon: DollarSign,
     title: 'Save Money',
     eyebrow: 'Do It Yourself & Save Big',
-    desc: 'Much of the cost of a typical roofing installation comes with labor. Do it yourself and save big with raw materials factory direct from Crazy Seal!',
+    desc: 'Much of the cost of a typical roofing installation is labor. Do it yourself and save big with raw materials factory direct from Crazy Seal!',
     href: '/kit-builder',
     cta: 'Build My Kit',
   },
   {
-    icon: <Timer className="w-6 h-6 text-accent" />,
+    icon: Timer,
     title: 'Quick Install',
     eyebrow: 'Get the Job Done Fast',
-    desc: 'Hiring a roofing technician can take several weeks or even months. With Crazy Seal, you can have a brand new roof within hours of receiving your kit.',
+    desc: 'Hiring a roofing technician can take weeks or even months. With Crazy Seal, you can have a brand new roof within hours of receiving your kit.',
     href: '/installation',
     cta: 'Installation',
   },
   {
-    icon: <ShieldCheck className="w-6 h-6 text-accent" />,
+    icon: ShieldCheck,
     title: 'Permanent',
     eyebrow: '50 Year Product Warranty',
-    desc: "If it's worth doing, it's worth doing right. Rather than putting a bandaid on a problem, do it right and do it once with the Crazy Seal roofing system.",
+    desc: "If it's worth doing, it's worth doing right. Skip the bandaid — do it right and do it once with the Crazy Seal roofing system.",
     href: '/warranty',
     cta: 'Warranty',
   },
@@ -72,33 +84,27 @@ const TOP_ADVANTAGES = [
 
 const ROOF_TYPES = ['TPO', 'EPDM', 'Rubber', 'Vinyl', 'Aluminum', 'Fiberglass']
 
-const COLORS = [
-  { name: 'White', swatch: '#FFFFFF', border: true },
-  { name: 'Gray', swatch: '#9CA3AF', border: false },
-  { name: 'Tan', swatch: '#D2B48C', border: false },
-]
-
 const ALL_ADVANTAGES = [
-  { icon: BadgeCheck, title: 'Guaranteed', desc: 'We offer a fully transferrable 50 year product warranty.' },
-  { icon: Hammer, title: 'DIY', desc: 'For the DIY person looking for a long-term solution to their roofing needs.' },
+  { icon: BadgeCheck, title: 'Guaranteed', desc: 'A fully transferrable 50 year product warranty.' },
+  { icon: Hammer, title: 'DIY', desc: 'For the DIY person looking for a long-term roofing solution.' },
   { icon: Truck, title: 'We Ship to You', desc: 'We ship anywhere within the United States and Canada.' },
   { icon: PiggyBank, title: 'Affordable', desc: "Our DIY application can save you $1,000's on your roofing needs." },
-  { icon: Smile, title: 'Easy', desc: 'Easy application process that sticks to most surfaces without a primer.' },
+  { icon: Smile, title: 'Easy', desc: 'Easy application that sticks to most surfaces without a primer.' },
   { icon: Sun, title: 'Energy Efficient', desc: 'Reflective properties help reduce interior temperature and A/C expense.' },
-  { icon: Shuffle, title: 'Versatile', desc: 'Can be used for a variety of applications, not just roofing.' },
-  { icon: Dumbbell, title: 'Heavy Duty', desc: 'Fiber-infused, making it scratch resistant, strong, & tough.' },
+  { icon: Shuffle, title: 'Versatile', desc: 'Works for a variety of applications, not just roofing.' },
+  { icon: Dumbbell, title: 'Heavy Duty', desc: 'Fiber-infused, making it scratch resistant, strong & tough.' },
   { icon: Sparkles, title: 'No Upkeep', desc: "Won't crack, chip, peel, or streak. No need to climb on your roof again." },
-  { icon: Feather, title: 'Lightweight', desc: 'Our Crazy Seal system is extremely light. It will not add stress to your roof or chassis.' },
-  { icon: Ruler, title: 'Custom Fit', desc: 'Starts out as a liquid, but dries into a seamless, maintenance free roof.' },
-  { icon: FlaskConical, title: 'Resistant', desc: 'Resistant to mold penetration, fungus, salt, acids, and overall is chemical resistant.' },
-  { icon: Layers, title: 'Direct Application', desc: 'Can be installed directly to decking. No existing roof membrane is required.' },
-  { icon: CloudLightning, title: 'Extreme', desc: 'The Crazy Seal system is designed to perform in all kinds of extreme weather conditions.' },
+  { icon: Feather, title: 'Lightweight', desc: "Extremely light. It won't add stress to your roof or chassis." },
+  { icon: Ruler, title: 'Custom Fit', desc: 'Starts out as a liquid, then dries into a seamless, maintenance free roof.' },
+  { icon: FlaskConical, title: 'Resistant', desc: 'Resists mold penetration, fungus, salt and acids. Chemical resistant overall.' },
+  { icon: Layers, title: 'Direct Application', desc: 'Installs directly to decking. No existing roof membrane is required.' },
+  { icon: CloudLightning, title: 'Extreme', desc: 'Designed to perform in all kinds of extreme weather conditions.' },
   { icon: Hourglass, title: 'Long Lasting', desc: 'Our system is designed to last a crazy long time.' },
-  { icon: Scissors, title: 'Tear Resistant', desc: 'Designed to be puncture and tear resistant. Great for whatever craziness your roof encounters!' },
+  { icon: Scissors, title: 'Tear Resistant', desc: 'Puncture and tear resistant, for whatever craziness your roof encounters!' },
   { icon: Droplets, title: 'Waterproof', desc: 'Superior waterproofing capabilities.' },
-  { icon: SunDim, title: 'UV Protection', desc: 'Offers superior UV protection with high reflectivity.' },
+  { icon: SunDim, title: 'UV Protection', desc: 'Superior UV protection with high reflectivity.' },
   { icon: Store, title: 'Exclusive', desc: 'Ships direct from manufacturer. Not available in stores.' },
-  { icon: Waves, title: 'Flexible', desc: 'The Crazy Seal system is extremely flexible, allowing it to flex without cracking.' },
+  { icon: Waves, title: 'Flexible', desc: 'Extremely flexible, allowing it to flex without cracking.' },
 ]
 
 const APPLICATIONS = [
@@ -149,79 +155,104 @@ const TESTIMONIALS = [
   },
 ]
 
+const TEMPS = [
+  {
+    label: 'Before Crazy Seal',
+    value: 160,
+    image: `${MEDIA}/2019/07/TEMP-GAUGES-160.jpg`,
+    alt: 'Roof temperature gauge reading 160 degrees before Crazy Seal',
+    tone: 'bg-primary text-white',
+  },
+  {
+    label: 'After Crazy Seal',
+    value: 104,
+    image: `${MEDIA}/2019/07/TEMP-GAUGES-104.jpg`,
+    alt: 'Roof temperature gauge reading 104 degrees after Crazy Seal',
+    tone: 'bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent',
+  },
+]
+
 export default function AdvantagesPage() {
   return (
     <>
       {/* ─── HERO + TOP 3 ADVANTAGES ─── */}
       <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight text-center mb-8 lg:mb-12">
-              Crazy Seal Advantages
+        <HeroShell>
+          <div className="text-center mb-8 lg:mb-12">
+            <h1 className={HERO_H1} style={fadeDelay(80)}>
+              Crazy Seal <span className="text-shimmer-highlight">Advantages</span>
             </h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-              {TOP_ADVANTAGES.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 lg:p-8 text-center flex flex-col items-center"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
-                    {item.icon}
-                  </div>
-                  <h2 className="text-xl font-bold text-white mb-1">{item.title}</h2>
-                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-highlight mb-3">
-                    {item.eyebrow}
-                  </p>
-                  <p className="text-white/60 leading-relaxed mb-6">{item.desc}</p>
-                  <div className="mt-auto">
-                    <LinkButton href={item.href} variant="accent" size="md">
-                      {item.cta}
-                      <ArrowRight className="w-4 h-4" />
-                    </LinkButton>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+            {TOP_ADVANTAGES.map(({ icon: Icon, ...item }, i) => (
+              <div
+                key={item.title}
+                className={`animate-fade-up group relative overflow-hidden p-6 lg:p-8 text-center flex flex-col items-center ${DARK_CARD} hover:-translate-y-1`}
+                style={fadeDelay(180 + i * 100)}
+              >
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-24 left-1/2 h-48 w-72 -translate-x-1/2 rounded-full bg-gradient-to-b from-accent/30 to-transparent blur-2xl opacity-50 transition-opacity duration-500 group-hover:opacity-100"
+                />
+                <span className="relative mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                  <Icon className="h-7 w-7 text-highlight" />
+                </span>
+                <h2 className="relative text-xl lg:text-2xl font-extrabold text-white mb-1">{item.title}</h2>
+                <p className="relative text-[11px] font-bold uppercase tracking-[0.18em] text-highlight mb-3">
+                  {item.eyebrow}
+                </p>
+                <p className="relative text-white/70 leading-relaxed mb-6">{item.desc}</p>
+                <div className="relative mt-auto">
+                  <LinkButton href={item.href} variant="accent" size="md">
+                    {item.cta}
+                    <ArrowRight className="w-4 h-4" />
+                  </LinkButton>
+                </div>
+              </div>
+            ))}
+          </div>
+        </HeroShell>
       </Container>
 
       {/* ─── ROOF TEMPERATURE ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className={SECTION_WHITE}>
           <SectionHeading
+            eyebrow="Energy Efficient"
             heading="Reduce Your Average Roof Temperature Dramatically"
             subheading="Shot before & after applying the Crazy Seal system at 95 degrees Fahrenheit outdoor temperature."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <div className="text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2019/07/TEMP-GAUGES-160.jpg`}
-                alt="Roof temperature gauge reading 160 degrees before Crazy Seal"
-                className="rounded-2xl shadow-lg w-full h-auto mb-4"
-              />
-              <h3 className="text-lg font-bold text-primary">Before Crazy Seal</h3>
-            </div>
-            <div className="text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2019/07/TEMP-GAUGES-104.jpg`}
-                alt="Roof temperature gauge reading 104 degrees after Crazy Seal"
-                className="rounded-2xl shadow-lg w-full h-auto mb-4"
-              />
-              <h3 className="text-lg font-bold text-accent">After Crazy Seal</h3>
-            </div>
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {TEMPS.map((t) => (
+              <div key={t.label} className="group text-center">
+                <div className="relative overflow-hidden rounded-3xl shadow-xl ring-1 ring-primary/10">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={t.image}
+                    alt={t.alt}
+                    className="w-full h-auto transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div
+                    className={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-2xl px-3 py-2 text-2xl sm:text-3xl font-extrabold font-[family-name:var(--font-display)] leading-none ${t.tone}`}
+                  >
+                    <Thermometer className="h-5 w-5" />
+                    <CountUp value={t.value} suffix="°F" duration={1.8} />
+                  </div>
+                </div>
+                <h3 className={`mt-4 text-lg font-extrabold ${t.value > 150 ? 'text-primary' : 'text-accent-dark'}`}>
+                  {t.label}
+                </h3>
+              </div>
+            ))}
           </div>
         </div>
       </Container>
 
       {/* ─── ROOF TYPES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className={SECTION_NAVY}>
           <SectionHeading
+            eyebrow="Bonds to Just About Anything"
             heading="Crazy Seal Can Be Applied to All Roof Types"
             variant="dark"
           />
@@ -229,9 +260,12 @@ export default function AdvantagesPage() {
             {ROOF_TYPES.map((type) => (
               <div
                 key={type}
-                className="rounded-2xl bg-white/5 ring-1 ring-white/10 py-6 px-3 text-center"
+                className={`group flex items-center justify-center gap-2.5 py-5 px-3 hover:-translate-y-1 ${DARK_CARD}`}
               >
-                <p className="text-white font-bold uppercase tracking-wide">{type}</p>
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-accent/25 ring-1 ring-accent/40 transition-transform duration-500 group-hover:rotate-[360deg]">
+                  <Check className="h-4 w-4 text-accent-light" strokeWidth={3} />
+                </span>
+                <p className="text-white font-extrabold uppercase tracking-wide">{type}</p>
               </div>
             ))}
           </div>
@@ -240,73 +274,62 @@ export default function AdvantagesPage() {
 
       {/* ─── COLORS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <ColorSwatches />
+      </Container>
+
+      {/* ─── FULL ADVANTAGES GRID ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className={SECTION_WHITE}>
           <SectionHeading
-            heading="Available in 3 Colors"
-            subheading="You asked for it, and we delivered! Crazy Seal is now available in 3 colors. White provides ultimate reflectivity, while the tan and gray help you to match your style. Choose the color that suits you best! All the Crazy Caulk, Crazy Patch, and Crazy Seal in your kit will be color matching."
+            eyebrow="Do It Once. Do It Right."
+            heading="Crazy Seal Advantages"
+            subheading={`${ALL_ADVANTAGES.length} advantages over traditional roofing methods.`}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 max-w-3xl mx-auto">
-            {COLORS.map((color) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+            {ALL_ADVANTAGES.map(({ icon, title, desc }) => (
               <div
-                key={color.name}
-                className="rounded-2xl border border-gray-200/80 bg-white shadow-sm overflow-hidden text-center"
+                key={title}
+                className="group flex items-start gap-4 rounded-2xl bg-gradient-to-b from-slate-50 to-white p-4 ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-lg hover:ring-accent/30"
               >
-                <div
-                  className={`h-28 ${color.border ? 'border-b border-gray-200' : ''}`}
-                  style={{ backgroundColor: color.swatch }}
-                />
-                <p className="font-bold text-primary uppercase tracking-wide py-4">
-                  {color.name}
-                </p>
+                <IconTile icon={icon} className="h-11 w-11" />
+                <div>
+                  <h3 className="font-extrabold text-primary leading-snug">{title}</h3>
+                  <p className="mt-0.5 text-sm text-gray-600 leading-relaxed">{desc}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </Container>
 
-      {/* ─── FULL ADVANTAGES GRID ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Do It Once. Do It Right."
-            heading="Crazy Seal Advantages"
-          />
-          <Grid responsiveCols={{ mobile: 1, tablet: 2, desktop: 4 }} gap="md">
-            {ALL_ADVANTAGES.map((item) => (
-              <FeatureCard
-                key={item.title}
-                icon={<item.icon className="w-6 h-6 text-accent" />}
-                title={item.title}
-                description={item.desc}
-              />
-            ))}
-          </Grid>
-        </div>
-      </Container>
-
       {/* ─── APPLICATIONS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Crazy Seal Works on Just About Any Application" />
+        <div className={SECTION_WHITE}>
+          <SectionHeading eyebrow="Every Flat Roof" heading="Crazy Seal Works on Just About Any Application" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {APPLICATIONS.map((app) => (
               <a
                 key={app.title}
                 href={app.href}
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={app.image}
-                  alt={app.title}
-                  className="w-full h-auto object-cover"
-                />
-                <div className="p-5 text-center">
-                  <h3 className="font-bold text-primary mb-1">{app.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-3">{app.desc}</p>
-                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-accent group-hover:gap-2 transition-all">
-                    {app.cta} <ArrowRight className="w-4 h-4" />
-                  </span>
+                <div className="overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={app.image}
+                    alt={app.title}
+                    className="w-full aspect-[9/7] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="text-lg font-extrabold text-primary">{app.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{app.desc}</p>
+                  <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+                    <span className="text-sm font-bold text-accent-dark">{app.cta}</span>
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:rotate-45">
+                      <ArrowUpRight className="h-5 w-5" />
+                    </span>
+                  </div>
                 </div>
               </a>
             ))}
@@ -316,19 +339,14 @@ export default function AdvantagesPage() {
 
       {/* ─── PHOTOS & REVIEWS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Photos & Reviews" />
+        <div className={SECTION_WHITE}>
+          <SectionHeading eyebrow="Crazy Reviews" heading="Photos & Reviews" />
           <Grid responsiveCols={{ mobile: 1, tablet: 3 }} gap="lg">
             {TESTIMONIALS.map((t) => (
-              <TestimonialCard
-                key={t.name}
-                name={t.name}
-                photo={t.photo}
-                text={t.text}
-              />
+              <TestimonialCard key={t.name} name={t.name} photo={t.photo} text={t.text} />
             ))}
           </Grid>
-          <div className="flex justify-center pt-6 md:pt-10">
+          <div className="flex justify-center pt-8 md:pt-10">
             <LinkButton href="/reviews" variant="accent" size="md">
               See More Photos & Reviews
               <ArrowRight className="w-4 h-4" />
@@ -339,29 +357,7 @@ export default function AdvantagesPage() {
 
       {/* ─── CONTACT CTA ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
-            Let&apos;s Get in Touch
-          </h2>
-          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
-            Have any questions? Our Crazy Seal specialists can help!
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/kit-builder" variant="white" size="lg">
-              Build My Kit
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
+        <ContactCta variant="dark" />
       </Container>
     </>
   )
