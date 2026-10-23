@@ -1,49 +1,61 @@
 import type { Metadata } from 'next'
 import {
   ArrowRight,
+  ArrowUpRight,
   BadgeDollarSign,
-  CheckCircle2,
+  Check,
   Download,
   FileCheck,
+  MessageSquareQuote,
   MonitorPlay,
+  Palette,
   Phone,
+  Repeat,
   ShoppingCart,
+  Sparkles,
   Timer,
+  TrendingUp,
   Wrench,
 } from 'lucide-react'
 import {
   Container,
   Grid,
   SectionHeading,
-  TestimonialCard,
   LinkButton,
   YouTubeEmbed,
 } from '@/lib/design-system'
-import { ProfessionalContactForm } from '@/components/forms/ProfessionalContactForm'
+import { FormModalButton } from '@/components/forms/FormModalButton'
+import { ProContactSection } from '@/components/pro/ProContactSection'
+import { DealerNetworkIntro } from '@/components/professionals/DealerNetworkIntro'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
+import { GlowOrb } from '@/components/motion'
+import { PortalShowcase } from '@/components/portal/showcase/PortalShowcase'
+import { ModuleRoadmap } from '@/components/portal/showcase/ModuleRoadmap'
+import { WhiteLabelShowcase } from '@/components/portal/showcase/WhiteLabelShowcase'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
+const PORTAL_TOUR = '/portal/demo/summit/'
 
 export const metadata: Metadata = {
   title: 'Professionals',
   description:
-    'Increase profits with our seamless roof system. Join the Crazy Seal Professional network — no franchise fees, no inventory requirements, free on-demand shipping, and new leads for your business.',
+    'Increase profits with our seamless roof system. Join the Crazy Seal Professional network — no franchise fees, no inventory requirements, free on-demand shipping, new leads, and a Pro Portal with training and white-label materials.',
 }
 
 const PERKS = [
-  'No Franchise Fees',
-  'No Inventory Requirements',
-  'Fast, Free On-Demand Shipping',
-  '50 Year Warranty on All Kits and Products',
-  'New Leads for Your Business',
-  'Rebates for High Volume Users',
+  'No franchise fees',
+  'No inventory',
+  'Free on-demand shipping',
+  '50 year warranty',
+  'New leads',
+  'High-volume rebates',
 ]
 
 const QUICK_LINKS = [
   {
     eyebrow: 'Make Money',
     title: 'Install & Earn Big',
-    desc: 'Install seamless roofs and earn big with raw materials factory direct from Crazy Seal!',
+    desc: 'Raw materials factory direct — you keep the margin.',
     cta: 'Ways to Earn',
     href: '/ways-to-earn',
     icon: BadgeDollarSign,
@@ -51,7 +63,7 @@ const QUICK_LINKS = [
   {
     eyebrow: 'Customer Presentation',
     title: 'Earn Their Business',
-    desc: 'Just press play! Show this page to potential customers to help earn their business.',
+    desc: 'Just press play on a page built to close.',
     cta: 'See Customer Pages',
     href: '/crazy-seal',
     icon: MonitorPlay,
@@ -59,7 +71,7 @@ const QUICK_LINKS = [
   {
     eyebrow: 'Completed Job',
     title: 'File the Warranty',
-    desc: 'File your customer\u2019s warranty and send an automatic confirmation email and PDF.',
+    desc: 'Automatic confirmation email and PDF for your customer.',
     cta: 'File the Warranty',
     href: '/warranty',
     icon: FileCheck,
@@ -67,7 +79,7 @@ const QUICK_LINKS = [
   {
     eyebrow: 'Professional Tools',
     title: 'Our Tools / Your Profit',
-    desc: 'Use these downloadable tools to help you grow your Crazy Seal Installation Business.',
+    desc: 'Downloadable tools to grow your installation business.',
     cta: 'Professional Tools',
     href: '/professional-tools',
     icon: Wrench,
@@ -75,7 +87,7 @@ const QUICK_LINKS = [
   {
     eyebrow: 'Kits & Pricing',
     title: 'Pre-Built Roofing Kits',
-    desc: 'We have pre-built kits for many jobs, or you can build your own kit from scratch!',
+    desc: 'Pre-built kits for most jobs, or build your own.',
     cta: 'Build My Kit',
     href: '/kit-builder',
     icon: ShoppingCart,
@@ -83,147 +95,214 @@ const QUICK_LINKS = [
   {
     eyebrow: 'Quick Install',
     title: 'Get the Job Done Fast',
-    desc: 'With Crazy Seal, you can have a brand new roof installed within hours.',
+    desc: 'A brand new roof installed within hours.',
     cta: 'Installation',
     href: '/installation',
     icon: Timer,
   },
 ]
 
-const CHAT_EXAMPLES = [1, 2, 3, 4, 5, 6].map(
-  (n) => `${MEDIA}/2022/07/Pro-Chat-Example-${n}.jpg`
-)
+const CHAT_EXAMPLES = [1, 2, 3, 4, 5, 6].map((n) => `${MEDIA}/2022/07/Pro-Chat-Example-${n}.jpg`)
 
-const TESTIMONIALS = [
-  {
-    name: 'David Vincent, Key Largo, FL',
-    text: 'Thank you for a great and reassuring experience! I have already referred this system to 3 family and friends.',
-  },
-  {
-    name: 'Dan Horning, Sarasota, FL',
-    text: 'I loved the product. I\u2019d recommend it to anybody!',
-  },
-  {
-    name: 'Philip Posey, Tuscumbia, AL',
-    photo: `${MEDIA}/2021/11/Philip-Posey-400x400-1.jpg`,
-    text: 'We could not be more pleased with the Crazy Seal product.',
-  },
-  {
-    name: 'Douglas Evans, Overton, NV',
-    photo: `${MEDIA}/2020/05/Doug-Evans-400x400.jpg`,
-    text: 'After viewing the DIY videos 4 times, I followed the instructions to the letter. The product went on easily.',
-  },
-]
 
 const APPLICATIONS = [
   {
     title: 'RV',
-    desc: "RV's, travel trailers, fifth wheels, motor coaches.",
+    desc: 'Travel trailers, fifth wheels, motor coaches.',
     href: '/rv-roofs',
     image: `${MEDIA}/2022/01/Areas_RVs.png`,
   },
   {
     title: 'Commercial',
-    desc: 'Facilities of all kinds with flat roofs are using Crazy Seal!',
+    desc: 'Flat-roof facilities of every kind.',
     href: '/commercial-roofing',
     image: `${MEDIA}/2022/01/Areas_Commercial.png`,
   },
   {
     title: 'Residential',
-    desc: 'Flat residential, sunrooms, storage buildings.',
+    desc: 'Flat roofs, sunrooms, storage buildings.',
     href: '/residential',
     image: `${MEDIA}/2022/01/Areas_Residential.png`,
   },
   {
     title: 'Transportation',
-    desc: 'Tractor trailers, box trucks, delivery vehicles, fleets.',
+    desc: 'Tractor trailers, box trucks, fleets.',
     href: '/transportation',
     image: `${MEDIA}/2022/01/Areas_Fleets.png`,
   },
 ]
 
+const PROFIT_POINTS = [
+  {
+    icon: Repeat,
+    title: 'Customers want one-and-done',
+    desc: 'RV’ers and owners are done with yearly resealing — a seamless roof with a 50 year warranty sells itself.',
+  },
+  {
+    icon: MessageSquareQuote,
+    title: 'We send you leads',
+    desc: 'We’re a manufacturer that ships direct. When customers ask for an installer near them, we send them to you.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Rebates as you grow',
+    desc: 'Start earning immediately — high volume dealers unlock additional rebates.',
+  },
+]
+
+const WHITE_LABEL_STEPS = [
+  'Upload your logo and pick your colors',
+  'Choose a template for your customer pages',
+  'Our asset team reviews and publishes',
+  'Co-branded page, brochure and emails go live',
+]
+
 export default function ProfessionalsPage() {
   return (
     <>
-      {/* ─── HERO ─── */}
+      {/* ─── HERO: animated dealer network intro ─── */}
       <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight mb-3">
-                  Dealer Network
-                </p>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  Join the Crazy Seal Dealer Network
-                </h1>
-                <p className="text-white/70 text-base sm:text-lg leading-relaxed mb-6">
-                  No franchise fees. No inventory requirements. More and more
-                  people are asking for a professionally installed Crazy Seal
-                  roof every single day — sell and install the system and keep
-                  the profit.
-                </p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <LinkButton href="#start-a-conversation" variant="accent" size="lg">
-                    Become a Dealer
-                    <ArrowRight className="w-4 h-4" />
-                  </LinkButton>
-                  <LinkButton href="/pro" variant="outline-white" size="lg">
-                    Already a Pro? Sign in
-                  </LinkButton>
-                  <a
-                    href="tel:8009630131"
-                    className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-                  >
-                    <Phone className="w-5 h-5" />
-                    (800) 963-0131
-                  </a>
+        <DealerNetworkIntro />
+      </Container>
+
+      {/* ─── PROFESSIONAL PERKS ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="relative section-bleed bg-white border-y sm:border border-gray-200/80 overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:px-12 lg:py-14">
+          {/* Highlight: warm glow + gold hairline across the top */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-highlight to-transparent" />
+          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/3 h-[26rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-highlight/25 via-accent/15 to-secondary/20 blur-3xl" />
+          <div className="relative mx-auto max-w-4xl text-center">
+            <SectionHeading
+              eyebrow="Professional Program"
+              heading="Join Our Professional Network for Professional Perks"
+              subheading="Everything you need to sell and install the Crazy Seal system — without the franchise fees."
+              className="mb-7 md:mb-8"
+            />
+            <div className="relative mx-auto max-w-3xl">
+              <div aria-hidden="true" className="absolute -inset-3 rounded-[1.75rem] bg-gradient-to-br from-highlight/40 via-secondary/20 to-accent/40 blur-2xl" />
+              <div className="relative rounded-[1.4rem] bg-gradient-to-br from-highlight via-accent-light to-secondary p-[3px] shadow-2xl">
+                <div className="overflow-hidden rounded-[1.25rem] bg-primary">
+                  <YouTubeEmbed videoId="PRhpGHn-J3s" variant="card" />
                 </div>
               </div>
-              <div>
-                <YouTubeEmbed videoId="PRhpGHn-J3s" variant="card" />
-                <p className="text-center text-white/50 text-sm mt-3">
-                  Watch the Professional Opportunities video (4:00)
-                </p>
-              </div>
+            </div>
+            <p className="mt-3 text-xs text-gray-500">Watch the Professional Opportunities video (4:00)</p>
+            <ul className="mx-auto mt-5 flex max-w-3xl flex-wrap justify-center gap-2">
+              {PERKS.map((perk) => (
+                <li
+                  key={perk}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-primary shadow-sm ring-1 ring-primary/[0.08] sm:px-3 sm:py-1.5 sm:text-xs"
+                >
+                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-accent/15 text-accent-dark">
+                    <Check className="h-2.5 w-2.5" strokeWidth={3.5} />
+                  </span>
+                  {perk}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="lg">
+                Start a Conversation
+                <ArrowRight className="w-4 h-4" />
+              </FormModalButton>
+              <LinkButton href={PORTAL_TOUR} variant="outline" size="lg" className="border-primary/25 text-primary">
+                <Sparkles className="w-4 h-4" />
+                Tour the Pro Portal
+              </LinkButton>
             </div>
           </div>
         </div>
       </Container>
 
-      {/* ─── PROFESSIONAL PERKS ─── */}
+      {/* ─── PRO PORTAL SHOWCASE ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
+        <div id="pro-portal" className="relative section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 scroll-mt-24">
+          <GlowOrb className="-right-32 -top-32 h-[28rem] w-[28rem]" color="rgb(91 164 17 / 0.22)" />
+          <div className="relative">
+            <SectionHeading
+              eyebrow="New · The Pro Portal"
+              heading="Everything you need to launch — in one login"
+              subheading="Training modules, leads, orders, warranties and white-label materials, built for Crazy Seal partners."
+              variant="dark"
+            />
+            <PortalShowcase />
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <LinkButton href={PORTAL_TOUR} variant="accent" size="lg">
+                <Sparkles className="w-4 h-4" />
+                Take the interactive tour
+              </LinkButton>
+              <FormModalButton form="professional" sourcePage="professionals" variant="outline-white" size="lg">
+                Get partner access
+              </FormModalButton>
+            </div>
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── PROGRAM MODULES ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-10 sm:px-6 md:p-10 lg:p-12">
+          <SectionHeading
+            heading="Six modules from first call to finished roof"
+            subheading="The Business Accelerator Program walks you through marketing, sales, kits, installation and warranty — inside the Pro Portal, with progress that saves as you go."
+            className="mb-8 md:mb-12"
+          />
+          <div data-no-reveal>
+            <ModuleRoadmap />
+          </div>
+          <div className="mt-10 flex flex-wrap justify-center gap-3 border-t border-primary/[0.06] pt-8 md:mt-14 md:pt-10">
+            <LinkButton href={PORTAL_TOUR} variant="accent" size="lg">
+              <Sparkles className="w-4 h-4" />
+              Start Module 1 in the Portal
+            </LinkButton>
+            <LinkButton href="/business-accelerator-program" variant="outline" size="lg" className="border-primary/25 text-primary">
+              See the Program
+              <ArrowRight className="w-4 h-4" />
+            </LinkButton>
+            <FormModalButton form="professional" sourcePage="professionals" variant="primary" size="lg">
+                Become a Dealer
+                <ArrowRight className="w-4 h-4" />
+              </FormModalButton>
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── WHITE LABEL ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-10 lg:gap-14 items-center">
+            <div className="text-center lg:text-left">
               <SectionHeading
-                eyebrow="Professional Program"
-                heading="Join Our Network for Professional Perks"
+                eyebrow="White Label Studio"
+                heading="Your brand. Our 50 year warranty."
+                subheading="Put your logo and colors on the customer presentation page, brochure and quote emails — powered by Crazy Seal."
+                variant="dark"
                 align="left"
-                className="mb-6"
+                className="mb-6 text-center lg:text-left"
               />
-              <ul className="space-y-3 mb-8">
-                {PERKS.map((perk) => (
-                  <li key={perk} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <span className="text-gray-700 font-medium">{perk}</span>
+              <ol className="space-y-2.5 text-left max-w-md mx-auto lg:mx-0">
+                {WHITE_LABEL_STEPS.map((step, i) => (
+                  <li key={step} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] px-4 py-3 ring-1 ring-white/10">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-highlight text-sm font-black text-primary">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm font-semibold text-white">{step}</span>
                   </li>
                 ))}
-              </ul>
-              <LinkButton href="#start-a-conversation" variant="primary" size="lg">
-                Start a Conversation
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
+              </ol>
+              <div className="mt-7 flex flex-wrap justify-center lg:justify-start gap-3">
+                <LinkButton href={`${PORTAL_TOUR}?next=/portal/white-label/`} variant="white" size="md">
+                  <Palette className="w-4 h-4" />
+                  Try the studio
+                </LinkButton>
+                <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="md">
+                  Become a Dealer
+                  <ArrowRight className="w-4 h-4" />
+                </FormModalButton>
+              </div>
             </div>
-            <div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2022/07/US-Map-Gold-Professionals.png`}
-                alt="Map of Crazy Seal professional partners across the United States"
-                className="w-full h-auto"
-              />
+            <div data-no-reveal>
+              <WhiteLabelShowcase />
             </div>
           </div>
         </div>
@@ -231,106 +310,95 @@ export default function ProfessionalsPage() {
 
       {/* ─── QUICK LINKS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Quick Links" variant="dark" />
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="For Partners" heading="Quick Links" />
           <Grid responsiveCols={{ mobile: 1, tablet: 2, desktop: 3 }} gap="lg">
             {QUICK_LINKS.map((link) => (
               <a
                 key={link.title}
                 href={link.href}
-                className="group rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 transition-all duration-300 hover:bg-white/10 hover:-translate-y-1"
+                className="group relative flex h-full items-start gap-4 rounded-3xl bg-gradient-to-b from-slate-50 to-white p-5 ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
-                <link.icon className="w-8 h-8 text-highlight mb-4" />
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/50 mb-1">
-                  {link.eyebrow}
-                </p>
-                <h3 className="font-bold text-white mb-2">{link.title}</h3>
-                <p className="text-sm text-white/60 leading-relaxed mb-3">
-                  {link.desc}
-                </p>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-highlight group-hover:gap-2 transition-all">
-                  {link.cta}
-                  <ArrowRight className="w-4 h-4" />
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
+                  <link.icon className="h-5 w-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-accent-dark">{link.eyebrow}</span>
+                  <span className="mt-0.5 block font-extrabold text-primary">{link.title}</span>
+                  <span className="mt-1 block text-sm text-gray-500 leading-relaxed">{link.desc}</span>
+                  <span className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary">
+                    {link.cta}
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </span>
               </a>
             ))}
           </Grid>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-8">
+            <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="md">
+                Become a Dealer
+                <ArrowRight className="w-4 h-4" />
+              </FormModalButton>
+            <LinkButton href="tel:8009630131" variant="outline" size="md" className="border-primary/25 text-primary">
+              <Phone className="w-4 h-4" />
+              (800) 963-0131
+            </LinkButton>
+          </div>
         </div>
       </Container>
 
-      {/* ─── NEW LEADS ─── */}
+      {/* ─── LEADS + PROFIT ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
           <SectionHeading
             eyebrow="Demand Creates Opportunity"
-            heading="New Leads for Your Business"
-            subheading="We are simply a manufacturer that ships products direct. Many of our customers ask for an installer near them, and we love sending business to our Professional Partners."
+            heading="New Leads — and Bigger Margins"
+            subheading="Seamless roofing is on the rise, and people are asking for pros to install it."
           />
-          <p className="text-center text-sm font-semibold text-gray-500 mb-6">
-            Example chats of customers asking for pro installation:
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {PROFIT_POINTS.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="rounded-3xl bg-gradient-to-b from-slate-50 to-white p-6 ring-1 ring-primary/[0.08] shadow-sm">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-highlight shadow-glow-primary">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-extrabold text-primary">{title}</h3>
+                <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-sm font-semibold text-gray-500 mt-10 mb-5">
+            Real chats from customers asking for pro installation:
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
             {CHAT_EXAMPLES.map((src, i) => (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 key={src}
                 src={src}
                 alt={`Customer chat example ${i + 1} asking for professional Crazy Seal installation`}
-                className="w-full h-auto rounded-xl border border-gray-200 shadow-sm"
+                className="w-full h-auto rounded-2xl ring-1 ring-primary/10 shadow-md transition-transform duration-500 hover:-translate-y-1 hover:rotate-1"
                 loading="lazy"
               />
             ))}
           </div>
-        </div>
-      </Container>
-
-      {/* ─── INCREASE PROFITS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <SectionHeading
-              eyebrow="The Word Is Out"
-              heading="Increase Your Profits Immediately With Crazy Seal"
-            />
-            <div className="space-y-4 text-gray-600 text-base sm:text-lg leading-relaxed text-left sm:text-center">
-              <p>
-                With seamless roofing systems on the rise all over the roofing
-                industry, people are naturally gravitating toward this new,
-                maintenance free option. Especially in the RV industry, people
-                love the idea of a &ldquo;one-and-done&rdquo; system.
-              </p>
-              <p>
-                Traditional roofing systems that require UV treatments and
-                resealing annually are no fun for anyone. RV&apos;ers want to
-                enjoy their rig with less downtime. That&apos;s exactly what
-                the Crazy Seal system offers since they can do their roof once
-                with Crazy Seal, do it right, and receive a 50 year product
-                warranty.
-              </p>
-              <p>
-                Our Professional Program allows you to immediately begin
-                turning more profit in your business. Plus, high volume
-                dealers get additional rebates that increase profitability
-                even further.
-              </p>
-            </div>
-            <div className="pt-8">
-              <LinkButton href="#start-a-conversation" variant="accent" size="lg">
-                Start a Conversation
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-8">
+            <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="lg">
+              Start Getting Leads
+              <ArrowRight className="w-4 h-4" />
+            </FormModalButton>
+            <LinkButton href={`${PORTAL_TOUR}?next=/portal/leads/`} variant="outline" size="lg" className="border-primary/25 text-primary">
+              See the Leads Dashboard
+            </LinkButton>
           </div>
         </div>
       </Container>
 
       {/* ─── ADDITIONAL INFORMATION VIDEOS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-8 sm:px-6 md:p-8 lg:p-12">
           <SectionHeading
             eyebrow="Additional Information"
             heading="Learn More About the Crazy Seal System"
-            subheading="Watch our &ldquo;21&frac12; Reasons Why&rdquo; and &ldquo;Let&rsquo;s Get Crazy&rdquo; videos to learn more about the Crazy Seal system."
             variant="dark"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -340,82 +408,96 @@ export default function ProfessionalsPage() {
                 thumbnail={`${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`}
                 title="21 and a half Reasons Why video"
               />
-              <p className="text-center text-white/60 text-sm font-semibold mt-3">
-                21&frac12; Reasons Why
-              </p>
+              <p className="text-center text-white/65 text-sm font-semibold mt-3">21&frac12; Reasons Why</p>
             </div>
             <div>
               <YouTubeEmbed videoId="VoPjXn8YCk4" variant="card" />
-              <p className="text-center text-white/60 text-sm font-semibold mt-3">
-                Let&rsquo;s Get Crazy
-              </p>
+              <p className="text-center text-white/65 text-sm font-semibold mt-3">Let&rsquo;s Get Crazy</p>
             </div>
           </div>
-          <div className="flex justify-center pt-6 md:pt-8">
-            <LinkButton
-              href={`${MEDIA}/2020/02/21-Reasons.pdf`}
-              variant="white"
-              size="md"
-              external
-            >
+          <div className="flex flex-wrap justify-center gap-3 pt-8">
+            <LinkButton href={`${MEDIA}/2020/02/21-Reasons.pdf`} variant="white" size="md" external>
               <Download className="w-4 h-4" />
               Download Our 21&frac12; Reasons PDF
             </LinkButton>
+            <LinkButton href="/crazy-seal" variant="outline-white" size="md">
+              How the Hybrid System Works
+            </LinkButton>
+            <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="md">
+                Become a Dealer
+                <ArrowRight className="w-4 h-4" />
+              </FormModalButton>
           </div>
         </div>
       </Container>
 
-      {/* ─── PHOTOS & REVIEWS ─── */}
+      {/* ─── PRESS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="DIY Images & Reviews" />
-          <Grid responsiveCols={{ mobile: 1, tablet: 2, desktop: 4 }} gap="lg">
-            {TESTIMONIALS.map((t) => (
-              <TestimonialCard
-                key={t.name}
-                name={t.name}
-                photo={t.photo}
-                text={t.text}
-              />
-            ))}
-          </Grid>
-          <div className="flex justify-center pt-6 md:pt-10">
-            <LinkButton href="/reviews" variant="accent" size="md">
-              See More Photos & Reviews
-              <ArrowRight className="w-4 h-4" />
-            </LinkButton>
+        <div className="relative section-bleed overflow-hidden bg-gradient-to-r from-primary to-secondary px-5 py-8 sm:px-6 md:p-8 lg:px-12">
+          <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-highlight/20 blur-3xl" />
+          <div className="relative flex flex-col items-center gap-5 sm:flex-row sm:gap-8">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`${MEDIA}/2020/04/Trailer-Life-May-2020-Cover-Large-600x800.jpg`}
+              alt="Trailer Life Magazine May 2020 cover featuring Crazy Seal"
+              className="h-40 w-auto -rotate-3 rounded-xl shadow-2xl ring-1 ring-white/20 transition-transform duration-500 hover:rotate-0 sm:h-44"
+            />
+            <div className="flex-1 text-center sm:text-left">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-highlight">Featured in Trailer Life Magazine</p>
+              <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Proof you can show every customer</h2>
+              <p className="mt-2 text-white/70">Share the feature article at your next appointment.</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3">
+              <LinkButton href={`${MEDIA}/2020/07/Crazy-Seal-Trailer-Life.pdf`} variant="white" size="md" external>
+                <Download className="w-4 h-4" />
+                Feature PDF
+              </LinkButton>
+              <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="md">
+                Become a Dealer
+                <ArrowRight className="w-4 h-4" />
+              </FormModalButton>
+            </div>
           </div>
         </div>
       </Container>
 
       {/* ─── APPLICATION TYPES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Learn More About Different Application Types" />
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="Every Flat Roof" heading="Application Types You Can Sell" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {APPLICATIONS.map((app) => (
               <a
                 key={app.title}
                 href={app.href}
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="group relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={app.image}
-                  alt={app.title}
-                  className="w-full h-auto object-cover"
-                />
-                <div className="p-5 text-center">
-                  <h3 className="font-bold text-primary mb-1">{app.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">
-                    {app.desc}
-                  </p>
+                <div className="overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={app.image}
+                    alt={app.title}
+                    className="w-full aspect-[9/7] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3 p-5">
+                  <div>
+                    <h3 className="text-lg font-extrabold text-primary">{app.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{app.desc}</p>
+                  </div>
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:rotate-45">
+                    <ArrowUpRight className="h-5 w-5" />
+                  </span>
                 </div>
               </a>
             ))}
           </div>
-          <div className="flex justify-center pt-6 md:pt-8">
-            <LinkButton href="/applications" variant="outline" size="md">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-8">
+            <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="md">
+                Become a Dealer
+                <ArrowRight className="w-4 h-4" />
+              </FormModalButton>
+            <LinkButton href="/applications" variant="outline" size="md" className="border-primary/30 text-primary">
               See More Application Types
               <ArrowRight className="w-4 h-4" />
             </LinkButton>
@@ -423,98 +505,15 @@ export default function ProfessionalsPage() {
         </div>
       </Container>
 
-      {/* ─── TRAILER LIFE FEATURE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 md:gap-4 lg:gap-6 items-center">
-            <div className="order-2 md:order-1 relative flex items-center justify-center md:justify-start">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2020/04/Trailer-Life-May-2020-Cover-Large-600x800.jpg`}
-                alt="Trailer Life Magazine May 2020 cover featuring Crazy Seal"
-                className="rounded-2xl shadow-xl h-auto md:max-h-[400px] object-contain"
-              />
-            </div>
-            <div className="order-1 md:order-2 text-center md:text-left">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                Featured in Trailer Life Magazine
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-4">
-                See Our Feature Article
-              </h2>
-              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-4 md:mb-8">
-                Download our featured article from Trailer Life Magazine
-                explaining our revolutionary DIY Crazy Seal roofing system.
-              </p>
-              <LinkButton
-                href={`${MEDIA}/2020/07/Crazy-Seal-Trailer-Life.pdf`}
-                variant="primary"
-                size="lg"
-                external
-              >
-                <Download className="w-5 h-5" />
-                See Feature PDF
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── HYBRID ROOF SYSTEM ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2019/07/Metal-Closeup-800x800.jpg`}
-                alt="Close-up of the Crazy Seal fiber-infused silicone membrane on a metal roof"
-                className="w-full h-auto rounded-2xl shadow-xl"
-                loading="lazy"
-              />
-            </div>
-            <div className="text-center md:text-left">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight mb-3">
-                The Crazy Seal Hybrid Roof System
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
-                The Most Advanced System Ever Developed
-              </h2>
-              <p className="text-white/70 text-base sm:text-lg leading-relaxed mb-6">
-                Imagine taking roofing fabric and infusing it with the highest
-                grade silicone money can buy. As each piece of the Crazy Seal
-                System cures, fiber strands bond to each other in a complex
-                interstitial network that delivers the strength of roofing
-                fabric with the durability, flexibility, and longevity of
-                silicone. The result is a seamless, fiber reinforced roofing
-                membrane that is waterproof, highly reflective, scratch
-                resistant, flexible, tough, and maintenance free.
-              </p>
-              <LinkButton href="/crazy-seal" variant="accent" size="lg">
-                Learn More About Our System
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── CONTACT FORM ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div
-          id="start-a-conversation"
-          className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 scroll-mt-24"
-        >
-          <SectionHeading
-            eyebrow="Join the Network"
-            heading="Become a Crazy Seal Dealer"
-            subheading="Tell us about your business and a member of our team will reach out to talk partnership, ways to earn, and next steps."
-          />
-          <div className="max-w-2xl mx-auto">
-            <ProfessionalContactForm sourcePage="professionals" />
-          </div>
-        </div>
-      </Container>
+      {/* ─── CONTACT (form opens in a pop-up) ─── */}
+      <ProContactSection
+        id="start-a-conversation"
+        sourcePage="professionals"
+        eyebrow="Join the Network"
+        heading="Become a Crazy Seal Dealer"
+        subheading="Tell us about your business — we’ll reach out about partnership, ways to earn, and Pro Portal access."
+        points={['No franchise fees', 'No inventory requirements', 'Pro Portal access']}
+      />
     </>
   )
 }

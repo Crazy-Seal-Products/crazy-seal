@@ -1,59 +1,83 @@
 import Link from 'next/link'
-import { ArrowRight, MapPin } from 'lucide-react'
-import { Container, SectionHeading } from '@/lib/design-system'
+import { ArrowRight, ArrowUpRight, MapPin } from 'lucide-react'
+import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { categoryLabel, type Project } from '@/lib/projects'
+
+export type ProjectCardData = Pick<
+  Project,
+  'slug' | 'project_number' | 'title' | 'category' | 'location' | 'cover_photo'
+> & { quote?: string | null }
+
+/** One documented customer-project card (photo, number, title, quote, location). */
+export function ProjectCard({
+  project: p,
+  showCategory = true,
+  className = '',
+}: {
+  project: ProjectCardData
+  showCategory?: boolean
+  className?: string
+}) {
+  return (
+    <Link
+      href={`/project/${p.slug}/`}
+      className={`group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl ${className}`}
+    >
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+        {p.cover_photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={p.cover_photo}
+            alt={`Project #${p.project_number}: ${p.title}`}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">
+            No photo
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-dark/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        {showCategory && p.category && (
+          <span className="absolute top-3 left-3 rounded-full bg-primary/85 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white ring-1 ring-white/20 backdrop-blur-sm">
+            {categoryLabel(p.category)}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent-dark mb-1.5">
+          Project #{p.project_number}
+        </p>
+        <h3 className="text-lg font-extrabold text-primary leading-snug mb-2">{p.title}</h3>
+        {p.quote && (
+          <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-3">
+            &ldquo;{p.quote}&rdquo;
+          </p>
+        )}
+        <div className="mt-auto flex items-center justify-between gap-3 pt-2 text-sm text-gray-500">
+          {p.location ? (
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-accent" />
+              {p.location}
+            </span>
+          ) : (
+            <span />
+          )}
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:rotate-45">
+            <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
 
 /** Grid of documented customer-project cards (no wrapper section). */
 export function ProjectCardsGrid({ projects }: { projects: Project[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {projects.map((p) => (
-        <Link
-          key={p.slug}
-          href={`/project/${p.slug}/`}
-          className="group rounded-2xl overflow-hidden bg-white border border-gray-200 hover:border-[#003365]/30 hover:shadow-lg transition-all duration-300"
-        >
-          <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-            {p.cover_photo && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={p.cover_photo}
-                alt={`Project #${p.project_number}: ${p.title}`}
-                loading="lazy"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-            )}
-            {p.category && (
-              <span className="absolute top-3 left-3 bg-[#003365] text-white text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                {categoryLabel(p.category)}
-              </span>
-            )}
-          </div>
-          <div className="p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-accent mb-1">
-              Project #{p.project_number}
-            </p>
-            <h3 className="text-lg font-bold text-[#003365] leading-snug mb-2 group-hover:underline decoration-2 underline-offset-2">
-              {p.title}
-            </h3>
-            {p.quote && (
-              <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-3">
-                &ldquo;{p.quote}&rdquo;
-              </p>
-            )}
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              {p.location ? (
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5" />
-                  {p.location}
-                </span>
-              ) : (
-                <span />
-              )}
-              <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#5ba411] group-hover:translate-x-0.5 transition-all" />
-            </div>
-          </div>
-        </Link>
+        <ProjectCard key={p.slug} project={p} />
       ))}
     </div>
   )
@@ -62,13 +86,15 @@ export function ProjectCardsGrid({ projects }: { projects: Project[] }) {
 /** Round pill link to the filtered projects gallery. */
 export function BrowseProjectsLink({ category }: { category: string }) {
   return (
-    <Link
+    <LinkButton
       href={`/projects?category=${category}`}
-      className="inline-flex items-center gap-2 rounded-full border-2 border-[#003365]/20 px-6 py-3 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors"
+      variant="outline"
+      size="md"
+      className="border-primary/25 text-primary"
     >
       Browse All Customer Projects
       <ArrowRight className="w-4 h-4" />
-    </Link>
+    </LinkButton>
   )
 }
 
@@ -88,20 +114,20 @@ export function RealProjectsSection({
   projects,
   browseCategory,
   heading = 'Thousands of Real Projects Completed With This System',
-  subheading = "These aren't stock photos — they're documented customer installations, in their own words and pictures.",
+  subheading = "Not stock photos — documented customer installs, in their own words and pictures.",
 }: RealProjectsSectionProps) {
   if (projects.length === 0) return null
 
   return (
     <Container size="xl" className="sm:pt-4 md:pt-8">
-      <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+      <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
         <SectionHeading
           eyebrow="Real Roofs. Real Results."
           heading={heading}
           subheading={subheading}
         />
         <ProjectCardsGrid projects={projects} />
-        <div className="pt-6 text-center">
+        <div className="pt-8 text-center">
           <BrowseProjectsLink category={browseCategory} />
         </div>
       </div>

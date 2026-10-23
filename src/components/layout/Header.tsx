@@ -3,7 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Phone, ChevronDown, ShoppingCart, MessageSquare } from 'lucide-react'
+import { Menu, X, Phone, ChevronDown, ShoppingCart, MessageSquare, ArrowUpRight } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { clsx } from 'clsx'
 import { CartButton } from '@/components/store/CartButton'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
@@ -30,6 +31,7 @@ const APPLICATIONS_DROPDOWN = [
 
 const PROFESSIONALS_DROPDOWN = [
   { href: '/professionals', label: 'Become a Dealer' },
+  { href: '/portal/login', label: 'Pro Portal' },
   { href: '/pro', label: 'Pro Hub' },
   { href: '/ways-to-earn', label: 'Ways to Earn' },
   { href: '/business-accelerator-program', label: 'Business Accelerator' },
@@ -88,44 +90,55 @@ function DesktopDropdown({ label, links, active, pathname }: DropdownProps) {
       <button
         onClick={() => setOpen(!open)}
         className={clsx(
-          'relative flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer',
-          'after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:bg-[#003365] after:rounded-full after:transition-all after:duration-200',
+          'relative flex items-center gap-1 px-3 py-2 text-sm font-semibold rounded-full transition-all duration-200 cursor-pointer',
           active || open
-            ? 'text-[#003365] bg-blue-50 after:w-3/4'
-            : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50 after:w-0 hover:after:w-3/4'
+            ? 'text-primary bg-primary/[0.06]'
+            : 'text-gray-700 hover:text-primary hover:bg-primary/[0.04]'
         )}
       >
         {label}
-        <ChevronDown className={clsx('w-3.5 h-3.5 transition-transform', open && 'rotate-180')} />
+        <ChevronDown className={clsx('w-3.5 h-3.5 transition-transform duration-300', open && 'rotate-180')} />
+        {active && (
+          <span className="absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent" />
+        )}
       </button>
 
-      <div
-        className={clsx(
-          'absolute top-full left-0 w-56 z-50 pt-1',
-          'transition-all duration-200 ease-out',
-          open
-            ? 'opacity-100 visible translate-y-0'
-            : 'opacity-0 invisible -translate-y-1 pointer-events-none'
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-full left-0 w-64 z-50 pt-2 origin-top-left"
+          >
+            <div className="rounded-2xl bg-white/95 backdrop-blur-xl border border-primary/[0.08] shadow-xl p-2">
+              {links.map((link, i) => (
+                <motion.div
+                  key={link.href}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.02 * i, duration: 0.25 }}
+                >
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={clsx(
+                      'group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                      isActive(pathname, link.href)
+                        ? 'text-primary bg-primary/[0.06]'
+                        : 'text-gray-700 hover:text-primary hover:bg-gradient-to-r hover:from-accent/10 hover:to-transparent'
+                    )}
+                  >
+                    {link.label}
+                    <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 text-accent" />
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         )}
-      >
-        <div className="rounded-xl bg-white border border-gray-200 shadow-lg py-2">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className={clsx(
-                'block px-4 py-2.5 text-sm font-medium transition-all duration-200 border-l-2',
-                isActive(pathname, link.href)
-                  ? 'text-[#003365] bg-blue-50 border-[#003365]'
-                  : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50 border-transparent hover:border-[#5BA411]'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </div>
+      </AnimatePresence>
     </div>
   )
 }
@@ -147,32 +160,42 @@ function MobileAccordion({ label, links, active, pathname, onNavigate }: MobileA
         className={clsx(
           'flex items-center justify-between w-full px-4 py-3 text-base font-medium rounded-lg transition-colors cursor-pointer',
           active
-            ? 'text-[#003365] bg-blue-50'
-            : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50'
+            ? 'text-primary bg-primary/[0.06]'
+            : 'text-gray-700 hover:text-primary hover:bg-gray-50'
         )}
       >
         {label}
         <ChevronDown className={clsx('w-4 h-4 transition-transform', open && 'rotate-180')} />
       </button>
-      {open && (
-        <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-3">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={onNavigate}
-              className={clsx(
-                'block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors',
-                isActive(pathname, link.href)
-                  ? 'text-[#003365] bg-blue-50'
-                  : 'text-gray-600 hover:text-[#003365] hover:bg-gray-50'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="ml-4 mt-1 space-y-1 border-l-2 border-accent/30 pl-3">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={onNavigate}
+                  className={clsx(
+                    'block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors',
+                    isActive(pathname, link.href)
+                      ? 'text-primary bg-primary/[0.06]'
+                      : 'text-gray-600 hover:text-primary hover:bg-gray-50'
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -180,14 +203,29 @@ function MobileAccordion({ label, links, active, pathname, onNavigate }: MobileA
 export function Header() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const { openQuoteModal } = useQuoteModal()
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const isSystemActive = SYSTEM_PATHS.some(p => isActive(pathname, p))
   const isApplicationsActive = APPLICATION_PATHS.some(p => isActive(pathname, p))
   const isProfessionalsActive = PROFESSIONAL_PATHS.some(p => isActive(pathname, p))
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header
+      className={clsx(
+        'sticky top-0 z-50 border-b transition-all duration-300',
+        scrolled || mobileMenuOpen
+          ? 'bg-white/85 backdrop-blur-xl border-primary/[0.08] shadow-[0_10px_30px_-18px_rgba(0,32,67,0.35)]'
+          : 'bg-white border-transparent'
+      )}
+    >
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -195,7 +233,7 @@ export function Header() {
             <img
               src="https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-150.png"
               alt="Crazy Seal"
-              className="h-11 w-auto"
+              className={clsx('w-auto transition-all duration-300', scrolled ? 'h-10' : 'h-11')}
             />
           </Link>
 
@@ -210,11 +248,10 @@ export function Header() {
                 key={link.label}
                 href={link.href}
                 className={clsx(
-                  'relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200',
-                  'after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:bg-[#003365] after:rounded-full after:transition-all after:duration-200',
+                  'relative px-3 py-2 text-sm font-semibold rounded-full transition-all duration-200',
                   isActive(pathname, link.href)
-                    ? 'text-[#003365] bg-blue-50 after:w-3/4'
-                    : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50 after:w-0 hover:after:w-3/4'
+                    ? 'text-primary bg-primary/[0.06]'
+                    : 'text-gray-700 hover:text-primary hover:bg-primary/[0.04]'
                 )}
               >
                 {link.label}
@@ -235,7 +272,7 @@ export function Header() {
             </a>
             <Link
               href="/kit-builder"
-              className="flex items-center gap-2 rounded-full border border-[#5BA411] px-4 py-2 text-sm font-semibold text-[#5BA411] hover:bg-[#5BA411]/10 transition-colors"
+              className="flex items-center gap-2 rounded-full border border-accent/60 bg-white px-4 py-2 text-sm font-semibold text-accent-dark hover:bg-accent/10 hover:border-accent transition-all hover:-translate-y-0.5"
             >
               <ShoppingCart className="w-4 h-4" />
               Shop
@@ -243,7 +280,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => openQuoteModal({ sourcePage: 'header' })}
-              className="flex items-center gap-2 rounded-full bg-[#5BA411] px-5 py-2 text-sm font-semibold text-white hover:bg-[#4A870E] transition-colors shadow-sm hover:shadow-md cursor-pointer"
+              className="btn-sheen flex items-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-2 text-sm font-semibold text-white transition-all shadow-[0_6px_16px_-6px_rgba(91,164,17,0.7)] hover:shadow-[0_12px_24px_-10px_rgba(91,164,17,0.75)] hover:-translate-y-0.5 cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
               Talk to a Specialist
@@ -257,27 +294,45 @@ export function Header() {
           </div>
           <button
             type="button"
-            className="lg:hidden p-2 text-gray-700"
+            className="lg:hidden grid h-10 w-10 place-items-center rounded-full text-gray-700 hover:bg-primary/[0.05] transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={mobileMenuOpen ? 'close' : 'open'}
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </motion.span>
+            </AnimatePresence>
           </button>
         </div>
       </div>
 
       {/* Mobile Nav */}
+      <AnimatePresence>
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-4 space-y-1">
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:hidden overflow-hidden border-t border-primary/[0.08] bg-white"
+        >
+          <div className="px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
               className={clsx(
                 'block px-4 py-3 text-base font-medium rounded-lg transition-colors',
                 isActive(pathname, '/')
-                  ? 'text-[#003365] bg-blue-50'
-                  : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50'
+                  ? 'text-primary bg-primary/[0.06]'
+                  : 'text-gray-700 hover:text-primary hover:bg-gray-50'
               )}
             >
               Home
@@ -313,8 +368,8 @@ export function Header() {
                 className={clsx(
                   'block px-4 py-3 text-base font-medium rounded-lg transition-colors',
                   isActive(pathname, link.href)
-                    ? 'text-[#003365] bg-blue-50'
-                    : 'text-gray-700 hover:text-[#003365] hover:bg-gray-50'
+                    ? 'text-primary bg-primary/[0.06]'
+                    : 'text-gray-700 hover:text-primary hover:bg-gray-50'
                 )}
               >
                 {link.label}
@@ -335,7 +390,7 @@ export function Header() {
                   setMobileMenuOpen(false)
                   openQuoteModal({ sourcePage: 'header-mobile' })
                 }}
-                className="flex items-center justify-center gap-2 w-full text-center rounded-full bg-[#5BA411] px-5 py-3 text-base font-semibold text-white cursor-pointer"
+                className="btn-sheen flex items-center justify-center gap-2 w-full text-center rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-3 text-base font-semibold text-white shadow-[0_8px_20px_-8px_rgba(91,164,17,0.7)] cursor-pointer"
               >
                 <MessageSquare className="w-5 h-5" />
                 Talk to a Specialist
@@ -350,8 +405,9 @@ export function Header() {
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   )
 }

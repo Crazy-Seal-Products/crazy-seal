@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
-import { ArrowRight, ExternalLink, Package, ShoppingCart } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Check, ShoppingCart } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
-import { ContentRequestForm } from '@/components/forms/ContentRequestForm'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import {
+  ContentRequestSection,
+  ModuleHero,
+  ModuleNav,
+  ModuleNext,
+} from '@/components/pro/ProgramModule'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -16,231 +21,157 @@ const PRODUCTS = [
   {
     heading: 'Crazy Clean',
     image: `${MEDIA}/2019/05/Crazy-Clean-731x1024.png`,
-    desc: 'Crazy Clean is a highly effective concentrated cleaning solution specially formulated to remove surface contaminants such as oils, dirt and oxidation. Crazy Clean is environmentally safe, non-toxic and leaves no contaminating by-products or pollutants to damage the environment.',
+    desc: 'A concentrated cleaner that removes oils, dirt and oxidation. Environmentally safe and non-toxic, it leaves no contaminating by-products or pollutants.',
     href: '/store/crazy-clean',
   },
   {
     heading: 'Crazy Caulk',
     image: `${MEDIA}/2019/04/Crazy-Caulk-1-Tube-177x1024.png`,
-    desc: 'Crazy Caulk is a fiber-infused silicone, moisture-curing sealant with excellent adhesion to most surfaces. Crazy Caulk is generally used to seal seams, such as the seams along the sides of an RV or seams created where components such as gutter systems attach to the roof.',
+    desc: 'Fiber-infused silicone, moisture-curing sealant with excellent adhesion to most surfaces. Seals seams, like the sides of an RV or where gutter systems attach to the roof.',
     href: '/store/crazy-caulk',
   },
   {
     heading: 'Crazy Patch',
     image: `${MEDIA}/2019/05/Crazy-Patch-731x1024.png`,
-    desc: 'Crazy Patch is a fiber-infused silicone, moisture-curing mastic with excellent adhesion to most surfaces. Crazy Patch is generally used to seal all existing penetrations. Simply stated, wherever sealant was previously applied to cover penetrations, Crazy Patch will be used to ensure that penetrations are sealed. Crazy Patch can also be used alone as a single component repair product to patch leaks.',
+    desc: 'Fiber-infused silicone, moisture-curing mastic with excellent adhesion. Seals every existing penetration (anywhere sealant was used before) and works alone as a single-component leak repair.',
     href: '/store/crazy-patch',
   },
   {
     heading: 'Crazy Seal',
     image: `${MEDIA}/2019/05/Crazy-Seal-5-Gal-Gray-Bottom-699x1024.png`,
-    desc: 'Crazy Seal is a weatherproof, fiber-infused silicone, fluid-applied membrane. Applying Crazy Seal to any weathered roof substrate will help ensure it is protected against degradation caused by harsh UV rays, severe weather, mold and mildew. It will not chalk or blister. The unique fiber-infused silicone makeup of Crazy Seal remains permanently flexible yet strong.',
+    desc: "Weatherproof, fiber-infused silicone, fluid-applied membrane. Protects weathered roofs from harsh UV, severe weather, mold and mildew. Won't chalk or blister; stays permanently flexible yet strong.",
     href: '/store/crazy-seal',
   },
   {
     heading: 'Crazy Tape',
     image: `${MEDIA}/2021/12/Crazy-Tape-1395x1395-1-1024x1024.png`,
-    desc: 'Crazy Tape is a special tape created for scenarios where repairs are required. Crazy Tape has a strong adhesive on one side and a fabric material on the other. This gives you the ability to add additional structural integrity to the seam with the adhesive, while the fabric on top is designed to allow the Crazy Seal System to adhere to it. This combination allows you many different possibilities for repair on your roof.',
+    desc: 'Strong adhesive on one side, fabric on the other. Adds structural integrity to a seam while giving the Crazy Seal System a surface to adhere to, for many repair possibilities.',
     href: '/store/crazy-tape',
   },
   {
     heading: 'Crazy Cloth',
     image: `${MEDIA}/2021/12/Crazy-Cloth-1000x1395-1-734x1024.png`,
-    desc: 'Crazy Cloth is a special roofing fabric used to seal large seams. Combining this with the fluid applied products allows you many different possibilities for repair on your roof.',
+    desc: 'Special roofing fabric used to seal large seams. Combine it with the fluid-applied products for many different repair possibilities.',
     href: '/store/crazy-cloth',
   },
 ]
 
-const MODULE_LINKS = [
-  { number: 1, label: 'Welcome', href: '/resources/welcome-to-crazy-seal' },
-  { number: 2, label: 'Marketing', href: '/resources/marketing' },
-  { number: 3, label: 'Sales', href: '/resources/sales' },
-  { number: 4, label: 'Build a Kit', href: '/resources/building-a-kit' },
-  { number: 5, label: 'Installation', href: '/resources/installation' },
-  { number: 6, label: 'Warranty', href: '/resources/warranty' },
+const KIT_TIPS = [
+  'Click any project kit for exact pricing',
+  'Build your own kit to see totals, pricing and coverage rates per product',
+  'Need help choosing? Our team is happy to help',
 ]
 
 export default function BuildingAKitPage() {
   return (
     <>
       {/* ─── HERO / MODULE VIDEO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
-                  <Package className="w-4 h-4 text-highlight" />
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                    Module 4
-                  </p>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  Building a Kit
-                </h1>
-                <p className="text-xl font-semibold text-white mb-3">
-                  Pre-Built Kits Or Custom Solutions To Fit Your Application
-                </p>
-                <p className="text-white/70 text-base leading-relaxed">
-                  The size and type of roof you have will determine how much of
-                  each of our products you need to complete your project!
-                  Please click on project kits below for exact pricing on any
-                  kit. You can also can use the build your own kit page to add
-                  products to your cart and see a total price. The build your
-                  own kit page is also the fastest way to view pricing and
-                  coverage rates on each individual product. If you need
-                  assistance with choosing or building a kit, reach out to our
-                  team and we&apos;ll be happy to help!
-                </p>
+      <ModuleHero
+        module={4}
+        title={
+          <>
+            Building a <span className="text-shimmer-highlight">Kit</span>
+          </>
+        }
+        tagline="Pre-Built Kits Or Custom Solutions To Fit Your Application"
+        intro={
+          <>
+            <p>The size and type of roof determine how much of each product you need.</p>
+            <ul className="mx-auto mt-4 w-fit space-y-2 text-left text-base lg:mx-0">
+              {KIT_TIPS.map((tip) => (
+                <li key={tip} className="flex items-start gap-2.5">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/20 ring-1 ring-accent/40">
+                    <Check className="h-3 w-3 text-accent-light" strokeWidth={3} />
+                  </span>
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </>
+        }
+        media={
+          <ProVimeoEmbed
+            videoId="937517426"
+            thumbnail={`${MEDIA}/2024/04/Module-4-Thumbnail.jpg`}
+            title="Module 4: Building a Kit"
+          />
+        }
+        mediaCaption="Module 4: Building a Kit"
+      />
+
+      <ModuleNav current={4} />
+
+      {/* ─── ALL KITS ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/[0.04] via-accent/[0.07] to-primary/[0.04] p-6 ring-1 ring-primary/[0.06] sm:p-8 lg:p-10">
+            <div className="flex flex-col items-center gap-6 text-center lg:flex-row lg:text-left">
+              <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent animate-float">
+                <ShoppingCart className="h-8 w-8" />
+              </span>
+              <div className="flex-1">
+                <h2 className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl">
+                  See All Kits On One Page
+                </h2>
+                <p className="mt-1 text-gray-600">Double layer, direct to deck, commercial and build-your-own kits.</p>
               </div>
-              <div>
-                <ProVimeoEmbed
-                  videoId="937517426"
-                  thumbnail={`${MEDIA}/2024/04/Module-4-Thumbnail.jpg`}
-                  title="Module 4: Building a Kit"
-                />
-                <p className="text-center text-white/50 text-sm mt-3">
-                  Module 4: Building a Kit
-                </p>
-              </div>
+              <LinkButton href="/kit-builder" variant="accent" size="lg">
+                <ShoppingCart className="h-5 w-5" />
+                All Project Kits
+              </LinkButton>
             </div>
           </div>
         </div>
       </Container>
 
-      {/* ─── ALL KITS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 text-center">
-          <SectionHeading heading="See All Kits On One Page" />
-          <LinkButton
-            href="/kit-builder"
-            variant="accent"
-            size="lg"
-           
-          >
-            <ShoppingCart className="w-5 h-5" />
-            All Project Kits
-          </LinkButton>
-        </div>
-      </Container>
-
       {/* ─── INDIVIDUAL PRODUCT PAGES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Individual Product Pages" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="The Crazy Seal Lineup" heading="Individual Product Pages" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {PRODUCTS.map((product) => (
-              <div
+              <a
                 key={product.heading}
-                className="rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                href={product.href}
+                className="group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
-                <div className="aspect-[4/3] overflow-hidden bg-gray-50 flex items-center justify-center p-4">
+                <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-accent/10 p-6">
+                  <div aria-hidden="true" className="absolute inset-x-12 bottom-6 h-6 rounded-full bg-primary/10 blur-xl" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={product.image}
                     alt={product.heading}
-                    className="h-full w-auto object-contain"
+                    className="relative h-full w-auto object-contain transition-transform duration-700 ease-out group-hover:-rotate-2 group-hover:scale-[1.08]"
                   />
                 </div>
-                <div className="p-5 text-center flex flex-col flex-1">
-                  <h3 className="font-bold text-primary uppercase tracking-wide mb-2">
-                    {product.heading}
-                  </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-4">
-                    {product.desc}
-                  </p>
-                  <div className="mt-auto">
-                    <LinkButton
-                      href={product.href}
-                      variant="outline"
-                      size="sm"
-                      external
-                      className="border-primary text-primary"
-                    >
-                      See Product Page
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </LinkButton>
-                  </div>
+                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 className="mb-2 text-lg font-extrabold text-primary">{product.heading}</h3>
+                  <p className="mb-5 text-sm leading-relaxed text-gray-500">{product.desc}</p>
+                  <span className="mt-auto flex items-center justify-between gap-3 border-t border-primary/[0.07] pt-4 text-sm font-bold text-primary">
+                    See Product Page
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/[0.06] transition-all duration-300 group-hover:rotate-45 group-hover:bg-accent group-hover:text-white">
+                      <ArrowUpRight className="h-4 w-4" />
+                    </span>
+                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center pt-6 md:pt-10">
-            <h3 className="text-lg font-bold text-primary uppercase tracking-wide mb-4">
-              See All Products On One Page
-            </h3>
-            <LinkButton
-              href="/kit-builder#products"
-              variant="primary"
-              size="lg"
-             
-            >
-              See All Products
-              <ArrowRight className="w-4 h-4" />
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── CONTINUE TO NEXT MODULE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-5">
-            Continue to Next Module
-          </h2>
-          <LinkButton href="/resources/installation" variant="accent" size="lg">
-            Installation
-            <ArrowRight className="w-4 h-4" />
-          </LinkButton>
-        </div>
-      </Container>
-
-      {/* ─── MODULE QUICK LINKS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Business Accelerator Program"
-            heading="Module Quick Links"
-          />
-          <div className="flex flex-wrap justify-center gap-3">
-            {MODULE_LINKS.map((mod) => (
-              <a
-                key={mod.number}
-                href={mod.href}
-                className="group flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {mod.number}
-                </span>
-                <span className="text-sm font-semibold text-primary group-hover:text-accent transition-colors">
-                  {mod.label}
-                </span>
               </a>
             ))}
           </div>
-          <div className="flex justify-center pt-6">
-            <LinkButton href="/business-accelerator-program" variant="primary" size="md">
-              Business Accelerator Home
+          <div className="mt-8 flex flex-col items-center gap-4 text-center md:mt-10">
+            <h3 className="text-lg font-extrabold text-primary">See All Products On One Page</h3>
+            <LinkButton href="/kit-builder#products" variant="primary" size="lg">
+              See All Products
+              <ArrowRight className="h-4 w-4" />
             </LinkButton>
           </div>
         </div>
       </Container>
 
+      {/* ─── CONTINUE TO NEXT MODULE + QUICK LINKS ─── */}
+      <ModuleNext current={4} />
+
       {/* ─── CONTENT / FEATURE REQUEST ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Content | Feature Request"
-            heading="Request Content or a Feature"
-            subheading="Have a request for marketing materials, sales resources, or something else that would support you in your business? Drop it in this form and the request will go directly to our asset creation team!"
-          />
-          <div className="max-w-2xl mx-auto">
-            <ContentRequestForm sourcePage="resources-building-a-kit" />
-          </div>
-        </div>
-      </Container>
+      <ContentRequestSection sourcePage="resources-building-a-kit" />
     </>
   )
 }

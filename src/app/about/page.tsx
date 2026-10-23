@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ArrowRight, Phone } from 'lucide-react'
+import { ArrowRight, BookOpen, Quote, Trophy } from 'lucide-react'
 import {
   Container,
   Grid,
@@ -7,9 +7,20 @@ import {
   TestimonialCard,
   LinkButton,
 } from '@/lib/design-system'
+import {
+  Callout,
+  Checklist,
+  ContactCta,
+  DARK_CARD,
+  HERO_H1,
+  HeroShell,
+  MEDIA,
+  SECTION_NAVY,
+  SECTION_WHITE,
+  StatTile,
+  fadeDelay,
+} from '@/components/system-pages/blocks'
 import { VimeoEmbed } from './VimeoEmbed'
-
-const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
 export const metadata: Metadata = {
   title: 'About Crazy Seal',
@@ -43,125 +54,138 @@ export default function AboutPage() {
     <>
       {/* ─── HERO ─── */}
       <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-18 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-              A Letter From the Owners
-            </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-              About Us
-            </h1>
-            <p className="text-lg sm:text-xl text-highlight font-semibold uppercase tracking-wide">
-              Born Into Roofing. Innovative in Spirit!
-            </p>
+        <HeroShell innerClassName="text-center">
+          <h1 className={HERO_H1} style={fadeDelay(80)}>
+            About Us
+          </h1>
+          <p
+            className="animate-fade-up text-lg sm:text-2xl font-extrabold uppercase tracking-wide text-white/90 font-[family-name:var(--font-display)]"
+            style={fadeDelay(160)}
+          >
+            Born Into Roofing. <span className="text-shimmer-highlight">Innovative in Spirit!</span>
+          </p>
+          <div
+            className="animate-fade-up mx-auto mt-8 grid max-w-3xl grid-cols-2 md:grid-cols-4 gap-3"
+            style={fadeDelay(260)}
+          >
+            <StatTile value={70} suffix="+" label="Years in roofing" variant="dark" />
+            <StatTile display="3rd" label="Generation roofer" variant="dark" />
+            <StatTile display="1946" label="Thaxton Roofers founded" variant="dark" />
+            <StatTile value={50} suffix=" yr" label="Product warranty" variant="dark" />
           </div>
-        </div>
+        </HeroShell>
       </Container>
 
       {/* ─── BORN INTO ROOFING ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center">
+        <div className={SECTION_WHITE}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center">
             <div>
               <SectionHeading
+                eyebrow="Three Generations"
                 heading="I Was Born Into the Roofing Business. It's in My Blood."
                 align="left"
                 className="mb-4"
               />
-              <p className="text-gray-600 leading-relaxed mb-4">
-                I am a 3rd generation roofer. My Grandfather (also Lee
-                Thaxton), started Thaxton Roofers, Inc. in Northfield, Ohio
-                back in 1946. My Uncle and Cousin still run that business
-                today.
+              <p className="text-gray-600 leading-relaxed mb-5">
+                I am a 3rd generation roofer. My Grandfather (also Lee Thaxton) started Thaxton Roofers, Inc.
+                in Northfield, Ohio back in 1946, and my Uncle and Cousin still run that business today. My
+                father was a roofing contractor, and my brother, uncles and cousins are in the business too.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                My father was a roofing contractor. My brother and uncles and
-                cousins are in the business. I guess you can say that our name
-                says all you need to know. Our name is a derivative of
-                Thatcher or Thatch for short. Thatching literally means
-                roofing. Here&apos;s the definition: a material, as straw,
-                rushes, leaves, or the like, used to cover roofs. Eventually,
-                our name evolved and became Thaxton.
-              </p>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                With over 70 years of experience behind us, we know a thing or
-                two about roofing.
-              </p>
+              <Callout icon={BookOpen} title="Our name says all you need to know" tone="highlight" className="mb-5">
+                Thaxton is a derivative of Thatcher, or Thatch for short. Thatching literally means roofing:
+                &ldquo;a material, as straw, rushes, leaves, or the like, used to cover roofs.&rdquo;
+              </Callout>
               <p className="text-gray-600 leading-relaxed">
-                Although I love my family, I&apos;ve always leaned towards
-                innovation and creating new paths. While I can appreciate
-                traditional roofing, as it&apos;s been a mainstay in our
-                family for decades, I ventured out.
+                With over 70 years of experience behind us, we know a thing or two about roofing. Although I
+                love my family, I&apos;ve always leaned towards innovation and creating new paths. While I can
+                appreciate traditional roofing, as it&apos;s been a mainstay in our family for decades, I
+                ventured out.
               </p>
             </div>
-            <div>
+            <figure className="group relative">
+              <div
+                aria-hidden="true"
+                className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-secondary/15 via-transparent to-accent/20 blur-xl"
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2019/09/Lee-Pointed-Out.jpg`}
                 alt="Lee Thaxton with the Thaxton Roofers crew in 1982"
-                className="rounded-2xl shadow-lg w-full h-auto"
+                className="relative rounded-2xl shadow-xl ring-1 ring-primary/10 w-full h-auto transition-transform duration-700 group-hover:-rotate-1"
               />
-              <p className="text-sm text-gray-500 text-center mt-3">
+              <figcaption className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-glow-primary">
                 Lee Thaxton, 3rd from left, 1982
-              </p>
-            </div>
+              </figcaption>
+            </figure>
           </div>
         </div>
       </Container>
 
       {/* ─── NO RV'ER LEFT BEHIND ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center">
-            <div className="order-2 md:order-1">
+        <div className={SECTION_NAVY}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center">
+            <div className="relative order-2 md:order-1">
+              <div
+                aria-hidden="true"
+                className="absolute -inset-3 rounded-[1.75rem] bg-gradient-to-br from-highlight/25 via-secondary/20 to-accent/30 blur-2xl"
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2019/06/070-Far-Off-Roll-1.jpg`}
                 alt="Applying the Crazy Seal roofing system to an RV roof"
-                className="rounded-2xl shadow-2xl ring-1 ring-white/10 w-full h-auto"
+                className="relative rounded-2xl shadow-2xl ring-1 ring-white/15 w-full h-auto"
               />
             </div>
             <div className="order-1 md:order-2">
               <SectionHeading
+                eyebrow="Fellow RV'ers"
                 heading="No RV'er Left Behind"
                 align="left"
                 variant="dark"
                 className="mb-4"
               />
-              <p className="text-white/70 leading-relaxed mb-4">
-                Carol and I are fellow RV&apos;ers and travel most of the year
-                in our motorhome and work from the road. It&apos;s a great way
-                to see this great country, and with the ability to have
-                internet virtually anywhere, it makes it easy to stay on top
-                of our businesses.
+              <p className="text-white/70 leading-relaxed mb-5">
+                Carol and I are fellow RV&apos;ers. We travel most of the year in our motorhome and work from
+                the road. It&apos;s a great way to see this great country, and with internet virtually
+                anywhere, it&apos;s easy to stay on top of our businesses.
               </p>
-              <p className="text-white/70 leading-relaxed mb-4">
-                Carol and I are not new to RV roofing. We created the first
-                nationwide, mobile service company that would offer a
-                seamless, maintenance free roofing system. We also created the
-                first true Lifetime Material and Labor Warranty for roofing
-                RV&apos;s.
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-highlight">
+                We&apos;re not new to RV roofing. We created:
               </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                {[
+                  'The first nationwide, mobile service company offering a seamless, maintenance free roofing system',
+                  "The first true Lifetime Material and Labor Warranty for roofing RV's",
+                ].map((item) => (
+                  <div key={item} className={`group flex items-start gap-3 p-4 ${DARK_CARD}`}>
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-highlight text-primary transition-transform duration-500 group-hover:-rotate-6">
+                      <Trophy className="h-4 w-4" />
+                    </span>
+                    <p className="text-sm font-semibold text-white/85 leading-snug">{item}</p>
+                  </div>
+                ))}
+              </div>
               <p className="text-white/70 leading-relaxed mb-4">
-                Even though our company has done thousands of RV roofs and
-                dealt with thousands of people, it always troubled us that not
-                every RV or RV&apos;er was a good fit for that system. We
-                would, and still get hundreds of requests each year for DIY
-                kits. The problem with that is just how difficult it is to
-                work with our roofing system. It&apos;s not easily installed
-                by the average person. It&apos;s a solvent based system, needs
-                primer, and truly needs to be installed by trained certified
-                techs.
+                Even after thousands of RV roofs, it always troubled us that not every RV or RV&apos;er was a
+                good fit for that system. We still get hundreds of requests each year for DIY kits, but our
+                roofing system is not easily installed by the average person:
               </p>
+              <ul className="flex flex-wrap gap-2 mb-5">
+                {['Solvent based', 'Needs primer', 'Needs trained, certified techs'].map((item) => (
+                  <li
+                    key={item}
+                    className="inline-flex items-center rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-white ring-1 ring-white/15"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
               <p className="text-white/70 leading-relaxed">
-                We had to look at making something different, something
-                special, that would benefit the average DIY&apos;er. We
-                recognize people need and want a good roofing solution. Not
-                the inferior products you find at most retailers. We spent
-                years working with chemical specialists, until we found and
-                tested a formula that would stand the test of time.
+                So we made something different, something special, for the average DIY&apos;er — not the
+                inferior products you find at most retailers. We spent years working with chemical
+                specialists until we found and tested a formula that would stand the test of time.
               </p>
             </div>
           </div>
@@ -170,44 +194,39 @@ export default function AboutPage() {
 
       {/* ─── THE CRAZY SEAL ROOFING SOLUTION ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center">
+        <div className={SECTION_WHITE}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-center">
             <div>
               <SectionHeading
+                eyebrow="Patented Fiber-Infused Silicone"
                 heading="The Crazy Seal Roofing Solution"
                 align="left"
                 className="mb-4"
               />
-              <p className="text-gray-600 leading-relaxed mb-4">
-                Crazy Seal is the most advanced fluid applied roofing membrane
-                ever developed. It&apos;s a patented, superior grade
-                fiber-infused silicone. It&apos;s designed with 3 products
-                (Crazy Caulk, Crazy Patch, and Crazy Seal), that when used
-                together create an incredibly tough, seamless, maintenance
-                free, roof membrane.
+              <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
+                Crazy Seal is the most advanced fluid applied roofing membrane ever developed: a patented,
+                superior grade fiber-infused silicone. Its 3 products (Crazy Caulk, Crazy Patch, and Crazy
+                Seal) work together to create an incredibly tough, seamless, maintenance free roof membrane.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                Crazy Seal is designed to go over multiple surfaces without
-                the need for a primer. That means you can go over wood
-                decking, rubber, fiberglass, and more. Crazy Seal bonds
-                directly to just about any roof surface. Our guided,
-                do-it-yourself roofing system comes with step by step
-                application instructions to help you create a professional
-                finish.
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                Crazy Seal offers a different, more straightforward twist on a
-                liquid-type roof product, which makes it installable by any
-                capable person but stout enough to be covered by a 50-year
-                product warranty.
-              </p>
+              <Checklist
+                items={[
+                  'Goes over multiple surfaces without the need for a primer',
+                  'Bonds directly to wood decking, rubber, fiberglass, and more',
+                  'Guided DIY system with step by step application instructions for a professional finish',
+                  'Installable by any capable person, but stout enough to be covered by a 50-year product warranty',
+                ]}
+              />
             </div>
-            <div>
+            <div className="group relative grid place-items-center py-6">
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-6 inset-y-10 rounded-full bg-gradient-to-br from-secondary/20 via-accent/15 to-highlight/25 blur-2xl"
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2019/10/09_Double-300-500-White-1024x485.png`}
                 alt="Crazy Seal Double Layer roofing kit"
-                className="w-full h-auto"
+                className="relative w-full h-auto animate-float-slow drop-shadow-[0_24px_30px_rgba(0,32,67,0.25)] transition-transform duration-700 group-hover:scale-105"
               />
             </div>
           </div>
@@ -216,54 +235,40 @@ export default function AboutPage() {
 
       {/* ─── 70+ YEARS OF ROOFING KNOWLEDGE ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 lg:gap-10 items-center">
-            <div className="flex justify-center">
+        <div className={SECTION_WHITE}>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 lg:gap-14 items-center">
+            <div className="relative flex justify-center">
+              <div aria-hidden="true" className="absolute inset-8 rounded-full bg-highlight/30 blur-3xl" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2019/06/50-Year-Warranty-Space-600x600.png`}
                 alt="Crazy Seal 50 year warranty badge"
-                className="w-full max-w-xs h-auto"
+                className="relative w-full max-w-[16rem] md:max-w-xs h-auto animate-float-slow drop-shadow-[0_24px_40px_rgba(0,32,67,0.25)]"
               />
             </div>
             <div>
               <SectionHeading
+                eyebrow="What You Get"
                 heading="70+ Years of Roofing Knowledge"
                 align="left"
-                className="mb-4"
+                className="mb-5"
               />
-              <p className="text-gray-600 leading-relaxed mb-4">
-                You get our 70 plus years of roofing knowledge, plus all the
-                experience of installing thousands of RV roofs. We give you
-                both a PDF installation guide, and a suite of installation
-                videos to help you succeed with your project.
-              </p>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                You won&apos;t find Crazy Seal at any stores. We manufacture
-                and ship directly to you. We make it easy to figure out how
-                much product you will need for your project.
-              </p>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                We back it up with a 50 year warranty. We even make it easy to
-                register your warranty right here on our website.
-              </p>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Not just for RV&apos;s &mdash; Crazy Seal was designed for
-                small projects. We designed Crazy Seal to be good on virtually
-                any flat surface. If you have a small project, there&apos;s
-                pretty good chance Crazy Seal will work.
-              </p>
+              <Checklist
+                className="mb-7"
+                items={[
+                  'Our 70 plus years of roofing knowledge, plus all the experience of installing thousands of RV roofs',
+                  'A PDF installation guide and a suite of installation videos to help you succeed with your project',
+                  "You won't find Crazy Seal in stores. We manufacture and ship directly to you, and make it easy to figure out how much product you'll need",
+                  'Backed by a 50 year warranty that you can register right here on our website',
+                  "Not just for RV's: designed for small projects on virtually any flat surface. If you have a small project, there's a pretty good chance Crazy Seal will work",
+                ]}
+              />
               <div className="flex flex-wrap gap-3">
                 <LinkButton href="/installation" variant="primary" size="md">
                   See Installation Guides
                   <ArrowRight className="w-4 h-4" />
                 </LinkButton>
-                <LinkButton
-                  href="/warranty"
-                  variant="outline"
-                  size="md"
-                  className="border-primary text-primary"
-                >
+                <LinkButton href="/warranty" variant="outline" size="md" className="border-primary/30 text-primary">
                   Learn About Our Warranty
                 </LinkButton>
               </div>
@@ -274,41 +279,50 @@ export default function AboutPage() {
 
       {/* ─── KNOWING WHO YOU ARE DEALING WITH ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 lg:gap-10 items-center">
-            <div>
+        <div className={SECTION_NAVY}>
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 lg:gap-14 items-center">
+            <div className="relative">
+              <Quote aria-hidden="true" className="absolute -left-2 -top-4 h-16 w-16 rotate-180 text-white/[0.06]" />
               <SectionHeading
+                eyebrow="Buy With Confidence"
                 heading="It's All About Knowing Who You Are Dealing With"
                 align="left"
                 variant="dark"
                 className="mb-4"
               />
-              <p className="text-white/70 leading-relaxed mb-4">
-                Crazy Seal is the most advanced seamless roof system ever
-                developed.
+              <p className="text-white/80 text-base md:text-lg leading-relaxed mb-4">
+                Crazy Seal is the most advanced seamless roof system ever developed.
               </p>
               <p className="text-white/70 leading-relaxed mb-4">
-                You can buy with confidence, because we have a long track
-                record in traditional roofing, own a successful RV roofing
-                business, and genuinely care about delivering the best
-                products available.
+                You can buy with confidence, because we have a long track record in traditional roofing, own
+                a successful RV roofing business, and genuinely care about delivering the best products
+                available.
               </p>
-              <p className="text-white/70 leading-relaxed mb-6">
+              <p className="text-white/70 leading-relaxed mb-7">
                 I wish all of you great success on your roof project.
               </p>
-              <p className="text-white font-bold text-lg leading-snug">
-                Lee Thaxton
-              </p>
-              <p className="text-white/60 text-sm uppercase tracking-wide">
-                President, Crazy Seal Products, Inc.
-              </p>
+              <div className="flex items-center gap-4">
+                <span aria-hidden="true" className="h-px w-10 bg-highlight" />
+                <div>
+                  <p className="text-white font-extrabold text-xl leading-snug font-[family-name:var(--font-display)]">
+                    Lee Thaxton
+                  </p>
+                  <p className="text-white/60 text-sm uppercase tracking-wide">
+                    President, Crazy Seal Products, Inc.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-center md:justify-end">
+            <div className="relative flex justify-center md:justify-end">
+              <div
+                aria-hidden="true"
+                className="absolute inset-6 rounded-[2rem] bg-gradient-to-br from-highlight/25 via-secondary/20 to-accent/30 blur-2xl"
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${MEDIA}/2019/09/Lee-and-Carol.jpg`}
                 alt="Lee and Carol Thaxton"
-                className="rounded-2xl shadow-2xl ring-1 ring-white/10 w-full max-w-xs h-auto"
+                className="relative rounded-2xl shadow-2xl ring-1 ring-white/15 w-full max-w-xs h-auto rotate-2 transition-transform duration-500 hover:rotate-0"
               />
             </div>
           </div>
@@ -317,36 +331,34 @@ export default function AboutPage() {
 
       {/* ─── WANT TO INTERVIEW LEE ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Hear From the Founder"
-            heading="Want to Interview Lee?"
-          />
-          <div className="max-w-3xl mx-auto">
-            <VimeoEmbed
-              videoId="1060563463"
-              thumbnail={`${MEDIA}/2025/03/Lee-Thaxton-Episode.jpg`}
-              title="Lee Thaxton interview episode"
+        <div className={SECTION_WHITE}>
+          <SectionHeading eyebrow="Hear From the Founder" heading="Want to Interview Lee?" />
+          <div className="relative max-w-3xl mx-auto">
+            <div
+              aria-hidden="true"
+              className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-secondary/15 via-transparent to-accent/20 blur-xl"
             />
+            <div className="relative">
+              <VimeoEmbed
+                videoId="1060563463"
+                thumbnail={`${MEDIA}/2025/03/Lee-Thaxton-Episode.jpg`}
+                title="Lee Thaxton interview episode"
+              />
+            </div>
           </div>
         </div>
       </Container>
 
       {/* ─── PHOTOS & REVIEWS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Photos & Reviews" />
-          <Grid responsiveCols={{ mobile: 1, tablet: 2 }} gap="lg">
+        <div className={SECTION_WHITE}>
+          <SectionHeading eyebrow="Crazy Reviews" heading="Photos & Reviews" />
+          <Grid responsiveCols={{ mobile: 1, tablet: 2, wide: 4 }} gap="lg">
             {TESTIMONIALS.map((t) => (
-              <TestimonialCard
-                key={t.name}
-                name={t.name}
-                photo={t.photo}
-                text={t.text}
-              />
+              <TestimonialCard key={t.name} name={t.name} photo={t.photo} text={t.text} />
             ))}
           </Grid>
-          <div className="flex justify-center pt-6 md:pt-10">
+          <div className="flex justify-center pt-8 md:pt-10">
             <LinkButton href="/reviews" variant="accent" size="md">
               See More Photos & Reviews
               <ArrowRight className="w-4 h-4" />
@@ -357,29 +369,7 @@ export default function AboutPage() {
 
       {/* ─── CONTACT CTA ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 lg:p-14 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
-            Let&apos;s Get in Touch
-          </h2>
-          <p className="text-white/70 text-base sm:text-lg mb-6 max-w-xl mx-auto">
-            Have any questions? Our Crazy Seal specialists can help!
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/kit-builder" variant="white" size="lg">
-              Build My Kit
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
+        <ContactCta variant="dark" />
       </Container>
     </>
   )

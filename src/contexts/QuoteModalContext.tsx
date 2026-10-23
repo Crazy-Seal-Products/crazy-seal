@@ -9,6 +9,8 @@ export interface QuoteModalOptions {
   sourcePage?: string
   /** Prefills the message field, e.g. product or cart context. */
   initialMessage?: string
+  /** Preselects the project type, e.g. 'RV Roof' on RV pages. */
+  defaultProjectType?: string
 }
 
 interface QuoteModalContextValue {
@@ -52,6 +54,7 @@ export function QuoteModalProvider({ children }: { children: ReactNode }) {
         onClose={closeQuoteModal}
         sourcePage={options.sourcePage ?? `quote-modal:${fallbackSource}`}
         initialMessage={options.initialMessage}
+        defaultProjectType={options.defaultProjectType}
       />
     </QuoteModalContext.Provider>
   )

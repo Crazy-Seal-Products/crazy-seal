@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
-import { ArrowRight, Bot, ExternalLink } from 'lucide-react'
-import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
-import { ContentRequestForm } from '@/components/forms/ContentRequestForm'
+import { Bot, ExternalLink } from 'lucide-react'
+import { LinkButton } from '@/lib/design-system'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import { AssetPageFooter } from '@/components/marketing-assets/AssetPageFooter'
+import { ModuleHero, ModuleNav } from '@/components/pro/ProgramModule'
+import { PromptLibrary } from '@/components/pro/SalesAssetBlocks'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -82,155 +84,56 @@ const PROMPTS = [
   { heading: 'AI Prompt for Any Content', text: ANY_CONTENT_PROMPT },
 ]
 
-const MODULE_LINKS = [
-  { number: 1, label: 'Welcome', href: '/resources/welcome-to-crazy-seal' },
-  { number: 2, label: 'Marketing', href: '/resources/marketing' },
-  { number: 3, label: 'Sales', href: '/resources/sales' },
-  { number: 4, label: 'Build a Kit', href: '/resources/building-a-kit' },
-  { number: 5, label: 'Installation', href: '/resources/installation' },
-  { number: 6, label: 'Warranty', href: '/resources/warranty' },
-]
-
 export default function AiPromptsPage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
-                  <Bot className="w-4 h-4 text-highlight" />
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                    AI Prompts for Marketing Your Business
-                  </p>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  AI Prompts
-                </h1>
-                <p className="text-white/70 text-base sm:text-lg leading-relaxed mb-6">
-                  Use these prompts with any Artificial Intelligence platform
-                  to teach it what you are doing as a professional with Crazy
-                  Seal and create custom assets!
-                </p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <LinkButton
-                    href="https://chat.openai.com/"
-                    variant="accent"
-                    size="lg"
-                    external
-                  >
-                    Go To Chat GPT
-                    <ExternalLink className="w-4 h-4" />
-                  </LinkButton>
-                </div>
-              </div>
-              <div>
-                <ProVimeoEmbed
-                  videoId="937522726"
-                  thumbnail={`${MEDIA}/2024/04/9.jpg`}
-                  title="AI Prompts for Marketing Your Business"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+      <ModuleHero
+        module={2}
+        kicker="AI Prompts for Marketing"
+        icon={Bot}
+        title={
+          <>
+            AI <span className="text-shimmer-highlight">Prompts</span>
+          </>
+        }
+        intro="Use these prompts with any Artificial Intelligence platform to teach it what you are doing as a professional with Crazy Seal and create custom assets!"
+        chips={['Ad copy', 'Email templates', 'Any content']}
+        actions={
+          <LinkButton href="https://chat.openai.com/" variant="accent" size="lg" external>
+            Go To Chat GPT
+            <ExternalLink className="h-4 w-4" />
+          </LinkButton>
+        }
+        media={
+          <ProVimeoEmbed
+            videoId="937522726"
+            thumbnail={`${MEDIA}/2024/04/9.jpg`}
+            title="AI Prompts for Marketing Your Business"
+          />
+        }
+      />
+
+      <ModuleNav current={2} />
 
       {/* ─── PROMPTS ─── */}
-      {PROMPTS.map((prompt) => (
-        <Container key={prompt.heading} size="xl" className="sm:pt-4 md:pt-8">
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight text-center mb-6">
-              {prompt.heading}
-            </h2>
-            <div className="max-w-3xl mx-auto rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden">
-              <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-2.5">
-                <Bot className="w-4 h-4 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-wide text-primary">
-                  {prompt.heading}
-                </span>
-              </div>
-              <div className="p-5 text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                {prompt.text}
-              </div>
-            </div>
-          </div>
-        </Container>
-      ))}
+      <PromptLibrary prompts={PROMPTS} />
 
-      {/* ─── BACK / CONTINUE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 text-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight mb-4">
-                Back to Main Marketing Page
-              </h2>
-              <LinkButton href="/resources/marketing" variant="white" size="md">
-                Marketing
-              </LinkButton>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight mb-4">
-                Continue On to Sales
-              </h2>
-              <LinkButton href="/resources/sales" variant="accent" size="md">
-                Sales
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── MODULE QUICK LINKS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Business Accelerator Program"
-            heading="Module Quick Links"
-          />
-          <div className="flex flex-wrap justify-center gap-3">
-            {MODULE_LINKS.map((mod) => (
-              <a
-                key={mod.number}
-                href={mod.href}
-                className="group flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {mod.number}
-                </span>
-                <span className="text-sm font-semibold text-primary group-hover:text-accent transition-colors">
-                  {mod.label}
-                </span>
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center pt-6">
-            <LinkButton href="/business-accelerator-program" variant="primary" size="md">
-              Business Accelerator Home
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── CONTENT / FEATURE REQUEST ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Content | Feature Request"
-            heading="Request Content or a Feature"
-            subheading="Have a request for marketing materials, sales resources, or something else that would support you in your business? Drop it in this form and the request will go directly to our asset creation team!"
-          />
-          <div className="max-w-2xl mx-auto">
-            <ContentRequestForm sourcePage="marketing-ai-prompts" />
-          </div>
-        </div>
-      </Container>
+      {/* ─── BACK / CONTINUE + QUICK LINKS + CONTENT REQUEST ─── */}
+      <AssetPageFooter
+        module={2}
+        sourcePage="marketing-ai-prompts"
+        back={{
+          heading: 'Back to Main Marketing Page',
+          label: 'Marketing',
+          href: '/resources/marketing',
+        }}
+        next={{
+          heading: 'Continue On to Sales',
+          label: 'Sales',
+          href: '/resources/sales',
+        }}
+      />
     </>
   )
 }

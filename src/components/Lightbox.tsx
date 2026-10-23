@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 export interface LightboxImage {
@@ -32,7 +33,8 @@ export function Lightbox({ images, index, onClose, onNavigate, onJump }: Lightbo
 
   const image = images[index]
 
-  return (
+  // Portal to <body> so animated or stacked ancestors can't trap the overlay.
+  return createPortal(
     <div
       ref={containerRef}
       className="fixed inset-0 z-50 flex flex-col bg-black/95 animate-in fade-in duration-200"
@@ -112,7 +114,8 @@ export function Lightbox({ images, index, onClose, onNavigate, onJump }: Lightbo
           </button>
         ))}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

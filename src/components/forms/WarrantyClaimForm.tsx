@@ -2,10 +2,18 @@
 
 import React, { useState, useRef } from 'react'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2, CheckCircle } from 'lucide-react'
-import { Input, Textarea, Button } from '@/lib/design-system'
+import { Send } from 'lucide-react'
+import { Input, Textarea } from '@/lib/design-system'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import {
+  FieldLabel,
+  FormError,
+  FormSection,
+  FormSuccess,
+  SubmitButton,
+  fieldClass,
+} from '@/components/forms/form-ui'
 
 export function WarrantyClaimForm() {
   const [submitting, setSubmitting] = useState(false)
@@ -67,102 +75,68 @@ export function WarrantyClaimForm() {
 
   if (submitted) {
     return (
-      <div className="text-center py-12">
-        <CheckCircle className="w-14 h-14 text-accent mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-primary mb-2">Claim Received!</h3>
-        <p className="text-gray-600 max-w-md mx-auto">
+      <FormSuccess title="Claim Received!">
+        <p>
           We&apos;re sorry you&apos;re having an issue. Our team will be in touch
           as soon as possible to make it right.
         </p>
-      </div>
+      </FormSuccess>
     )
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden">
           <label htmlFor="wc-website">Website</label>
           <input type="text" id="wc-website" name="website" tabIndex={-1} autoComplete="off" />
         </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Name <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Input name="first_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">First</span>
-            </div>
-            <div>
-              <Input name="last_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">Last</span>
-            </div>
+        <FormSection step={1} title="Your details">
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="first_name" size="md" required placeholder="First name *" aria-label="First name" autoComplete="given-name" className={fieldClass} />
+            <Input name="last_name" size="md" required placeholder="Last name *" aria-label="Last name" autoComplete="family-name" className={fieldClass} />
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="phone" size="md" type="tel" required placeholder="Phone *" aria-label="Phone" autoComplete="tel" className={fieldClass} />
+            <Input name="email" size="md" type="email" required placeholder="Email *" aria-label="Email" autoComplete="email" className={fieldClass} />
+          </div>
+
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Phone <span className="text-red-500">*</span>
-            </label>
-            <Input name="phone" size="lg" type="tel" required />
+            <FieldLabel>Order number (optional)</FieldLabel>
+            <Input name="order_number" size="md" className={fieldClass} />
           </div>
+        </FormSection>
+
+        <FormSection step={2} title="The issue">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <Input name="email" size="lg" type="email" required />
+            <FieldLabel required>Notes</FieldLabel>
+            <Textarea name="failure_description" rows={3} required className={fieldClass} />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Crazy Seal Order Number (if available)
-          </label>
-          <Input name="order_number" size="lg" />
-        </div>
+          <PhotoUploadField
+            label="Photos (optional)"
+            files={photoFiles}
+            onChange={setPhotoFiles}
+          />
+        </FormSection>
 
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Please add a quick note about your application so we can best assist you. <span className="text-red-500">*</span>
-          </label>
-          <Textarea name="failure_description" rows={4} required />
-        </div>
-
-        <PhotoUploadField
-          label="If you would like to share photos, you can upload them here."
-          files={photoFiles}
-          onChange={setPhotoFiles}
-        />
-
-        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+        <div className="flex justify-center empty:hidden">
           <FormTurnstile
             id="turnstile-warranty-claim"
             turnstileRef={turnstileRef}
             onToken={setTurnstileToken}
+            appearance="interaction-only"
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
-        )}
+        {error && <FormError>{error}</FormError>}
 
-        <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-            {submitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2" />
-                Submit Claim
-              </>
-            )}
-          </Button>
+        <div className="flex justify-center">
+          <SubmitButton submitting={submitting} icon={<Send className="h-4 w-4" />}>
+            Submit Claim
+          </SubmitButton>
         </div>
       </div>
     </form>

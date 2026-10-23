@@ -5,9 +5,10 @@
 
 import { readdirSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const APP_DIR = new URL('../src/app', import.meta.url).pathname
-const OUT = new URL('../src/lib/generated/route-manifest.json', import.meta.url).pathname
+const APP_DIR = fileURLToPath(new URL('../src/app', import.meta.url))
+const OUT = fileURLToPath(new URL('../src/lib/generated/route-manifest.json', import.meta.url))
 
 function collectRoutes(dir, segments = []) {
   const routes = []

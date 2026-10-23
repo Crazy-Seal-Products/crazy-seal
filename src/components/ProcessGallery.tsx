@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { Maximize2 } from 'lucide-react'
 import { Lightbox, type LightboxImage } from '@/components/Lightbox'
 
 interface ProcessImage {
@@ -54,6 +55,12 @@ export function ProcessGallery({
     alt: img.alt,
   }))
 
+  const stepBadge = (step: number) => (
+    <div className="absolute top-2 left-2 grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-accent-light to-accent-dark text-xs font-extrabold text-white shadow-glow-accent ring-2 ring-white/80">
+      {step}
+    </div>
+  )
+
   return (
     <>
       {/* Mobile: 2-col grid */}
@@ -62,7 +69,7 @@ export function ProcessGallery({
           <button
             key={i}
             onClick={() => openLightbox(i)}
-            className="rounded-xl overflow-hidden border border-gray-200 bg-white cursor-pointer text-left"
+            className="overflow-hidden rounded-2xl bg-white text-left shadow-sm ring-1 ring-primary/[0.08] cursor-pointer"
           >
             <div className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -72,15 +79,11 @@ export function ProcessGallery({
                 className="w-full object-cover"
                 style={{ aspectRatio: aspect }}
               />
-              {showStepBadge && img.step && (
-                <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                  {img.step}
-                </div>
-              )}
+              {showStepBadge && img.step && stepBadge(img.step)}
             </div>
             {showDescription && (img.label || img.description) && (
               <div>
-                {img.label && <p className="text-xs font-bold text-[#003365] bg-gray-100 px-2 py-1">{img.label}</p>}
+                {img.label && <p className="text-xs font-bold text-primary bg-slate-50 px-2 py-1">{img.label}</p>}
                 {img.description && <p className="text-xs text-gray-600 leading-snug px-2 py-1.5">{img.description}</p>}
               </div>
             )}
@@ -97,26 +100,25 @@ export function ProcessGallery({
           <button
             key={i}
             onClick={() => openLightbox(i)}
-            className="group rounded-xl overflow-hidden border border-gray-200 bg-white cursor-pointer hover:border-[#003365]/30 transition-colors text-left"
+            className="group overflow-hidden rounded-2xl bg-white text-left shadow-sm ring-1 ring-primary/[0.08] cursor-pointer transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="relative">
+            <div className="relative overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img.src}
                 alt={img.alt}
-                className="w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                 style={{ aspectRatio: aspect }}
               />
-              {showStepBadge && img.step && (
-                <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                  {img.step}
-                </div>
-              )}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              {showStepBadge && img.step && stepBadge(img.step)}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/50 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <span className="absolute bottom-2.5 right-2.5 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-primary shadow-lg opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+                <Maximize2 className="h-4 w-4" />
+              </span>
             </div>
             {showDescription && (img.label || img.description) && (
               <div>
-                {img.label && <p className="text-sm font-bold text-[#003365] bg-gray-100 px-3 py-1">{img.label}</p>}
+                {img.label && <p className="text-sm font-bold text-primary bg-slate-50 px-3 py-1.5">{img.label}</p>}
                 {img.description && <p className="text-sm text-gray-600 leading-relaxed px-3 py-2">{img.description}</p>}
               </div>
             )}

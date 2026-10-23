@@ -28,11 +28,11 @@ export function FeatureCard({
   return (
     <div
       className={twMerge(
-        'group rounded-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden',
+        'group relative rounded-2xl transition-all duration-500 ease-out hover:-translate-y-1.5 overflow-hidden',
         image ? '' : 'p-6 md:p-8',
         isLight
-          ? 'bg-white border border-gray-200/80 shadow-sm hover:shadow-lg hover:border-primary/20'
-          : 'bg-white/10 border border-white/10 hover:bg-white/15',
+          ? 'ring-glow bg-gradient-to-b from-white to-slate-50/80 border border-primary/[0.08] shadow-sm hover:shadow-xl'
+          : 'bg-white/[0.07] border border-white/10 backdrop-blur-sm hover:bg-white/[0.12] hover:border-white/20 hover:shadow-[0_20px_40px_-20px_rgba(0,0,0,0.5)]',
         className
       )}
     >
@@ -49,13 +49,14 @@ export function FeatureCard({
         </div>
       )}
       {image && (
-        <div className="aspect-[16/10] overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={image}
             alt={imageAlt || title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700 ease-out"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" />
         </div>
       )}
       <div className={twMerge(
@@ -66,10 +67,10 @@ export function FeatureCard({
           <div className="mb-0 md:mb-5 flex-shrink-0">
             <div
               className={twMerge(
-                'w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-colors duration-300',
+                'w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3',
                 isLight
-                  ? 'bg-primary/8 group-hover:bg-primary/15'
-                  : 'bg-white/10 group-hover:bg-white/20'
+                  ? 'bg-gradient-to-br from-accent/15 to-primary/10 ring-1 ring-primary/10 shadow-sm group-hover:shadow-md'
+                  : 'bg-white/10 ring-1 ring-white/10 group-hover:bg-white/20'
               )}
             >
               {icon}
@@ -80,8 +81,7 @@ export function FeatureCard({
           <h3
             className={twMerge(
               'text-lg font-bold mb-2',
-              isLight ? 'text-primary' : 'text-white',
-              image && 'inline-block bg-primary/8 rounded-lg px-3 py-1'
+              isLight ? 'text-primary' : 'text-white'
             )}
           >
             {title}

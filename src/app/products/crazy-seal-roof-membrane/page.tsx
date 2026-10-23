@@ -1,16 +1,18 @@
 import type { Metadata } from 'next'
+import { Layers, Palette, Sun, Waves } from 'lucide-react'
+import { Container, SectionHeading } from '@/lib/design-system'
 import {
-  ArrowRight,
-  CreditCard,
-  PackageCheck,
-  Phone,
-  ShoppingCart,
-  Truck,
-} from 'lucide-react'
-import { Container, LinkButton } from '@/lib/design-system'
+  ContactCta,
+  LIGHT_CARD,
+  MEDIA,
+  OrderPerks,
+  ProductDetail,
+  SECTION_WHITE,
+  ShopHero,
+  SystemTrail,
+} from '@/components/system-pages/blocks'
 import { VideoPlayer } from '../../build-your-own-kit/VideoPlayer'
 
-const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 const SHOP_URL = '/store/crazy-seal'
 
 export const metadata: Metadata = {
@@ -23,14 +25,17 @@ const SIZES = [
   {
     label: '1 US GAL / 3.8 L',
     image: `${MEDIA}/2019/04/Crazy-Seal-1-Gal-White-1000x1395-768x1071.png`,
+    height: 'h-36 sm:h-40',
   },
   {
     label: '3 US GAL / 11.4 L',
     image: `${MEDIA}/2019/04/Crazy-Seal-3-Gal-White-1000x1395-768x1071.png`,
+    height: 'h-44 sm:h-48',
   },
   {
     label: '5 US GAL / 18.9 L',
     image: `${MEDIA}/2019/04/Crazy-Seal-5-Gal-White-1000x1395-768x1071.png`,
+    height: 'h-52 sm:h-56',
   },
 ]
 
@@ -39,128 +44,99 @@ export default function CrazySealRoofMembranePage() {
     <>
       {/* ─── HERO ─── */}
       <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-6 sm:px-6 sm:py-10 md:px-6 md:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
-              <div className="text-center lg:text-left">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                  Crazy Seal Products
-                </p>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  Crazy Seal
-                </h1>
-                <p className="text-base sm:text-lg text-white/70 leading-relaxed mb-6">
-                  A weatherproof, fiber-infused silicone, fluid-applied
-                  membrane that protects any weathered roof substrate against
-                  harsh UV rays, severe weather, mold and mildew.
-                </p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <LinkButton href={SHOP_URL} variant="accent" size="lg" external>
-                    <ShoppingCart className="w-5 h-5" />
-                    Shop Crazy Seal
-                  </LinkButton>
-                  <LinkButton href="/kit-builder" variant="white" size="lg">
-                    Build My Kit
-                  </LinkButton>
-                </div>
-              </div>
-              <VideoPlayer
-                youtubeId="7UdhprChv1Q"
-                title="Crazy Seal product video"
-                caption="Click to Watch Product Video (0:44)"
-              />
-            </div>
-          </div>
-        </div>
+        <ShopHero
+          eyebrow="Crazy Seal Products"
+          title="Crazy Seal"
+          lead={
+            <p>
+              A weatherproof, fiber-infused silicone, fluid-applied membrane that protects any weathered
+              roof substrate against harsh UV rays, severe weather, mold and mildew.
+            </p>
+          }
+          shopHref={SHOP_URL}
+          shopLabel="Shop Crazy Seal"
+          media={
+            <VideoPlayer
+              youtubeId="7UdhprChv1Q"
+              title="Crazy Seal product video"
+              caption="Click to Watch Product Video (0:44)"
+            />
+          }
+          packshot={{
+            src: `${MEDIA}/2019/04/Crazy-Seal-5-Gal-White-1000x1395-768x1071.png`,
+            alt: '',
+            className: 'h-32',
+          }}
+          badge={{ icon: Layers, label: 'Fiber-infused silicone' }}
+          chips={[
+            { icon: Sun, label: 'Will not chalk or blister' },
+            { icon: Waves, label: 'Permanently flexible' },
+            { icon: Palette, label: 'White, Gray or Tan' },
+          ]}
+        />
       </Container>
 
       {/* ─── ORDER PERKS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              {
-                icon: <PackageCheck className="w-6 h-6 text-accent" />,
-                text: 'In-stock & Ready to Ship',
-              },
-              {
-                icon: <CreditCard className="w-6 h-6 text-accent" />,
-                text: 'Orders between $100 - $1,000 can be broken into 4 installments during checkout',
-              },
-              {
-                icon: <Truck className="w-6 h-6 text-accent" />,
-                text: 'Free Shipping on Orders Over $700',
-              },
-            ].map((perk) => (
-              <div
-                key={perk.text}
-                className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-4"
-              >
-                <div className="flex-shrink-0">{perk.icon}</div>
-                <p className="text-sm font-semibold text-primary">{perk.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <Container size="xl" className="sm:pt-4 md:pt-6">
+        <OrderPerks freeShippingOver="$700" />
       </Container>
 
       {/* ─── PRODUCT DETAILS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="max-w-3xl mx-auto text-center md:text-left">
-            <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight uppercase mb-4">
-              Crazy Seal
-            </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              Crazy Seal is a weatherproof, fiber-infused silicone,
-              fluid-applied membrane. Applying Crazy Seal to any weathered roof
-              substrate will help ensure it is protected against degradation
-              caused by harsh UV rays, severe weather, mold and mildew. It will
-              not chalk or blister. The unique fiber-infused silicone makeup of
-              Crazy Seal remains permanently flexible yet strong.
+        <ProductDetail
+          name="Crazy Seal"
+          image={`${MEDIA}/2019/04/Crazy-Seal-5-Gal-White-1000x1395-768x1071.png`}
+          imageAlt="Crazy Seal 5 gallon bucket"
+          intro={
+            <p>
+              Applying Crazy Seal to any weathered roof substrate helps protect it against degradation
+              caused by harsh UV rays, severe weather, mold and mildew. It will not chalk or blister, and
+              its fiber-infused silicone makeup remains permanently flexible yet strong. When properly
+              applied, Crazy Seal&trade; provides a weatherproof monolithic silicone roof coating.
             </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              When properly applied, Crazy Seal&trade; provides a weatherproof
-              monolithic silicone roof coating.
-            </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              <span className="font-semibold text-primary">Color Options:</span>{' '}
-              Available in White, Gray, or Tan
-            </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              <span className="font-semibold text-primary">Coverage Rates:</span>{' '}
-              100 SQ FT / Gallon on standard surface like rubber. 75 SQ FT /
-              Gallon when applied directly to wood decking.
-            </p>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              <span className="font-semibold text-primary">
-                Net Contents (3 Size Options):
-              </span>{' '}
-              5 US GAL / 18.9 L, 3 US GAL / 11.4 L, or 1 US GAL / 3.8 L
-            </p>
-            <LinkButton href={SHOP_URL} variant="accent" size="md" external>
-              Shop Crazy Seal
-              <ArrowRight className="w-4 h-4" />
-            </LinkButton>
-          </div>
-        </div>
+          }
+          stats={[
+            { value: 100, label: 'SQ FT / gal on rubber' },
+            { value: 75, label: 'SQ FT / gal on wood' },
+            { value: 3, label: 'Size options' },
+          ]}
+          specs={[
+            { label: 'Color Options', value: 'Available in White, Gray, or Tan' },
+            {
+              label: 'Coverage Rates',
+              value:
+                '100 SQ FT / Gallon on standard surface like rubber. 75 SQ FT / Gallon when applied directly to wood decking.',
+            },
+            {
+              label: 'Net Contents (3 Size Options)',
+              value: '5 US GAL / 18.9 L, 3 US GAL / 11.4 L, or 1 US GAL / 3.8 L',
+            },
+          ]}
+          shopHref={SHOP_URL}
+          shopLabel="Shop Crazy Seal"
+          after={<SystemTrail current="Crazy Seal" />}
+        />
       </Container>
 
       {/* ─── SIZES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className={SECTION_WHITE}>
+          <SectionHeading eyebrow="3 Size Options" heading="Pick Your Pail" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 max-w-4xl mx-auto items-end">
             {SIZES.map((size) => (
-              <div key={size.label} className="text-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={size.image}
-                  alt={`Crazy Seal ${size.label} bucket`}
-                  className="h-56 w-auto object-contain mx-auto mb-4"
-                />
-                <p className="font-bold text-primary">{size.label}</p>
+              <div key={size.label} className={`group text-center px-5 pt-8 pb-6 ${LIGHT_CARD}`}>
+                <div className="relative grid place-items-end justify-center">
+                  <div aria-hidden="true" className="absolute bottom-0 h-5 w-2/3 rounded-full bg-primary/15 blur-lg" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={size.image}
+                    alt={`Crazy Seal ${size.label} bucket`}
+                    className={`relative ${size.height} w-auto object-contain transition-transform duration-700 ease-out group-hover:-translate-y-2 group-hover:scale-105`}
+                  />
+                </div>
+                <p className="mt-5 inline-flex rounded-full bg-primary/[0.06] px-4 py-1.5 text-sm font-extrabold text-primary ring-1 ring-primary/10">
+                  {size.label}
+                </p>
               </div>
             ))}
           </div>
@@ -169,29 +145,7 @@ export default function CrazySealRoofMembranePage() {
 
       {/* ─── CTA ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 py-10 sm:py-16 px-5 sm:px-8 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
-            Let&apos;s Get In Touch
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4 tracking-tight">
-            Have Any Questions? Our Crazy Seal Specialists Can Help!
-          </h2>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/kit-builder" variant="primary" size="lg">
-              Build My Kit
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-gray-600 hover:text-primary font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
+        <ContactCta />
       </Container>
     </>
   )

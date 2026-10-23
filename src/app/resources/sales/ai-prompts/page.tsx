@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { Bot, ExternalLink } from 'lucide-react'
-import { Container, LinkButton } from '@/lib/design-system'
+import { LinkButton } from '@/lib/design-system'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
 import { AssetPageFooter } from '@/components/marketing-assets/AssetPageFooter'
+import { ModuleHero, ModuleNav } from '@/components/pro/ProgramModule'
+import { PromptLibrary } from '@/components/pro/SalesAssetBlocks'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -92,75 +94,39 @@ export default function SalesAiPromptsPage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
-                  <Bot className="w-4 h-4 text-highlight" />
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                    AI Prompts for Sales
-                  </p>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  AI Prompts
-                </h1>
-                <p className="text-white/70 text-base sm:text-lg leading-relaxed mb-6">
-                  Use these prompts with any Artificial Intelligence platform
-                  to teach it what you are doing as a professional with Crazy
-                  Seal and create custom assets!
-                </p>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <LinkButton
-                    href="https://chat.openai.com/"
-                    variant="accent"
-                    size="lg"
-                    external
-                  >
-                    Go To Chat GPT
-                    <ExternalLink className="w-4 h-4" />
-                  </LinkButton>
-                </div>
-              </div>
-              <div>
-                <ProVimeoEmbed
-                  videoId="937522660"
-                  thumbnail={`${MEDIA}/2024/04/9.jpg`}
-                  title="AI Prompts for Sales"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+      <ModuleHero
+        module={3}
+        kicker="AI Prompts for Sales"
+        icon={Bot}
+        title={
+          <>
+            AI <span className="text-shimmer-highlight">Prompts</span>
+          </>
+        }
+        intro="Use these prompts with any Artificial Intelligence platform to teach it what you are doing as a professional with Crazy Seal and create custom assets!"
+        chips={['Sales scripts', 'Website content', 'Contracts', 'Labor warranties']}
+        actions={
+          <LinkButton href="https://chat.openai.com/" variant="accent" size="lg" external>
+            Go To Chat GPT
+            <ExternalLink className="h-4 w-4" />
+          </LinkButton>
+        }
+        media={
+          <ProVimeoEmbed
+            videoId="937522660"
+            thumbnail={`${MEDIA}/2024/04/9.jpg`}
+            title="AI Prompts for Sales"
+          />
+        }
+      />
+
+      <ModuleNav current={3} />
 
       {/* ─── PROMPTS ─── */}
-      {PROMPTS.map((prompt) => (
-        <Container key={prompt.heading} size="xl" className="sm:pt-4 md:pt-8">
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight text-center mb-6">
-              {prompt.heading}
-            </h2>
-            <div className="max-w-3xl mx-auto rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden">
-              <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-2.5">
-                <Bot className="w-4 h-4 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-wide text-primary">
-                  {prompt.heading}
-                </span>
-              </div>
-              <div className="p-5 text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                {prompt.text}
-              </div>
-            </div>
-          </div>
-        </Container>
-      ))}
+      <PromptLibrary prompts={PROMPTS} />
 
       {/* ─── FOOTER ─── */}
-      <AssetPageFooter sourcePage="resources-sales-ai-prompts" />
+      <AssetPageFooter module={3} sourcePage="resources-sales-ai-prompts" />
     </>
   )
 }

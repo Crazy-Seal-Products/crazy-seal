@@ -6,8 +6,8 @@ const config: HubPageConfig = {
   tagline: 'Seal a unit in a day. Keep it on the road for good.',
   installsLine: 'Thousands of successful installations',
   pitch: [
-    'Crazy Seal is a seamless, fiber-infused silicone membrane for tractor trailers, box trucks, and delivery vehicles — built for the constant flexing that vibrates ordinary sealant apart. One crew can seal a unit in a day, in your own yard.',
-    "One kit typically covers a box truck or trailer roof. A fire department sealed a 24' rescue trailer for about $1,000 in product instead of spending $40,000 on a replacement. Sealing a fleet? Talk to us about volume.",
+    'A seamless, fiber-infused silicone membrane for tractor trailers, box trucks, and delivery vehicles — built for the constant flexing that vibrates ordinary sealant apart. One crew can seal a unit in a day, in your own yard.',
+    "A fire department sealed a 24' rescue trailer for about $1,000 in product instead of a $40,000 replacement. Sealing a fleet? Talk to us about volume.",
   ],
   priceNote:
     "A 24' trailer runs about $1,200 in product — versus writing off the unit over a roof.",
@@ -22,7 +22,7 @@ const config: HubPageConfig = {
   },
   kitsHeading: 'Pick a Pre-Built Kit',
   kitsNote:
-    'Vehicle roofs use the same flat-roof kits, sized by square footage. One kit typically covers a box truck or trailer roof — and one crew can seal a unit in a day.',
+    'The same flat-roof kits, sized by square footage. One kit typically covers a box truck or trailer roof.',
   projectsHeading: 'Real Vehicle Roofs, Documented Start to Finish',
   sourcePage: 'transportation',
   leadHeading: 'Talk to a Specialist About Your Vehicles',

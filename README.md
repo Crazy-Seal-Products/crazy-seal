@@ -24,6 +24,36 @@ npm run dev
 
 Copy `.env.local.example` to `.env.local` and fill in credentials.
 
+On Windows PowerShell, use `npm.cmd ci` and `npm.cmd run dev`. The site runs
+at `http://localhost:3004`. To create the local file without overwriting one:
+
+```powershell
+if (!(Test-Path .env.local)) { Copy-Item .env.local.example .env.local }
+npm.cmd run env:check
+```
+
+Set `NEXT_PUBLIC_SITE_URL=http://localhost:3004` locally. Replace every
+placeholder with the existing Crazy Seal credentials; an example file is
+not a working environment. Obtain the owner's ignored `.env.local` through
+a secure file transfer, or pull Development variables from the correct
+Vercel project after linking it. Never commit the local file or paste its
+contents into chat. Do not reuse RV Armor credentials or CRM owner IDs.
+
+`npm run env:check` reports variable names and missing settings without
+printing values. Supabase's URL, publishable key, and secret key are the core
+requirements. Other feature settings enable uploads/video processing,
+Shopify, Turnstile forms, and CRM/email delivery. `DATABASE_URL` and `WP_*`
+are needed only for database administration or legacy migration scripts.
+Marketing tags, reviews, CRM owner overrides, and the command-center secret
+are optional for basic development. A successful presence check does not
+verify service access. Installing dependencies and building do not apply
+database migrations, import data, submit forms, or deploy the site.
+
+For standalone Node scripts that expect environment variables, PowerShell
+can use `node --env-file=.env.local scripts/<script>.mjs` instead of the
+POSIX-only `source .env.local` commands below. Review scripts before running
+them: imports, syncs, backfills, and migrations can write to live systems.
+
 ## Database
 
 Migrations live in `supabase/migrations/` and are applied with psql against the pooler connection (`DATABASE_URL` in `.env.local`):

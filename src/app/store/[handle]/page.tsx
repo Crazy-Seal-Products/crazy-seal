@@ -9,15 +9,17 @@ import {
   PackageCheck,
   CreditCard,
   ArrowRight,
+  ArrowUpRight,
   MapPin,
   Quote,
   Droplets,
   Wrench,
   PaintRoller,
   Download,
-  CheckCircle2,
+  Check,
 } from 'lucide-react'
 import { Container, YouTubeEmbed } from '@/lib/design-system'
+import { GlowOrb } from '@/components/motion'
 import { getStoreProducts, getStoreProduct, type StoreProduct } from '@/lib/store/products'
 import { STORE_CATEGORIES } from '@/lib/store/config'
 import {
@@ -139,84 +141,98 @@ export default async function ProductPage({ params }: PageProps) {
   )
 
   return (
-    <Container size="xl" className="py-8 sm:py-10">
+    <Container size="xl" className="pt-4 sm:pt-0">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6 flex-wrap">
-        <Link href="/kit-builder" className="hover:text-[#003365] font-medium">
+      <nav
+        aria-label="Breadcrumb"
+        className="animate-fade-up mb-4 flex flex-wrap items-center gap-1.5 text-sm text-gray-500 md:mb-5"
+      >
+        <Link href="/kit-builder" className={CRUMB}>
           Store
         </Link>
         {category && (
           <>
-            <ChevronRight className="w-4 h-4" />
-            <Link href={`/kit-builder#${category.id}`} className="hover:text-[#003365] font-medium">
+            <ChevronRight className="h-4 w-4 text-gray-300" />
+            <Link href={`/kit-builder#${category.id}`} className={CRUMB}>
               {category.label}
             </Link>
           </>
         )}
-        <ChevronRight className="w-4 h-4" />
-        <span className="text-gray-900 font-medium">{product.displayTitle}</span>
+        <ChevronRight className="h-4 w-4 text-gray-300" />
+        <span className="min-w-0 truncate font-medium text-gray-700">{product.displayTitle}</span>
       </nav>
 
-      <ProductDetail product={product}>
-        {/* Assurance stack */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {ASSURANCES.map((a) => (
+      {/* Main product card (not a .section-bleed, so the buy box never waits on scroll reveal) */}
+      <div className="-mx-5 border-y border-primary/[0.07] bg-white px-5 py-6 sm:mx-0 sm:rounded-[1.75rem] sm:border sm:px-6 sm:shadow-card md:p-8 lg:p-10">
+        <ProductDetail product={product}>
+          {/* Assurance stack */}
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {ASSURANCES.map((a) => (
+              <div
+                key={a.strong}
+                className="group flex items-center gap-3 rounded-2xl bg-gradient-to-b from-slate-50 to-white px-3.5 py-3 ring-1 ring-primary/[0.07] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <span className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
+                  <a.icon className="h-4 w-4" />
+                </span>
+                <p className="text-xs leading-snug text-gray-600">
+                  <span className="block font-semibold text-gray-900">{a.strong}</span>
+                  {a.rest}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Description */}
+          {product.descriptionHtml && (
             <div
-              key={a.strong}
-              className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3"
-            >
-              <a.icon className="w-5 h-5 text-[#5BA411] flex-shrink-0" />
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-900">{a.strong}</span> {a.rest}
-              </p>
-            </div>
-          ))}
-        </div>
+              className="prose prose-sm mt-8 max-w-none border-t border-primary/[0.06] pt-6 text-sm leading-relaxed text-gray-600 sm:text-[15px] [&_a]:font-semibold [&_a]:text-secondary [&_a:hover]:underline [&_h1]:mb-2 [&_h1]:mt-5 [&_h1]:text-lg [&_h1]:font-extrabold [&_h1]:text-primary [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-lg [&_h2]:font-extrabold [&_h2]:text-primary [&_h3]:mb-1.5 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-primary [&_li]:marker:text-accent [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:text-gray-900 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+            />
+          )}
 
-        {/* Description */}
-        {product.descriptionHtml && (
-          <div
-            className="prose prose-sm max-w-none mt-8 text-gray-600 [&_h1]:text-lg [&_h2]:text-lg [&_h3]:text-base [&_strong]:text-gray-900"
-            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-          />
-        )}
-
-        {/* Help */}
-        <div className="mt-8 flex items-center gap-3 rounded-xl bg-blue-50 border border-blue-100 px-4 py-3.5">
-          <Phone className="w-5 h-5 text-[#003365] flex-shrink-0" />
-          <p className="text-sm text-gray-700">
-            Questions about sizing or installation?{' '}
-            <a href="tel:8009630131" className="font-semibold text-[#003365] hover:underline">
-              Call (800) 963-0131
-            </a>{' '}
-            — we&apos;ll make sure you get exactly what your roof needs.
-          </p>
-        </div>
-      </ProductDetail>
+          {/* Help */}
+          <div className="mt-8 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary/[0.04] via-white to-accent/[0.06] px-4 py-3.5 ring-1 ring-primary/10">
+            <span className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-light to-primary text-white shadow-glow-primary">
+              <Phone className="h-4 w-4" />
+            </span>
+            <p className="text-sm text-gray-700">
+              Questions about sizing or installation?{' '}
+              <a href="tel:8009630131" className="font-semibold text-primary hover:underline">
+                Call (800) 963-0131
+              </a>{' '}
+              — we&apos;ll make sure you get exactly what your roof needs.
+            </p>
+          </div>
+        </ProductDetail>
+      </div>
 
       {/* ─── Why it works: transcript details + featured product video ─── */}
-      <section className="mt-16">
-        <div className="relative rounded-3xl bg-primary overflow-hidden px-6 py-10 sm:p-10 lg:p-12">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(18,95,151,0.5),transparent_55%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_90%,rgba(91,164,17,0.18),transparent_45%)]" />
+      <section className="sm:mt-4 md:mt-8">
+        <div className="relative section-bleed bg-primary overflow-hidden px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <GlowOrb className="-right-24 -top-28 h-96 w-96" color="rgb(26 123 196 / 0.4)" />
+          <GlowOrb className="-bottom-24 -left-20 h-72 w-72" color="rgb(91 164 17 / 0.22)" />
           <div
-            className={`relative z-10 grid grid-cols-1 gap-8 lg:gap-12 items-center ${
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
+          <div
+            className={`relative z-10 grid grid-cols-1 gap-8 lg:gap-14 items-center ${
               heroVideoId ? 'lg:grid-cols-2' : 'max-w-3xl mx-auto'
             }`}
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-2">
-                The Details That Matter
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-6">
+              <h2 className="mb-6 text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-4xl">
                 {isKit ? 'Why This Kit Works' : 'Why It Works'}
               </h2>
               <ul className="space-y-4">
                 {whyPoints.map((point) => (
                   <li key={point.lead} className="flex gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-[#5BA411] mt-0.5 flex-shrink-0" />
-                    <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                      <span className="font-bold text-[#F9EA1C]">{point.lead}</span>{' '}
+                    <span className="mt-0.5 grid h-6 w-6 flex-shrink-0 place-items-center rounded-full bg-accent/20 text-accent-light ring-1 ring-accent/40">
+                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                    </span>
+                    <p className="text-sm leading-relaxed text-white/70 sm:text-base">
+                      <span className="font-bold text-highlight">{point.lead}</span>{' '}
                       {point.text}
                     </p>
                   </li>
@@ -224,13 +240,17 @@ export default async function ProductPage({ params }: PageProps) {
               </ul>
             </div>
             {heroVideoId && (
-              <div className="order-first lg:order-none">
+              <div className="relative order-first lg:order-none">
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-3 rounded-[1.75rem] bg-gradient-to-br from-highlight/25 via-secondary/20 to-accent/30 blur-2xl"
+                />
                 <YouTubeEmbed
                   videoId={heroVideoId}
                   variant="card"
-                  className="shadow-2xl ring-1 ring-white/10"
+                  className="relative shadow-2xl ring-1 ring-white/15"
                 />
-                <p className="text-center text-white/50 text-sm font-medium mt-3">
+                <p className="relative mt-3 text-center text-sm font-medium text-white/55">
                   Watch the {product.displayTitle} overview
                 </p>
               </div>
@@ -241,230 +261,257 @@ export default async function ProductPage({ params }: PageProps) {
 
       {/* ─── Real customer projects ─── */}
       {projects.length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5BA411] mb-1">
-              Real Roofs. Real Results.
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-              Thousands of Real Projects Completed With Kits Just Like This One
-            </h2>
-            <p className="mt-1.5 text-gray-500 max-w-2xl">
-              These aren&apos;t stock photos — they&apos;re documented customer
-              installations, in their own words and pictures.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {projects.map((p) => (
-              <Link
-                key={p.slug}
-                href={`/project/${p.slug}/`}
-                className="group rounded-2xl overflow-hidden bg-white border border-gray-200 hover:border-[#003365]/30 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                  {p.cover_photo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={p.cover_photo}
-                      alt={`Project #${p.project_number}: ${p.title}`}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  )}
-                  {p.category && (
-                    <span className="absolute top-3 left-3 bg-[#003365] text-white text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                      {categoryLabel(p.category)}
-                    </span>
-                  )}
-                </div>
-                <div className="p-5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent mb-1">
-                    Project #{p.project_number}
-                  </p>
-                  <h3 className="text-lg font-bold text-[#003365] leading-snug mb-2 group-hover:underline decoration-2 underline-offset-2">
-                    {p.title}
-                  </h3>
-                  {p.quote && (
-                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-3">
-                      &ldquo;{p.quote}&rdquo;
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    {p.location ? (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5" />
-                        {p.location}
-                      </span>
-                    ) : (
-                      <span />
+        <section className="sm:mt-4 md:mt-8">
+          <div className={WHITE_SECTION}>
+            <SectionHead
+              eyebrow="Real Roofs. Real Results."
+              heading="Thousands of Real Projects Completed With Kits Just Like This One"
+              sub="Not stock photos — documented customer installs, in their own words and pictures."
+            />
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {projects.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={`/project/${p.slug}/`}
+                  className="group flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                    {p.cover_photo && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.cover_photo}
+                        alt={`Project #${p.project_number}: ${p.title}`}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                      />
                     )}
-                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#5ba411] group-hover:translate-x-0.5 transition-all" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-dark/40 via-transparent to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-100" />
+                    {p.category && (
+                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary shadow-sm backdrop-blur-sm">
+                        {categoryLabel(p.category)}
+                      </span>
+                    )}
                   </div>
-                </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <p className="mb-1 text-xs font-bold uppercase tracking-wider text-accent-dark">
+                      Project #{p.project_number}
+                    </p>
+                    <h3 className="mb-2 text-lg font-extrabold leading-snug text-primary">
+                      {p.title}
+                    </h3>
+                    {p.quote && (
+                      <p className="mb-3 text-sm leading-relaxed text-gray-600 line-clamp-3">
+                        &ldquo;{p.quote}&rdquo;
+                      </p>
+                    )}
+                    <div className="mt-auto flex items-center justify-between gap-3 text-sm text-gray-500">
+                      {p.location ? (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-3.5 w-3.5 text-accent" />
+                          {p.location}
+                        </span>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:rotate-45 group-hover:bg-accent group-hover:text-white">
+                        <ArrowUpRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-8 text-center">
+              <Link href={`/projects?category=${projectCategory}`} className={OUTLINE_BTN}>
+                Browse All Customer Projects
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link
-              href={`/projects?category=${projectCategory}`}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-[#003365]/20 px-6 py-3 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors"
-            >
-              Browse All Customer Projects
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            </div>
           </div>
         </section>
       )}
 
       {/* ─── Reviews ─── */}
-      <section className="mt-16">
-        <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-              Straight From the Roof
-            </h2>
-            <p className="mt-1.5 text-gray-500">
-              Real reviews from customers who installed it themselves.
-            </p>
-          </div>
-          <Link
-            href="/reviews"
-            className="flex items-center gap-1 text-sm font-semibold text-[#5BA411] hover:gap-2 transition-all"
-          >
-            See More Photos &amp; Reviews
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {testimonials.map((t) => (
-            <div
-              key={t.name}
-              className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5"
-            >
-              <Quote className="w-5 h-5 text-[#5BA411] mb-3" />
-              <p className="text-sm text-gray-600 leading-relaxed flex-1 mb-4">
-                &ldquo;{t.text}&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                {t.photo && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={t.photo}
-                    alt={t.name}
-                    className="w-9 h-9 rounded-full object-cover"
-                    loading="lazy"
-                  />
-                )}
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{t.name}</p>
-                  <Stars className="w-3 h-3" />
+      <section className="sm:mt-4 md:mt-8">
+        <div className={WHITE_SECTION}>
+          <SectionHead
+            heading="Straight From the Roof"
+            sub="Real reviews from customers who installed it themselves."
+            action={
+              <Link
+                href="/reviews"
+                className="group inline-flex items-center gap-1 text-sm font-bold text-accent-dark"
+              >
+                See More Photos &amp; Reviews
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+            }
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="flex flex-col rounded-3xl bg-gradient-to-b from-slate-50 to-white p-5 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1 hover:shadow-lg"
+              >
+                <span className="mb-4 grid h-9 w-9 place-items-center rounded-xl bg-accent/10 ring-1 ring-accent/20">
+                  <Quote className="h-4 w-4 text-accent" />
+                </span>
+                <p className="mb-5 flex-1 text-sm leading-relaxed text-gray-600">
+                  &ldquo;{t.text}&rdquo;
+                </p>
+                <div className="flex items-center gap-3 border-t border-primary/[0.06] pt-4">
+                  {t.photo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={t.photo}
+                      alt={t.name}
+                      className="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-sm"
+                      loading="lazy"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{t.name}</p>
+                    <Stars className="h-3 w-3" />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Additional product videos beyond the one featured in the band above */}
       {extraVideoIds.length > 0 && (
-        <section className="mt-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight mb-6">
-            See It In Action
-          </h2>
-          <div
-            className={`grid gap-6 ${
-              extraVideoIds.length > 1 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl'
-            }`}
-          >
-            {extraVideoIds.map((id) => (
-              <YouTubeEmbed key={id} videoId={id} variant="card" />
-            ))}
+        <section className="sm:mt-4 md:mt-8">
+          <div className={WHITE_SECTION}>
+            <SectionHead heading="See It In Action" />
+            <div
+              className={`grid gap-6 ${
+                extraVideoIds.length > 1 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 max-w-3xl'
+              }`}
+            >
+              {extraVideoIds.map((id) => (
+                <YouTubeEmbed
+                  key={id}
+                  videoId={id}
+                  variant="card"
+                  className="shadow-xl ring-1 ring-primary/10"
+                />
+              ))}
+            </div>
           </div>
         </section>
       )}
 
       {/* ─── Why Crazy Seal videos ─── */}
       {brandVideos.length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5BA411] mb-1">
-              Do Your Homework
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-              Why Crazy Seal?
-            </h2>
-            <p className="mt-1.5 text-gray-500 max-w-2xl">
-              This isn&apos;t box-store roof coating. Watch what makes the system
-              different — and why it costs more.
-            </p>
-          </div>
-          <div
-            className={`grid grid-cols-1 gap-6 ${
-              brandVideos.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'
-            }`}
-          >
-            {brandVideos.map((video) => (
-              <div key={video.videoId}>
-                <ProYouTubeEmbed
-                  videoId={video.videoId}
-                  thumbnail={video.thumbnail}
-                  title={video.title}
-                />
-                <p className="text-center text-gray-600 text-sm font-medium mt-2">
-                  {video.caption}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-center mt-8">
-            <a
-              href={REASONS_PDF_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#003365] px-6 py-3 text-sm font-semibold text-white hover:bg-[#00274d] transition-colors"
+        <section className="sm:mt-4 md:mt-8">
+          <div className={WHITE_SECTION}>
+            <SectionHead
+              eyebrow="Do Your Homework"
+              heading="Why Crazy Seal?"
+              sub="This isn't box-store roof coating. Watch what makes the system different — and why it costs more."
+            />
+            <div
+              className={`grid grid-cols-1 gap-6 ${
+                brandVideos.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'
+              }`}
             >
-              <Download className="w-4 h-4" />
-              Download Our 21&frac12; Reasons PDF
-            </a>
+              {brandVideos.map((video) => (
+                <div key={video.videoId}>
+                  <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-primary/10">
+                    <ProYouTubeEmbed halo={false}
+                      videoId={video.videoId}
+                      thumbnail={video.thumbnail}
+                      title={video.title}
+                    />
+                  </div>
+                  <p className="mt-3 text-center text-sm font-semibold text-gray-600">
+                    {video.caption}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 flex justify-center">
+              <a
+                href={REASONS_PDF_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-sheen inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-primary-light to-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_-6px_rgb(0_51_101/0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-10px_rgb(0_51_101/0.6)]"
+              >
+                <Download className="h-4 w-4" />
+                Download Our 21&frac12; Reasons PDF
+              </a>
+            </div>
           </div>
         </section>
       )}
 
       {/* ─── How it goes down ─── */}
-      <section className="mt-16">
-        <div className="mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-            How It Goes Down
-          </h2>
-          <p className="mt-1.5 text-gray-500 max-w-2xl">
-            No torches, no tear-off, no special tools. Three steps, guided by
-            step-by-step videos.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {INSTALL_STEPS.map((step) => (
-            <div key={step.title} className="rounded-2xl border border-gray-200 bg-white p-6">
-              <div className="inline-flex rounded-full bg-[#5BA411]/10 p-3 mb-4">
-                <step.icon className="w-6 h-6 text-[#5BA411]" />
+      <section className="sm:mt-4 md:mt-8">
+        <div className={WHITE_SECTION}>
+          <SectionHead
+            heading="How It Goes Down"
+            sub="No torches, no tear-off, no special tools. Three steps, guided by step-by-step videos."
+          />
+          <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {INSTALL_STEPS.map((step) => (
+              <div
+                key={step.title}
+                className="group relative rounded-3xl bg-gradient-to-b from-slate-50 to-white p-6 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+              >
+                <span className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
+                  <step.icon className="h-6 w-6" />
+                </span>
+                <h3 className="mb-1.5 text-lg font-extrabold text-primary">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-gray-500">{step.desc}</p>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1.5">{step.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 text-center">
-          <Link
-            href={installGuideHref(product)}
-            className="inline-flex items-center gap-2 rounded-full border-2 border-[#003365]/20 px-6 py-3 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors"
-          >
-            Watch the Full Installation Guide
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link href={installGuideHref(product)} className={OUTLINE_BTN}>
+              Watch the Full Installation Guide
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* ─── Complete Your System (replaces "You Might Also Need") ─── */}
       <CompanionProducts items={companions} />
     </Container>
+  )
+}
+
+const CRUMB =
+  'rounded-full bg-white px-3 py-1 font-semibold text-primary shadow-sm ring-1 ring-primary/[0.08] transition-all duration-300 hover:-translate-y-0.5 hover:ring-accent/40'
+
+const WHITE_SECTION =
+  'section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12'
+
+const OUTLINE_BTN =
+  'group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-primary shadow-sm ring-1 ring-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:ring-primary/50'
+
+/** Left-aligned section heading with an optional right-side action. */
+function SectionHead({
+  heading,
+  sub,
+  action,
+}: {
+  eyebrow?: string
+  heading: string
+  sub?: string
+  action?: React.ReactNode
+}) {
+  return (
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-8">
+      <div className="max-w-3xl">
+        <h2 className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl lg:text-4xl text-balance">
+          {heading}
+        </h2>
+        {sub && <p className="mt-2 max-w-2xl text-gray-500">{sub}</p>}
+      </div>
+      {action}
+    </div>
   )
 }

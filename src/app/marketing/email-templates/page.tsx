@@ -1,8 +1,12 @@
 import type { Metadata } from 'next'
-import { ArrowRight, Mail } from 'lucide-react'
-import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
-import { ContentRequestForm } from '@/components/forms/ContentRequestForm'
+import { Mail } from 'lucide-react'
+import { Container, SectionHeading } from '@/lib/design-system'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import { CopyCodeBlock } from '@/components/pro/CopyCodeBlock'
+import { AssetPageFooter } from '@/components/marketing-assets/AssetPageFooter'
+import { CustomCopyCta } from '@/components/marketing-assets/AdCopyExamples'
+import { ModuleHero, ModuleNav } from '@/components/pro/ProgramModule'
+import { highlightPlaceholders } from '@/components/pro/SalesAssetBlocks'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -64,169 +68,112 @@ const EMAILS = [
   },
 ]
 
-const MODULE_LINKS = [
-  { number: 1, label: 'Welcome', href: '/resources/welcome-to-crazy-seal' },
-  { number: 2, label: 'Marketing', href: '/resources/marketing' },
-  { number: 3, label: 'Sales', href: '/resources/sales' },
-  { number: 4, label: 'Build a Kit', href: '/resources/building-a-kit' },
-  { number: 5, label: 'Installation', href: '/resources/installation' },
-  { number: 6, label: 'Warranty', href: '/resources/warranty' },
-]
+type Email = (typeof EMAILS)[number]
+
+/** Plain-text version of an email for the clipboard. */
+function toPlainText(email: Email) {
+  return [
+    `Subject: ${email.subject}`,
+    ...email.intro,
+    ...(email.bullets.length ? [email.bullets.map((b) => `• ${b}`).join('\n')] : []),
+    ...email.outro,
+  ].join('\n\n')
+}
 
 export default function EmailTemplatesPage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
-                  <Mail className="w-4 h-4 text-highlight" />
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                    Marketing Assets
-                  </p>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  Email Templates
-                </h1>
-                <p className="text-white/70 text-base sm:text-lg leading-relaxed">
-                  Pre-built email templates ready for your immediate use.
-                  Replace the bracketed placeholders with your business
-                  details and send them to your customers.
-                </p>
-              </div>
-              <div>
-                <ProVimeoEmbed
-                  videoId="937522833"
-                  thumbnail={`${MEDIA}/2024/04/12.jpg`}
-                  title="Email Templates"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+      <ModuleHero
+        module={2}
+        kicker="Marketing Assets"
+        icon={Mail}
+        title={
+          <>
+            Email <span className="text-shimmer-highlight">Templates</span>
+          </>
+        }
+        intro="Pre-built email templates ready for your immediate use. Replace the bracketed placeholders with your business details and send them to your customers."
+        chips={['Announcement', 'Benefits', 'Call to action']}
+        media={
+          <ProVimeoEmbed videoId="937522833" thumbnail={`${MEDIA}/2024/04/12.jpg`} title="Email Templates" />
+        }
+      />
+
+      <ModuleNav current={2} />
 
       {/* ─── EMAIL TEMPLATES ─── */}
-      {EMAILS.map((email) => (
-        <Container key={email.heading} size="xl" className="sm:pt-4 md:pt-8">
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight text-center mb-6">
-              {email.heading}
-            </h2>
-            <div className="max-w-3xl mx-auto rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden">
-              <div className="border-b border-gray-200 bg-white px-5 py-3">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-primary">Subject:</span>{' '}
-                  {email.subject}
-                </p>
-              </div>
-              <div className="p-5 space-y-4 text-sm text-gray-700 leading-relaxed">
-                {email.intro.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-                {email.bullets.length > 0 && (
-                  <ul className="list-disc pl-5 space-y-1.5">
-                    {email.bullets.map((bullet) => (
-                      <li key={bullet}>{bullet}</li>
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading
+            eyebrow="3-Email Sequence"
+            heading="Copy, Personalize, Send"
+            subheading="Swap the highlighted placeholders for your details, then send the emails in order."
+          />
+          <ol className="mx-auto max-w-3xl space-y-10">
+            {EMAILS.map((email, i) => (
+              <li key={email.heading} className="relative">
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-b from-primary-light to-primary text-sm font-extrabold text-white shadow-glow-primary">
+                    {i + 1}
+                  </span>
+                  <h2 className="text-xl font-extrabold tracking-tight text-primary sm:text-2xl">{email.heading}</h2>
+                </div>
+                <CopyCodeBlock
+                  label={email.heading}
+                  text={toPlainText(email)}
+                  icon="mail"
+                  meta={
+                    <p>
+                      <span className="font-bold text-primary">Subject:</span> {email.subject}
+                    </p>
+                  }
+                >
+                  <div className="space-y-4">
+                    {email.intro.map((paragraph) => (
+                      <p key={paragraph}>{highlightPlaceholders(paragraph)}</p>
                     ))}
-                  </ul>
-                )}
-                {email.outro.map((paragraph) => (
-                  <p key={paragraph} className="whitespace-pre-line">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Container>
-      ))}
+                    {email.bullets.length > 0 && (
+                      <ul className="space-y-1.5">
+                        {email.bullets.map((bullet) => (
+                          <li key={bullet} className="flex items-start gap-2.5">
+                            <span className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {email.outro.map((paragraph) => (
+                      <p key={paragraph} className="whitespace-pre-line">
+                        {highlightPlaceholders(paragraph)}
+                      </p>
+                    ))}
+                  </div>
+                </CopyCodeBlock>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </Container>
 
       {/* ─── CUSTOM EMAIL TEMPLATES CTA ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 text-center">
-          <SectionHeading heading="Want To Create Custom Email Templates?" />
-          <LinkButton href="/marketing/ai-prompts" variant="primary" size="lg">
-            Click Here for Crazy Seal AI Prompts
-            <ArrowRight className="w-4 h-4" />
-          </LinkButton>
-        </div>
-      </Container>
+      <CustomCopyCta heading="Want To Create Custom Email Templates?" />
 
-      {/* ─── BACK / CONTINUE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 text-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight mb-4">
-                Back to Marketing Page
-              </h2>
-              <LinkButton href="/resources/marketing" variant="white" size="md">
-                Marketing
-              </LinkButton>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight mb-4">
-                Continue On to Sales
-              </h2>
-              <LinkButton href="/resources/sales" variant="accent" size="md">
-                Sales
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── MODULE QUICK LINKS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Business Accelerator Program"
-            heading="Module Quick Links"
-          />
-          <div className="flex flex-wrap justify-center gap-3">
-            {MODULE_LINKS.map((mod) => (
-              <a
-                key={mod.number}
-                href={mod.href}
-                className="group flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {mod.number}
-                </span>
-                <span className="text-sm font-semibold text-primary group-hover:text-accent transition-colors">
-                  {mod.label}
-                </span>
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center pt-6">
-            <LinkButton href="/business-accelerator-program" variant="primary" size="md">
-              Business Accelerator Home
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── CONTENT / FEATURE REQUEST ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Content | Feature Request"
-            heading="Request Content or a Feature"
-            subheading="Have a request for marketing materials, sales resources, or something else that would support you in your business? Drop it in this form and the request will go directly to our asset creation team!"
-          />
-          <div className="max-w-2xl mx-auto">
-            <ContentRequestForm sourcePage="marketing-email-templates" />
-          </div>
-        </div>
-      </Container>
+      {/* ─── BACK / CONTINUE + QUICK LINKS + CONTENT REQUEST ─── */}
+      <AssetPageFooter
+        module={2}
+        sourcePage="marketing-email-templates"
+        back={{
+          heading: 'Back to Marketing Page',
+          label: 'Marketing',
+          href: '/resources/marketing',
+        }}
+        next={{
+          heading: 'Continue On to Sales',
+          label: 'Sales',
+          href: '/resources/sales',
+        }}
+      />
     </>
   )
 }

@@ -3,13 +3,20 @@
 import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2 } from 'lucide-react'
-import { Input, Textarea, Button } from '@/lib/design-system'
+import { Send } from 'lucide-react'
+import { Input, Textarea } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
 import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import {
+  FieldLabel,
+  FormError,
+  FormSection,
+  SubmitButton,
+  fieldClass,
+} from '@/components/forms/form-ui'
 
 interface ContentRequestFormProps {
   sourcePage?: string
@@ -125,7 +132,7 @@ export function ContentRequestForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden">
           <label htmlFor="content-request-website">Website</label>
           <input
@@ -137,102 +144,70 @@ export function ContentRequestForm({
           />
         </div>
 
-        {/* Name */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Name <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Input name="first_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">First</span>
-            </div>
-            <div>
-              <Input name="last_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">Last</span>
-            </div>
+        <FormSection step={1} title="Your details">
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="first_name" size="md" required placeholder="First name *" aria-label="First name" autoComplete="given-name" className={fieldClass} />
+            <Input name="last_name" size="md" required placeholder="Last name *" aria-label="Last name" autoComplete="family-name" className={fieldClass} />
           </div>
-        </div>
 
-        {/* Phone & Email */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Phone & Email */}
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="phone" size="md" type="tel" required placeholder="Phone *" aria-label="Phone" autoComplete="tel" className={fieldClass} />
+            <Input name="email" size="md" type="email" required placeholder="Email *" aria-label="Email" autoComplete="email" className={fieldClass} />
+          </div>
+        </FormSection>
+
+        <FormSection step={2} title="Your request">
+          {/* Cloud file link */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Phone <span className="text-red-500">*</span>
-            </label>
-            <Input name="phone" size="lg" type="tel" placeholder="(555) 123-4567" required />
+            <FieldLabel>Cloud file link (optional)</FieldLabel>
+            <Input
+              name="file_link"
+              size="md"
+              type="url"
+              placeholder="https://drive.google.com/..."
+              className={fieldClass}
+            />
           </div>
+
+          {/* File uploads */}
+          <PhotoUploadField
+            label="Files or photos (optional)"
+            files={photoFiles}
+            onChange={setPhotoFiles}
+          />
+
+          {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <Input name="email" size="lg" type="email" placeholder="john@example.com" required />
+            <FieldLabel required>
+              Please describe the content or feature that would support you in
+              your business.
+            </FieldLabel>
+            <Textarea
+              name="message"
+              placeholder="Tell us what marketing materials, sales resources, or features would help you close more deals!"
+              rows={3}
+              required
+              className={fieldClass}
+            />
           </div>
-        </div>
+        </FormSection>
 
-        {/* Cloud file link */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Google Drive | Dropbox | Cloud File Link
-          </label>
-          <Input
-            name="file_link"
-            size="lg"
-            type="url"
-            placeholder="https://drive.google.com/..."
-          />
-        </div>
-
-        {/* File uploads */}
-        <PhotoUploadField
-          label="If you would like to share files or photos, you can upload them here."
-          files={photoFiles}
-          onChange={setPhotoFiles}
-        />
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Please describe the content or feature that would support you in
-            your business. <span className="text-red-500">*</span>
-          </label>
-          <Textarea
-            name="message"
-            placeholder="Tell us what marketing materials, sales resources, or features would help you close more deals!"
-            rows={4}
-            required
-            className="text-base px-5 py-4"
-          />
-        </div>
-
-        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+        <div className="flex justify-center empty:hidden">
           <FormTurnstile
             id="turnstile-content-request"
             turnstileRef={turnstileRef}
             onToken={setTurnstileToken}
+            appearance="interaction-only"
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-            {error}
-          </p>
-        )}
+        {error && <FormError>{error}</FormError>}
 
-        <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-            {submitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2" />
-                Submit Request
-              </>
-            )}
-          </Button>
+        <div className="flex justify-center">
+          <SubmitButton submitting={submitting} icon={<Send className="h-4 w-4" />}>
+            Submit Request
+          </SubmitButton>
         </div>
       </div>
     </form>

@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Star } from 'lucide-react'
+import { Quote, Star } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 
 interface TestimonialCardProps {
@@ -25,13 +25,20 @@ export function TestimonialCard({
   return (
     <div
       className={twMerge(
-        'rounded-2xl p-6 md:p-8 transition-all duration-300 hover:-translate-y-1',
+        'group relative overflow-hidden rounded-2xl p-6 md:p-8 transition-all duration-500 ease-out hover:-translate-y-1.5',
         isLight
-          ? 'bg-white border border-gray-200/80 shadow-sm hover:shadow-lg'
-          : 'bg-white/10 border border-white/10 hover:bg-white/15',
+          ? 'ring-glow bg-gradient-to-b from-white to-slate-50/80 border border-primary/[0.08] shadow-sm hover:shadow-xl'
+          : 'bg-white/[0.07] border border-white/10 hover:bg-white/[0.12]',
         className
       )}
     >
+      <Quote
+        aria-hidden="true"
+        className={twMerge(
+          'absolute right-5 top-5 h-10 w-10 rotate-180 transition-transform duration-500 group-hover:-translate-y-1',
+          isLight ? 'text-accent/15' : 'text-white/10'
+        )}
+      />
       <div className="flex items-center gap-4 mb-5">
         {photo ? (
           /* eslint-disable-next-line @next/next/no-img-element */

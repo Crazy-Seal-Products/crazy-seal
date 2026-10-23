@@ -3,13 +3,20 @@
 import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2 } from 'lucide-react'
-import { Input, Textarea, Select, Button } from '@/lib/design-system'
+import { Send } from 'lucide-react'
+import { Input, Textarea, Select } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
 import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import {
+  FieldLabel,
+  FormError,
+  FormSection,
+  SubmitButton,
+  fieldClass,
+} from '@/components/forms/form-ui'
 
 interface ProfessionalContactFormProps {
   sourcePage?: string
@@ -125,121 +132,78 @@ export function ProfessionalContactForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden">
           <label htmlFor="pro-website">Website</label>
           <input type="text" id="pro-website" name="website" tabIndex={-1} autoComplete="off" />
         </div>
 
-        <p className="text-gray-600 text-[15px] leading-relaxed">
-          We&apos;d love to have a conversation about your business to see how
-          we can work together to increase your profits. Fill out the form
-          below and a Crazy Seal specialist will reach out shortly!
-        </p>
+        <FormSection step={1} title="About you">
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="first_name" size="md" required placeholder="First name *" aria-label="First name" autoComplete="given-name" className={fieldClass} />
+            <Input name="last_name" size="md" required placeholder="Last name *" aria-label="Last name" autoComplete="family-name" className={fieldClass} />
+          </div>
 
-        {/* Name */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Name <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-4">
+          {/* Phone & Email */}
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="phone" size="md" type="tel" required placeholder="Phone *" aria-label="Phone" autoComplete="tel" className={fieldClass} />
+            <Input name="email" size="md" type="email" required placeholder="Email *" aria-label="Email" autoComplete="email" className={fieldClass} />
+          </div>
+        </FormSection>
+
+        <FormSection step={2} title="Your business">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <Input name="first_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">First</span>
+              <FieldLabel>Business name (optional)</FieldLabel>
+              <Input name="business_name" size="md" autoComplete="organization" className={fieldClass} />
             </div>
             <div>
-              <Input name="last_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">Last</span>
+              <FieldLabel required>Business type</FieldLabel>
+              <Select
+                name="business_type"
+                size="md"
+                required
+                placeholder="Please Select"
+                options={BUSINESS_TYPES.map((t) => ({ value: t, label: t }))}
+                className={fieldClass}
+              />
             </div>
           </div>
-        </div>
 
-        {/* Business name */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Business / Dealership Name (If Applicable)
-          </label>
-          <Input name="business_name" size="lg" />
-        </div>
-
-        {/* Phone & Email */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Phone <span className="text-red-500">*</span>
-            </label>
-            <Input name="phone" size="lg" type="tel" placeholder="(555) 123-4567" required />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <Input name="email" size="lg" type="email" placeholder="john@example.com" required />
-          </div>
-        </div>
-
-        {/* Business type */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            What best describes your business type? <span className="text-red-500">*</span>
-          </label>
-          <Select
-            name="business_type"
-            size="lg"
-            required
-            placeholder="Please Select"
-            options={BUSINESS_TYPES.map((t) => ({ value: t, label: t }))}
+          {/* Photo Upload */}
+          <PhotoUploadField
+            label="Photos (optional)"
+            files={photoFiles}
+            onChange={setPhotoFiles}
           />
-        </div>
 
-        {/* Photo Upload */}
-        <PhotoUploadField
-          label="If you would like to share photos, you can upload them here."
-          files={photoFiles}
-          onChange={setPhotoFiles}
-        />
+          {/* Message */}
+          <div>
+            <FieldLabel>Notes</FieldLabel>
+            <Textarea
+              name="message"
+              placeholder="How many roofs you service, questions, anything else…"
+              rows={2}
+              className={fieldClass}
+            />
+          </div>
+        </FormSection>
 
-        {/* Message */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Please add a quick note about your business so we can best assist you.
-          </label>
-          <Textarea
-            name="message"
-            placeholder="Tell us about your business, how many roofs you service, or any questions you have!"
-            rows={4}
-            className="text-base px-5 py-4"
-          />
-        </div>
-
-        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+        <div className="flex justify-center empty:hidden">
           <FormTurnstile
             id="turnstile-pro-contact"
             turnstileRef={turnstileRef}
             onToken={setTurnstileToken}
+            appearance="interaction-only"
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-            {error}
-          </p>
-        )}
+        {error && <FormError>{error}</FormError>}
 
-        <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-            {submitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2" />
-                Start a Conversation
-              </>
-            )}
-          </Button>
+        <div className="flex justify-center">
+          <SubmitButton submitting={submitting} icon={<Send className="h-4 w-4" />}>
+            Start a Conversation
+          </SubmitButton>
         </div>
       </div>
     </form>

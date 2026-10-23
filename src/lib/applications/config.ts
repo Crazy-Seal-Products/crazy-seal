@@ -112,7 +112,7 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
     projectCategory: 'rv',
     kitHandles: ['rv-roofing-kit', 'direct-to-deck-rv-roofing-kit', 'crazy-good-rv-repair-kit'],
     kitIntro:
-      'RV kits are sized by roof square footage and include everything down to the brushes. Pick your size, pick your color, and your whole system ships to your door.',
+      'Sized by roof square footage with everything down to the brushes. Pick your size and color — the whole system ships to your door.',
     storeAnchor: 'rv-kits',
     heroVideoId: 'OsJCUv3s2Is',
     heroVideoThumbnail: 'https://img.youtube.com/vi/OsJCUv3s2Is/sddefault.jpg',
@@ -130,7 +130,7 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
     projectCategory: 'residential',
     kitHandles: ['double-layer-kit', 'direct-to-deck-kit', 'crazy-good-repair-kit'],
     kitIntro:
-      'Kits are sized by roof square footage and include every product, tool, and instruction you need. Going over an existing roof? Double Layer. Bare wood decking? Direct to Deck.',
+      'Sized by square footage with every product, tool, and instruction you need. Over an existing roof? Double Layer. Bare wood decking? Direct to Deck.',
     storeAnchor: 'roof-kits',
     heroVideoId: 'ji0GvXRUams',
     heroVideoThumbnail: `${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`,
@@ -154,7 +154,7 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
       '2000-sq-ft-commercial-kit',
     ],
     kitIntro:
-      'Commercial kits scale from 500 to 3,000+ square feet, and large projects can be installed in stages — seal the worst sections first and expand from there.',
+      'Kits scale from 500 to 3,000+ square feet, and large projects can be installed in stages — worst sections first, then expand.',
     storeAnchor: 'commercial-kits',
     heroVideoId: 'ji0GvXRUams',
     heroVideoThumbnail: `${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`,
@@ -173,7 +173,7 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
     projectCategoryFallback: 'rv',
     kitHandles: ['double-layer-kit', 'direct-to-deck-kit', 'crazy-good-repair-kit'],
     kitIntro:
-      'Vehicle roofs use the same flat-roof kits, sized by square footage. One kit typically covers a box truck or trailer roof — and one crew can seal a unit in a day.',
+      'The same flat-roof kits, sized by square footage. One kit typically covers a box truck or trailer roof — and one crew can seal a unit in a day.',
     storeAnchor: 'roof-kits',
     heroVideoId: 'ji0GvXRUams',
     heroVideoThumbnail: `${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`,
@@ -217,8 +217,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Seal cracked ABS and aluminum pop-up tops for good.',
     problemHeading: 'Pop-up roofs fail small, then all at once.',
     problemParagraphs: [
-      'Pop-up camper roofs take a double beating: sun and rain when you camp, plus the constant stress of cranking the top up and down. Hairline cracks in ABS tops, loosened seals around vents and marker lights, and worn seams at the lift brackets let water into a ceiling you cannot easily reach — and by the time you see a stain, the damage is done.',
-      'Crazy Seal wraps your entire pop-up top in one seamless, fiber-infused silicone membrane. It flexes with every raise and lower, seals around every penetration, and turns the most fragile roof in the campground into the toughest one — without adding meaningful weight.',
+      "Pop-up roofs take a double beating: weather at camp, plus the stress of cranking the top up and down. Hairline cracks in ABS tops and loose seals at vents, marker lights, and lift brackets let water into a ceiling you can't easily reach — and by the time you see a stain, the damage is done.",
+      'Crazy Seal wraps the whole top in one seamless, fiber-infused silicone membrane that flexes with every raise and lower and seals every penetration — the toughest roof in the campground, without adding meaningful weight.',
     ],
     whoBullets: [
       'Cracked or chalky ABS plastic and aluminum pop-up tops',
@@ -239,8 +239,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Built for cab-over campers that twist and flex on every mile.',
     problemHeading: 'No RV roof works harder than a truck camper roof.',
     problemParagraphs: [
-      'A truck camper rides directly on the truck frame, so its roof twists and flexes with every pothole and driveway. Rigid sealants and aging rubber membranes crack right where the movement concentrates — along the cab-over nose seam and around vents, fans, and antenna mounts.',
-      'Crazy Seal was built for exactly this. The fiber-infused silicone membrane stays permanently flexible, bonds to aluminum, fiberglass, TPO, and EPDM, and covers the whole roof — seams, penetrations, and all — with one continuous, seamless layer. Do it once and stop chasing leaks every season.',
+      'A truck camper rides on the truck frame, so its roof twists with every pothole and driveway. Rigid sealants and aging rubber crack right where that movement concentrates — the cab-over nose seam and around vents, fans, and antenna mounts.',
+      'Crazy Seal stays permanently flexible, bonds to aluminum, fiberglass, TPO, and EPDM, and covers the whole roof — seams, penetrations, and all — in one continuous layer. Do it once and stop chasing leaks every season.',
     ],
     whoBullets: [
       'Cab-over seam leaks that reappear after every re-caulk',
@@ -263,8 +263,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Stop fastener leaks and rust on metal barn roofs — no tear-off.',
     problemHeading: 'A leaking barn roof costs more than the barn.',
     problemParagraphs: [
-      'Most barn roofs are aging metal panels held down by hundreds of fasteners — and every one of those screws is a future leak. Gaskets dry out, panels rust at the laps, and suddenly water is dripping on hay, livestock, tack, and machinery worth far more than the building itself. Replacing a big ag roof runs tens of thousands of dollars.',
-      "Crazy Seal goes right over your existing metal — rust treated, screws and laps sealed — and locks the whole roof under one seamless, fiber-infused silicone membrane. It's a fraction of the cost of re-roofing, you can install it yourself, and the bright white finish reflects heat to keep the barn cooler all summer.",
+      'Most barn roofs are aging metal panels held down by hundreds of fasteners — and every screw is a future leak. Gaskets dry out, laps rust, and water drips on hay, livestock, tack, and machinery worth far more than the building. Replacing a big ag roof runs tens of thousands of dollars.',
+      'Crazy Seal goes right over your existing metal — rust treated, screws and laps sealed — under one seamless, fiber-infused silicone membrane. A fraction of the cost of re-roofing, installed yourself, with a bright white finish that keeps the barn cooler all summer.',
     ],
     whoBullets: [
       'Metal panel roofs with leaking screws and rusted laps',
@@ -285,8 +285,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'A waterproof membrane for roofs in full-time marine conditions.',
     problemHeading: 'Water below, weather above — boat house roofs get it from both sides.',
     problemParagraphs: [
-      'A boat house roof never dries out. Humidity rises off the water 24/7, UV reflects up from the surface and doubles the sun exposure, and the structure itself is usually built light — metal panels or thin decking that ordinary roofing was never meant to protect in these conditions. Meanwhile the boat underneath is often the most valuable thing on the property.',
-      'Crazy Seal is 94% silicone — a material that simply does not care about water. The fiber-infused membrane seals seams, fasteners, and flashing into one continuous waterproof layer that shrugs off moisture from both directions and stands up to relentless reflected UV, year after year.',
+      'A boat house roof never dries out. Humidity rises off the water 24/7, UV reflects up and doubles the sun exposure, and the structure is usually built light — while the boat underneath is often the most valuable thing on the property.',
+      "Crazy Seal is 94% silicone — a material that simply doesn't care about water. The fiber-infused membrane seals seams, fasteners, and flashing into one continuous waterproof layer that shrugs off moisture from both directions and relentless reflected UV.",
     ],
     whoBullets: [
       'Metal and low-slope roofs in permanent high humidity',
@@ -307,8 +307,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Seamless protection for patio covers, lanais, and pergola roofs.',
     problemHeading: 'Outdoor rooms have indoor expectations.',
     problemParagraphs: [
-      "You put real furniture, a TV, maybe an outdoor kitchen under that patio cover — so a \"minor\" roof leak isn't minor anymore. Most outdoor room roofs are low-slope pans, corrugated panels, or lightweight covers that pond water, drip at the house tie-in, and were never detailed like the main roof.",
-      'Crazy Seal turns that cover into a genuinely waterproof roof: one seamless membrane over the panels, the seams, the fasteners, and the critical wall junction where most leaks start. The clean white or gray finish looks intentional, reflects heat so the space stays cooler, and carries a 50 year warranty.',
+      "You put real furniture, a TV, maybe an outdoor kitchen under that patio cover — so a \"minor\" leak isn't minor anymore. Most outdoor room roofs are low-slope pans, corrugated panels, or light covers that pond water and drip at the house tie-in.",
+      'Crazy Seal makes that cover genuinely waterproof: one seamless membrane over panels, seams, fasteners, and the wall junction where most leaks start. The white or gray finish looks intentional, reflects heat, and carries a 50 year warranty.',
     ],
     whoBullets: [
       'Patio covers and lanais with furniture and electronics below',
@@ -329,8 +329,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'End the wall-flashing leak on low-slope porch roofs.',
     problemHeading: 'The hardest 100 square feet on your house.',
     problemParagraphs: [
-      "Porch roofs are small, but they combine everything roofing hates: a low slope that drains slowly, a flashing joint where the porch meets the house wall, and roll roofing or metal panels near the end of their life. That wall junction is where the water gets in — and it stains your porch ceiling, rots the framing, and defies every tube of caulk you've thrown at it.",
-      'Crazy Seal solves the junction problem by eliminating the junction: our 3-part system seals the flashing, the seams, and the field into one continuous membrane that runs up the wall line. A porch is a one-weekend project with our smallest kit, and it comes with the same 50 year warranty as a whole commercial roof.',
+      "Porch roofs are small, but they combine everything roofing hates: a slow-draining low slope, a flashing joint where the porch meets the house, and roll roofing or metal near the end of its life. That wall junction lets water in — staining the ceiling, rotting the framing, and defying every tube of caulk you've thrown at it.",
+      'Crazy Seal eliminates the junction: our 3-part system seals the flashing, seams, and field into one continuous membrane that runs up the wall line. A porch is a one-weekend project with our smallest kit — with the same 50 year warranty as a whole commercial roof.',
     ],
     whoBullets: [
       'Recurring leaks at the porch-to-wall flashing line',
@@ -351,8 +351,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'A one-kit weekend fix for workshop and storage shed roofs.',
     problemHeading: "Your shed protects everything you'd hate to replace.",
     problemParagraphs: [
-      "Tools, mowers, bikes, holiday decorations, that project car — sheds hold thousands of dollars of stuff behind a roof that usually got the cheapest materials on the property. Roll roofing curls, panel screws loosen, and one wet season quietly rusts and mildews everything inside.",
-      "Crazy Seal makes a shed roof genuinely permanent: clean it, seal the seams and fasteners, and roll the fiber-infused membrane over the whole thing. Most sheds need only our smallest kit and a single weekend, and the reflective finish keeps the interior noticeably cooler — worth a lot if your shed doubles as a workshop.",
+      'Tools, mowers, bikes, that project car — sheds hold thousands of dollars of stuff under the cheapest roof on the property. Roll roofing curls, panel screws loosen, and one wet season quietly rusts and mildews everything inside.',
+      'Crazy Seal makes a shed roof permanent: clean it, seal the seams and fasteners, and roll the fiber-infused membrane over the whole thing. Most sheds need only our smallest kit and a single weekend — and the reflective finish keeps a workshop noticeably cooler.',
     ],
     whoBullets: [
       'Workshop, garden, and storage sheds with aging roofs',
@@ -373,8 +373,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Stop aluminum pan-roof seam leaks over your living space.',
     problemHeading: 'Sunroom roofs leak by design.',
     problemParagraphs: [
-      'Most sunrooms and patio enclosures are capped with aluminum pan roofs — long interlocking panels whose seams rely on factory sealant that dries out in a decade. When those seams open up, water lands on drywall, carpet, and furniture in what is effectively part of your house. Re-caulking the seams buys a season or two at best.',
-      "Crazy Seal is the permanent answer: our 3-part system fills and bridges every seam, seals the wall tie-in, and covers the entire pan roof with one seamless fiber-infused membrane. The before-and-after photos below are an actual sunroom install — slide the bar and see exactly what your roof would get.",
+      'Most sunrooms and patio enclosures are capped with aluminum pan roofs whose interlocking seams rely on factory sealant that dries out in a decade. Once those seams open, water lands on drywall, carpet, and furniture — and re-caulking buys a season or two at best.',
+      'Our 3-part system fills and bridges every seam, seals the wall tie-in, and covers the whole pan roof with one seamless fiber-infused membrane. The before-and-afters below are an actual sunroom install — slide the bar to see what your roof would get.',
     ],
     whoBullets: [
       'Aluminum pan roofs with failing seam sealant',
@@ -395,8 +395,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Light, flexible, permanent roofing for tiny houses on or off wheels.',
     problemHeading: 'Tiny homes need full-size roof protection.',
     problemParagraphs: [
-      "In a tiny home there is no attic to catch a leak and no spare room to close off while you fix it — water hits your living space immediately. Homes on wheels add road flex that opens rigid roofing at the seams, and every pound of material matters when your house has a tow rating.",
-      "Crazy Seal adds a seamless, permanently flexible membrane at a fraction of the weight of new roofing panels. It bonds to metal, membrane, and wood decking, moves with the house instead of cracking, and the reflective finish makes a small, easily-heated space much easier to keep cool too.",
+      'A tiny home has no attic to catch a leak and no spare room to close off — water hits your living space immediately. Homes on wheels add road flex that opens rigid roofing at the seams, and every pound matters when your house has a tow rating.',
+      'Crazy Seal adds a seamless, permanently flexible membrane at a fraction of the weight of new roofing panels. It bonds to metal, membrane, and wood decking, moves with the house instead of cracking, and the reflective finish helps keep a small space cool.',
     ],
     whoBullets: [
       'Tiny houses on wheels that flex going down the road',
@@ -419,8 +419,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Reseal warehouse and plant roofs in stages, with your own crew.',
     problemHeading: 'Downtime costs more than the roof does.',
     problemParagraphs: [
-      'On an industrial building, the roof problem is never just the roof. A tear-off means staging, crews, disruption underneath, and exposure risk over production lines and inventory. So leaks get bucket-managed for years while the deck quietly deteriorates and the eventual bill grows.',
-      'Crazy Seal changes the math: no tear-off, no specialized crew, no shutdown. Your own maintenance team can install it, and large roofs can be sealed in stages — hit the worst sections this quarter, expand next quarter. The result is one seamless, fiber-infused membrane over the entire roof, backed by a 50 year warranty.',
+      'On an industrial building, the roof problem is never just the roof. A tear-off means staging, crews, and exposure risk over production lines and inventory — so leaks get bucket-managed for years while the deck deteriorates and the bill grows.',
+      'Crazy Seal changes the math: no tear-off, no specialized crew, no shutdown. Your own maintenance team installs it in stages — worst sections this quarter, the rest next — ending in one seamless, fiber-infused membrane backed by a 50 year warranty.',
     ],
     whoBullets: [
       'Warehouses, plants, and shops that cannot pause operations',
@@ -441,8 +441,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Permanently seal the thousands of fasteners on a metal roof.',
     problemHeading: 'A metal roof is a grid of future leaks.',
     problemParagraphs: [
-      'Steel buildings are fastened down with thousands of screws, and every one has a rubber washer with an expiration date. Panels expand and contract daily, backing screws out and working lap seams open. Once rust starts at the laps, patch coatings and washer swaps become an annual ritual that never actually ends.',
-      'Crazy Seal treats the whole roof as one system: rust is neutralized, every fastener head and lap seam gets sealed with our 3-part process, and the entire surface is locked under a seamless fiber-infused silicone membrane. As a bonus, the highly reflective finish drops roof surface temperatures dramatically — which shows up on the cooling bill.',
+      'Steel buildings are held down by thousands of screws, each with a rubber washer that has an expiration date. Daily expansion backs screws out and works lap seams open — and once rust starts at the laps, patch coatings become an annual ritual that never ends.',
+      'Crazy Seal treats the roof as one system: rust neutralized, every fastener head and lap seam sealed with our 3-part process, and the whole surface locked under a seamless fiber-infused silicone membrane. The reflective finish drops roof temperatures dramatically — and it shows on the cooling bill.',
     ],
     whoBullets: [
       'Screw-down metal roofs with aging washer gaskets',
@@ -463,8 +463,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Reseal storage buildings roof by roof, tenants in place.',
     problemHeading: "A storage roof leak is a liability, not a maintenance item.",
     problemParagraphs: [
-      "When a storage facility roof leaks, it leaks onto someone else's belongings — and that means claims, angry tenants, and reviews that cost future occupancy. The long, low metal roofs on storage buildings are classic fastener-and-lap leakers, and a traditional re-roof means disruption across dozens of occupied units.",
-      "Crazy Seal lets you fix the problem building by building with your own crew: seal the screws and seams, roll the membrane, done — tenants never move a box. It goes straight over the existing metal, can be staged across your properties as budget allows, and the 50 year warranty outlasts your loan.",
+      "When a storage roof leaks, it leaks onto someone else's belongings — claims, angry tenants, and reviews that cost future occupancy. Long, low metal storage roofs are classic fastener-and-lap leakers, and a traditional re-roof disrupts dozens of occupied units.",
+      'Your own crew fixes it building by building: seal the screws and seams, roll the membrane, done — tenants never move a box. It goes straight over the existing metal, can be staged across properties as budget allows, and the 50 year warranty outlasts your loan.',
     ],
     whoBullets: [
       'Occupied facilities — no tenant disruption, no unit turnover',
@@ -487,8 +487,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Seal flexing aluminum and FRP truck roofs in a day per unit.',
     problemHeading: 'Box truck roofs live a hard life at 70 mph.',
     problemParagraphs: [
-      'A box truck roof is thin aluminum or translucent FRP that flexes on every mile, riveted and seamed in exactly the places water wants in. Once a roof starts leaking, you find out from a customer — wet freight, a damage claim, and a truck out of rotation while someone chases the leak with tape and tar.',
-      'Crazy Seal turns that thin, flexing roof into a single seamless membrane that moves with the truck body instead of cracking away from it. It bonds to aluminum, FRP, and steel, seals every rivet line and seam, and one crew can do a truck in a day — so the unit is back on the route tomorrow.',
+      'A box truck roof is thin aluminum or translucent FRP that flexes every mile, riveted and seamed exactly where water wants in. You usually find a leak from a customer — wet freight, a damage claim, and a truck out of rotation.',
+      'Crazy Seal turns that roof into one seamless membrane that moves with the truck body instead of cracking away from it. It bonds to aluminum, FRP, and steel, seals every rivet line and seam, and one crew can do a truck in a day — back on the route tomorrow.',
     ],
     whoBullets: [
       'Aluminum and translucent FRP roofs with rivet-line leaks',
@@ -509,8 +509,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Seal dented, rusting container roofs — storage, office, or home.',
     problemHeading: 'Container roofs pond, rust, and bake.',
     problemParagraphs: [
-      'Container roofs dent the first time anything lands on them, and every dent becomes a pond. Standing water finds the rust, rust becomes pinholes, and suddenly your "weatherproof" steel box is dripping on inventory, tools, or — if it\'s a container office or home — on people. Bare steel also turns the interior into an oven all summer.',
-      'Crazy Seal was practically made for steel boxes: it neutralizes surface rust, seals pinholes and seams, and covers the whole roof in a seamless waterproof membrane that fills the low spots standing water exploits. The reflective white finish knocks interior temperatures down dramatically — the single biggest livability upgrade a container can get.',
+      'Container roofs dent the first time anything lands on them, and every dent becomes a pond. Standing water finds the rust, rust becomes pinholes, and your "weatherproof" steel box drips on inventory, tools, or people. Bare steel also turns the interior into an oven all summer.',
+      'Crazy Seal neutralizes surface rust, seals pinholes and seams, and covers the whole roof in a seamless waterproof membrane that fills the low spots standing water exploits. The reflective white finish knocks interior temperatures down dramatically — the biggest livability upgrade a container can get.',
     ],
     whoBullets: [
       'Dented roofs with ponding water and rust pinholes',
@@ -531,8 +531,8 @@ export const APPLICATIONS: ApplicationConfig[] = [
     cardBlurb: 'Reseal 53-foot trailer roofs and retire the freight claims.',
     problemHeading: 'A 53-foot roof with a thousand chances to leak.',
     problemParagraphs: [
-      "Trailer roofs are long sheets of thin aluminum or brittle translucent panels, seamed and riveted for fifty-three feet, twisting over every expansion joint on the interstate. Cracked skylight panels and opened rivet lines don't announce themselves — the first sign is a rejected load and a freight claim.",
-      "Crazy Seal reseals the entire roof as one flexible, seamless membrane — panels, rivets, seams, and all. It moves with the trailer, survives the constant vibration that destroys rigid coatings, and one bay crew can turn a trailer around in a day. Seal the fleet's worst roofs first and work down the line.",
+      "Trailer roofs are fifty-three feet of thin aluminum or brittle translucent panels, seamed and riveted, twisting over every expansion joint on the interstate. Cracked skylight panels and opened rivet lines don't announce themselves — the first sign is a rejected load and a freight claim.",
+      "Crazy Seal reseals the whole roof — panels, rivets, seams, and all — as one flexible, seamless membrane that survives the vibration that destroys rigid coatings. One bay crew can turn a trailer around in a day; seal the fleet's worst roofs first and work down the line.",
     ],
     whoBullets: [
       'Cracked translucent roof panels and skylights',

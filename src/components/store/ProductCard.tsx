@@ -16,24 +16,23 @@ export function ProductCard({ product }: { product: StoreProduct }) {
   return (
     <Link
       href={`/store/${product.handle}`}
-      className="group relative flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-[#003365]/30 transition-all duration-300"
+      className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-2 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl hover:ring-primary/15"
     >
-      {product.badge && (
-        <span className="absolute top-3 left-3 z-10 rounded-full bg-[#5BA411] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
-          {product.badge}
-        </span>
-      )}
       <div
-        className={`bg-gray-50 overflow-hidden ${
+        className={`relative grid place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-accent/10 ${
           isKit ? '' : 'aspect-square'
         }`}
       >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-10 bottom-3 h-6 rounded-full bg-primary/10 blur-xl transition-opacity duration-500 group-hover:opacity-70"
+        />
         {product.featuredImage && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={product.featuredImage}
             alt={product.displayTitle}
-            className={`w-full group-hover:scale-105 transition-transform duration-300 ${
+            className={`relative w-full transition-transform duration-700 ease-out group-hover:scale-[1.06] ${
               isKit
                 ? 'h-auto object-contain px-2 pt-2 pb-1'
                 : 'h-full object-contain p-6'
@@ -41,31 +40,43 @@ export function ProductCard({ product }: { product: StoreProduct }) {
             loading="lazy"
           />
         )}
+        {product.badge && (
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-highlight px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary shadow-sm">
+            {product.badge}
+          </span>
+        )}
       </div>
-      <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-center gap-2 mb-1.5">
-          <Stars className="w-3.5 h-3.5" />
-          <span className="flex items-center gap-1 text-[11px] font-semibold text-gray-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5BA411]" />
+
+      <div className="flex flex-1 flex-col px-3.5 pb-3.5 pt-4">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <Stars className="h-3.5 w-3.5" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2 py-0.5 text-[11px] font-semibold text-accent-dark">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent ring-2 ring-accent/25" />
             In Stock
           </span>
         </div>
-        <h3 className="text-base font-bold text-gray-900 group-hover:text-[#003365] transition-colors">
+        <h3 className="text-base font-extrabold leading-snug text-primary">
           {product.displayTitle}
         </h3>
-        <p className="mt-1.5 text-sm text-gray-500 leading-relaxed line-clamp-2 flex-1">
+        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-gray-500 line-clamp-2">
           {product.blurb}
         </p>
-        <div className="mt-4 flex items-end justify-between">
+        <div className="mt-4 flex items-end justify-between gap-3 border-t border-primary/[0.06] pt-4">
           <div>
-            <span className="text-lg font-bold text-[#003365]">{priceLabel}</span>
+            <span className="text-lg font-extrabold text-primary font-[family-name:var(--font-display)]">
+              {priceLabel}
+            </span>
             {isKit && product.priceMin >= 100 && (
               <p className="text-[11px] text-gray-400">or 4 payments with Affirm</p>
             )}
           </div>
-          <span className="flex items-center gap-1 text-sm font-semibold text-[#5BA411] group-hover:gap-2 transition-all">
+          <span className="relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-b from-accent-light to-accent px-4 py-2 text-sm font-bold text-white shadow-[0_6px_16px_-6px_rgb(91_164_17/0.6)] transition-shadow duration-300 group-hover:shadow-glow-accent">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -translate-x-[130%] bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[130%]"
+            />
             Shop
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </span>
         </div>
       </div>
