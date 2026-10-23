@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
         customer_details: [
           customer_details,
           project_type ? `Project type: ${project_type}` : null,
-          rv_length ? `RV length: ${rv_length} ft` : null,
           square_footage ? `Square footage: ${square_footage}` : null,
         ].filter(Boolean).join('\n') || null,
         order_number,
