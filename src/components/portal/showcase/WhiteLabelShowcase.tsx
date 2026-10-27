@@ -3,13 +3,36 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { twMerge } from 'tailwind-merge'
-import { PORTAL_ACCOUNTS } from '@/lib/portal/accounts'
+import { DEMO_ACCOUNT, type PartnerBrand } from '@/lib/portal/accounts'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { BrandPreview } from '../BrandPreview'
 
-const BRANDS = PORTAL_ACCOUNTS.map((a) => a.brand)
+/** The demo dealer's brand plus two sample looks, to show the range of styles. */
+const BRANDS: PartnerBrand[] = [
+  DEMO_ACCOUNT.brand,
+  {
+    companyName: 'Coastal RV Restoration',
+    tagline: 'Your RV roof, done once and done right.',
+    phone: '(813) 555-0187',
+    website: 'coastalrv.example',
+    primary: '#0F6E7A',
+    accent: '#F2B441',
+    template: 'split',
+    coBrand: true,
+  },
+  {
+    companyName: 'Ridgeline Exteriors',
+    tagline: 'Built for the long haul.',
+    phone: '(208) 555-0119',
+    website: 'ridgeline.example',
+    primary: '#2F4A3A',
+    accent: '#C9D84A',
+    template: 'clean',
+    coBrand: true,
+  },
+]
 
-/** Cycles the demo partner brands through a co-branded page + brochure stack. */
+/** Cycles sample partner brands through a co-branded page + brochure stack. */
 export function WhiteLabelShowcase() {
   const [i, setI] = useState(0)
   const reduce = useReducedMotion()

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getPublishedProjects } from '@/lib/projects'
-import { getStoreProducts } from '@/lib/store/products'
+import { getShopProducts } from '@/lib/store/products'
 
 const BASE_URL = 'https://crazyseal.com'
 
@@ -43,9 +43,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: '/contact/', changeFrequency: 'monthly' as const, priority: 0.9 },
     { url: '/faq/', changeFrequency: 'monthly' as const, priority: 0.8 },
     // Kit pages
-    { url: '/double-layer-kit/', changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: '/direct-to-deck-kit/', changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: '/crazy-good-repair-kit/', changeFrequency: 'monthly' as const, priority: 0.6 },
     // Product detail pages
     { url: '/products/crazy-seal-roof-membrane/', changeFrequency: 'monthly' as const, priority: 0.6 },
     { url: '/products/crazy-caulk/', changeFrequency: 'monthly' as const, priority: 0.6 },
@@ -102,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const projects = await getPublishedProjects()
-  const storeProducts = await getStoreProducts().catch(() => [])
+  const storeProducts = await getShopProducts().catch(() => [])
 
   return [
     ...storeProducts.map((p) => ({

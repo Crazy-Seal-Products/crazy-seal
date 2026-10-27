@@ -4,12 +4,11 @@ import { useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowRight,
-  ChevronRight,
+  ChevronDown,
   Hammer,
+  Headset,
   ImagePlus,
-  MessageSquare,
   PackageCheck,
-  Phone,
   ShieldCheck,
   ShoppingCart,
   Truck,
@@ -23,8 +22,8 @@ import { FormModal } from '@/components/forms/FormModal'
 import { GlowOrb, EASE_OUT_EXPO } from '@/components/motion'
 import { uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { Stars } from '@/components/store/Stars'
+import { CallRepLink, SpeakToRepButton } from '@/components/store/SpeakToRep'
 import { useCart } from '@/contexts/CartContext'
-import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId } from '@/lib/tracking/meta-pixel'
 import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
@@ -65,11 +64,11 @@ const KIT_ASSURANCES = [
 
 function KitAssurances() {
   return (
-    <div className="flex flex-wrap gap-x-5 gap-y-2 mt-5">
+    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
       {KIT_ASSURANCES.map((a) => (
-        <p key={a.label} className="flex items-center gap-2 text-xs font-semibold text-white/75">
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-accent/20 ring-1 ring-accent/40">
-            <a.icon className="h-3.5 w-3.5 text-accent-light" />
+        <p key={a.label} className="flex items-center gap-1.5 text-[11.5px] font-semibold text-white/75">
+          <span className="grid h-5 w-5 place-items-center rounded-full bg-accent/20 ring-1 ring-accent/40">
+            <a.icon className="h-3 w-3 text-accent-light" />
           </span>
           {a.label}
         </p>
@@ -87,7 +86,6 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
   const [color, setColor] = useState<KitColor>('White')
 
   const { addItem } = useCart()
-  const { openQuoteModal } = useQuoteModal()
   const { trackEvent } = useTracking()
   const reduce = useReducedMotion()
   const resultMotion = {
@@ -220,56 +218,60 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
   }
 
   return (
-    <div className="rounded-3xl bg-white ring-1 ring-white/20 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.55)] p-5 sm:p-6 lg:p-8">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="grid h-12 w-12 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent">
-          <Hammer className="w-5 h-5" />
+    <div className="rounded-3xl bg-white ring-1 ring-white/20 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.55)] p-4 sm:p-5">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent">
+          <Hammer className="w-[18px] h-[18px]" />
         </div>
-        <div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-primary">Kit Builder</h2>
-          <p className="text-sm text-gray-500">
-            Answer a few questions — we&apos;ll build your custom kit instantly.
-          </p>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-lg sm:text-xl font-extrabold leading-tight text-primary">Build your kit</h2>
+          <p className="hidden text-[13px] text-gray-500 sm:block">A few quick questions, then your kit with live pricing.</p>
         </div>
+        <SpeakToRepButton sourcePage="kit-builder:header" message={kitSummary} size="sm" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 rounded-2xl bg-gradient-to-b from-slate-50/80 to-white p-4 ring-1 ring-primary/[0.06] sm:p-5 [&_label]:font-semibold [&_label]:text-gray-800">
-        <Select
-          label="What best describes your application type?"
-          placeholder="Please Select"
-          className={fieldClass}
-          value={applicationType}
-          onChange={(e) => {
-            setApplicationType(e.target.value as KitApplication)
-            setRvLength('')
-          }}
-          options={[
-            { value: 'rv', label: 'RV' },
-            { value: 'commercial', label: 'Commercial Flat Roof' },
-            { value: 'residential', label: 'Residential Flat Roof' },
-            { value: 'transportation', label: 'Transportation' },
-          ]}
-        />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-2.5 gap-y-3 sm:gap-3 mt-4 rounded-2xl bg-gradient-to-b from-slate-50/80 to-white p-3 ring-1 ring-primary/[0.06] sm:p-4 [&_label]:text-[13px] [&_label]:font-semibold [&_label]:text-gray-800">
+        {/* Long answers get the full row on phones; the short fields below pair up */}
+        <div className="col-span-2 sm:col-span-1">
+          <Select
+            label="What are you sealing?"
+            placeholder="Please Select"
+            className={fieldClass}
+            value={applicationType}
+            onChange={(e) => {
+              setApplicationType(e.target.value as KitApplication)
+              setRvLength('')
+            }}
+            options={[
+              { value: 'rv', label: 'RV' },
+              { value: 'commercial', label: 'Commercial Flat Roof' },
+              { value: 'residential', label: 'Residential Flat Roof' },
+              { value: 'transportation', label: 'Transportation' },
+            ]}
+          />
+        </div>
 
-        <Select
-          label="How will the kit be applied?"
-          placeholder="Please Select"
-          className={fieldClass}
-          value={installMethod}
-          onChange={(e) => {
-            setInstallMethod(e.target.value as KitInstallMethod)
-            setRvLength('')
-          }}
-          options={[
-            { value: 'over-existing', label: 'Over existing substrate' },
-            { value: 'direct-to-deck', label: 'Direct to wood decking' },
-          ]}
-        />
+        <div className="col-span-2 sm:col-span-1">
+          <Select
+            label="Applied over"
+            placeholder="Please Select"
+            className={fieldClass}
+            value={installMethod}
+            onChange={(e) => {
+              setInstallMethod(e.target.value as KitInstallMethod)
+              setRvLength('')
+            }}
+            options={[
+              { value: 'over-existing', label: 'An existing roof' },
+              { value: 'direct-to-deck', label: 'Bare wood decking' },
+            ]}
+          />
+        </div>
 
         {isRv && installMethod && (
           <div className="animate-fade-up">
             <Select
-              label={applicationType === 'rv' ? 'How long is your RV?' : 'How long is your vehicle roof?'}
+              label={applicationType === 'rv' ? 'RV length' : 'Roof length'}
               placeholder="Please Select"
               className={fieldClass}
               value={rvLength}
@@ -282,7 +284,7 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
         {!isRv && applicationType && (
           <div className="animate-fade-up">
             <Input
-              label="Project square footage"
+              label="Roof size (sq ft)"
               type="number"
               min={0}
               placeholder="e.g. 250"
@@ -296,7 +298,7 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
         {applicationType && installMethod && (
           <div className="animate-fade-up">
             <Select
-              label="Choose your roof color"
+              label="Color"
               className={fieldClass}
               value={color}
               onChange={(e) => setColor(e.target.value as KitColor)}
@@ -308,10 +310,10 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
         {!isRv && applicationType && (
           <div className="animate-fade-up">
             <Input
-              label="Approximate linear footage of seams (optional)"
+              label="Seams, linear ft (optional)"
               type="number"
               min={0}
-              placeholder="e.g. 5 seams x 50 FT = 250"
+              placeholder="e.g. 250"
               className={fieldClass}
               value={seams}
               onChange={(e) => setSeams(e.target.value)}
@@ -324,24 +326,24 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
       {kit && (
         <motion.div
           {...resultMotion}
-          className="relative mt-6 rounded-3xl bg-primary text-white overflow-hidden shadow-[0_30px_60px_-30px_rgb(0_32_67/0.6)]"
+          className="relative mt-4 rounded-3xl bg-primary text-white overflow-hidden shadow-[0_30px_60px_-30px_rgb(0_32_67/0.6)]"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(18,95,151,0.6),transparent_55%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_90%,rgba(91,164,17,0.18),transparent_45%)]" />
           <GlowOrb className="-right-20 -top-20 h-64 w-64" color="rgb(26 123 196 / 0.35)" />
           <div aria-hidden="true" className="hairline-grid pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-          <div className="relative z-10 p-5 sm:p-6 lg:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-center">
+          <div className="relative z-10 p-4 sm:p-5">
+            <div className="grid grid-cols-1 md:grid-cols-[4fr_8fr] gap-4 lg:gap-6 items-center">
               {/* Kit image */}
               {(kit.variant.image ?? kit.product.featuredImage) && (
                 <div className="relative">
                   <div aria-hidden="true" className="absolute -inset-3 rounded-[1.75rem] bg-gradient-to-br from-highlight/25 via-secondary/20 to-accent/30 blur-2xl" />
-                  <div className="relative rounded-2xl bg-gradient-to-br from-white via-white to-accent/10 p-3 shadow-2xl ring-1 ring-white/20">
+                  <div className="relative rounded-2xl bg-gradient-to-br from-white via-white to-accent/10 p-2.5 shadow-2xl ring-1 ring-white/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={kit.variant.image ?? kit.product.featuredImage ?? undefined}
                     alt={kit.product.title}
-                    className="w-full h-auto object-contain"
+                    className="mx-auto max-h-44 w-full object-contain"
                   />
                   </div>
                 </div>
@@ -349,61 +351,46 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
 
               {/* Kit details */}
               <div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold mb-1">{kit.product.title}</h3>
-                <p className="text-white/70 mb-3">
+                <h3 className="text-xl sm:text-2xl font-extrabold leading-tight">{kit.product.title}</h3>
+                <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm text-white/70">
                   {kit.sizeLabel} &middot; {color}
+                  <Stars className="w-3 h-3" />
                 </p>
-                <div className="flex items-center gap-2 mb-4">
-                  <Stars className="w-3.5 h-3.5" />
-                  <span className="text-xs text-white/60">
-                    Thousands of successful installations
-                  </span>
-                </div>
-                <p className="text-3xl sm:text-4xl font-extrabold font-[family-name:var(--font-display)]">{usd(kit.variant.price)}</p>
-                {kit.variant.price >= 100 && kit.variant.price <= 1000 && (
-                  <p className="text-xs text-white/50 mt-1">
-                    or 4 installments with Affirm at checkout
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-3 mt-5">
+                <p className="mt-2 text-3xl font-extrabold font-[family-name:var(--font-display)]">
+                  {usd(kit.variant.price)}
+                  {kit.variant.price >= 100 && kit.variant.price <= 1000 && (
+                    <span className="ml-2 align-middle text-xs font-medium text-white/55">or 4 payments with Affirm</span>
+                  )}
+                </p>
+                <div className="flex flex-wrap items-center gap-2.5 mt-3">
                   <Button variant="accent" size="md" className="btn-sheen gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent shadow-[0_8px_22px_-8px_rgb(91_164_17/0.65)] hover:shadow-[0_16px_32px_-10px_rgb(91_164_17/0.7)] active:translate-y-0 active:scale-[0.98]" onClick={addKitToCart}>
                     <ShoppingCart className="w-4 h-4" />
                     Add Kit to Cart
                   </Button>
-                  <LinkButton
-                    href={`/store/${kit.product.handle}`}
-                    variant="outline-white"
-                    size="md"
-                  >
-                    View Full Kit Details
-                    <ArrowRight className="w-4 h-4" />
-                  </LinkButton>
+                  {kit.product.listed !== false && (
+                    <a href={`/store/${kit.product.handle}`} className="inline-flex items-center gap-1 text-sm font-semibold text-white/80 hover:text-white">
+                      Kit details <ArrowRight className="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    openQuoteModal({ sourcePage: 'kit-builder', initialMessage: kitSummary() })
-                  }
-                  className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition-colors cursor-pointer"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Talk to a Specialist about this kit
-                </button>
                 <KitAssurances />
               </div>
             </div>
 
             {/* What's included — per-variant contents from Shopify */}
             {kit.variant.descriptionHtml && (
-              <div className="mt-6 rounded-2xl bg-white/[0.06] ring-1 ring-white/10 backdrop-blur-sm p-4 sm:p-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-highlight mb-2">
-                  What&apos;s Included
-                </p>
+              <details className="group mt-4 rounded-2xl bg-white/[0.06] ring-1 ring-white/10 backdrop-blur-sm">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-highlight [&::-webkit-details-marker]:hidden">
+                  What&apos;s included
+                  <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="px-4 pb-4">
                 <div
                   className="prose prose-sm prose-invert max-w-none text-sm leading-relaxed text-white/80 [&_strong]:text-white [&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:mb-2 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_li]:marker:text-accent-light"
                   dangerouslySetInnerHTML={{ __html: kit.variant.descriptionHtml }}
                 />
-              </div>
+                </div>
+              </details>
             )}
 
             <KitLeadPrompt summary={kitSummary} />
@@ -415,30 +402,25 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
       {custom && (
         <motion.div
           {...resultMotion}
-          className="relative mt-6 rounded-3xl bg-primary text-white overflow-hidden shadow-[0_30px_60px_-30px_rgb(0_32_67/0.6)]"
+          className="relative mt-4 rounded-3xl bg-primary text-white overflow-hidden shadow-[0_30px_60px_-30px_rgb(0_32_67/0.6)]"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(18,95,151,0.6),transparent_55%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_90%,rgba(91,164,17,0.18),transparent_45%)]" />
           <GlowOrb className="-right-20 -top-20 h-64 w-64" color="rgb(26 123 196 / 0.35)" />
           <div aria-hidden="true" className="hairline-grid pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-          <div className="relative z-10 p-5 sm:p-6 lg:p-8">
-          <h3 className="text-2xl sm:text-3xl font-extrabold mb-1">
+          <div className="relative z-10 p-4 sm:p-5">
+          <h3 className="text-xl sm:text-2xl font-extrabold leading-tight">
             Custom {isDeck ? 'Direct-to-Deck' : 'Seamless Roofing'} Build
           </h3>
-          <p className="text-white/70 mb-1">
+          <p className="mt-0.5 mb-3 flex flex-wrap items-center gap-x-2 text-sm text-white/70">
             {sqftNum.toLocaleString('en-US')} sq ft &middot; {color}
+            <Stars className="w-3 h-3" />
           </p>
-          <div className="flex items-center gap-2 mb-4">
-            <Stars className="w-3.5 h-3.5" />
-            <span className="text-xs text-white/60">
-              Thousands of successful installations
-            </span>
-          </div>
-          <div className="rounded-2xl bg-white/[0.06] ring-1 ring-white/10 backdrop-blur-sm p-4 sm:p-5 mb-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-highlight mb-3">
-              What&apos;s In Your Build
+          <div className="rounded-2xl bg-white/[0.06] ring-1 ring-white/10 backdrop-blur-sm px-4 py-3 mb-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-highlight mb-2">
+              What&apos;s in your build
             </p>
-            <ul className="text-white/85 text-sm space-y-2">
+            <ul className="text-white/85 text-sm space-y-1.5">
               {custom.lines.map((line) => (
                 <li key={line.variant.id} className="flex items-baseline justify-between gap-3">
                   <span>
@@ -457,34 +439,18 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
               A specialist will confirm: {custom.missing.join(', ')}
             </p>
           )}
-          <p className="text-3xl sm:text-4xl font-extrabold mb-4 font-[family-name:var(--font-display)]">{usd(custom.total)}</p>
-          <div className="flex flex-wrap items-center gap-3">
+          <p className="text-3xl font-extrabold mb-3 font-[family-name:var(--font-display)]">{usd(custom.total)}</p>
+          <div className="flex flex-wrap items-center gap-2.5">
             <Button variant="accent" size="md" className="btn-sheen gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent shadow-[0_8px_22px_-8px_rgb(91_164_17/0.65)] hover:shadow-[0_16px_32px_-10px_rgb(91_164_17/0.7)] active:translate-y-0 active:scale-[0.98]" onClick={addCustomKitToCart}>
               <ShoppingCart className="w-4 h-4" />
               Add Kit to Cart
             </Button>
-            <button
-              type="button"
-              onClick={() =>
-                openQuoteModal({ sourcePage: 'kit-builder-custom', initialMessage: kitSummary() })
-              }
-              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/30 bg-white/5 px-5 py-2 text-sm sm:text-base font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Talk to a Specialist
-            </button>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              (800) 963-0131
-            </a>
+            <CallRepLink light />
           </div>
           <KitAssurances />
 
           {commercialKit && (
-            <div className="mt-5 rounded-2xl bg-white/[0.06] ring-1 ring-white/10 backdrop-blur-sm p-4 sm:p-5 transition-colors duration-300 hover:bg-white/[0.09] hover:ring-white/25">
+            <div className="mt-3 rounded-2xl bg-white/[0.06] ring-1 ring-white/10 backdrop-blur-sm px-4 py-3 transition-colors duration-300 hover:bg-white/[0.09] hover:ring-white/25">
               <p className="text-sm font-semibold text-white mb-1">
                 Prefer a pre-built kit?
               </p>
@@ -497,14 +463,12 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
                   <ShoppingCart className="w-4 h-4" />
                   Add to Cart
                 </Button>
-                <LinkButton
-                  href={`/store/${commercialKit.product.handle}`}
-                  variant="outline-white"
-                  size="sm"
-                >
-                  View Kit
-                  <ArrowRight className="w-4 h-4" />
-                </LinkButton>
+                {commercialKit.product.listed !== false && (
+                  <LinkButton href={`/store/${commercialKit.product.handle}`} variant="outline-white" size="sm">
+                    View Kit
+                    <ArrowRight className="w-4 h-4" />
+                  </LinkButton>
+                )}
               </div>
             </div>
           )}
@@ -515,32 +479,9 @@ export function KitBuilder({ catalog }: { catalog: KitBuilderCatalog }) {
       )}
 
       {!kit && !custom && (
-        <div className="mt-6">
-          <p className="text-sm text-gray-400 text-center mb-4">
-            Answer the questions above and your kit appears here with live pricing.
-          </p>
-          <button
-            type="button"
-            onClick={() => openQuoteModal({ sourcePage: 'kit-builder' })}
-            className="group ring-glow w-full flex items-center gap-4 rounded-2xl bg-gradient-to-r from-primary/[0.04] via-white to-accent/[0.06] px-4 py-3.5 sm:px-5 text-left shadow-sm ring-1 ring-primary/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99] cursor-pointer"
-          >
-            <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-light to-primary text-white shadow-glow-primary transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
-              <MessageSquare className="w-5 h-5" />
-            </span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-sm font-bold text-primary">
-                Not sure where to start? Ask a specialist — free
-              </span>
-              <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">
-                Opens a quick form. We&apos;ll build the kit for your exact roof
-                and get right back to you.
-              </span>
-            </span>
-            <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white">
-              <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </span>
-          </button>
-        </div>
+        <p className="mt-3 text-center text-[13px] text-gray-400">
+          Your kit appears here with live pricing as soon as you answer.
+        </p>
       )}
     </div>
   )
@@ -581,29 +522,30 @@ function KitLeadPrompt({ summary }: { summary: () => string }) {
 
   return (
     <>
-      <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10 backdrop-blur-sm sm:flex-row sm:items-center">
+      <div className="mt-3 flex flex-col gap-2.5 rounded-2xl bg-[#f5c542]/[0.1] px-4 py-3 ring-1 ring-[#f5c542]/45 sm:flex-row sm:items-center">
         <p className="flex flex-1 items-center gap-2 text-sm text-white/80">
-          <MessageSquare className="h-4 w-4 shrink-0 text-highlight" />
+          <Headset className="h-4 w-4 shrink-0 text-[#ffd95a]" />
           <span>
-            <span className="font-semibold text-white">Want a specialist to double-check this kit?</span>{' '}
+            <span className="font-semibold text-white">Want a rep to double-check this kit?</span>{' '}
             Free, no obligation.
           </span>
         </p>
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="btn-sheen inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 text-sm font-semibold text-white shadow-[0_8px_22px_-8px_rgb(91_164_17/0.65)] transition-all hover:-translate-y-0.5"
+          className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#ffe27a] to-[#f5c542] px-5 text-sm font-bold text-primary-dark ring-1 ring-inset ring-[#e3b42a] shadow-[0_8px_22px_-10px_rgb(227_180_42/0.9)] transition-all hover:-translate-y-0.5"
         >
-          Talk to Us About My Kit
+          <Headset className="h-4 w-4" />
+          Speak to a rep
         </button>
       </div>
       <FormModal
         open={open}
         onClose={() => setOpen(false)}
         eyebrow="Kit review"
-        title="Talk to Us About Your Kit"
+        title="Speak to a Rep About Your Kit"
         subtitle="We'll double-check the fit and answer any questions."
-        icon={MessageSquare}
+        icon={Headset}
         width="sm"
       >
         <KitLeadForm
@@ -764,7 +706,7 @@ function KitLeadForm({ summary, onSubmitted }: { summary: () => string; onSubmit
       />
       {error && <FormError>{error}</FormError>}
       <SubmitButton submitting={submitting} submittingLabel="Sending...">
-        Talk to Us About My Kit
+        Send to a Rep
       </SubmitButton>
     </form>
   )

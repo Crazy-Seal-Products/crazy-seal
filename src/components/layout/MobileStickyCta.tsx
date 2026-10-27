@@ -1,10 +1,12 @@
 'use client'
 
-import { Phone, MessageSquare } from 'lucide-react'
+import { Phone, Headset } from 'lucide-react'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
+import { REP_GOLD } from '@/components/store/SpeakToRep'
 
 /**
- * Sticky bottom bar on mobile: Call + Talk to a Specialist.
+ * Sticky bottom bar on mobile: Call + Speak to a rep (gold, like every rep
+ * button on the site).
  * Rendered on marketing pages only (see GlobalLayout).
  */
 export function MobileStickyCta() {
@@ -26,10 +28,10 @@ export function MobileStickyCta() {
           <button
             type="button"
             onClick={() => openQuoteModal({ sourcePage: 'mobile-sticky' })}
-            className="btn-sheen flex items-center justify-center gap-2 py-3.5 text-sm font-semibold text-white bg-gradient-to-b from-accent-light to-accent cursor-pointer"
+            className={`flex items-center justify-center gap-2 py-3.5 text-sm font-bold cursor-pointer ${REP_GOLD}`}
           >
-            <MessageSquare className="w-4 h-4" />
-            Talk to a Specialist
+            <Headset className="w-4 h-4" />
+            Speak to a Rep
           </button>
         </div>
       </div>

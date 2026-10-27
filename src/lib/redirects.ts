@@ -22,8 +22,13 @@ export const REDIRECTS: Redirect[] = [
   // Instant Quote retired in favor of the Kit Builder (Aug 2026)
   { source: '/pricing', destination: '/kit-builder', permanent: true },
   // Single Layer Kits retired from the lineup (Aug 2026)
-  { source: '/single-layer-kit', destination: '/store/double-layer-kit', permanent: true },
-  { source: '/store/single-layer-kit', destination: '/store/double-layer-kit', permanent: true },
+  { source: '/single-layer-kit', destination: '/kit-builder', permanent: true },
+  { source: '/store/single-layer-kit', destination: '/kit-builder', permanent: true },
+  // Flat-roof and commercial kits retired from the site (Oct 2026); the Kit Builder
+  // still builds those roofs. Temporary, in case a kit comes back.
+  { source: '/double-layer-kit', destination: '/kit-builder', permanent: false },
+  { source: '/direct-to-deck-kit', destination: '/kit-builder', permanent: false },
+  { source: '/crazy-good-repair-kit', destination: '/kit-builder', permanent: false },
   // Was a generic clone page; /applications is the real directory (Aug 2026)
   { source: '/roofing-applications', destination: '/applications', permanent: true },
   // Live site served marketing assets at both /marketing/* and

@@ -128,10 +128,11 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
     hubLabel: 'Residential Flat Roofs',
     storeCategory: 'roof-kits',
     projectCategory: 'residential',
-    kitHandles: ['double-layer-kit', 'direct-to-deck-kit', 'crazy-good-repair-kit'],
+    // Flat-roof kits retired from the site (Oct 2026): the Kit Builder sizes these roofs.
+    kitHandles: [],
     kitIntro:
       'Sized by square footage with every product, tool, and instruction you need. Over an existing roof? Double Layer. Bare wood decking? Direct to Deck.',
-    storeAnchor: 'roof-kits',
+    storeAnchor: 'build',
     heroVideoId: 'ji0GvXRUams',
     heroVideoThumbnail: `${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`,
     heroVideoCaption: 'Click to Watch the System Overview (5:15)',
@@ -148,14 +149,11 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
     projectCategory: 'commercial',
     // No published commercial projects yet — show flat-roof building installs.
     projectCategoryFallback: 'residential',
-    kitHandles: [
-      '500-sq-ft-commercial-kit',
-      '1000-sq-ft-commercial-kit',
-      '2000-sq-ft-commercial-kit',
-    ],
+    // Commercial kits retired from the site (Oct 2026): the Kit Builder sizes these roofs.
+    kitHandles: [],
     kitIntro:
       'Kits scale from 500 to 3,000+ square feet, and large projects can be installed in stages — worst sections first, then expand.',
-    storeAnchor: 'commercial-kits',
+    storeAnchor: 'build',
     heroVideoId: 'ji0GvXRUams',
     heroVideoThumbnail: `${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`,
     heroVideoCaption: 'Click to Watch the System Overview (5:15)',
@@ -171,10 +169,11 @@ export const FAMILIES: Record<ApplicationFamily, FamilyConfig> = {
     storeCategory: 'roof-kits',
     projectCategory: 'transportation',
     projectCategoryFallback: 'rv',
-    kitHandles: ['double-layer-kit', 'direct-to-deck-kit', 'crazy-good-repair-kit'],
+    // Flat-roof kits retired from the site (Oct 2026): the Kit Builder sizes these roofs.
+    kitHandles: [],
     kitIntro:
       'The same flat-roof kits, sized by square footage. One kit typically covers a box truck or trailer roof — and one crew can seal a unit in a day.',
-    storeAnchor: 'roof-kits',
+    storeAnchor: 'build',
     heroVideoId: 'ji0GvXRUams',
     heroVideoThumbnail: `${MEDIA}/2024/01/21-Reason-Thumbnail-2.jpg`,
     heroVideoCaption: 'Click to Watch the System Overview (5:15)',

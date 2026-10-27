@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-23T05:05:16.009Z",
+  "generatedAt": "2026-10-27T10:00:03.592Z",
   "routes": [
     {
       "path": "/",
@@ -132,11 +132,6 @@
       "admin": false
     },
     {
-      "path": "/crazy-good-repair-kit/",
-      "dynamic": false,
-      "admin": false
-    },
-    {
       "path": "/crazy-seal/",
       "dynamic": false,
       "admin": false
@@ -148,16 +143,6 @@
     },
     {
       "path": "/dealers/",
-      "dynamic": false,
-      "admin": false
-    },
-    {
-      "path": "/direct-to-deck-kit/",
-      "dynamic": false,
-      "admin": false
-    },
-    {
-      "path": "/double-layer-kit/",
       "dynamic": false,
       "admin": false
     },
@@ -369,6 +354,106 @@
     {
       "path": "/portal/",
       "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/abandoned/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/customers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/customers/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/applications/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/portal/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/discounts/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/history/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/leads/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/leads/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/orders/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/orders/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/products/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/products/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/projects/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/projects/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/search/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/warranties/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/warranties/[id]/",
+      "dynamic": true,
       "admin": false
     },
     {

@@ -27,7 +27,7 @@ import { twMerge } from 'tailwind-merge'
 import { initials, TIER_LABELS, type PortalAccount } from '@/lib/portal/accounts'
 import { PORTAL_MODULES, TOTAL_LESSONS, currentModule, moduleProgress } from '@/lib/portal/modules'
 import { demoLeads } from '@/lib/portal/demo-data'
-import { portalSignOut, portalSwitchAccount } from '@/lib/portal/actions'
+import { portalSignOut } from '@/lib/portal/actions'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { PortalProvider, usePortal } from './PortalContext'
 
@@ -52,30 +52,15 @@ function isActive(pathname: string, href: string) {
   return pathname === h || pathname.startsWith(h + '/')
 }
 
-export interface AccountSummary {
-  id: string
-  company: string
-  contactName: string
-  blurb: string
-}
-
-export function PortalShell({
-  account,
-  accounts,
-  children,
-}: {
-  account: PortalAccount
-  accounts: AccountSummary[]
-  children: React.ReactNode
-}) {
+export function PortalShell({ account, children }: { account: PortalAccount; children: React.ReactNode }) {
   return (
     <PortalProvider account={account}>
-      <ShellFrame accounts={accounts}>{children}</ShellFrame>
+      <ShellFrame>{children}</ShellFrame>
     </PortalProvider>
   )
 }
 
-function ShellFrame({ accounts, children }: { accounts: AccountSummary[]; children: React.ReactNode }) {
+function ShellFrame({ children }: { children: React.ReactNode }) {
   const pathname = normalize(usePathname())
   const router = useRouter()
   const welcome = useSearchParams().get('welcome') === '1'
@@ -142,7 +127,7 @@ function ShellFrame({ accounts, children }: { accounts: AccountSummary[]; childr
         </AnimatePresence>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar accounts={accounts} onMenu={() => setDrawerOpen(true)} pathname={pathname} />
+          <TopBar onMenu={() => setDrawerOpen(true)} pathname={pathname} />
           <main className="flex-1 px-4 py-6 sm:px-6 md:py-8 lg:px-10">
             <AnimatePresence mode="wait">
               <motion.div
@@ -399,15 +384,7 @@ const SECTION_TITLES: [string, string][] = [
   ['/portal/modules', 'Accelerator Program'],
 ]
 
-function TopBar({
-  accounts,
-  onMenu,
-  pathname,
-}: {
-  accounts: AccountSummary[]
-  onMenu: () => void
-  pathname: string
-}) {
+function TopBar({ onMenu, pathname }: { onMenu: () => void; pathname: string }) {
   const { account, resetProgress, resetBrand } = usePortal()
   const [open, setOpen] = useState(false)
   const section = useMemo(
@@ -468,28 +445,15 @@ function TopBar({
                   transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
                   className="absolute right-0 top-full z-10 mt-2 w-72 origin-top-right rounded-2xl border border-white/10 bg-[#03224a]/95 p-2 shadow-2xl backdrop-blur-xl"
                 >
-                  <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100/45">
-                    Switch demo account
-                  </p>
-                  {accounts.map((a) => (
-                    <form key={a.id} action={portalSwitchAccount.bind(null, a.id)}>
-                      <button
-                        className={twMerge(
-                          'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-white/[0.06]',
-                          a.id === account.id && 'bg-white/[0.06]'
-                        )}
-                      >
-                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/10 text-[11px] font-black">
-                          {initials(a.company)}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-semibold">{a.company}</span>
-                          <span className="block truncate text-[11px] text-blue-100/50">{a.blurb}</span>
-                        </span>
-                        {a.id === account.id && <Check className="h-4 w-4 text-accent-light" />}
-                      </button>
-                    </form>
-                  ))}
+                  <div className="flex items-center gap-3 px-3 py-2.5">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/10 text-[11px] font-black">
+                      {initials(account.company)}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold">{account.company}</span>
+                      <span className="block truncate text-[11px] text-blue-100/50">Demo dealer · {account.blurb}</span>
+                    </span>
+                  </div>
                   <div className="my-1 h-px bg-white/10" />
                   <button
                     onClick={() => {
@@ -542,7 +506,7 @@ function WelcomeIntro() {
         transition={{ duration: 2.2, ease: 'easeOut', repeat: 1 }}
       />
       <div className="relative flex flex-col items-center px-6 text-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        { }
         <motion.img
           src={BIG_LOGO}
           alt="Crazy Seal"

@@ -1,20 +1,17 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { PORTAL_ACCOUNTS } from '@/lib/portal/accounts'
-import { getPortalAccountFromSession, isPortalDemoEnabled } from '@/lib/portal/session'
+import { DEMO_ACCOUNT } from '@/lib/portal/accounts'
+import { isPortalDemoEnabled } from '@/lib/portal/session'
+import { getPortalAdmin } from '@/lib/portal/admin/auth'
 import { PortalLogin } from '@/components/portal/PortalLogin'
 
 export const metadata: Metadata = { title: 'Sign in' }
 
+// Admins skip straight to the admin. A demo session doesn't redirect, so
+// someone browsing the demo can still reach the sign-in form.
 export default async function PortalLoginPage() {
-  if (await getPortalAccountFromSession()) redirect('/portal/')
-  const accounts = PORTAL_ACCOUNTS.map(({ id, company, contactName, email, blurb, tier }) => ({
-    id,
-    company,
-    contactName,
-    email,
-    blurb,
-    tier,
-  }))
-  return <PortalLogin accounts={accounts} demoEnabled={isPortalDemoEnabled()} />
+  if (await getPortalAdmin()) redirect('/portal/admin/')
+
+  const { company, contactName, blurb, tier } = DEMO_ACCOUNT
+  return <PortalLogin demo={isPortalDemoEnabled() ? { company, contactName, blurb, tier } : null} />
 }

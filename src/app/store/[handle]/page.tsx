@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import {
   ChevronRight,
   Truck,
@@ -20,8 +20,8 @@ import {
 } from 'lucide-react'
 import { Container, YouTubeEmbed } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
-import { getStoreProducts, getStoreProduct, type StoreProduct } from '@/lib/store/products'
-import { STORE_CATEGORIES } from '@/lib/store/config'
+import { getShopProducts, getStoreProduct, type StoreProduct } from '@/lib/store/products'
+import { RETIRED_HANDLES, STORE_CATEGORIES } from '@/lib/store/config'
 import {
   testimonialsFor,
   projectCategoryFor,
@@ -90,12 +90,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { handle } = await params
+  // Retired flat-roof / commercial kits: the Kit Builder covers those roofs now.
+  if (RETIRED_HANDLES.has(handle)) redirect('/kit-builder/')
   const product = await getStoreProduct(handle)
   if (!product) notFound()
 
   const category = STORE_CATEGORIES.find((c) => c.id === product.category)
   const isKit = product.category !== 'products' && product.category !== 'extras'
-  const allProducts = await getStoreProducts()
+  const allProducts = await getShopProducts()
 
   // ─── Companion cross-sell ("Complete Your System") ───
   const companionHandles = product.companions ?? defaultCompanionsFor(product)

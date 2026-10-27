@@ -38,22 +38,22 @@ export async function generateMetadata({
 
 const KIT_LINKS = [
   {
-    href: '/double-layer-kit/',
-    title: 'Double Layer Kits',
-    blurb: 'Our most popular kit with double layer protection.',
+    href: '/store/rv-roofing-kit/',
+    title: 'RV Roofing Kit',
+    blurb: 'Our most popular kit, sized to your RV.',
     icon: Layers,
   },
   {
-    href: '/direct-to-deck-kit/',
-    title: 'Direct to Deck Kits',
-    blurb: 'A special kit for sealing directly over wood decking.',
-    icon: Package,
+    href: '/kit-builder/#build',
+    title: 'Build Your Own Kit',
+    blurb: 'A custom kit for any roof, with live pricing.',
+    icon: Hammer,
   },
   {
-    href: '/build-your-own-kit/',
-    title: 'Build Your Own Kit',
-    blurb: 'Build a custom kit from our lineup of roofing products.',
-    icon: Hammer,
+    href: '/kit-builder/#products',
+    title: 'Individual Products',
+    blurb: 'Every part of the Crazy Seal System on its own.',
+    icon: Package,
   },
 ]
 
