@@ -100,7 +100,7 @@ export function WarrantyRegistrationForm() {
         website: formData.get('website') as string,
       }
 
-      const res = await fetch('/api/warranty/register', {
+      const res = await fetch('/api/warranty/register/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

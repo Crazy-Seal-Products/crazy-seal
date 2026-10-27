@@ -49,7 +49,7 @@ export function WarrantyTransferForm() {
     }
 
     try {
-      const res = await fetch('/api/warranty/transfer', {
+      const res = await fetch('/api/warranty/transfer/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
