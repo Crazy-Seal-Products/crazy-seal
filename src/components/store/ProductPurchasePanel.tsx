@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Minus, Plus, ShoppingCart, Zap, MessageSquare, ChevronRight, Check } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Zap, Headset, ChevronRight, Check } from 'lucide-react'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { useCart } from '@/contexts/CartContext'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
+import { REP_GOLD } from '@/components/store/SpeakToRep'
 import { formatPrice, type StoreProduct } from '@/lib/store/products'
 import type { ShopifyVariant } from '@/lib/shopify/catalog'
 
@@ -175,7 +176,7 @@ export function ProductPurchasePanel({
         </button>
       </div>
 
-      {/* Specialist assist — converts hesitant shoppers into sales leads */}
+      {/* Speak to a rep (gold across the shop) — converts hesitant shoppers into sales leads */}
       <button
         type="button"
         onClick={() =>
@@ -184,21 +185,20 @@ export function ProductPurchasePanel({
             initialMessage: `I'm looking at the ${product.displayTitle} (${selectedVariant.title}) and would like help making sure it's the right kit for my roof.`,
           })
         }
-        className="group ring-glow w-full flex items-center gap-4 rounded-2xl bg-gradient-to-r from-primary/[0.04] via-white to-accent/[0.06] px-4 py-3.5 sm:px-5 text-left shadow-sm ring-1 ring-primary/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99] cursor-pointer"
+        className="group w-full flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#fff3c4] to-[#fff8dc] px-4 py-3.5 sm:px-5 text-left shadow-[0_8px_22px_-12px_rgb(227_180_42/0.9)] ring-1 ring-[#f5c542] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_rgb(227_180_42/0.95)] active:scale-[0.99] cursor-pointer"
       >
-        <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-light to-primary text-white shadow-glow-primary transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
-          <MessageSquare className="w-5 h-5" />
+        <span className={`grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105 ${REP_GOLD}`}>
+          <Headset className="w-5 h-5" />
         </span>
         <span className="flex-1 min-w-0">
-          <span className="block text-sm font-bold text-primary">
-            Not sure which kit? Ask a specialist — free
+          <span className="block text-sm font-bold text-primary-dark">
+            Not sure which kit? Speak to a rep, free
           </span>
-          <span className="block text-xs text-gray-500 mt-0.5 leading-relaxed">
-            Opens a quick form. We&apos;ll size the kit to your exact roof and
-            get right back to you.
+          <span className="block text-xs text-primary-dark/70 mt-0.5 leading-relaxed">
+            A rep sizes the kit to your exact roof and gets right back to you.
           </span>
         </span>
-        <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white">
+        <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-[#f5c542] text-primary-dark transition-all duration-300 group-hover:bg-[#e3b42a]">
           <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
         </span>
       </button>

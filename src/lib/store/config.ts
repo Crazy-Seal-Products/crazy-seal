@@ -476,3 +476,24 @@ export const PRODUCT_CURATION: ProductCuration[] = [
 
 /** Shopify handles never shown in the store. */
 export const HIDDEN_HANDLES = new Set(['test-product', 'single-layer-kit'])
+
+/**
+ * Kits retired from the consumer site (Oct 2026): the flat-roof and
+ * commercial kits. They stay in Shopify, and the Kit Builder still uses them
+ * to price flat-roof builds, but the shop no longer lists them and their
+ * product pages redirect to /kit-builder.
+ */
+export const RETIRED_HANDLES = new Set([
+  'double-layer-kit',
+  'direct-to-deck-kit',
+  'crazy-good-repair-kit',
+  '500-sq-ft-commercial-kit',
+  '1000-sq-ft-commercial-kit',
+  '1-500-sq-ft-commercial-kit',
+  '2000-sq-ft-commercial-kit',
+  '2500-sq-ft-commercial-kit',
+  '3000-sq-ft-commercial-kit',
+])
+
+/** Categories the shop page lists, in order. */
+export const SHOP_CATEGORIES: StoreCategory[] = ['rv-kits', 'products']

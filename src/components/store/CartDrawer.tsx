@@ -2,26 +2,21 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { X, Minus, Plus, Trash2, ShoppingCart, Lock, MessageSquare, Truck } from 'lucide-react'
+import { X, Minus, Plus, Trash2, ShoppingCart, Lock, Truck } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
-import { useQuoteModal } from '@/contexts/QuoteModalContext'
 import { formatPrice } from '@/lib/store/products'
+import { CallRepLink, SpeakToRepButton } from '@/components/store/SpeakToRep'
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
-  const { openQuoteModal } = useQuoteModal()
   const [checkingOut, setCheckingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  function handleSpecialistAssist() {
-    const cartSummary = items
+  function cartSummary() {
+    const lines = items
       .map((i) => `- ${i.productTitle}${i.variantTitle !== 'Default Title' ? ` (${i.variantTitle})` : ''} x${i.quantity}`)
       .join('\n')
-    closeCart()
-    openQuoteModal({
-      sourcePage: 'cart-assist',
-      initialMessage: `I have these items in my cart and would like a specialist to double-check my kit before I order:\n${cartSummary}`,
-    })
+    return `I have these items in my cart and would like a rep to double-check my kit before I order:\n${lines}`
   }
 
   async function handleCheckout() {
@@ -91,6 +86,12 @@ export function CartDrawer() {
             >
               Browse the Store
             </Link>
+            <SpeakToRepButton
+              sourcePage="cart-empty"
+              label="Build a kit with a rep"
+              size="sm"
+              onOpen={closeCart}
+            />
           </div>
         ) : (
           <>
@@ -194,14 +195,18 @@ export function CartDrawer() {
               <p className="text-[11px] text-gray-400 text-center">
                 Taxes and shipping calculated at checkout
               </p>
-              <button
-                type="button"
-                onClick={handleSpecialistAssist}
-                className="w-full flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-primary ring-1 ring-primary/20 transition-all duration-300 hover:ring-primary/50 hover:shadow-md cursor-pointer"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Prefer a specialist? We&apos;ll build your kit with you
-              </button>
+              <div className="rounded-2xl bg-[#fff8dc] p-3 ring-1 ring-[#f5c542]/70">
+                <p className="mb-2 text-center text-xs font-semibold text-primary-dark">
+                  Not sure it&apos;s the right kit? A rep will check it with you, free.
+                </p>
+                <SpeakToRepButton
+                  sourcePage="cart-assist"
+                  message={cartSummary}
+                  onOpen={closeCart}
+                  className="w-full"
+                />
+                <CallRepLink className="mt-2 flex justify-center text-xs" />
+              </div>
             </div>
           </>
         )}

@@ -32,10 +32,10 @@ const FOOTER_LINKS = {
     { href: '/contact', label: 'Contact' },
   ],
   shop: [
-    { href: '/store/double-layer-kit', label: 'Double Layer Kits' },
-    { href: '/store/direct-to-deck-kit', label: 'Direct to Deck Kits' },
-    { href: '/kit-builder#products', label: 'Build Your Own Kit' },
-    { href: '/kit-builder', label: 'Shop All Products' },
+    { href: '/store/rv-roofing-kit', label: 'RV Roofing Kit' },
+    { href: '/kit-builder#build', label: 'Build Your Own Kit' },
+    { href: '/kit-builder#products', label: 'Individual Products' },
+    { href: '/kit-builder', label: 'Shop All' },
   ],
   partners: [
     { href: '/professionals', label: 'Become a Dealer' },

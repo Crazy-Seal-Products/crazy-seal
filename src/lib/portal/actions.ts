@@ -2,16 +2,23 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { getPortalAccount, PORTAL_ACCOUNTS } from './accounts'
+import { DEMO_ACCOUNT } from './accounts'
 import { isPortalDemoEnabled, PORTAL_COOKIE, PORTAL_COOKIE_MAX_AGE } from './session'
+import {
+  endAdminSession,
+  isAdminEmail,
+  isLockedOut,
+  startAdminSession,
+  verifyAdminCredentials,
+} from './admin/auth'
 
 export interface SignInState {
   error?: string
 }
 
-async function setSession(accountId: string) {
+async function setDemoSession() {
   const store = await cookies()
-  store.set(PORTAL_COOKIE, accountId, {
+  store.set(PORTAL_COOKIE, DEMO_ACCOUNT.id, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -21,32 +28,39 @@ async function setSession(accountId: string) {
 }
 
 export async function portalSignIn(_prev: SignInState, formData: FormData): Promise<SignInState> {
-  if (!isPortalDemoEnabled()) {
-    return { error: 'The Pro Portal preview isn’t open yet. Use the Pro Hub to sign in.' }
-  }
   const email = String(formData.get('email') ?? '').trim().toLowerCase()
   const password = String(formData.get('password') ?? '')
-  const selected = String(formData.get('account') ?? '')
-
   if (!email || !password) return { error: 'Enter your email and password.' }
 
-  // Demo mode: match a demo email, otherwise fall back to the selected tile.
-  const account =
-    PORTAL_ACCOUNTS.find((a) => a.email.toLowerCase() === email) ?? getPortalAccount(selected)
-  if (!account) return { error: 'Pick one of the demo accounts to continue.' }
+  if (isAdminEmail(email)) {
+    if (isLockedOut(email)) return { error: 'Too many attempts. Try again in 15 minutes.' }
+    const admin = await verifyAdminCredentials(email, password)
+    if (!admin) return { error: 'That email and password don’t match.' }
+    await startAdminSession(admin)
+    redirect('/portal/admin/')
+  }
 
-  await setSession(account.id)
-  redirect('/portal/?welcome=1')
+  if (email === DEMO_ACCOUNT.email.toLowerCase() && isPortalDemoEnabled()) {
+    await setDemoSession()
+    redirect('/portal/?welcome=1')
+  }
+
+  return { error: 'Dealer sign-in isn’t open yet. Explore the demo below, or use the Pro Hub for orders today.' }
 }
 
-export async function portalSwitchAccount(accountId: string) {
-  if (!isPortalDemoEnabled() || !getPortalAccount(accountId)) return
-  await setSession(accountId)
+export async function portalStartDemo() {
+  if (!isPortalDemoEnabled()) redirect('/portal/login/')
+  await setDemoSession()
   redirect('/portal/?welcome=1')
 }
 
 export async function portalSignOut() {
   const store = await cookies()
   store.delete(PORTAL_COOKIE)
+  redirect('/portal/login/')
+}
+
+export async function adminSignOut() {
+  await endAdminSession()
   redirect('/portal/login/')
 }

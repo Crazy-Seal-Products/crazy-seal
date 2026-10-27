@@ -42,26 +42,26 @@ const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
 const KIT_TYPES = [
   {
-    title: 'Double Layer Kits',
-    desc: 'Our most popular kit — two layers of protection.',
-    href: '/store/double-layer-kit',
+    title: 'RV Roofing Kit',
+    desc: 'Everything to seal an RV roof for good, sized to your rig.',
+    href: '/store/rv-roofing-kit',
     image: `${MEDIA}/2019/05/Double-White-100-300-Crazy-Seal-Flat-Roofing-Project-Kit-1024x336.png`,
     tag: 'Most popular',
   },
   {
-    title: 'Direct to Deck Kits',
-    desc: 'Seal directly over wood decking.',
-    href: '/store/direct-to-deck-kit',
-    image: `${MEDIA}/2019/10/02_Direct-150-225-White-1024x416.png`,
+    title: 'Build Your Kit',
+    desc: 'Answer a few questions for a custom kit at live prices.',
+    href: '/kit-builder#build',
+    image: `${MEDIA}/2021/12/Build-Your-Own-Kit-Featured-Image-768x384.png`,
   },
   {
-    title: 'Commercial Kits',
-    desc: 'Custom kits for any size project.',
-    href: '/kit-builder#commercial-kits',
-    image: `${MEDIA}/2019/10/03_Direct-225-300-White-1024x503.png`,
+    title: 'Build It With a Rep',
+    desc: 'A Crazy Seal rep sizes your roof and builds the kit with you.',
+    href: '/kit-builder#rep',
+    image: `${MEDIA}/2022/01/Crazy-Seal-Specialist-Image-768x768.png`,
   },
   {
-    title: 'Build Your Own Kit',
+    title: 'Individual Products',
     desc: 'Pick exactly the products you need.',
     href: '/kit-builder#products',
     image: `${MEDIA}/2020/03/Single-Layer-Kit-1-e1637944173532.png`,

@@ -543,3 +543,149 @@ h1, h2, h3 {
 @media (prefers-reduced-motion: reduce) {
   .dn-pulses { display: none; }
 }
+
+/* ─── Crazy Seal Admin (/portal/admin) ──────────────────────────────────────
+   "Brand Blue" glass theme, dark by default with a light "Clean White"
+   theme (data-theme="light"). Every admin colour goes through these
+   variables (bg-adm-*, text-adm-*, border-adm-*); the sidebar re-declares
+   the dark set so it keeps its blue glass look in both themes. */
+@theme inline {
+  --color-adm-bg: var(--adm-bg);
+  --color-adm-ink: var(--adm-ink);
+  --color-adm-text: var(--adm-text);
+  --color-adm-soft: var(--adm-soft);
+  --color-adm-muted: var(--adm-muted);
+  --color-adm-faint: var(--adm-faint);
+  --color-adm-line: var(--adm-line);
+  --color-adm-line-soft: var(--adm-line-soft);
+  --color-adm-head: var(--adm-head);
+  --color-adm-input: var(--adm-input);
+  --color-adm-blue: var(--adm-blue);
+  --color-adm-blue-bright: var(--adm-blue-bright);
+  --color-adm-gold: var(--adm-gold);
+  --color-adm-gold-bright: var(--adm-gold-bright);
+  --color-adm-gold-ink: var(--adm-gold-ink);
+  --color-adm-gold-text: var(--adm-gold-text);
+  --color-adm-green: var(--adm-green);
+  --color-adm-red: var(--adm-red);
+  --color-adm-warn: var(--adm-warn);
+  --color-adm-hero-ink: var(--adm-hero-ink);
+  --color-adm-hero-text: var(--adm-hero-text);
+  --color-adm-hero-soft: var(--adm-hero-soft);
+}
+
+.cs-admin,
+.cs-admin .adm-sidebar {
+  --adm-bg: #08111f;
+  --adm-ink: #f2f6fb;
+  --adm-text: #d8e1ec;
+  --adm-soft: #b4c1d1;
+  --adm-muted: #8e9fb4;
+  --adm-faint: #7a8ca4;
+  --adm-line: rgb(150 182 222 / 0.16);
+  --adm-line-soft: rgb(150 182 222 / 0.085);
+  --adm-head: rgb(255 255 255 / 0.025);
+  --adm-input: rgb(5 12 24 / 0.65);
+  --adm-blue: #2f80d8;
+  --adm-blue-bright: #6cb6ff;
+  --adm-gold: #f5c542;
+  --adm-gold-bright: #ffd95a;
+  --adm-gold-ink: #1c1505;
+  /* gold as text (fills use --adm-gold) */
+  --adm-gold-text: #ffd95a;
+  --adm-green: #7ccf5a;
+  --adm-red: #f39a9a;
+  --adm-warn: #fde68a;
+  /* the highlighted KPI tile */
+  --adm-hero-ink: #ffd95a;
+  --adm-hero-text: #d8e1ec;
+  --adm-hero-soft: #b4c1d1;
+  /* chart series (fills, not text) */
+  --adm-chart-blue: #4a9ff5;
+  --adm-chart-gold: #f5c542;
+  color-scheme: dark;
+}
+
+/* "Clean White": light canvas and panels, navy ink, gold kept for fills. */
+.cs-admin[data-theme='light'] {
+  --adm-bg: #f4f7fb;
+  --adm-ink: #0b2545;
+  --adm-text: #1f3550;
+  --adm-soft: #3f526b;
+  --adm-muted: #5b6b80;
+  --adm-faint: #627186;
+  --adm-line: #d9e2ee;
+  --adm-line-soft: #e8eef5;
+  --adm-head: #f7f9fc;
+  --adm-input: #ffffff;
+  --adm-blue: #2f80d8;
+  --adm-blue-bright: #1b6ccc;
+  --adm-gold: #f5c542;
+  --adm-gold-bright: #ffe27a;
+  --adm-gold-ink: #1c1505;
+  --adm-gold-text: #8a5a00;
+  --adm-green: #2e7d32;
+  --adm-red: #9f1f17;
+  --adm-warn: #92400e;
+  --adm-hero-ink: #1c1505;
+  --adm-hero-text: #3a2a00;
+  --adm-hero-soft: #4a3608;
+  --adm-chart-blue: #2f80d8;
+  --adm-chart-gold: #b8860b;
+  color-scheme: light;
+}
+
+/* The sidebar is always on blue glass, whatever the theme. */
+.cs-admin .adm-sidebar {
+  color: #f2f6fb;
+  color-scheme: dark;
+}
+
+/* Soft aurora light behind everything. */
+.cs-admin .adm-aurora {
+  background:
+    radial-gradient(60rem 30rem at 18% -8%, rgb(47 128 216 / 0.28), transparent 70%),
+    radial-gradient(40rem 22rem at 78% -6%, rgb(245 197 66 / 0.08), transparent 70%),
+    radial-gradient(50rem 30rem at 90% 105%, rgb(56 150 235 / 0.12), transparent 70%);
+}
+
+/* Blue glass sidebar (same in both themes) with a glow at the top. */
+.cs-admin .adm-sidebar {
+  background:
+    radial-gradient(130% 30% at 12% 0%, rgb(108 182 255 / 0.28), transparent 72%),
+    linear-gradient(180deg, #174a86 0%, #113766 40%, #0c2647 100%);
+  border-color: rgb(120 175 240 / 0.2);
+}
+
+/* Glass panels: soft gradient fill, hairline border, top highlight. */
+.cs-admin .adm-glass {
+  background: linear-gradient(180deg, rgb(19 33 56 / 0.78), rgb(11 21 37 / 0.84));
+  border: 1px solid var(--adm-line);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 18px 40px -30px rgb(0 0 0 / 0.95);
+  backdrop-filter: blur(14px);
+}
+
+/* The one highlighted KPI (Sales): a deeper blue tile with a gold number. */
+.cs-admin .adm-hero {
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgb(108 182 255 / 0.22), transparent 60%),
+    linear-gradient(140deg, #164278, #0e2a4e);
+  border-color: rgb(120 175 240 / 0.38);
+}
+
+.cs-admin[data-theme='light'] .adm-aurora {
+  background:
+    radial-gradient(60rem 26rem at 18% -10%, rgb(47 128 216 / 0.09), transparent 70%),
+    radial-gradient(40rem 20rem at 80% -8%, rgb(245 197 66 / 0.08), transparent 70%);
+}
+
+.cs-admin[data-theme='light'] .adm-glass {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 35 70 / 0.05), 0 10px 26px -20px rgb(15 35 70 / 0.3);
+  backdrop-filter: none;
+}
+
+.cs-admin[data-theme='light'] .adm-hero {
+  background: linear-gradient(140deg, #ffe27a, #f5c542);
+  border-color: #e3b42a;
+}

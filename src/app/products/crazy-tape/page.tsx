@@ -70,12 +70,12 @@ export default function CrazyTapePage() {
                 possibilities for repair on your roof.
               </p>
               <p>
-                You will see Crazy Tape in our{' '}
+                You will see Crazy Tape in every{' '}
                 <a
-                  href="/direct-to-deck-kit"
+                  href="/kit-builder/#build"
                   className="font-semibold text-accent-dark underline decoration-accent/40 underline-offset-4 hover:text-primary"
                 >
-                  Direct to Deck Kits
+                  direct-to-deck kit
                 </a>
                 . Going directly to wood decking? Crazy Tape will help you permanently seal your seams.
               </p>

@@ -50,6 +50,12 @@ export interface JourneyTrackingActions {
 
 export type UseJourneyTrackingReturn = JourneyTrackingState & JourneyTrackingActions
 
+// The Crazy Seal Admin carries customer IDs and search terms in its URLs;
+// keep it out of visitor analytics.
+function isUntrackedPath(path: string | null): boolean {
+  return Boolean(path?.startsWith('/portal/admin'))
+}
+
 export function useJourneyTracking(): UseJourneyTrackingReturn {
   const pathname = usePathname()
   const pageViewCount = useRef(0)
@@ -68,7 +74,7 @@ export function useJourneyTracking(): UseJourneyTrackingReturn {
 
   useEffect(() => {
     if (state.isInitialized || isInitializing.current) return
-    if (isDoNotTrack()) {
+    if (isDoNotTrack() || isUntrackedPath(window.location.pathname)) {
       setState(prev => ({ ...prev, isInitialized: true }))
       return
     }
@@ -126,7 +132,7 @@ export function useJourneyTracking(): UseJourneyTrackingReturn {
 
   useEffect(() => {
     if (!state.isInitialized || !state.visitorId || !state.sessionId) return
-    if (lastTrackedPath.current === pathname) return
+    if (lastTrackedPath.current === pathname || isUntrackedPath(pathname)) return
 
     lastTrackedPath.current = pathname
     pageViewCount.current += 1

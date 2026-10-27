@@ -22,16 +22,10 @@ export const metadata: Metadata = {
 
 const KITS = [
   {
-    title: 'Double Layer Kits',
-    desc: 'Our most popular kit with double layer protection.',
-    href: '/store/double-layer-kit',
+    title: 'RV Roofing Kit',
+    desc: 'Our most popular kit: everything to seal an RV roof for good, sized to your rig.',
+    href: '/store/rv-roofing-kit',
     image: `${MEDIA}/2021/12/Double-Layer-Kit-Featured-Image-768x384.png`,
-  },
-  {
-    title: 'Direct to Deck Kits',
-    desc: 'A special kit for sealing directly over wood decking.',
-    href: '/store/direct-to-deck-kit',
-    image: `${MEDIA}/2021/12/Direct-to-Deck-Layer-Kit-Featured-Image-768x384.png`,
   },
   {
     title: 'Build Your Own Kit',
@@ -40,15 +34,9 @@ const KITS = [
     image: `${MEDIA}/2021/12/Build-Your-Own-Kit-Featured-Image-768x384.png`,
   },
   {
-    title: 'Crazy Good Repair Kit',
-    desc: 'Kit for small repairs or adding a fixture to a Crazy Seal roof.',
-    href: '/store/crazy-good-repair-kit',
-    image: `${MEDIA}/2021/12/Repair-Kit-Featured-Image-768x384.png`,
-  },
-  {
-    title: 'Work With A Specialist',
-    desc: 'Need help building a kit? Our team of experts would love to help!',
-    href: '/contact',
+    title: 'Build It With a Rep',
+    desc: 'Need help building a kit? A Crazy Seal rep will size your roof and build it with you.',
+    href: '/kit-builder#rep',
     image: `${MEDIA}/2022/01/Crazy-Seal-Specialist-Image-768x768.png`,
   },
 ]

@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useActionState, useState } from 'react'
+import React, { useActionState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
-  Check,
   GraduationCap,
   Inbox,
   Loader2,
@@ -16,17 +15,15 @@ import {
 } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { initials, TIER_LABELS, type PartnerTier } from '@/lib/portal/accounts'
-import { portalSignIn, type SignInState } from '@/lib/portal/actions'
+import { portalSignIn, portalStartDemo, type SignInState } from '@/lib/portal/actions'
 import { EASE_OUT_EXPO, GlowOrb } from '@/components/motion'
 import { portalInput } from './ui'
 
 const BIG_LOGO = 'https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-1000x800-400x320.png'
 
-interface LoginAccount {
-  id: string
+interface DemoSummary {
   company: string
   contactName: string
-  email: string
   blurb: string
   tier: PartnerTier
 }
@@ -38,16 +35,8 @@ const FEATURES = [
   { icon: ShieldCheck, title: 'Warranty registration', desc: 'File the 50 year warranty for every job you finish.' },
 ]
 
-export function PortalLogin({ accounts, demoEnabled }: { accounts: LoginAccount[]; demoEnabled: boolean }) {
-  const [selected, setSelected] = useState(accounts[0]?.id ?? '')
-  const account = accounts.find((a) => a.id === selected)
-  const [email, setEmail] = useState(account?.email ?? '')
+export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
   const [state, formAction, pending] = useActionState<SignInState, FormData>(portalSignIn, {})
-
-  const pick = (a: LoginAccount) => {
-    setSelected(a.id)
-    setEmail(a.email)
-  }
 
   return (
     <div className="min-h-screen bg-[#00152b] text-white lg:grid lg:grid-cols-[1.05fr_0.95fr]">
@@ -63,7 +52,7 @@ export function PortalLogin({ accounts, demoEnabled }: { accounts: LoginAccount[
         </Link>
 
         <div className="relative">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <motion.img
             src={BIG_LOGO}
             alt="Crazy Seal"
@@ -119,117 +108,83 @@ export function PortalLogin({ accounts, demoEnabled }: { accounts: LoginAccount[
           <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-highlight">Pro Portal</p>
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight">Sign in</h2>
           <p className="mt-2 text-sm text-blue-100/60">
-            Training, leads, white-label materials and warranties for Crazy Seal partners.
+            Crazy Seal partners and the Crazy Seal team sign in here.
           </p>
 
-          {!demoEnabled ? (
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-blue-100/75">
-              The Pro Portal preview isn&apos;t open yet. Partners can keep using the{' '}
-              <Link href="/pro/login/" className="font-semibold text-accent-light underline underline-offset-4">
-                Pro Hub
-              </Link>{' '}
-              for orders, jobs and warranties.
+          <form action={formAction} className="mt-7 space-y-4">
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Email</span>
+              <span className="relative block">
+                <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="username"
+                  placeholder="you@company.com"
+                  className={twMerge(portalInput, 'pl-10')}
+                />
+              </span>
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Password</span>
+              <span className="relative block">
+                <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  className={twMerge(portalInput, 'pl-10')}
+                />
+              </span>
+            </label>
+
+            {state.error && (
+              <p role="alert" className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-200 ring-1 ring-red-400/30">{state.error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={pending}
+              className="btn-sheen flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-3 text-sm font-bold text-white shadow-[0_10px_26px_-10px_rgba(91,164,17,0.8)] transition-all hover:-translate-y-0.5 disabled:opacity-70"
+            >
+              {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {pending ? 'Signing in…' : 'Sign in'}
+              {!pending && <ArrowRight className="h-4 w-4" />}
+            </button>
+          </form>
+
+          {demo && (
+            <div className="mt-7">
+              <div className="mb-3 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100/40">
+                <span className="h-px flex-1 bg-white/10" />
+                Or explore the demo
+                <span className="h-px flex-1 bg-white/10" />
+              </div>
+              <form action={portalStartDemo}>
+                <button
+                  type="submit"
+                  className="group flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-white/[0.02] px-3.5 py-3 text-left transition hover:border-highlight/40"
+                >
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-highlight text-xs font-black text-primary">
+                    {initials(demo.company)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="truncate text-sm font-semibold">{demo.company}</span>
+                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-blue-100/80">
+                        {TIER_LABELS[demo.tier]}
+                      </span>
+                    </span>
+                    <span className="block truncate text-xs text-blue-100/55">
+                      Demo dealer · {demo.contactName} · {demo.blurb}
+                    </span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-blue-100/50 transition group-hover:translate-x-0.5 group-hover:text-highlight" />
+                </button>
+              </form>
             </div>
-          ) : (
-            <form action={formAction} className="mt-8 space-y-5">
-              <fieldset>
-                <legend className="mb-2 text-xs font-semibold text-blue-100/60">Choose a demo account</legend>
-                <div className="space-y-2">
-                  {accounts.map((a) => {
-                    const active = a.id === selected
-                    return (
-                      <button
-                        key={a.id}
-                        type="button"
-                        onClick={() => pick(a)}
-                        className={twMerge(
-                          'relative flex w-full items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-colors',
-                          active ? 'border-accent/50' : 'border-white/10 hover:border-white/25 hover:bg-white/[0.03]'
-                        )}
-                        aria-pressed={active}
-                      >
-                        {active && (
-                          <motion.span
-                            layoutId="login-active"
-                            className="absolute inset-0 rounded-2xl bg-gradient-to-r from-accent/15 to-white/[0.03]"
-                            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                          />
-                        )}
-                        <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-xs font-black">
-                          {initials(a.company)}
-                        </span>
-                        <span className="relative min-w-0 flex-1">
-                          <span className="flex items-center gap-2">
-                            <span className="truncate text-sm font-semibold">{a.company}</span>
-                            <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-blue-100/80">
-                              {TIER_LABELS[a.tier]}
-                            </span>
-                          </span>
-                          <span className="block truncate text-xs text-blue-100/55">
-                            {a.contactName} · {a.blurb}
-                          </span>
-                        </span>
-                        <span
-                          className={twMerge(
-                            'relative grid h-5 w-5 place-items-center rounded-full border transition',
-                            active ? 'border-accent bg-accent' : 'border-white/25'
-                          )}
-                        >
-                          {active && <Check className="h-3 w-3" strokeWidth={3.5} />}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </fieldset>
-
-              <input type="hidden" name="account" value={selected} />
-
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Email</span>
-                <span className="relative block">
-                  <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
-                  <input
-                    name="email"
-                    type="email"
-                    autoComplete="username"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={twMerge(portalInput, 'pl-10')}
-                  />
-                </span>
-              </label>
-              <label className="block">
-                <span className="mb-1.5 flex items-center justify-between text-xs font-semibold text-blue-100/60">
-                  Password
-                  <span className="font-normal text-blue-100/40">Demo: any password works</span>
-                </span>
-                <span className="relative block">
-                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
-                  <input
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    defaultValue="demo-preview"
-                    className={twMerge(portalInput, 'pl-10')}
-                  />
-                </span>
-              </label>
-
-              {state.error && (
-                <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-200 ring-1 ring-red-400/30">{state.error}</p>
-              )}
-
-              <button
-                type="submit"
-                disabled={pending}
-                className="btn-sheen flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-3 text-sm font-bold text-white shadow-[0_10px_26px_-10px_rgba(91,164,17,0.8)] transition-all hover:-translate-y-0.5 disabled:opacity-70"
-              >
-                {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {pending ? 'Signing in…' : `Sign in as ${account?.contactName.split(' ')[0] ?? 'partner'}`}
-                {!pending && <ArrowRight className="h-4 w-4" />}
-              </button>
-            </form>
           )}
 
           <div className="mt-8 space-y-2 border-t border-white/10 pt-6 text-sm text-blue-100/60">
