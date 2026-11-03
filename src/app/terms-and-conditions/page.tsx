@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Container, Stack, Heading, Text } from '@/lib/design-system'
+import { GlowOrb } from '@/components/motion'
 
 export const metadata: Metadata = {
   title: 'Terms and Conditions',
@@ -11,12 +12,31 @@ export default function TermsAndConditionsPage() {
   return (
     <Container size="xl">
       <Stack gap="lg">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-10 sm:px-6 sm:py-12 md:p-14 lg:p-16 text-center">
-          <Heading level={1}>Terms and Conditions</Heading>
+        <div className="relative section-bleed bg-primary overflow-hidden">
+          <GlowOrb className="-left-32 top-0 h-96 w-96" color="rgb(26 123 196 / 0.45)" />
+          <GlowOrb className="-right-24 -bottom-24 h-80 w-80" color="rgb(91 164 17 / 0.25)" />
+          <div
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
+          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16 text-center">
+            <h1
+              className="animate-fade-up text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-3"
+              style={{ animationDelay: '80ms' }}
+            >
+              Terms and Conditions
+            </h1>
+            <p
+              className="animate-fade-up mx-auto max-w-xl text-base sm:text-lg text-white/70"
+              style={{ animationDelay: '160ms' }}
+            >
+              Terms of use for the Crazy Seal website and services.
+            </p>
+          </div>
         </div>
 
         <section>
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 prose prose-gray max-w-none space-y-8">
+          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-10 lg:p-14 space-y-10 [&>*]:mx-auto [&>*]:max-w-3xl [&_h2]:mb-4 [&_h2]:flex [&_h2]:items-center [&_h2]:gap-3 [&_h2]:font-extrabold [&_h2]:before:block [&_h2]:before:h-6 [&_h2]:before:w-1.5 [&_h2]:before:flex-shrink-0 [&_h2]:before:rounded-full [&_h2]:before:bg-gradient-to-b [&_h2]:before:from-accent-light [&_h2]:before:to-accent [&_h2]:before:content-[''] [&_p]:leading-[1.75] [&_li]:leading-[1.75] [&_ul]:marker:text-accent [&_strong]:text-primary">
           <div>
             <Heading level={2}>1. Acceptance of Terms</Heading>
             <Text>
@@ -98,7 +118,7 @@ export default function TermsAndConditionsPage() {
             <Heading level={2}>9. Privacy</Heading>
             <Text>
               Your use of the website is also governed by our{' '}
-              <a href="/privacy-policy" className="text-[#003365] font-semibold hover:underline">
+              <a href="/privacy-policy" className="text-primary font-semibold hover:underline">
                 Privacy Policy
               </a>
               , which is incorporated into these Terms and Conditions by reference.

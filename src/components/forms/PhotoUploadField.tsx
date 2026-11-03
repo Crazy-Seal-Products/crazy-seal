@@ -9,6 +9,8 @@ interface PhotoUploadFieldProps {
   files: File[]
   onChange: (files: File[]) => void
   inputLabel?: string
+  /** When set, photos start uploading to this folder as soon as they are picked. */
+  folder?: string
 }
 
 const IMAGE_EXT_RE = /\.(heic|heif|jpe?g|png|gif|webp|bmp|tiff?)$/i
@@ -25,28 +27,29 @@ const EXT_TO_MIME: Record<string, string> = {
   tiff: 'image/tiff',
 }
 
-export function PhotoUploadField({ label, hint, files, onChange, inputLabel }: PhotoUploadFieldProps) {
+export function PhotoUploadField({ label, hint, files, onChange, inputLabel, folder }: PhotoUploadFieldProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
   function addFiles(incoming: FileList | File[]) {
     const images = Array.from(incoming).filter(isImageFile)
     if (!images.length) return
+    if (folder) images.forEach((file) => startUpload(file, folder).catch(() => {}))
     onChange([...files, ...images])
   }
 
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-3">{label}</label>
+      <label className="mb-1 block text-xs font-semibold text-gray-700">{label}</label>
       <div
         onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); if (e.dataTransfer.files) addFiles(e.dataTransfer.files) }}
         className={`
-          relative w-full rounded-xl border-2 border-dashed cursor-pointer transition-colors
+          group relative w-full cursor-pointer rounded-lg border border-dashed transition-all duration-300
           ${dragging
-            ? 'border-[#003365] bg-blue-50'
-            : 'border-gray-300 hover:border-[#003365] hover:bg-gray-50'
+            ? 'border-accent bg-accent/[0.06] ring-4 ring-accent/15'
+            : 'border-primary/15 bg-gradient-to-b from-slate-50/80 to-white hover:border-accent/60 hover:bg-accent/[0.03]'
           }
         `}
       >
@@ -67,19 +70,30 @@ export function PhotoUploadField({ label, hint, files, onChange, inputLabel }: P
           className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
           aria-label={inputLabel || 'Upload photos'}
         />
-        <div className="pointer-events-none flex flex-col items-center justify-center py-10 px-4 text-center">
-          <Upload className={`w-8 h-8 mb-2 ${dragging ? 'text-[#003365]' : 'text-gray-400'}`} />
-          <p className="text-sm text-gray-600">
-            Drag and drop photos here, or <span className="text-[#003365] font-medium">browse</span>
+        <div className="pointer-events-none flex items-center gap-3 px-3 py-2">
+          <span
+            className={`grid h-8 w-8 flex-shrink-0 place-items-center rounded-lg shadow-sm ring-1 transition-all duration-300 ${
+              dragging
+                ? 'scale-110 bg-accent text-white ring-accent shadow-glow-accent'
+                : 'bg-white text-primary/60 ring-primary/10 group-hover:-translate-y-0.5 group-hover:text-accent'
+            }`}
+          >
+            <Upload className="h-4 w-4" />
+          </span>
+          <p className="min-w-0 flex-1 text-left text-xs text-gray-600 sm:text-sm">
+            Drag and drop photos here, or <span className="font-semibold text-accent-dark underline decoration-accent/40 underline-offset-2">browse</span>
           </p>
-          <p className="text-xs text-gray-400 mt-1">{hint || 'JPG, PNG, or HEIC'}</p>
+          <p className="hidden max-w-[45%] truncate text-[11px] text-gray-400 sm:block" title={hint}>{hint || 'JPG, PNG, or HEIC'}</p>
         </div>
       </div>
 
       {files.length > 0 && (
-        <div className="flex flex-wrap gap-3 mt-3">
+        <div className="mt-2 flex flex-wrap gap-2">
           {files.map((file, i) => (
-            <div key={`${file.name}-${file.size}-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
+            <div
+              key={`${file.name}-${file.size}-${i}`}
+              className="animate-in zoom-in-95 relative h-12 w-12 overflow-hidden rounded-lg shadow-sm ring-1 ring-primary/10"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={URL.createObjectURL(file)}
@@ -89,7 +103,7 @@ export function PhotoUploadField({ label, hint, files, onChange, inputLabel }: P
               <button
                 type="button"
                 onClick={() => onChange(files.filter((_, idx) => idx !== i))}
-                className="absolute top-0.5 right-0.5 z-20 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center"
+                className="absolute top-0.5 right-0.5 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-primary-dark/70 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
                 aria-label={`Remove photo ${i + 1}`}
               >
                 <X className="w-3 h-3" />
@@ -117,14 +131,33 @@ function imageContentType(file: File): string {
   return EXT_TO_MIME[ext] || 'image/jpeg'
 }
 
-async function uploadViaPresign(file: File, folder: string): Promise<string | null> {
+const MAX_ATTEMPTS = 3
+const MAX_PARALLEL_UPLOADS = 3
+
+const uploads = new WeakMap<File, Promise<string>>()
+const waiting: (() => void)[] = []
+let activeUploads = 0
+
+async function withUploadSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (activeUploads < MAX_PARALLEL_UPLOADS) activeUploads++
+  else await new Promise<void>((resolve) => waiting.push(resolve))
+  try {
+    return await fn()
+  } finally {
+    const next = waiting.shift()
+    if (next) next()
+    else activeUploads--
+  }
+}
+
+async function uploadViaPresign(file: File, folder: string): Promise<string> {
   const contentType = imageContentType(file)
   const res = await fetch('/api/upload/presign/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ fileName: file.name, fileType: contentType, folder }),
   })
-  if (!res.ok) return null
+  if (!res.ok) throw new Error(`Presign failed (${res.status})`)
   const { presignedUrl, publicUrl } = await res.json()
 
   const put = await fetch(presignedUrl, {
@@ -132,7 +165,40 @@ async function uploadViaPresign(file: File, folder: string): Promise<string | nu
     headers: { 'Content-Type': contentType },
     body: file,
   })
-  return put.ok ? publicUrl : null
+  if (!put.ok) throw new Error(`S3 upload failed (${put.status})`)
+  return publicUrl
+}
+
+/**
+ * Cellular connections drop mid-upload often enough that a single attempt
+ * surfaces as "Failed to fetch" / "Load failed", so each photo gets retries.
+ */
+async function uploadWithRetry(file: File, folder: string): Promise<string> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    try {
+      return await withUploadSlot(() => uploadViaPresign(file, folder))
+    } catch (err) {
+      lastError = err
+      if (attempt < MAX_ATTEMPTS - 1) await new Promise((r) => setTimeout(r, 1500 * 2 ** attempt))
+    }
+  }
+  throw lastError
+}
+
+/**
+ * Starts (or reuses) the upload for one file. Successful uploads are cached
+ * per File so resubmitting the form never uploads the same photo twice.
+ */
+export function startUpload(file: File, folder: string): Promise<string> {
+  const existing = uploads.get(file)
+  if (existing) return existing
+  const pending = uploadWithRetry(file, folder)
+  uploads.set(file, pending)
+  pending.catch(() => {
+    if (uploads.get(file) === pending) uploads.delete(file)
+  })
+  return pending
 }
 
 /**
@@ -143,11 +209,10 @@ async function uploadViaPresign(file: File, folder: string): Promise<string | nu
  */
 export async function uploadPhotos(files: File[], folder: string): Promise<string[]> {
   if (!files.length) return []
-  const urls: string[] = []
-  for (const file of files) {
-    const url = await uploadViaPresign(file, folder)
-    if (!url) return []
-    urls.push(url)
+  try {
+    return await Promise.all(files.map((file) => startUpload(file, folder)))
+  } catch (err) {
+    console.error('[uploadPhotos]', err)
+    return []
   }
-  return urls
 }

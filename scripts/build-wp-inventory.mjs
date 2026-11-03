@@ -15,9 +15,10 @@
 
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const WP = 'https://crazyseal.com'
-const OUT = new URL('../src/lib/generated/wp-url-inventory.json', import.meta.url).pathname
+const OUT = fileURLToPath(new URL('../src/lib/generated/wp-url-inventory.json', import.meta.url))
 
 function decodeEntities(s) {
   return s

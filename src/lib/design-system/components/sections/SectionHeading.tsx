@@ -3,6 +3,7 @@ import React from 'react'
 import { twMerge } from 'tailwind-merge'
 
 interface SectionHeadingProps {
+  /** Deprecated: sections lead with the heading; kept so existing callers compile. */
   eyebrow?: string
   heading: string
   subheading?: string
@@ -13,7 +14,6 @@ interface SectionHeadingProps {
 }
 
 export function SectionHeading({
-  eyebrow,
   heading,
   subheading,
   level = 2,
@@ -32,19 +32,9 @@ export function SectionHeading({
         className
       )}
     >
-      {eyebrow && (
-        <p
-          className={twMerge(
-            'text-xs font-bold uppercase tracking-[0.2em] mb-3',
-            isLight ? 'text-accent' : 'text-accent'
-          )}
-        >
-          {eyebrow}
-        </p>
-      )}
       <Tag
         className={twMerge(
-          'font-bold tracking-tight mb-3',
+          'font-extrabold tracking-tight mb-3 text-balance',
           level <= 2 ? 'text-3xl md:text-4xl lg:text-5xl' : 'text-2xl md:text-3xl',
           isLight ? 'text-primary' : 'text-white'
         )}
@@ -54,9 +44,9 @@ export function SectionHeading({
       {subheading && (
         <p
           className={twMerge(
-            'text-base md:text-lg leading-relaxed mt-4',
+            'text-base md:text-lg leading-relaxed mt-4 text-pretty',
             align === 'center' && 'max-w-2xl mx-auto',
-            isLight ? 'text-gray-500' : 'text-white/60'
+            isLight ? 'text-gray-500' : 'text-white/70'
           )}
         >
           {subheading}

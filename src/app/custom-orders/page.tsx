@@ -1,8 +1,16 @@
 import type { Metadata } from 'next'
-import { ArrowRight, Phone } from 'lucide-react'
-import { Container, LinkButton } from '@/lib/design-system'
-
-const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
+import { ArrowRight, ArrowUpRight, Calculator, Headset } from 'lucide-react'
+import { Container } from '@/lib/design-system'
+import {
+  ContactCta,
+  HERO_H1,
+  HeroChips,
+  HeroShell,
+  LIGHT_CARD,
+  MEDIA,
+  SECTION_WHITE,
+  fadeDelay,
+} from '@/components/system-pages/blocks'
 
 export const metadata: Metadata = {
   title: 'Custom Orders',
@@ -17,6 +25,7 @@ const OPTIONS = [
     href: '/contact',
     image: `${MEDIA}/2022/01/Crazy-Seal-Specialist-Image-768x768.png`,
     cta: 'Contact Us',
+    tag: 'Option 1',
   },
   {
     title: 'Build My Kit Online',
@@ -24,6 +33,7 @@ const OPTIONS = [
     href: '/kit-builder',
     image: `${MEDIA}/2022/01/Crazy-Seal-Instant-Quote-Image-768x768.png`,
     cta: 'Build My Kit',
+    tag: 'Option 2',
   },
 ]
 
@@ -32,81 +42,77 @@ export default function CustomOrdersPage() {
     <>
       {/* ─── HERO ─── */}
       <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-              Custom Orders
-            </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-              Need Assistance With a Custom Kit?
-            </h1>
-            <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
-              Every roof is different. Whether your project is large,
-              complicated, or just plain unusual, we&apos;ll help you put
-              together exactly what you need.
-            </p>
-          </div>
-        </div>
+        <HeroShell innerClassName="text-center">
+          <h1 className={HERO_H1} style={fadeDelay(80)}>
+            Need Assistance With a <span className="text-shimmer-highlight">Custom Kit?</span>
+          </h1>
+          <p
+            className="animate-fade-up text-base sm:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed"
+            style={fadeDelay(160)}
+          >
+            Every roof is different. Whether your project is large, complicated, or just plain unusual,
+            we&apos;ll help you put together exactly what you need.
+          </p>
+          <HeroChips
+            delay={260}
+            className="mt-7 justify-center"
+            items={[
+              { icon: Headset, label: 'Work with a specialist' },
+              { icon: Calculator, label: 'Or get instant pricing online' },
+            ]}
+          />
+        </HeroShell>
       </Container>
 
       {/* ─── TWO PATHS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className={SECTION_WHITE}>
+          <div className="relative grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 max-w-4xl mx-auto">
             {OPTIONS.map((option) => (
               <a
                 key={option.title}
                 href={option.href}
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className={`group relative flex flex-col overflow-hidden ${LIGHT_CARD}`}
               >
-                <div className="aspect-square overflow-hidden bg-gray-50">
+                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-accent/10">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={option.image}
                     alt={option.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="h-full w-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                   />
+                  <span className="absolute left-4 top-4 rounded-full bg-highlight px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary shadow-sm">
+                    {option.tag}
+                  </span>
                 </div>
-                <div className="p-6 text-center">
-                  <h2 className="text-xl font-bold text-primary mb-2">{option.title}</h2>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-4">{option.desc}</p>
-                  <span className="inline-flex items-center gap-1 font-semibold text-accent group-hover:gap-2 transition-all">
-                    {option.cta} <ArrowRight className="w-4 h-4" />
+                <div className="flex flex-1 items-end justify-between gap-4 p-5 md:p-6">
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-extrabold text-primary mb-1.5">{option.title}</h2>
+                    <p className="text-sm text-gray-500 leading-relaxed mb-4">{option.desc}</p>
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-accent-dark">
+                      {option.cta}
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                  <span className="hidden sm:grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary/[0.06] text-primary transition-all duration-300 group-hover:bg-accent group-hover:text-white group-hover:rotate-45">
+                    <ArrowUpRight className="h-5 w-5" />
                   </span>
                 </div>
               </a>
             ))}
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 top-[38%] hidden h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-primary text-sm font-extrabold uppercase text-white shadow-glow-primary ring-4 ring-white md:grid"
+            >
+              or
+            </span>
           </div>
         </div>
       </Container>
 
       {/* ─── CTA ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden py-10 sm:py-16 px-5 sm:px-8 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
-            Let&apos;s Get In Touch
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            Have Any Questions? Our Crazy Seal Specialists Can Help!
-          </h2>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <LinkButton href="/contact" variant="accent" size="lg">
-              Contact Us
-            </LinkButton>
-            <LinkButton href="/kit-builder" variant="white" size="lg">
-              Build My Kit
-            </LinkButton>
-            <a
-              href="tel:8009630131"
-              className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors"
-            >
-              <Phone className="w-5 h-5" />
-              (800) 963-0131
-            </a>
-          </div>
-        </div>
+        <ContactCta variant="dark" />
       </Container>
     </>
   )

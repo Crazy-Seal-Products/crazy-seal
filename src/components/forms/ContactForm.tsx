@@ -3,13 +3,22 @@
 import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2 } from 'lucide-react'
-import { Input, Textarea, Select, Button } from '@/lib/design-system'
+import { Send } from 'lucide-react'
+import { Input, Textarea, Select } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
 import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import {
+  FieldLabel,
+  FormError,
+  FormSection,
+  SubmitButton,
+  checkRowClass,
+  checkboxClass,
+  fieldClass,
+} from '@/components/forms/form-ui'
 
 interface ContactFormProps {
   sourcePage?: string
@@ -138,161 +147,114 @@ export function ContactForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden">
           <label htmlFor="website">Website</label>
           <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
         </div>
 
-        {/* Warm intro */}
-        <p className="text-gray-600 text-[15px] leading-relaxed">
-          Tell us a little about your project and a Crazy Seal specialist will
-          reach out to build the perfect kit with you — no pressure, no
-          obligation.
-        </p>
+        <FormSection step={1} title="Your details">
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="first_name" size="md" required placeholder="First name *" aria-label="First name" autoComplete="given-name" className={fieldClass} />
+            <Input name="last_name" size="md" required placeholder="Last name *" aria-label="Last name" autoComplete="family-name" className={fieldClass} />
+          </div>
 
-        {/* Name */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Name <span className="text-red-500">*</span>
+          {/* Phone & Email */}
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="phone" size="md" type="tel" required placeholder="Phone *" aria-label="Phone" autoComplete="tel" className={fieldClass} />
+            <Input name="email" size="md" type="email" required placeholder="Email *" aria-label="Email" autoComplete="email" className={fieldClass} />
+          </div>
+
+          {/* Texting consent */}
+          <label className={checkRowClass}>
+            <input type="checkbox" name="texting_consent" className={checkboxClass} />
+            <span className="text-gray-600">
+              It&apos;s OK to text me about my project — often the fastest way to
+              get kit questions answered. (Message rates may apply. Opt out
+              anytime.)
+            </span>
           </label>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Input name="first_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">First</span>
-            </div>
-            <div>
-              <Input name="last_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">Last</span>
-            </div>
-          </div>
-        </div>
+        </FormSection>
 
-        {/* Phone & Email */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Phone <span className="text-red-500">*</span>
-            </label>
-            <Input name="phone" size="lg" type="tel" placeholder="(555) 123-4567" required />
+        <FormSection step={2} title="Your project">
+          {/* Project type + conditional size */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <FieldLabel required>Project type</FieldLabel>
+              <Select
+                name="project_type"
+                size="md"
+                required
+                value={projectType}
+                onChange={(e) => setProjectType(e.target.value)}
+                placeholder="Please Select"
+                options={PROJECT_TYPES.map((t) => ({ value: t, label: t }))}
+                className={fieldClass}
+              />
+            </div>
+            {projectType === 'RV Roof' && (
+              <div className="animate-fade-up">
+                <FieldLabel required>RV length</FieldLabel>
+                <Select
+                  name="rv_length"
+                  size="md"
+                  required
+                  placeholder="Please Select"
+                  options={RV_LENGTHS.map(l => ({ value: l, label: `${l} FT` }))}
+                  className={fieldClass}
+                />
+              </div>
+            )}
+            {projectType !== '' && projectType !== 'RV Roof' && (
+              <div className="animate-fade-up">
+                <FieldLabel required>Approx. square footage</FieldLabel>
+                <Select
+                  name="square_footage"
+                  size="md"
+                  required
+                  placeholder="Please Select"
+                  options={SQ_FT_RANGES.map(r => ({ value: r, label: r }))}
+                  className={fieldClass}
+                />
+              </div>
+            )}
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <Input name="email" size="lg" type="email" placeholder="john@example.com" required />
-          </div>
-        </div>
 
-        {/* Project type + conditional size */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Photo Upload */}
+          <PhotoUploadField
+            label="Photos (optional)"
+            files={photoFiles}
+            onChange={setPhotoFiles}
+          />
+
+          {/* Message */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              What best describes your project type? <span className="text-red-500">*</span>
-            </label>
-            <Select
-              name="project_type"
-              size="lg"
-              required
-              value={projectType}
-              onChange={(e) => setProjectType(e.target.value)}
-              placeholder="Please Select"
-              options={PROJECT_TYPES.map((t) => ({ value: t, label: t }))}
+            <FieldLabel>Notes</FieldLabel>
+            <Textarea
+              name="message"
+              defaultValue={initialMessage}
+              placeholder="Tell us about your roof or ask a question"
+              rows={2}
+              className={fieldClass}
             />
           </div>
-          {projectType === 'RV Roof' && (
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                How long is your RV? (FT) <span className="text-red-500">*</span>
-              </label>
-              <Select
-                name="rv_length"
-                size="lg"
-                required
-                placeholder="Please Select"
-                options={RV_LENGTHS.map(l => ({ value: l, label: `${l} FT` }))}
-              />
-            </div>
-          )}
-          {projectType !== '' && projectType !== 'RV Roof' && (
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                What is the approximate square footage of your application? <span className="text-red-500">*</span>
-              </label>
-              <Select
-                name="square_footage"
-                size="lg"
-                required
-                placeholder="Please Select"
-                options={SQ_FT_RANGES.map(r => ({ value: r, label: r }))}
-              />
-            </div>
-          )}
-        </div>
+        </FormSection>
 
-        {/* Texting consent */}
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            name="texting_consent"
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent cursor-pointer"
-          />
-          <span className="text-sm text-gray-600 leading-relaxed">
-            It&apos;s OK to text me about my project — often the fastest way to
-            get kit questions answered. (Message rates may apply. Opt out
-            anytime.)
-          </span>
-        </label>
-
-        {/* Photo Upload */}
-        <PhotoUploadField
-          label="If you would like to share photos, you can upload them here."
-          files={photoFiles}
-          onChange={setPhotoFiles}
-        />
-
-        {/* Message */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Please add a quick note about your application so we can best assist you.
-          </label>
-          <Textarea
-            name="message"
-            defaultValue={initialMessage}
-            placeholder="Tell us about your roof, any questions you have, or just say hi!"
-            rows={4}
-            className="text-base px-5 py-4"
-          />
-        </div>
-
-        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+        <div className="flex justify-center empty:hidden">
           <FormTurnstile
             id="turnstile-contact"
             turnstileRef={turnstileRef}
             onToken={setTurnstileToken}
+            appearance="interaction-only"
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-            {error}
-          </p>
-        )}
+        {error && <FormError>{error}</FormError>}
 
-        <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-            {submitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2" />
-                Talk to a Specialist
-              </>
-            )}
-          </Button>
+        <div className="flex justify-center">
+          <SubmitButton submitting={submitting} icon={<Send className="h-4 w-4" />}>
+            Talk to a Specialist
+          </SubmitButton>
         </div>
       </div>
     </form>

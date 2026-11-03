@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import {
   ArrowRight,
-  CheckCircle2,
+  Check,
   ChevronRight,
   CreditCard,
   Download,
@@ -10,24 +10,23 @@ import {
   PackageCheck,
   PaintRoller,
   Phone,
-  Quote,
+  Ruler,
   ShieldCheck,
+  Sparkles,
   Truck,
   Wrench,
 } from 'lucide-react'
-import { Container } from '@/lib/design-system'
+import { Container, SectionHeading, TestimonialCard, LinkButton } from '@/lib/design-system'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
 import { LeadCaptureSection } from '@/components/LeadCaptureSection'
 import { FamilyApplicationsBand } from '@/components/applications/FamilyApplicationsBand'
+import {} from '@/components/applications/applicationIcons'
 import { ProductCard } from '@/components/store/ProductCard'
 import { Stars } from '@/components/store/Stars'
-import {
-  ProjectCardsGrid,
-  BrowseProjectsLink,
-  pickStrongProjects,
-} from '@/components/RealProjectsSection'
+import { RealProjectsSection, pickStrongProjects } from '@/components/RealProjectsSection'
+import { GlowOrb } from '@/components/motion'
 import { FAMILIES, type ApplicationFamily } from '@/lib/applications/config'
 import { getStoreProducts, type StoreProduct } from '@/lib/store/products'
 import { getPublishedProjects } from '@/lib/projects'
@@ -66,20 +65,26 @@ export interface HubPageConfig {
 const INSTALL_STEPS = [
   {
     icon: Droplets,
-    title: '1. Clean',
+    title: 'Clean',
     desc: 'Wash the roof with Crazy Clean so the membrane bonds to the roof — not the dirt.',
   },
   {
     icon: Wrench,
-    title: '2. Seal',
+    title: 'Seal',
     desc: 'Caulk and patch every seam, screw, and penetration with Crazy Caulk and Crazy Patch.',
   },
   {
     icon: PaintRoller,
-    title: '3. Coat',
+    title: 'Coat',
     desc: 'Roll on the seamless Crazy Seal membrane and never worry about that roof again.',
   },
 ]
+
+// CSS entrance (runs before hydration, so the hero never flashes empty)
+const enter = (delayMs: number) => ({
+  className: 'animate-fade-up',
+  style: { animationDelay: `${delayMs}ms` },
+})
 
 /**
  * PDP-style application hub page: offer panel up top (video, stars, pitch,
@@ -116,359 +121,382 @@ export async function HubPage({ config }: { config: HubPageConfig }) {
     { icon: PackageCheck, strong: 'In-stock & ready to ship', rest: 'from our USA facility' },
     config.stagedAssurance
       ? { icon: Layers, strong: 'Install in stages', rest: 'as your budget allows' }
-      : { icon: CreditCard, strong: 'Split into 4 installments', rest: 'on $100\u2013$1,000 orders' },
+      : { icon: CreditCard, strong: 'Split into 4 installments', rest: 'on $100–$1,000 orders' },
     { icon: Truck, strong: 'Free shipping', rest: 'on orders over $500' },
     { icon: ShieldCheck, strong: '50 year warranty', rest: 'when registered' },
   ]
 
   return (
     <>
-      <Container size="xl" className="py-8 sm:py-10">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6 flex-wrap">
-          <Link href="/applications" className="hover:text-[#003365] font-medium">
-            Applications
-          </Link>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-gray-900 font-medium">{family.hubLabel}</span>
-        </nav>
+      {/* ─── HERO / OFFER PANEL ─── */}
+      <Container size="xl">
+        <div className="relative section-bleed bg-primary overflow-hidden">
+          <GlowOrb className="-left-32 top-10 h-96 w-96" color="rgb(26 123 196 / 0.45)" />
+          <GlowOrb className="-right-24 -bottom-24 h-96 w-96" color="rgb(91 164 17 / 0.25)" />
+          <div
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
 
-        {/* ─── Offer panel (PDP-style two column) ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          {/* Left: video + before/after evidence */}
-          <div>
-            {config.video.type === 'vimeo' ? (
-              <ProVimeoEmbed
-                videoId={config.video.id}
-                thumbnail={config.video.thumbnail}
-                title={`${config.h1} overview video`}
-              />
-            ) : (
-              <ProYouTubeEmbed
-                videoId={config.video.id}
-                thumbnail={config.video.thumbnail}
-                title={`${config.h1} overview video`}
-              />
-            )}
-            <p className="text-center text-gray-500 text-sm font-medium mt-2 mb-4">
-              {config.video.caption}
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {family.transformations.slice(0, 2).map((t) => (
-                <div key={t.label}>
-                  <BeforeAfterSlider
-                    beforeSrc={t.before}
-                    afterSrc={t.after}
-                    aspectRatio={t.aspect ?? '16/9'}
-                  />
-                  <p className="text-center text-xs font-semibold text-gray-500 mt-1.5">
-                    {t.label} — slide to compare
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: the offer */}
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5BA411] mb-2">
-              The Crazy Seal Roofing System
-            </p>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#003365] tracking-tight mb-3">
-              {config.h1}
-            </h1>
-            <div className="flex items-center gap-2 mb-3">
-              <Stars />
-              <span className="text-sm font-medium text-gray-600">{config.installsLine}</span>
-            </div>
-            <p className="text-lg font-semibold text-gray-900 mb-4">{config.tagline}</p>
-            {config.pitch.map((paragraph) => (
-              <p key={paragraph.slice(0, 40)} className="text-gray-600 leading-relaxed mb-3">
-                {paragraph}
-              </p>
-            ))}
-
-            {/* Price */}
-            <div className="mt-5 rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4">
-              <p className="text-xl font-bold text-[#003365]">
-                Sized &amp; priced to your exact roof
-              </p>
-              <p className="text-sm text-gray-500 mt-1">
-                Kits scale from a single tube of caulk to a complete system for
-                thousands of square feet. {config.priceNote}
-              </p>
-            </div>
-
-            {/* CTAs */}
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Link
-                href={config.primaryCta.href}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#5BA411] px-6 py-3.5 text-base font-bold text-white hover:bg-[#4c8a0e] transition-colors"
-              >
-                {config.primaryCta.label}
-                <ArrowRight className="w-4 h-4" />
+          <div className="relative z-10 px-5 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 lg:px-12 lg:py-14">
+            {/* Breadcrumb */}
+            <nav
+              {...enter(0)}
+              aria-label="Breadcrumb"
+              className="animate-fade-up mb-6 flex flex-wrap items-center justify-center lg:justify-start gap-1.5 text-sm text-white/60"
+            >
+              <Link href="/applications" className="hover:text-white font-medium transition-colors">
+                Applications
               </Link>
-              <Link
-                href={config.secondaryCta.href}
-                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-[#003365] px-6 py-3.5 text-base font-bold text-[#003365] hover:bg-[#003365]/5 transition-colors"
-              >
-                {config.secondaryCta.label}
-              </Link>
-            </div>
+              <ChevronRight className="w-4 h-4 text-white/35" />
+              <span className="text-white font-semibold">{family.hubLabel}</span>
+            </nav>
 
-            {/* Assurances */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {assurances.map((a) => (
-                <div
-                  key={a.strong}
-                  className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3"
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8 items-start">
+              {/* Headline */}
+              <div className="text-center lg:text-left lg:col-start-1 lg:row-start-1">
+                <h1
+                  {...enter(120)}
+                  className="animate-fade-up text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-white tracking-tight leading-[1.06] mb-4 text-balance"
                 >
-                  <a.icon className="w-5 h-5 text-[#5BA411] flex-shrink-0" />
-                  <p className="text-xs text-gray-600">
-                    <span className="font-semibold text-gray-900">{a.strong}</span> {a.rest}
-                  </p>
+                  {config.h1}
+                </h1>
+                <div
+                  {...enter(180)}
+                  className="animate-fade-up flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-4"
+                >
+                  <Stars />
+                  <span className="text-sm font-medium text-white/70">{config.installsLine}</span>
                 </div>
-              ))}
-            </div>
+                <p
+                  {...enter(240)}
+                  className="animate-fade-up text-xl sm:text-2xl font-bold leading-snug text-balance"
+                >
+                  <span className="text-shimmer-highlight">{config.tagline}</span>
+                </p>
+              </div>
 
-            {/* Help */}
-            <div className="mt-5 flex items-center gap-3 rounded-xl bg-blue-50 border border-blue-100 px-4 py-3.5">
-              <Phone className="w-5 h-5 text-[#003365] flex-shrink-0" />
-              <p className="text-sm text-gray-700">
-                Questions about sizing or fit?{' '}
-                <a href="tel:8009630131" className="font-semibold text-[#003365] hover:underline">
-                  Call (800) 963-0131
-                </a>{' '}
-                — we&apos;ll make sure you get exactly what your roof needs.
-              </p>
+              {/* Media: video + before/after evidence */}
+              <div {...enter(200)} className="animate-fade-up relative lg:col-start-2 lg:row-start-1 lg:row-span-2">
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-3 rounded-[1.75rem] bg-gradient-to-br from-highlight/30 via-secondary/20 to-accent/30 blur-2xl"
+                />
+                <div className="relative rounded-2xl shadow-2xl ring-1 ring-white/15">
+                  {config.video.type === 'vimeo' ? (
+                    <ProVimeoEmbed halo={false}
+                      videoId={config.video.id}
+                      thumbnail={config.video.thumbnail}
+                      title={`${config.h1} overview video`}
+                    />
+                  ) : (
+                    <ProYouTubeEmbed halo={false}
+                      videoId={config.video.id}
+                      thumbnail={config.video.thumbnail}
+                      title={`${config.h1} overview video`}
+                    />
+                  )}
+                </div>
+                <p className="relative text-center text-white/70 text-sm font-medium mt-3 mb-5">
+                  {config.video.caption}
+                </p>
+                <div className="relative grid grid-cols-2 gap-3">
+                  {family.transformations.slice(0, 2).map((t) => (
+                    <figure
+                      key={t.label}
+                      className="rounded-2xl bg-white/[0.06] p-1.5 ring-1 ring-white/10 backdrop-blur-sm"
+                    >
+                      <BeforeAfterSlider
+                        beforeSrc={t.before}
+                        afterSrc={t.after}
+                        aspectRatio={t.aspect ?? '16/9'}
+                      />
+                      <figcaption className="text-center text-[11px] sm:text-xs font-semibold text-white/65 mt-1.5 mb-0.5">
+                        {t.label} — slide to compare
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+
+              {/* The offer */}
+              <div className="lg:col-start-1 lg:row-start-2">
+                {config.pitch.map((paragraph) => (
+                  <p
+                    key={paragraph.slice(0, 40)}
+                    className="text-white/75 text-base sm:text-lg leading-relaxed mb-3 text-center lg:text-left"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+
+                {/* Price */}
+                <div className="mt-5 flex items-start gap-4 rounded-2xl bg-white/[0.07] px-5 py-4 ring-1 ring-white/15 backdrop-blur-sm">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-highlight to-highlight-dark text-primary shadow-glow-highlight">
+                    <Ruler className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-lg sm:text-xl font-extrabold text-white">
+                      Sized &amp; priced to your exact roof
+                    </p>
+                    <p className="text-sm text-white/65 mt-1 leading-relaxed">
+                      From a single tube of caulk to a complete system for thousands of square
+                      feet. {config.priceNote}
+                    </p>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <LinkButton href={config.primaryCta.href} variant="accent" size="lg" className="w-full py-3.5">
+                    {config.primaryCta.label}
+                    <ArrowRight className="w-4 h-4" />
+                  </LinkButton>
+                  <LinkButton href={config.secondaryCta.href} variant="outline-white" size="lg" className="w-full py-3.5">
+                    {config.secondaryCta.label}
+                  </LinkButton>
+                </div>
+
+                {/* Assurances */}
+                <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3">
+                  {assurances.map((a) => (
+                    <li key={a.strong} className="flex items-center gap-3 text-sm text-white/65">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/20 ring-1 ring-accent/40">
+                        <a.icon className="h-4 w-4 text-accent-light" />
+                      </span>
+                      <span>
+                        <span className="font-semibold text-white">{a.strong}</span> {a.rest}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Help */}
+                <a
+                  href="tel:8009630131"
+                  className="group mt-6 flex items-center gap-3 rounded-2xl bg-white/[0.05] px-4 py-3.5 ring-1 ring-white/10 transition-all duration-300 hover:bg-white/[0.09] hover:ring-white/25"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 ring-1 ring-white/20">
+                    <Phone className="h-4 w-4 text-highlight" />
+                  </span>
+                  <span className="text-sm text-white/70">
+                    Questions about sizing or fit?{' '}
+                    <span className="font-bold text-white group-hover:text-highlight transition-colors">
+                      Call (800) 963-0131
+                    </span>{' '}
+                    — we&apos;ll make sure you get exactly what your roof needs.
+                  </span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </Container>
 
-        {/* ─── Why it works: transcript details + 21½ Reasons video ─── */}
-        {whyPoints.length > 0 && (
-          <section className="mt-16">
-            <div className="relative rounded-3xl bg-primary overflow-hidden px-6 py-10 sm:p-10 lg:p-12">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(18,95,151,0.5),transparent_55%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_90%,rgba(91,164,17,0.18),transparent_45%)]" />
-              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-2">
-                    The Details That Matter
-                  </p>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-6">
-                    Why the System Works
-                  </h2>
-                  <ul className="space-y-4">
-                    {whyPoints.map((point) => (
-                      <li key={point.lead} className="flex gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-[#5BA411] mt-0.5 flex-shrink-0" />
-                        <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                          <span className="font-bold text-[#F9EA1C]">{point.lead}</span>{' '}
-                          {point.text}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="order-first lg:order-none">
-                  <ProYouTubeEmbed
+      {/* ─── WHY IT WORKS: transcript details + 21½ Reasons video ─── */}
+      {whyPoints.length > 0 && (
+        <Container size="xl" className="sm:pt-4 md:pt-8">
+          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+              <div>
+                <SectionHeading
+                  eyebrow="The Details That Matter"
+                  heading="Why the System Works"
+                  align="left"
+                  className="mb-6"
+                />
+                <ul className="space-y-3">
+                  {whyPoints.map((point) => (
+                    <li
+                      key={point.lead}
+                      className="group flex gap-4 rounded-2xl bg-gradient-to-b from-slate-50 to-white p-4 ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
+                        <Check className="h-5 w-5" strokeWidth={3} />
+                      </span>
+                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                        <span className="font-extrabold text-primary">{point.lead}</span>{' '}
+                        {point.text}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="relative order-first lg:order-none">
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-secondary/15 via-transparent to-accent/20 blur-xl"
+                />
+                <div className="relative rounded-2xl shadow-xl ring-1 ring-primary/10">
+                  <ProYouTubeEmbed halo={false}
                     videoId={reasonsVideo.videoId}
                     thumbnail={reasonsVideo.thumbnail}
                     title={reasonsVideo.title}
                   />
-                  <p className="text-center text-white/50 text-sm font-medium mt-3">
-                    {reasonsVideo.caption}
-                  </p>
                 </div>
+                <p className="relative text-center text-gray-500 text-sm font-semibold mt-3">
+                  {reasonsVideo.caption}
+                </p>
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </Container>
+      )}
 
-        {/* ─── Kits ─── */}
-        {kits.length > 0 && (
-          <section className="mt-16">
-            <div className="mb-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5BA411] mb-1">
-                Ships Direct To Your Door
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-                {config.kitsHeading}
-              </h2>
-              <p className="mt-1.5 text-gray-500 max-w-2xl">{config.kitsNote}</p>
-            </div>
+      {/* ─── KITS ─── */}
+      {kits.length > 0 && (
+        <Container size="xl" className="sm:pt-4 md:pt-8">
+          <div className="section-bleed bg-primary overflow-hidden px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+            <SectionHeading
+              eyebrow="Ships Direct To Your Door"
+              heading={config.kitsHeading}
+              subheading={config.kitsNote}
+              variant="dark"
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {kits.map((kit) => (
                 <ProductCard key={kit.handle} product={kit} />
               ))}
             </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/kit-builder"
-                className="inline-flex items-center gap-2 rounded-full bg-[#003365] px-6 py-3 text-sm font-semibold text-white hover:bg-[#00274d] transition-colors"
-              >
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+              <LinkButton href="/kit-builder" variant="white" size="md">
                 Build a Custom Kit in 60 Seconds
                 <ArrowRight className="w-4 h-4" />
-              </Link>
+              </LinkButton>
               <a
                 href="tel:8009630131"
-                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#003365] transition-colors"
+                className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 text-sm font-semibold text-white/80 ring-1 ring-white/10 hover:bg-white/10 hover:text-white transition-colors"
               >
-                <Phone className="w-4 h-4" />
+                <Phone className="w-4 h-4 text-accent-light" />
                 Or call (800) 963-0131 — M-F 9AM-6PM EST
               </a>
             </div>
-          </section>
-        )}
+          </div>
+        </Container>
+      )}
 
-        {/* ─── Real customer projects ─── */}
-        {projects.length > 0 && (
-          <section className="mt-16">
-            <div className="mb-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5BA411] mb-1">
-                Real Roofs. Real Results.
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-                {config.projectsHeading}
-              </h2>
-              <p className="mt-1.5 text-gray-500 max-w-2xl">
-                These aren&apos;t stock photos — they&apos;re documented customer
-                installations, in their own words and pictures.
-              </p>
-            </div>
-            <ProjectCardsGrid projects={projects} />
-            <div className="mt-6 text-center">
-              <BrowseProjectsLink category={projectsCategory} />
-            </div>
-          </section>
-        )}
+      {/* ─── REAL CUSTOMER PROJECTS ─── */}
+      <RealProjectsSection
+        projects={projects}
+        browseCategory={projectsCategory}
+        heading={config.projectsHeading}
+      />
 
-        {/* ─── Reviews ─── */}
-        <section className="mt-16">
-          <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-                Straight From the Roof
-              </h2>
-              <p className="mt-1.5 text-gray-500">
-                Real reviews from customers who installed it themselves.
-              </p>
-            </div>
+      {/* ─── REVIEWS ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 md:mb-10">
+            <SectionHeading
+              eyebrow="Crazy Reviews"
+              heading="Straight From the Roof"
+              subheading="Real reviews from customers who installed it themselves."
+              align="left"
+              className="mb-0 md:mb-0"
+            />
             <Link
               href="/reviews"
-              className="flex items-center gap-1 text-sm font-semibold text-[#5BA411] hover:gap-2 transition-all"
+              className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-accent-dark hover:text-accent transition-colors"
             >
               See More Photos &amp; Reviews
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {testimonials.map((t) => (
-              <div
+              <TestimonialCard
                 key={t.name}
-                className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5"
-              >
-                <Quote className="w-5 h-5 text-[#5BA411] mb-3" />
-                <p className="text-sm text-gray-600 leading-relaxed flex-1 mb-4">
-                  &ldquo;{t.text}&rdquo;
-                </p>
-                <div className="flex items-center gap-3">
-                  {t.photo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={t.photo}
-                      alt={t.name}
-                      className="w-9 h-9 rounded-full object-cover"
-                      loading="lazy"
-                    />
-                  )}
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">{t.name}</p>
-                    <Stars className="w-3 h-3" />
-                  </div>
-                </div>
-              </div>
+                name={t.name}
+                photo={t.photo}
+                text={t.text}
+                className="p-5 md:p-6"
+              />
             ))}
           </div>
-        </section>
+        </div>
+      </Container>
 
-        {/* ─── Why Crazy Seal videos ─── */}
-        <section className="mt-16">
-          <div className="mb-6">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5BA411] mb-1">
-              Do Your Homework
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-              Why Crazy Seal?
-            </h2>
-            <p className="mt-1.5 text-gray-500 max-w-2xl">
-              This isn&apos;t box-store roof coating. Watch what makes the system
-              different — and why it costs more.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {/* ─── WHY CRAZY SEAL VIDEOS ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-primary overflow-hidden px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading
+            eyebrow="Do Your Homework"
+            heading="Why Crazy Seal?"
+            subheading="This isn't box-store roof coating. See what makes the system different — and why it costs more."
+            variant="dark"
+          />
+          <div className="grid grid-cols-1 gap-4 lg:gap-6 md:grid-cols-2">
             {brandVideos.map((video) => (
-              <div key={video.videoId}>
-                <ProYouTubeEmbed
+              <div
+                key={video.videoId}
+                className="rounded-3xl bg-white/[0.06] p-2.5 ring-1 ring-white/10 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.09] hover:ring-white/25"
+              >
+                <ProYouTubeEmbed halo={false}
                   videoId={video.videoId}
                   thumbnail={video.thumbnail}
                   title={video.title}
                 />
-                <p className="text-center text-gray-600 text-sm font-medium mt-2">
+                <p className="px-2 pt-3 pb-1 text-center text-white/75 text-sm font-semibold">
                   {video.caption}
                 </p>
               </div>
             ))}
           </div>
           <div className="flex justify-center mt-8">
-            <a
-              href={REASONS_PDF_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#003365] px-6 py-3 text-sm font-semibold text-white hover:bg-[#00274d] transition-colors"
-            >
+            <LinkButton href={REASONS_PDF_URL} variant="white" size="md" external>
               <Download className="w-4 h-4" />
               Download Our 21&frac12; Reasons PDF
-            </a>
+            </LinkButton>
           </div>
-        </section>
-
-        {/* ─── How it goes down ─── */}
-        <section className="mt-16">
-          <div className="mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#003365] tracking-tight">
-              How It Goes Down
-            </h2>
-            <p className="mt-1.5 text-gray-500 max-w-2xl">
-              No torches, no tear-off, no special tools. Three steps, guided by
-              step-by-step videos.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {INSTALL_STEPS.map((step) => (
-              <div key={step.title} className="rounded-2xl border border-gray-200 bg-white p-6">
-                <div className="inline-flex rounded-full bg-[#5BA411]/10 p-3 mb-4">
-                  <step.icon className="w-6 h-6 text-[#5BA411]" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1.5">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link
-              href="/installation/membrane-roof"
-              className="inline-flex items-center gap-2 rounded-full border-2 border-[#003365]/20 px-6 py-3 text-sm font-semibold text-[#003365] hover:border-[#003365] hover:bg-[#003365]/5 transition-colors"
-            >
-              Watch the Full Installation Guide
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </section>
+        </div>
       </Container>
 
-      {/* ─── Specific applications + lead capture ─── */}
+      {/* ─── HOW IT GOES DOWN ─── */}
+      <Container size="xl" className="sm:pt-4 md:pt-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading
+            eyebrow="No Torches. No Tear-Off."
+            heading="How It Goes Down"
+            subheading="No special tools. Three steps, guided by step-by-step videos."
+          />
+          <div className="relative">
+            <div
+              aria-hidden="true"
+              className="hidden sm:block absolute left-[16%] right-[16%] top-12 h-0.5 rounded-full bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0"
+            />
+            <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+              {INSTALL_STEPS.map((step, i) => (
+                <div
+                  key={step.title}
+                  className="group relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white p-6 text-center ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-2 -top-4 text-[5.5rem] font-black leading-none text-primary/[0.04] font-[family-name:var(--font-display)]"
+                  >
+                    0{i + 1}
+                  </span>
+                  <span className="relative mx-auto mb-5 grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
+                    <step.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="relative text-lg font-extrabold text-primary mb-1.5">
+                    {i + 1}. {step.title}
+                  </h3>
+                  <p className="relative text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <LinkButton href="/installation/membrane-roof" variant="outline" size="md" className="border-primary/25 text-primary">
+              <Sparkles className="w-4 h-4 text-accent" />
+              Watch the Full Installation Guide
+              <ArrowRight className="w-4 h-4" />
+            </LinkButton>
+          </div>
+        </div>
+      </Container>
+
+      {/* ─── SPECIFIC APPLICATIONS + LEAD CAPTURE ─── */}
       <FamilyApplicationsBand family={config.family} />
       <LeadCaptureSection
         sourcePage={config.sourcePage}

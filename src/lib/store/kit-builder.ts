@@ -29,6 +29,8 @@ export interface KitVariant {
 export interface KitProduct {
   handle: string
   title: string
+  /** False for kits retired from the site: priced here, but no product page to link. */
+  listed?: boolean
   featuredImage: string | null
   options: Array<{ name: string; values: string[] }>
   variants: KitVariant[]

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
     const folder = ALLOWED_FOLDERS.includes(folderInput as typeof ALLOWED_FOLDERS[number])
       ? folderInput
       : 'lead-photos'
-    const key = `user-uploads/${folder}/${Date.now()}-${String(fileName).replace(/[^a-zA-Z0-9._-]/g, '_')}`
+    const key = `user-uploads/${folder}/${Date.now()}-${randomUUID().slice(0, 8)}-${String(fileName).replace(/[^a-zA-Z0-9._-]/g, '_')}`
 
     const command = new PutObjectCommand({
       Bucket: BUCKET,

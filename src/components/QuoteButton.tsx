@@ -34,7 +34,7 @@ export function QuoteButton({
       onClick={() => openQuoteModal({ sourcePage, initialMessage })}
       className={
         className ??
-        `inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 bg-accent text-white hover:bg-accent-dark shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(91,164,17,0.3)] hover:-translate-y-0.5 cursor-pointer ${SIZE_CLASSES[size]}`
+        `btn-sheen inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 bg-gradient-to-b from-accent-light to-accent text-white shadow-[0_6px_18px_-6px_rgba(91,164,17,0.6)] hover:shadow-[0_14px_30px_-10px_rgba(91,164,17,0.65)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer ${SIZE_CLASSES[size]}`
       }
     >
       {children}

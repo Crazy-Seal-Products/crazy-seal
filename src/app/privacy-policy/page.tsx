@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { Phone } from 'lucide-react'
+import { CalendarClock, Phone } from 'lucide-react'
 import { Container, Stack, Heading, Text, LinkButton } from '@/lib/design-system'
+import { GlowOrb } from '@/components/motion'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -12,12 +13,38 @@ export default function PrivacyPolicyPage() {
   return (
     <Container size="xl">
       <Stack gap="lg">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-10 sm:px-6 sm:py-12 md:p-14 lg:p-16 text-center">
-          <Heading level={1}>Privacy Policy</Heading>
+        <div className="relative section-bleed bg-primary overflow-hidden">
+          <GlowOrb className="-left-32 top-0 h-96 w-96" color="rgb(26 123 196 / 0.45)" />
+          <GlowOrb className="-right-24 -bottom-24 h-80 w-80" color="rgb(91 164 17 / 0.25)" />
+          <div
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
+          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16 text-center">
+            <h1
+              className="animate-fade-up text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-3"
+              style={{ animationDelay: '80ms' }}
+            >
+              Privacy Policy
+            </h1>
+            <p
+              className="animate-fade-up mx-auto max-w-xl text-base sm:text-lg text-white/70"
+              style={{ animationDelay: '160ms' }}
+            >
+              How Crazy Seal collects, uses, shares, stores and protects your information.
+            </p>
+            <p
+              className="animate-fade-up mt-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white/80 ring-1 ring-white/15"
+              style={{ animationDelay: '240ms' }}
+            >
+              <CalendarClock className="h-3.5 w-3.5 text-accent-light" />
+              Last modified December 2nd, 2024
+            </p>
+          </div>
         </div>
 
         <section>
-          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 prose prose-gray max-w-none space-y-8">
+          <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-10 lg:p-14 space-y-10 [&>*]:mx-auto [&>*]:max-w-3xl [&_h2]:mb-4 [&_h2]:flex [&_h2]:items-center [&_h2]:gap-3 [&_h2]:font-extrabold [&_h2]:before:block [&_h2]:before:h-6 [&_h2]:before:w-1.5 [&_h2]:before:flex-shrink-0 [&_h2]:before:rounded-full [&_h2]:before:bg-gradient-to-b [&_h2]:before:from-accent-light [&_h2]:before:to-accent [&_h2]:before:content-[''] [&_p]:leading-[1.75] [&_li]:leading-[1.75] [&_ul]:marker:text-accent [&_strong]:text-primary">
           <Text>
             Crazy Seal Products, Inc. (&ldquo;Crazy Seal&rdquo;) is committed to providing you with
             quality goods and excellent customer service. This privacy policy explains how we collect,

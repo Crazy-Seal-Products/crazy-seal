@@ -3,6 +3,7 @@ import { getShopifyProducts, type ShopifyProduct } from '@/lib/shopify/catalog'
 import {
   PRODUCT_CURATION,
   HIDDEN_HANDLES,
+  RETIRED_HANDLES,
   STORE_CATEGORIES,
   type StoreCategory,
 } from './config'
@@ -68,6 +69,15 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
       if (catDiff !== 0) return catDiff
       return a.order - b.order
     })
+}
+
+/**
+ * Products the consumer site lists and links to: everything except the
+ * retired flat-roof and commercial kits (which the Kit Builder still prices
+ * through getStoreProducts).
+ */
+export async function getShopProducts(): Promise<StoreProduct[]> {
+  return (await getStoreProducts()).filter((p) => !RETIRED_HANDLES.has(p.handle))
 }
 
 export async function getStoreProduct(handle: string): Promise<StoreProduct | null> {

@@ -2,9 +2,17 @@
 
 import React, { useState, useRef } from 'react'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Send, Loader2, CheckCircle } from 'lucide-react'
-import { Input, Textarea, Button } from '@/lib/design-system'
+import { Send } from 'lucide-react'
+import { Input, Textarea } from '@/lib/design-system'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import {
+  FieldLabel,
+  FormError,
+  FormSection,
+  FormSuccess,
+  SubmitButton,
+  fieldClass,
+} from '@/components/forms/form-ui'
 
 export function WarrantyTransferForm() {
   const [submitting, setSubmitting] = useState(false)
@@ -64,104 +72,68 @@ export function WarrantyTransferForm() {
 
   if (submitted) {
     return (
-      <div className="text-center py-12">
-        <CheckCircle className="w-14 h-14 text-accent mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-primary mb-2">Transfer Request Received!</h3>
-        <p className="text-gray-600 max-w-md mx-auto">
+      <FormSuccess title="Transfer Request Received!">
+        <p>
           Our team will process your warranty transfer and reach out if we need
           any additional information.
         </p>
-      </div>
+      </FormSuccess>
     )
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden">
           <label htmlFor="wt-website">Website</label>
           <input type="text" id="wt-website" name="website" tabIndex={-1} autoComplete="off" />
         </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Name (New Owner) <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-4">
+        <FormSection step={1} title="New owner">
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="first_name" size="md" required placeholder="First name *" aria-label="First name" autoComplete="given-name" className={fieldClass} />
+            <Input name="last_name" size="md" required placeholder="Last name *" aria-label="Last name" autoComplete="family-name" className={fieldClass} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Input name="phone" size="md" type="tel" required placeholder="Phone *" aria-label="Phone" autoComplete="tel" className={fieldClass} />
+            <Input name="email" size="md" type="email" required placeholder="Email *" aria-label="Email" autoComplete="email" className={fieldClass} />
+          </div>
+        </FormSection>
+
+        <FormSection step={2} title="Original purchase">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <Input name="first_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">First</span>
+              <FieldLabel required>Order Number</FieldLabel>
+              <Input name="order_number" size="md" required className={fieldClass} />
             </div>
             <div>
-              <Input name="last_name" size="lg" required />
-              <span className="block text-xs text-gray-400 mt-1.5 ml-1">Last</span>
+              <FieldLabel required>Email of Original Owner</FieldLabel>
+              <Input name="original_owner_email" size="md" type="email" required className={fieldClass} />
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Phone <span className="text-red-500">*</span>
-            </label>
-            <Input name="phone" size="lg" type="tel" required />
+            <FieldLabel>Notes (optional)</FieldLabel>
+            <Textarea name="transfer_notes" rows={3} className={fieldClass} />
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <Input name="email" size="lg" type="email" required />
-          </div>
-        </div>
+        </FormSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Order Number <span className="text-red-500">*</span>
-            </label>
-            <Input name="order_number" size="lg" required />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email of Original Owner <span className="text-red-500">*</span>
-            </label>
-            <Input name="original_owner_email" size="lg" type="email" required />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Please add a quick note describing the warranty transfer situation.
-          </label>
-          <Textarea name="transfer_notes" rows={4} />
-        </div>
-
-        <div className="flex justify-center w-full max-w-[300px] mx-auto">
+        <div className="flex justify-center empty:hidden">
           <FormTurnstile
             id="turnstile-warranty-transfer"
             turnstileRef={turnstileRef}
             onToken={setTurnstileToken}
+            appearance="interaction-only"
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
-        )}
+        {error && <FormError>{error}</FormError>}
 
-        <div className="flex justify-center pt-2">
-          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-            {submitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5 mr-2" />
-                Submit Transfer Request
-              </>
-            )}
-          </Button>
+        <div className="flex justify-center">
+          <SubmitButton submitting={submitting} icon={<Send className="h-4 w-4" />}>
+            Submit Transfer Request
+          </SubmitButton>
         </div>
       </div>
     </form>

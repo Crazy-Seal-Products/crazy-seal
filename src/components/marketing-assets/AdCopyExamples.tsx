@@ -1,5 +1,7 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Bot } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
+import { CopyCodeBlock } from '@/components/pro/CopyCodeBlock'
+import { highlightPlaceholders } from '@/components/pro/SalesAssetBlocks'
 
 interface AdCopyBlock {
   heading: string
@@ -116,6 +118,16 @@ const AD_COPY: AdCopyBlock[] = [
   },
 ]
 
+/** Plain-text version of a block for the clipboard. */
+function toPlainText(block: AdCopyBlock) {
+  return [
+    ...block.intro,
+    ...(block.bulletLabel ? [block.bulletLabel] : []),
+    ...(block.bullets.length ? [block.bullets.map((b) => `• ${b}`).join('\n')] : []),
+    ...block.outro,
+  ].join('\n\n')
+}
+
 /**
  * The seven ad copy examples (Facebook, Instagram, YouTube, LinkedIn, Google
  * My Business, Twitter, Pinterest) shared verbatim by every video package and
@@ -126,53 +138,77 @@ export function AdCopyExamples() {
   return (
     <>
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
           <SectionHeading
+            eyebrow="Copy, Paste, Post"
             heading="Ad Copy Examples"
-            subheading="Replace the bracketed placeholders with your business details and pair this copy with the assets above."
+            subheading="Swap the highlighted placeholders for your business details and pair this copy with the assets above."
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
             {AD_COPY.map((block) => (
-              <div
+              <CopyCodeBlock
                 key={block.heading}
-                className="rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden flex flex-col"
+                label={block.heading}
+                text={toPlainText(block)}
+                icon="megaphone"
+                className="flex flex-col"
               >
-                <div className="border-b border-gray-200 bg-white px-5 py-3">
-                  <h3 className="font-bold text-primary">{block.heading}</h3>
-                </div>
-                <div className="p-5 space-y-3 text-sm text-gray-700 leading-relaxed">
+                <div className="space-y-3">
                   {block.intro.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
+                    <p key={paragraph}>{highlightPlaceholders(paragraph)}</p>
                   ))}
-                  {block.bulletLabel && (
-                    <p className="font-semibold">{block.bulletLabel}</p>
-                  )}
+                  {block.bulletLabel && <p className="font-semibold text-primary">{block.bulletLabel}</p>}
                   {block.bullets.length > 0 && (
-                    <ul className="list-disc pl-5 space-y-1.5">
+                    <ul className="space-y-1.5">
                       {block.bullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
+                        <li key={bullet} className="flex items-start gap-2.5">
+                          <span className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                          <span>{bullet}</span>
+                        </li>
                       ))}
                     </ul>
                   )}
                   {block.outro.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
+                    <p key={paragraph}>{highlightPlaceholders(paragraph)}</p>
                   ))}
                 </div>
-              </div>
+              </CopyCodeBlock>
             ))}
           </div>
         </div>
       </Container>
 
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8 text-center">
-          <SectionHeading heading="Want To Create Custom Ad Copy?" />
-          <LinkButton href="/marketing/ai-prompts" variant="primary" size="lg">
+      <CustomCopyCta heading="Want To Create Custom Ad Copy?" />
+    </>
+  )
+}
+
+/** Gradient band pointing to the AI prompts page ("Want To Create Custom …?"). */
+export function CustomCopyCta({ heading }: { heading: string }) {
+  return (
+    <Container size="xl" className="sm:pt-4 md:pt-8">
+      <div
+        data-reveal
+        className="relative -mx-5 overflow-hidden bg-gradient-to-r from-primary to-secondary px-5 py-8 shadow-xl sm:mx-0 sm:rounded-[1.75rem] sm:p-8 md:p-10"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-highlight/20 blur-3xl"
+        />
+        <div className="relative flex flex-col items-center gap-5 text-center lg:flex-row lg:gap-8 lg:text-left">
+          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20 animate-float">
+            <Bot className="h-8 w-8 text-highlight" />
+          </span>
+          <div className="flex-1">
+            <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">{heading}</h2>
+            <p className="mt-2 text-white/70">Use our AI prompts to write copy tailored to your business.</p>
+          </div>
+          <LinkButton href="/marketing/ai-prompts" variant="white" size="lg">
             Click Here for Crazy Seal AI Prompts
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="h-4 w-4" />
           </LinkButton>
         </div>
-      </Container>
-    </>
+      </div>
+    </Container>
   )
 }

@@ -1,4 +1,5 @@
 import { getStoreProducts } from './products'
+import { RETIRED_HANDLES } from './config'
 import { KIT_BUILDER_HANDLES, type KitBuilderCatalog } from './kit-builder'
 
 /**
@@ -15,6 +16,7 @@ export async function getKitBuilderCatalog(): Promise<KitBuilderCatalog> {
     catalog[handle] = {
       handle: p.handle,
       title: p.displayTitle,
+      listed: !RETIRED_HANDLES.has(p.handle),
       featuredImage: p.featuredImage,
       options: p.options,
       variants: p.variants.map((v) => ({

@@ -7,8 +7,8 @@ const config: HubPageConfig = {
   tagline: 'Break the repair-repair-replace cycle.',
   installsLine: 'Trusted on thousands of roofs nationwide',
   pitch: [
-    'Crazy Seal is a seamless, fiber-infused silicone system your own crew — or any local contractor — can install over an existing commercial roof, in stages, as budget allows. Every repair chemically bonds to the last until the whole roof is one permanent membrane.',
-    "While we have pre-built kits as examples, 99% of commercial kits are custom built by a professional or a specialist on our team. Tell us about your roof and we'll spec it with you — or run your square footage through the Kit Builder for a quick price estimate.",
+    'A seamless, fiber-infused silicone system your own crew — or any local contractor — installs over the existing roof, in stages, as budget allows. Every repair chemically bonds to the last until the whole roof is one permanent membrane.',
+    "99% of commercial kits are custom built by a professional or a specialist on our team. Tell us about your roof and we'll spec it with you — or run your square footage through the Kit Builder for a quick estimate.",
   ],
   priceNote:
     'Most commercial projects are custom quoted — staged installs let you spread the cost across budget years.',
@@ -23,7 +23,7 @@ const config: HubPageConfig = {
   stagedAssurance: true,
   kitsHeading: 'Example Pre-Built Commercial Kits',
   kitsNote:
-    "These pre-built sizes show what a commercial system costs. 99% of commercial kits are custom built by a professional or a specialist on our team — contact us and we'll spec yours.",
+    "These pre-built sizes show what a commercial system costs. 99% are custom built by a professional or a specialist on our team — contact us and we'll spec yours.",
   projectsHeading: 'Real Flat Roofs, Documented Start to Finish',
   sourcePage: 'commercial-roofing',
   leadHeading: 'Talk to a Specialist About Your Facility',

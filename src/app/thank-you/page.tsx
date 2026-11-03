@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle, Phone, ArrowRight, Calculator, PlayCircle, BadgeDollarSign, Wrench } from 'lucide-react'
-import { Container, Stack, Heading, Text, Card } from '@/lib/design-system'
+import { Phone, ArrowRight, Calculator, PlayCircle, BadgeDollarSign, Wrench } from 'lucide-react'
+import { Container } from '@/lib/design-system'
+import { GlowOrb } from '@/components/motion'
+import { SuccessCheck } from '@/components/forms/form-ui'
 import { ThankYouConversion } from './ThankYouConversion'
 
 export const metadata: Metadata = {
@@ -50,59 +52,91 @@ export default async function ThankYouPage({
   const steps = isBusiness ? NEXT_STEPS.business : NEXT_STEPS.quote
 
   return (
-    <Container size="md">
+    <Container size="md" className="pt-4 sm:pt-0">
       <ThankYouConversion />
-      <Stack gap="lg">
-        <Card className="text-center !p-8 md:!p-12">
-          <div className="flex flex-col items-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+      <div className="relative overflow-hidden rounded-[1.75rem] bg-white shadow-card ring-1 ring-primary/[0.07]">
+        {/* Celebration band */}
+        <div className="relative overflow-hidden bg-primary px-6 py-10 text-center md:px-12 md:py-14">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[radial-gradient(110%_80%_at_0%_0%,rgb(26_123_196/0.45),transparent_55%),radial-gradient(80%_70%_at_100%_100%,rgb(91_164_17/0.22),transparent_60%)]"
+          />
+          <GlowOrb className="-right-20 -top-20 h-72 w-72" color="rgb(26 123 196 / 0.4)" />
+          <div
+            aria-hidden="true"
+            className="hairline-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+          />
+          <div className="relative flex flex-col items-center">
+            <div className="mb-6">
+              <SuccessCheck />
             </div>
-            <Heading level={1}>Thank You!</Heading>
-            <Text className="max-w-lg mx-auto !text-lg">
+            <h1
+              className="animate-fade-up mb-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl"
+              style={{ animationDelay: '200ms' }}
+            >
+              <span className="text-shimmer-highlight">Thank You!</span>
+            </h1>
+            <p
+              className="animate-fade-up mx-auto max-w-lg text-base leading-relaxed text-white/75 sm:text-lg"
+              style={{ animationDelay: '300ms' }}
+            >
               {isBusiness
                 ? "We've received your inquiry! A member of our team will reach out within 24 hours to talk about the dealer program and how we can grow your business together."
                 : "We've received your request! A Crazy Seal specialist will reach out within 24 hours to help build the perfect kit for your roof."}
-            </Text>
-
-            <div className="mt-8 p-4 bg-blue-50 rounded-xl max-w-sm mx-auto">
-              <p className="text-sm text-gray-600 mb-2">Need to talk sooner?</p>
-              <a
-                href="tel:8009630131"
-                className="flex items-center justify-center gap-2 text-[#003365] font-semibold hover:underline"
-              >
-                <Phone className="w-4 h-4" />
-                (800) 963-0131
-              </a>
-            </div>
-
-            {/* Next steps while you wait */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 w-full max-w-lg">
-              {steps.map((step) => (
-                <Link
-                  key={step.href}
-                  href={step.href}
-                  className="group rounded-xl border border-gray-200 p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#003365]/30"
-                >
-                  <step.icon className="w-6 h-6 text-[#5BA411] mb-2" />
-                  <p className="font-semibold text-[#003365] mb-1">{step.title}</p>
-                  <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
-                </Link>
-              ))}
-            </div>
-
-            <div className="flex justify-center pt-8">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#003365] transition-colors"
-              >
-                Back to Home
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+            </p>
           </div>
-        </Card>
-      </Stack>
+        </div>
+
+        <div className="flex flex-col items-center px-6 py-8 md:px-12 md:py-10">
+          <a
+            href="tel:8009630131"
+            className="group animate-fade-up flex w-full max-w-sm items-center gap-4 rounded-2xl bg-gradient-to-r from-primary/[0.04] via-white to-accent/[0.06] px-5 py-4 text-left ring-1 ring-primary/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+            style={{ animationDelay: '400ms' }}
+          >
+            <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-light to-primary text-white shadow-glow-primary transition-transform duration-500 group-hover:-rotate-6">
+              <Phone className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block text-sm text-gray-500">Need to talk sooner?</span>
+              <span className="block text-lg font-extrabold text-primary">(800) 963-0131</span>
+            </span>
+          </a>
+
+          {/* Next steps while you wait */}
+          <p className="mt-8 mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+            While you wait
+          </p>
+          <div className="grid w-full max-w-lg grid-cols-1 gap-4 sm:grid-cols-2">
+            {steps.map((step, i) => (
+              <Link
+                key={step.href}
+                href={step.href}
+                className="group animate-fade-up rounded-3xl bg-gradient-to-b from-slate-50 to-white p-5 text-left shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+                style={{ animationDelay: `${500 + i * 100}ms` }}
+              >
+                <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
+                  <step.icon className="h-5 w-5" />
+                </span>
+                <p className="mb-1 flex items-center gap-1 font-bold text-primary">
+                  {step.title}
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </p>
+                <p className="text-sm leading-relaxed text-gray-500">{step.desc}</p>
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex justify-center pt-8">
+            <Link
+              href="/"
+              className="group flex items-center gap-2 text-sm font-semibold text-gray-600 transition-colors hover:text-primary"
+            >
+              Back to Home
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </div>
+      </div>
     </Container>
   )
 }

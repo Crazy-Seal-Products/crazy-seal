@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
-import {
-  ArrowRight,
-  Caravan,
-  Code,
-  Download,
-  FileText,
-  PlayCircle,
-} from 'lucide-react'
-import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
-import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import { Caravan, PlayCircle, Repeat } from 'lucide-react'
+import { Container, LinkButton } from '@/lib/design-system'
 import { AssetPageFooter } from '@/components/marketing-assets/AssetPageFooter'
+import { ModuleHero, ModuleNav } from '@/components/pro/ProgramModule'
+import {
+  AssetJumpLinks,
+  EmbedAndThumbnailSection,
+  PdfPreviewSection,
+  PresentationPageBand,
+  VideoDownloadSection,
+} from '@/components/pro/SalesAssetBlocks'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -26,175 +26,105 @@ export const metadata: Metadata = {
     'RV sales assets for Crazy Seal Professional Partners: digital presentation page, savings PDF, Crazy Seal brochure, Trailer Life magazine feature, loopable videos, and video presentation download with embed code.',
 }
 
+const JUMP_LINKS = [
+  { id: 'presentation', label: 'Presentation Page' },
+  { id: 'savings', label: 'Savings PDF' },
+  { id: 'brochure', label: 'Brochure' },
+  { id: 'trailer-life', label: 'Trailer Life' },
+  { id: 'loopable', label: 'Loopable Videos' },
+  { id: 'video', label: 'Video Download' },
+]
+
 export default function RvSalesAssetsPage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-12 md:px-6 md:py-16 lg:px-8 text-center">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Caravan className="w-4 h-4 text-highlight" />
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                Sales Assets
-              </p>
-            </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              RV Sales Assets
-            </h1>
-          </div>
-        </div>
-      </Container>
+      <ModuleHero
+        module={3}
+        kicker="Sales Assets"
+        icon={Caravan}
+        title={
+          <>
+            RV <span className="text-shimmer-highlight">Sales Assets</span>
+          </>
+        }
+        intro="Presentation pages, PDFs and videos to help you close more RV roof jobs."
+        actions={<AssetJumpLinks items={JUMP_LINKS} />}
+      />
+
+      <ModuleNav current={3} />
 
       {/* ─── DIGITAL PRESENTATION PAGE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="Digital Presentation Page"
-            subheading="Check out this digital presentation page with no external links showing the benefits of having the Crazy Seal System professionally installed. If you have your own site, you can download the video or embed code below."
-          />
-          <div className="flex justify-center">
-            <LinkButton href="/rv-roofing" variant="accent" size="lg">
-              Visit Digital Presentation Page
-              <ArrowRight className="w-4 h-4" />
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
+      <PresentationPageBand
+        id="presentation"
+        href="/rv-roofing"
+        text="A presentation page with no external links showing the benefits of a professionally installed Crazy Seal System. Have your own site? Download the video or embed code below."
+      />
 
       {/* ─── HOW MUCH COULD YOU SAVE? ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="How Much Could You Save?"
-            subheading="Check out this PDF to show customers how they can save an RV load of cash by having the Crazy Seal System professionally installed."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-6">
-            {[
-              `${MEDIA}/2021/12/Crazy-Seal-Dealer-F-I-Two-Sheet-Final-791x1024-1.jpg`,
-              `${MEDIA}/2021/12/Crazy-Seal-Dealer-F-I-Two-Sheet-Final2-791x1024-1.jpg`,
-            ].map((image) => (
-              <a
-                key={image}
-                href={`${MEDIA}/2022/09/Crazy-Seal-Dealer-F-I-Two-Sheet-Final.pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image}
-                  alt="Crazy Seal dealer savings sheet"
-                  className="w-full h-auto object-cover"
-                />
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center">
-            <LinkButton
-              href={`${MEDIA}/2022/09/Crazy-Seal-Dealer-F-I-Two-Sheet-Final.pdf`}
-              variant="primary"
-              size="md"
-              external
-            >
-              <FileText className="w-4 h-4" />
-              See Savings PDF
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
+      <PdfPreviewSection
+        id="savings"
+        eyebrow="Savings PDF"
+        heading="How Much Could You Save?"
+        text="Show customers how they can save an RV load of cash by having the Crazy Seal System professionally installed."
+        images={[
+          `${MEDIA}/2021/12/Crazy-Seal-Dealer-F-I-Two-Sheet-Final-791x1024-1.jpg`,
+          `${MEDIA}/2021/12/Crazy-Seal-Dealer-F-I-Two-Sheet-Final2-791x1024-1.jpg`,
+        ]}
+        alt="Crazy Seal dealer savings sheet"
+        pdfHref={`${MEDIA}/2022/09/Crazy-Seal-Dealer-F-I-Two-Sheet-Final.pdf`}
+        buttonLabel="See Savings PDF"
+      />
 
       {/* ─── CRAZY SEAL BROCHURE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="Crazy Seal Brochure"
-            subheading="Check out this PDF for a brief overview of the Crazy Seal System professionally installed."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-6">
-            {[
-              `${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-4-15-24.jpg`,
-              `${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-4-15-242.jpg`,
-            ].map((image) => (
-              <a
-                key={image}
-                href={`${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-Final.pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image}
-                  alt="Crazy Seal RV brochure"
-                  className="w-full h-auto object-cover"
-                />
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center">
-            <LinkButton
-              href={`${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-Final.pdf`}
-              variant="primary"
-              size="md"
-              external
-            >
-              <FileText className="w-4 h-4" />
-              See Brochure PDF
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
+      <PdfPreviewSection
+        id="brochure"
+        eyebrow="Brochure"
+        heading="Crazy Seal Brochure"
+        text="A brief overview of the Crazy Seal System, professionally installed."
+        images={[
+          `${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-4-15-24.jpg`,
+          `${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-4-15-242.jpg`,
+        ]}
+        alt="Crazy Seal RV brochure"
+        pdfHref={`${MEDIA}/2024/04/RV-Crazy-Seal-Brochure-for-Download-Final.pdf`}
+        buttonLabel="See Brochure PDF"
+        flip
+      />
 
       {/* ─── TRAILER LIFE MAGAZINE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="Featured in Trailer Life Magazine"
-            subheading="Download our featured article from Trailer Life Magazine explaining our revolutionary Crazy Seal roofing system. This is nice edification for the system."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-6">
-            {[
-              `${MEDIA}/2020/04/Trailer-Life-May-2020-Cover-Large-768x1024.jpg`,
-              `${MEDIA}/2020/04/Trailer-Life-May-2020-Page-1-Small.jpg`,
-            ].map((image) => (
-              <a
-                key={image}
-                href={TRAILER_LIFE_PDF}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image}
-                  alt="Trailer Life Magazine feature"
-                  className="w-full h-auto object-cover"
-                />
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center">
-            <LinkButton href={TRAILER_LIFE_PDF} variant="primary" size="md" external>
-              <FileText className="w-4 h-4" />
-              See Feature PDF
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
+      <PdfPreviewSection
+        id="trailer-life"
+        eyebrow="As Featured In"
+        heading="Featured in Trailer Life Magazine"
+        text="Our featured Trailer Life article explaining the revolutionary Crazy Seal roofing system. Nice edification for the system."
+        images={[
+          `${MEDIA}/2020/04/Trailer-Life-May-2020-Cover-Large-768x1024.jpg`,
+          `${MEDIA}/2020/04/Trailer-Life-May-2020-Page-1-Small.jpg`,
+        ]}
+        alt="Trailer Life Magazine feature"
+        pdfHref={TRAILER_LIFE_PDF}
+        buttonLabel="See Feature PDF"
+      />
 
       {/* ─── LOOPABLE VIDEOS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="Loopable Videos"
-            subheading="Visit this link for looping videos you can play at trade shows or on a monitor in your office."
-          />
-          <div className="flex justify-center">
+        <div
+          id="loopable"
+          className="section-bleed scroll-mt-36 bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12"
+        >
+          <div className="flex flex-col items-center gap-6 text-center lg:flex-row lg:text-left">
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-primary text-highlight shadow-glow-primary">
+              <Repeat className="h-8 w-8" />
+            </span>
+            <div className="flex-1">
+              <h2 className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl">Loopable Videos</h2>
+              <p className="mt-2 leading-relaxed text-gray-600">
+                Looping videos to play at trade shows or on a monitor in your office.
+              </p>
+            </div>
             <LinkButton href="/resources/sales/loopable-videos/" variant="primary" size="md">
-              <PlayCircle className="w-4 h-4" />
+              <PlayCircle className="h-4 w-4" />
               See Loopable Videos
             </LinkButton>
           </div>
@@ -202,74 +132,27 @@ export default function RvSalesAssetsPage() {
       </Container>
 
       {/* ─── VIDEO PRESENTATION DOWNLOAD ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Video Presentation Download" variant="dark" />
-          <div className="max-w-3xl mx-auto">
-            <ProVimeoEmbed
-              videoId="418309408"
-              thumbnail={`${MEDIA}/2021/11/Pro-Installation-Video-Cover-1024x576.jpg`}
-              title="Crazy Seal RV roof video presentation"
-            />
-            <div className="flex justify-center pt-6">
-              <LinkButton href={VIDEO_DOWNLOAD_URL} variant="white" size="md" external>
-                <Download className="w-4 h-4" />
-                Click to Download Video File (1080P)
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
+      <VideoDownloadSection
+        id="video"
+        heading="Video Presentation Download"
+        videoId="418309408"
+        thumbnail={`${MEDIA}/2021/11/Pro-Installation-Video-Cover-1024x576.jpg`}
+        title="Crazy Seal RV roof video presentation"
+        downloadUrl={VIDEO_DOWNLOAD_URL}
+      />
 
-      {/* ─── EMBED CODE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            heading="Embed Code to Place On Website"
-            subheading="Copy this HTML snippet to embed the RV presentation video on your own website."
-          />
-          <div className="max-w-3xl mx-auto rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden">
-            <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-2.5">
-              <Code className="w-4 h-4 text-primary" />
-              <span className="text-xs font-bold uppercase tracking-wide text-primary">
-                Embed Code (HTML)
-              </span>
-            </div>
-            <pre className="p-4 text-xs text-gray-700 whitespace-pre-wrap break-all leading-relaxed">
-              {EMBED_CODE}
-            </pre>
-          </div>
-        </div>
-      </Container>
-
-      {/* ─── VIDEO THUMBNAIL ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Video Thumbnail" />
-          <div className="max-w-2xl mx-auto">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`${MEDIA}/2021/11/Pro-Installation-Video-Cover-1024x576.jpg`}
-              alt="Crazy Seal RV video thumbnail"
-              className="w-full h-auto rounded-2xl border border-gray-200"
-            />
-            <div className="flex justify-center pt-6">
-              <LinkButton
-                href={`${MEDIA}/2020/07/Dealer-Video-Cover.jpg`}
-                variant="primary"
-                size="md"
-                external
-              >
-                <Download className="w-4 h-4" />
-                Click to Download Thumbnail File (1080P)
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Container>
+      {/* ─── EMBED CODE + VIDEO THUMBNAIL ─── */}
+      <EmbedAndThumbnailSection
+        embedCode={EMBED_CODE}
+        embedText="Embed the RV presentation video on your own website."
+        thumbnail={`${MEDIA}/2021/11/Pro-Installation-Video-Cover-1024x576.jpg`}
+        thumbnailAlt="Crazy Seal RV video thumbnail"
+        thumbnailDownload={`${MEDIA}/2020/07/Dealer-Video-Cover.jpg`}
+      />
 
       {/* ─── FOOTER ─── */}
       <AssetPageFooter
+        module={3}
         sourcePage="resources-sales-rv"
         back={{
           heading: 'Back to Main Sales Page',

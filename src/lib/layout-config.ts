@@ -35,7 +35,20 @@ const ZONE_RULES: ZoneRule[] = [
     },
   },
   {
-    match: (p) => p.startsWith('/pro'),
+    // Exact segment match: '/professionals', '/products', '/projects' etc.
+    // are marketing pages and must keep the site header and footer.
+    match: (p) => p === '/pro' || p.startsWith('/pro/'),
+    config: {
+      zone: 'pro',
+      header: false,
+      footer: false,
+      pageWrapper: false,
+      sidebar: 'pro',
+      tracking: false,
+    },
+  },
+  {
+    match: (p) => p === '/portal' || p.startsWith('/portal/'),
     config: {
       zone: 'pro',
       header: false,

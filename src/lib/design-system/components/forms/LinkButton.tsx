@@ -6,15 +6,15 @@ import { twMerge } from 'tailwind-merge'
 
 const variantStyles = {
   primary:
-    'bg-primary text-white hover:bg-primary-dark shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,51,101,0.3)] hover:-translate-y-0.5',
+    'btn-sheen bg-gradient-to-b from-primary-light to-primary text-white shadow-[0_6px_18px_-6px_rgba(0,51,101,0.55)] hover:shadow-[0_14px_30px_-10px_rgba(0,51,101,0.6)] hover:-translate-y-0.5',
   accent:
-    'bg-accent text-white hover:bg-accent-dark shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(91,164,17,0.3)] hover:-translate-y-0.5',
+    'btn-sheen bg-gradient-to-b from-accent-light to-accent text-white shadow-[0_6px_18px_-6px_rgba(91,164,17,0.6)] hover:shadow-[0_14px_30px_-10px_rgba(91,164,17,0.65)] hover:-translate-y-0.5',
   outline:
-    'bg-transparent border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary',
+    'bg-white/70 border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary hover:bg-white hover:-translate-y-0.5 hover:shadow-md',
   'outline-white':
-    'bg-transparent border-2 border-white/30 text-white hover:bg-white/10',
+    'bg-white/5 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/15 hover:border-white/60 hover:-translate-y-0.5',
   white:
-    'bg-white text-primary hover:bg-gray-100 shadow-md',
+    'btn-sheen bg-white text-primary shadow-[0_8px_22px_-8px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.45)] hover:-translate-y-0.5',
 } as const
 
 const sizeStyles = {
@@ -32,6 +32,25 @@ interface LinkButtonProps {
   className?: string
 }
 
+export type LinkButtonVariant = keyof typeof variantStyles
+export type LinkButtonSize = keyof typeof sizeStyles
+
+/** The LinkButton look for any element (e.g. a <button> that opens a modal). */
+export function linkButtonClassName(
+  variant: LinkButtonVariant = 'primary',
+  size: LinkButtonSize = 'md',
+  className?: string
+) {
+  return twMerge(
+    clsx(
+      'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 ease-out active:translate-y-0 active:scale-[0.98] [&>svg]:transition-transform [&:hover>svg:last-child]:translate-x-0.5 cursor-pointer',
+      variantStyles[variant],
+      sizeStyles[size]
+    ),
+    className
+  )
+}
+
 export function LinkButton({
   href,
   variant = 'primary',
@@ -42,7 +61,7 @@ export function LinkButton({
 }: LinkButtonProps) {
   const combinedClassName = twMerge(
     clsx(
-      'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300',
+      'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 ease-out active:translate-y-0 active:scale-[0.98] [&>svg]:transition-transform [&:hover>svg:last-child]:translate-x-0.5',
       variantStyles[variant],
       sizeStyles[size]
     ),

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { GlobalLayout } from "@/components/layout/GlobalLayout";
@@ -9,6 +9,12 @@ import { AuthRedirectCatcher } from "@/components/auth/AuthRedirectCatcher";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
 });
 
 const SITE_URL = "https://crazyseal.com";
@@ -64,7 +70,7 @@ export default function RootLayout({
       {process.env.NEXT_PUBLIC_GTM_ID && (
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
       )}
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${jakarta.variable} font-sans antialiased`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var p=location.pathname.replace(/\\/+$/,'')||'/';if(p==='/admin/reset-password'||p==='/admin/login')return;var h=location.hash||'';var auth=/access_token=/.test(h)&&/type=(recovery|invite|signup|magiclink|email)/.test(h);var err=/error=/.test(h)&&(/error_code=/.test(h)||/error_description=/.test(h));if(auth||err){location.replace('/admin/reset-password/'+location.search+location.hash);}})();`,

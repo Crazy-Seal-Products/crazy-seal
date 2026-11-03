@@ -1,17 +1,22 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import {
-  ArrowRight,
-  Bot,
+  ArrowUpRight,
   Download,
   ExternalLink,
   Image as ImageIcon,
   Mail,
-  Megaphone,
   PlayCircle,
 } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
-import { ContentRequestForm } from '@/components/forms/ContentRequestForm'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
+import {
+  AiPromptsBand,
+  ContentRequestSection,
+  ModuleHero,
+  ModuleNav,
+  ModuleNext,
+} from '@/components/pro/ProgramModule'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -25,204 +30,139 @@ const PACKAGES = [
   {
     icon: PlayCircle,
     heading: 'Video Packages',
+    desc: '15 and 30 second video ads.',
     href: '/marketing/videos',
     linkText: 'See Video Packages',
   },
   {
     icon: ImageIcon,
     heading: 'Image Packages',
+    desc: 'RV, commercial and residential photos.',
     href: '/marketing/images',
     linkText: 'See Image Packages',
   },
   {
     icon: Mail,
     heading: 'Email Packages',
+    desc: 'Announcement, benefits and call-to-action emails.',
     href: '/marketing/email-templates',
     linkText: 'See Email Packages',
   },
 ]
 
-const MODULE_LINKS = [
-  { number: 1, label: 'Welcome', href: '/resources/welcome-to-crazy-seal' },
-  { number: 2, label: 'Marketing', href: '/resources/marketing' },
-  { number: 3, label: 'Sales', href: '/resources/sales' },
-  { number: 4, label: 'Build a Kit', href: '/resources/building-a-kit' },
-  { number: 5, label: 'Installation', href: '/resources/installation' },
-  { number: 6, label: 'Warranty', href: '/resources/warranty' },
-]
+const BRAND_KIT_FULL = `${MEDIA}/2024/04/Crazy-Seal-Brand-Kit-8.5-×-11-in.jpg`
+const LOGO_PNG = `${MEDIA}/2019/03/CRAZY-SEAL-LOGO-1000x800.png`
 
 export default function ResourcesMarketingPage() {
   return (
     <>
       {/* ─── HERO / MODULE VIDEO ─── */}
-      <Container size="xl">
-        <div className="relative section-bleed bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(18,95,151,0.5),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(91,164,17,0.15),transparent_40%)]" />
-          <div className="relative z-10 px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
-                  <Megaphone className="w-4 h-4 text-highlight" />
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-highlight">
-                    Module 2
-                  </p>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
-                  Marketing
-                </h1>
-                <p className="text-xl font-semibold text-white mb-3">
-                  Pre-built Advertising Packages ready for your immediate use!
-                </p>
-                <p className="text-white/70 text-base sm:text-lg leading-relaxed">
-                  We have pre-built a bunch of video and image Advertising
-                  Packages ready for your immediate use! Just click the links
-                  below to get started.
-                </p>
-              </div>
-              <div>
-                <ProVimeoEmbed
-                  videoId="937517463"
-                  thumbnail={`${MEDIA}/2024/04/Module-2-Thumbnail.jpg`}
-                  title="Module 2: Marketing"
-                />
-                <p className="text-center text-white/50 text-sm mt-3">
-                  Module 2: Marketing
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+      <ModuleHero
+        module={2}
+        title={
+          <>
+            <span className="text-shimmer-highlight">Marketing</span>
+          </>
+        }
+        tagline="Pre-built Advertising Packages ready for your immediate use!"
+        intro="Video, image and email packages are ready to go. Just pick a package below to get started."
+        media={
+          <ProVimeoEmbed
+            videoId="937517463"
+            thumbnail={`${MEDIA}/2024/04/Module-2-Thumbnail.jpg`}
+            title="Module 2: Marketing"
+          />
+        }
+        mediaCaption="Module 2: Marketing"
+      />
+
+      <ModuleNav current={2} />
 
       {/* ─── ADVERTISING PACKAGES ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Pre-Built Campaigns"
-            heading="Advertising Packages"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="Pre-Built Campaigns" heading="Advertising Packages" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6">
             {PACKAGES.map((pkg) => (
-              <a
+              <Link
                 key={pkg.heading}
                 href={pkg.href}
-                className="group rounded-2xl border border-gray-200 bg-white p-6 md:p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white p-6 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl md:p-8"
               >
-                <pkg.icon className="w-10 h-10 text-primary mx-auto mb-4" />
-                <h2 className="text-lg font-bold text-primary uppercase tracking-wide mb-3">
-                  {pkg.heading}
-                </h2>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-accent group-hover:gap-2 transition-all">
-                  {pkg.linkText}
-                  <ArrowRight className="w-4 h-4" />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-accent/10 blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0"
+                />
+                <span className="relative mb-5 grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
+                  <pkg.icon className="h-6 w-6" />
                 </span>
-              </a>
+                <h2 className="relative mb-1 text-xl font-extrabold text-primary">{pkg.heading}</h2>
+                <p className="relative mb-6 text-sm text-gray-500">{pkg.desc}</p>
+                <span className="relative mt-auto flex items-center justify-between gap-3 border-t border-primary/[0.07] pt-4 text-sm font-bold text-primary">
+                  {pkg.linkText}
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/[0.06] transition-all duration-300 group-hover:rotate-45 group-hover:bg-accent group-hover:text-white">
+                    <ArrowUpRight className="h-4 w-4" />
+                  </span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
       </Container>
 
       {/* ─── AI PROMPTS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Bot className="w-4 h-4 text-accent" />
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
-                  AI Prompts
-                </p>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight mb-3">
-                AI Prompts for your Crazy Seal Business
-              </h2>
-              <p className="text-gray-600 leading-relaxed mb-5">
-                Use these prompts with any Artificial Intelligence platform to
-                teach it what you are doing as a professional with Crazy Seal
-                and create custom assets!
-              </p>
-              <LinkButton href="/marketing/ai-prompts" variant="primary" size="md">
-                See AI Prompts for Marketing
-                <ArrowRight className="w-4 h-4" />
-              </LinkButton>
-            </div>
-            <div className="flex justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${MEDIA}/2024/04/1690998192chatgpt-logo-png.png`}
-                alt="ChatGPT logo"
-                className="w-40 h-40 object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      </Container>
+      <AiPromptsBand href="/marketing/ai-prompts" label="See AI Prompts for Marketing" />
 
       {/* ─── RESOURCES: LOGO FILES + BRAND KIT ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading heading="Resources" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center flex flex-col">
-              <h3 className="text-lg font-bold text-primary uppercase tracking-wide mb-4">
-                Logo Files
-              </h3>
-              <div className="flex-1 flex items-center justify-center mb-5">
+        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-8 sm:px-6 md:p-8 lg:p-12">
+          <SectionHeading eyebrow="Brand Assets" heading="Resources" />
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+            <div className="group flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl">
+              <div className="relative grid h-64 place-items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-accent/10 p-6">
+                <div aria-hidden="true" className="absolute inset-x-12 bottom-6 h-6 rounded-full bg-primary/10 blur-xl" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`${MEDIA}/2019/03/CRAZY-SEAL-LOGO-1000x800.png`}
+                  src={LOGO_PNG}
                   alt="Crazy Seal logo"
-                  className="max-h-48 w-auto object-contain"
+                  className="relative max-h-44 w-auto object-contain transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                 />
               </div>
-              <div className="flex flex-col items-center gap-3">
-                <LinkButton
-                  href={`${MEDIA}/2019/03/CRAZY-SEAL-LOGO-1000x800.png`}
-                  variant="primary"
-                  size="md"
-                  external
-                >
-                  <Download className="w-4 h-4" />
+              <div className="flex flex-1 flex-col items-center gap-3 p-6 text-center">
+                <h3 className="text-lg font-extrabold text-primary">Logo Files</h3>
+                <LinkButton href={LOGO_PNG} variant="primary" size="md" external>
+                  <Download className="h-4 w-4" />
                   Download Our Logo (PNG)
                 </LinkButton>
                 <a
                   href="https://drive.google.com/drive/folders/1HrdC6Bg4LMuej0X_qQBmi2bV6mn-hAiK?usp=drive_link"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-accent transition-colors"
+                  className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors hover:text-accent"
                 >
                   Google Drive File (High Res and Vector Files)
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               </div>
             </div>
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center flex flex-col">
-              <h3 className="text-lg font-bold text-primary uppercase tracking-wide mb-4">
-                Brand Kit
-              </h3>
-              <div className="flex-1 flex items-center justify-center mb-5">
-                <a
-                  href={`${MEDIA}/2024/04/Crazy-Seal-Brand-Kit-8.5-\u00D7-11-in.jpg`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`${MEDIA}/2024/04/Crazy-Seal-Brand-Kit-8.5-\u00D7-11-in-791x1024.jpg`}
-                    alt="Crazy Seal Brand Kit (8.5 x 11 in)"
-                    className="max-h-72 w-auto object-contain rounded-lg border border-gray-100"
-                  />
-                </a>
-              </div>
-              <div>
-                <LinkButton
-                  href={`${MEDIA}/2024/04/Crazy-Seal-Brand-Kit-8.5-\u00D7-11-in.jpg`}
-                  variant="primary"
-                  size="md"
-                  external
-                >
-                  <Download className="w-4 h-4" />
+            <div className="group flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl">
+              <a
+                href={BRAND_KIT_FULL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative grid h-64 place-items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-secondary/10 p-6"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${MEDIA}/2024/04/Crazy-Seal-Brand-Kit-8.5-×-11-in-791x1024.jpg`}
+                  alt="Crazy Seal Brand Kit (8.5 x 11 in)"
+                  className="max-h-52 w-auto rotate-2 rounded-lg object-contain shadow-xl ring-1 ring-primary/10 transition-transform duration-700 ease-out group-hover:rotate-0 group-hover:scale-[1.06]"
+                />
+              </a>
+              <div className="flex flex-1 flex-col items-center gap-3 p-6 text-center">
+                <h3 className="text-lg font-extrabold text-primary">Brand Kit</h3>
+                <LinkButton href={BRAND_KIT_FULL} variant="primary" size="md" external>
+                  <Download className="h-4 w-4" />
                   Download Brand Kit
                 </LinkButton>
               </div>
@@ -231,63 +171,11 @@ export default function ResourcesMarketingPage() {
         </div>
       </Container>
 
-      {/* ─── CONTINUE TO NEXT MODULE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-primary overflow-hidden px-5 py-10 sm:px-6 md:p-10 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-5">
-            Continue to Next Module
-          </h2>
-          <LinkButton href="/resources/sales" variant="accent" size="lg">
-            Sales
-            <ArrowRight className="w-4 h-4" />
-          </LinkButton>
-        </div>
-      </Container>
-
-      {/* ─── MODULE QUICK LINKS ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Business Accelerator Program"
-            heading="Module Quick Links"
-          />
-          <div className="flex flex-wrap justify-center gap-3">
-            {MODULE_LINKS.map((mod) => (
-              <a
-                key={mod.number}
-                href={mod.href}
-                className="group flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {mod.number}
-                </span>
-                <span className="text-sm font-semibold text-primary group-hover:text-accent transition-colors">
-                  {mod.label}
-                </span>
-              </a>
-            ))}
-          </div>
-          <div className="flex justify-center pt-6">
-            <LinkButton href="/business-accelerator-program" variant="primary" size="md">
-              Business Accelerator Home
-            </LinkButton>
-          </div>
-        </div>
-      </Container>
+      {/* ─── CONTINUE TO NEXT MODULE + QUICK LINKS ─── */}
+      <ModuleNext current={2} />
 
       {/* ─── CONTENT / FEATURE REQUEST ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="section-bleed bg-white border-y sm:border border-gray-200/80 px-5 py-6 sm:px-6 md:p-6 lg:p-8">
-          <SectionHeading
-            eyebrow="Content | Feature Request"
-            heading="Request Content or a Feature"
-            subheading="Have a request for marketing materials, sales resources, or something else that would support you in your business? Drop it in this form and the request will go directly to our asset creation team!"
-          />
-          <div className="max-w-2xl mx-auto">
-            <ContentRequestForm sourcePage="resources-marketing" />
-          </div>
-        </div>
-      </Container>
+      <ContentRequestSection sourcePage="resources-marketing" />
     </>
   )
 }
