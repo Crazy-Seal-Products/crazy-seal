@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { initials, TIER_LABELS, type PortalAccount } from '@/lib/portal/accounts'
-import { PORTAL_MODULES, TOTAL_LESSONS, currentModule, moduleProgress } from '@/lib/portal/modules'
+import { currentModule, moduleProgress, programProgress, type AcceleratorProgram, type PortalModule } from '@/lib/portal/modules'
 import { demoLeads } from '@/lib/portal/demo-data'
 import { portalSignOut } from '@/lib/portal/actions'
 import { EASE_OUT_EXPO } from '@/components/motion'
@@ -52,9 +52,19 @@ function isActive(pathname: string, href: string) {
   return pathname === h || pathname.startsWith(h + '/')
 }
 
-export function PortalShell({ account, children }: { account: PortalAccount; children: React.ReactNode }) {
+export function PortalShell({
+  account,
+  program,
+  modules,
+  children,
+}: {
+  account: PortalAccount
+  program: AcceleratorProgram
+  modules: PortalModule[]
+  children: React.ReactNode
+}) {
   return (
-    <PortalProvider account={account}>
+    <PortalProvider account={account} program={program} modules={modules}>
       <ShellFrame>{children}</ShellFrame>
     </PortalProvider>
   )
@@ -154,9 +164,9 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
 }
 
 function SidebarContent({ pathname }: { pathname: string }) {
-  const { account, completed, brand } = usePortal()
-  const current = currentModule(completed)
-  const overall = Math.round((completed.size / TOTAL_LESSONS) * 100)
+  const { account, modules, completed, brand } = usePortal()
+  const current = currentModule(modules, completed)
+  const overall = programProgress(modules, completed).pct
   const newLeads = demoLeads(account.id).filter((l) => l.stage === 'new').length
 
   const business: NavItem[] = [
@@ -235,7 +245,7 @@ function SidebarContent({ pathname }: { pathname: string }) {
             </motion.div>
 
             <ol className="relative ml-3 space-y-0.5 border-l border-white/[0.08] pl-0">
-              {PORTAL_MODULES.map((m) => {
+              {modules.map((m) => {
                 const p = moduleProgress(m, completed)
                 const href = `/portal/modules/${m.slug}/`
                 const active = isActive(pathname, href)

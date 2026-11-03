@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T02:09:23.411Z",
+  "generatedAt": "2026-11-03T06:12:11.476Z",
   "routes": [
     {
       "path": "/",
@@ -324,6 +324,16 @@
     {
       "path": "/portal/admin/dealers/",
       "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/accelerator/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/accelerator/[slug]/",
+      "dynamic": true,
       "admin": false
     },
     {

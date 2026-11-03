@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { verifyPassword } from '@/lib/pro/password'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { memo } from './cache'
 
 /**
  * Crazy Seal Admin sign-in (the owner side of the portal at /portal/admin).
@@ -166,11 +167,14 @@ export async function verifyStaffCredentials(email: string, password: string): P
 
 async function getStaffAdmin(): Promise<PortalAdmin | null> {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return null
-  const staff = await activeStaff('auth_user_id', user.id)
+  // Checked against the project's signing keys locally, so admin pages skip a
+  // round trip to Supabase Auth. src/proxy.ts refreshes the session cookies.
+  // A cookie it can't read counts as signed out.
+  const { data } = await supabase.auth.getClaims().catch(() => ({ data: null }))
+  const userId = data?.claims.sub
+  if (!userId) return null
+  // Deactivating someone takes effect within a minute.
+  const staff = await memo(`staff:${userId}`, 60_000, () => activeStaff('auth_user_id', userId))
   return staff ? staffAdmin(staff) : null
 }
 

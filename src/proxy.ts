@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 import { hasAuthSearch } from '@/lib/auth/recovery'
 
 // Admin-managed redirects (managed_redirects table), applied at request time
@@ -43,6 +44,33 @@ async function getRules(): Promise<Map<string, Rule>> {
   }
 }
 
+// Staff sign in to /portal/admin with Supabase Auth. Server components can't
+// write cookies, so the session is refreshed here (the @supabase/ssr proxy
+// step); without it a sign-in lapses when the hour-long access token expires.
+function hasStaffSession(request: NextRequest): boolean {
+  return request.cookies.getAll().some((c) => c.name.startsWith('sb-') && c.name.includes('-auth-token'))
+}
+
+async function refreshStaffSession(request: NextRequest): Promise<NextResponse> {
+  let response = NextResponse.next({ request })
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  if (!url || !key) return response
+
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll: () => request.cookies.getAll(),
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+        response = NextResponse.next({ request })
+        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+      },
+    },
+  })
+  await supabase.auth.getClaims().catch(() => null)
+  return response
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
   if (normalize(pathname) === '/' && hasAuthSearch(search)) {
@@ -52,15 +80,16 @@ export async function proxy(request: NextRequest) {
   }
 
   const rules = await getRules()
-  if (rules.size === 0) return NextResponse.next()
+  const rule = rules.get(normalize(pathname))
+  if (rule) {
+    const destination = rule.destination.startsWith('http')
+      ? rule.destination
+      : new URL(rule.destination, request.url)
+    return NextResponse.redirect(destination, rule.permanent ? 301 : 302)
+  }
 
-  const rule = rules.get(normalize(request.nextUrl.pathname))
-  if (!rule) return NextResponse.next()
-
-  const destination = rule.destination.startsWith('http')
-    ? rule.destination
-    : new URL(rule.destination, request.url)
-  return NextResponse.redirect(destination, rule.permanent ? 301 : 302)
+  if (pathname.startsWith('/portal/admin') && hasStaffSession(request)) return refreshStaffSession(request)
+  return NextResponse.next()
 }
 
 export const config = {

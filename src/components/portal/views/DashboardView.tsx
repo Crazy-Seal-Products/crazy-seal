@@ -19,13 +19,7 @@ import {
 } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { MONTH_LABELS, nextTier, TIER_LABELS } from '@/lib/portal/accounts'
-import {
-  PORTAL_MODULES,
-  TOTAL_LESSONS,
-  currentModule,
-  moduleProgress,
-  nextLesson,
-} from '@/lib/portal/modules'
+import { currentModule, moduleProgress, nextLesson, programProgress } from '@/lib/portal/modules'
 import { ANNOUNCEMENTS, LEAD_STAGES, demoLeads } from '@/lib/portal/demo-data'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { usePortal } from '../PortalContext'
@@ -44,10 +38,11 @@ import {
 } from '../ui'
 
 export function DashboardView() {
-  const { account, completed } = usePortal()
-  const mod = currentModule(completed)
+  const { account, modules, completed } = usePortal()
+  const mod = currentModule(modules, completed)
   const lesson = nextLesson(mod, completed)
-  const overall = Math.round((completed.size / TOTAL_LESSONS) * 100)
+  const program = programProgress(modules, completed)
+  const overall = program.pct
   const leads = demoLeads(account.id)
   const isNew = completed.size === 0
   const upcomingTier = nextTier(account.tier)
@@ -77,7 +72,7 @@ export function DashboardView() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-5">
-        <StatTile label="Program progress" value={overall} suffix="%" icon={GraduationCap} hint={`${completed.size} of ${TOTAL_LESSONS} lessons`} delay={0.05} />
+        <StatTile label="Program progress" value={overall} suffix="%" icon={GraduationCap} hint={`${program.done} of ${program.total} lessons`} delay={0.05} />
         <StatTile label="Open leads" value={account.metrics.openLeads} icon={Inbox} hint={`${leads.filter((l) => l.stage === 'new').length} new this week`} delay={0.1} />
         <StatTile label="Jobs this quarter" value={account.metrics.jobsThisQuarter} icon={HardHat} delay={0.15} />
         <StatTile label="Sq ft sealed" value={account.metrics.sqftSealed} icon={Ruler} hint="This year" delay={0.2} />
@@ -136,12 +131,12 @@ export function DashboardView() {
           </div>
 
           {/* Program track */}
-          <ol className="grid grid-cols-6 gap-1.5 border-t border-white/[0.06] p-4 md:p-5">
-            {PORTAL_MODULES.map((m) => {
+          <ol className="flex gap-1.5 border-t border-white/[0.06] p-4 md:p-5">
+            {modules.map((m) => {
               const p = moduleProgress(m, completed)
               const isDone = p.done === p.total
               return (
-                <li key={m.slug}>
+                <li key={m.slug} className="min-w-0 flex-1">
                   <Link href={`/portal/modules/${m.slug}/`} className="group block" title={m.title}>
                     <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
                       <motion.div

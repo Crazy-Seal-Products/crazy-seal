@@ -4,7 +4,8 @@ import { useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { ArrowUpRight, Download, FileText, FolderOpen, Image as ImageIcon, Search, Video, type LucideIcon } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
-import { PORTAL_MODULES, type LessonResource } from '@/lib/portal/modules'
+import type { LessonResource, PortalModule } from '@/lib/portal/modules'
+import { usePortal } from '../PortalContext'
 import { Panel, ViewHeader, portalInput } from '../ui'
 
 const TYPE_META: Record<LessonResource['type'], { label: string; icon: LucideIcon }> = {
@@ -21,10 +22,10 @@ interface LibraryItem extends LessonResource {
 }
 
 // Every resource referenced across the program, de-duplicated by URL.
-const LIBRARY: LibraryItem[] = (() => {
+function libraryOf(modules: PortalModule[]): LibraryItem[] {
   const seen = new Set<string>()
   const out: LibraryItem[] = []
-  for (const m of PORTAL_MODULES) {
+  for (const m of modules) {
     for (const l of m.lessons) {
       for (const r of l.resources ?? []) {
         if (seen.has(r.href)) continue
@@ -34,13 +35,15 @@ const LIBRARY: LibraryItem[] = (() => {
     }
   }
   return out
-})()
+}
 
 export function ResourcesView() {
+  const { modules } = usePortal()
+  const library = useMemo(() => libraryOf(modules), [modules])
   const [type, setType] = useState<LessonResource['type'] | 'all'>('all')
   const [query, setQuery] = useState('')
-  const types = useMemo(() => Array.from(new Set(LIBRARY.map((r) => r.type))), [])
-  const items = LIBRARY.filter(
+  const types = useMemo(() => Array.from(new Set(library.map((r) => r.type))), [library])
+  const items = library.filter(
     (r) => (type === 'all' || r.type === type) && (query === '' || `${r.label} ${r.module}`.toLowerCase().includes(query.toLowerCase()))
   )
 

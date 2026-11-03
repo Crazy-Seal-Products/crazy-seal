@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { fetchAllRows } from './cache'
+import { fetchAllRows, memo } from './cache'
 import { allCustomers } from './sales'
 
 /**
@@ -80,11 +80,14 @@ export function leadInterest(r: LeadRow): string {
   return [r.project_type, r.square_footage ? `${r.square_footage} sq ft` : null].filter(Boolean).join(' · ') || '—'
 }
 
-async function allLeads(): Promise<LeadRow[]> {
-  const supabase = createAdminClient()
-  return fetchAllRows<LeadRow>((from, to) =>
-    supabase.from('leads').select(LEAD_COLS).order('created_at', { ascending: false }).range(from, to).returns<LeadRow[]>(),
-  )
+function allLeads(): Promise<LeadRow[]> {
+  // Short-lived: new leads from the site show up within 30 seconds.
+  return memo('leads', 30_000, () => {
+    const supabase = createAdminClient()
+    return fetchAllRows<LeadRow>((from, to) =>
+      supabase.from('leads').select(LEAD_COLS).order('created_at', { ascending: false }).range(from, to).returns<LeadRow[]>(),
+    )
+  })
 }
 
 const PAGE_SIZE = 50

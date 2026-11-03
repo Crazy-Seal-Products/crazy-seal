@@ -12,6 +12,7 @@ import {
   ChartColumn,
   ClipboardList,
   FolderOpen,
+  GraduationCap,
   Images,
   Inbox,
   KeyRound,
@@ -86,6 +87,7 @@ const GROUPS: Group[] = [
       { href: '/portal/admin/dealers/', label: 'Dealer roster', icon: Store },
       { href: '/portal/admin/dealers/portal/', label: 'Portal accounts', icon: KeyRound },
       { href: '/portal/admin/dealers/applications/', label: 'Applications', icon: UserRoundPlus, badge: 'newApplications' },
+      { href: '/portal/admin/dealers/accelerator/', label: 'Accelerator Program', icon: GraduationCap },
     ],
   },
   {

@@ -4,30 +4,25 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle2, Clock, Layers, PlayCircle, Trophy } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
-import {
-  PORTAL_MODULES,
-  TOTAL_LESSONS,
-  currentModule,
-  moduleMinutes,
-  moduleProgress,
-} from '@/lib/portal/modules'
+import { currentModule, moduleMinutes, moduleProgress, programProgress } from '@/lib/portal/modules'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { usePortal } from '../PortalContext'
 import { MODULE_ICONS, Panel, ProgressBar, ProgressRing, ViewHeader, portalButton } from '../ui'
 
 export function ModulesView() {
-  const { completed } = usePortal()
-  const overall = Math.round((completed.size / TOTAL_LESSONS) * 100)
-  const current = currentModule(completed)
-  const modulesDone = PORTAL_MODULES.filter((m) => moduleProgress(m, completed).pct === 100).length
-  const totalMinutes = PORTAL_MODULES.reduce((n, m) => n + moduleMinutes(m), 0)
+  const { program, modules, completed } = usePortal()
+  const progress = programProgress(modules, completed)
+  const overall = progress.pct
+  const current = currentModule(modules, completed)
+  const modulesDone = modules.filter((m) => moduleProgress(m, completed).pct === 100).length
+  const totalMinutes = modules.reduce((n, m) => n + moduleMinutes(m), 0)
 
   return (
     <>
       <ViewHeader
-        kicker="Business Accelerator Program"
-        title="Launch your business like a boss"
-        description="Six short modules — videos, ready-made assets, checklists and quick checks. Your progress saves as you go."
+        kicker={program.name}
+        title={program.title}
+        description={program.description}
       />
 
       <Panel className="overflow-hidden">
@@ -47,8 +42,8 @@ export function ModulesView() {
             <p className="mt-2 text-sm text-blue-100/60">{overall === 100 ? 'Revisit any lesson anytime.' : current.outcome}</p>
             <div className="mt-5 flex flex-wrap justify-center gap-2 md:justify-start">
               {[
-                { icon: Trophy, label: `${modulesDone}/6 modules` },
-                { icon: Layers, label: `${completed.size}/${TOTAL_LESSONS} lessons` },
+                { icon: Trophy, label: `${modulesDone}/${modules.length} modules` },
+                { icon: Layers, label: `${progress.done}/${progress.total} lessons` },
                 { icon: Clock, label: `~${Math.round(totalMinutes / 60)} hrs total` },
               ].map(({ icon: Icon, label }) => (
                 <span key={label} className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-semibold ring-1 ring-white/10">
@@ -68,7 +63,7 @@ export function ModulesView() {
       </Panel>
 
       <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {PORTAL_MODULES.map((m, i) => {
+        {modules.map((m, i) => {
           const p = moduleProgress(m, completed)
           const Icon = MODULE_ICONS[m.icon]
           const isDone = p.pct === 100

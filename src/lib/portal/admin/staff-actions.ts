@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { ActionResult } from '@/components/portal/admin/controls'
 import { requirePortalAdmin, type StaffRow } from './auth'
+import { clearAdminCache } from './cache'
 import { findAuthUserIdByEmail } from './staff'
 
 export type AddStaffState = { ok: true; message: string; tempPassword?: string } | { ok: false; error: string } | null
@@ -78,6 +79,7 @@ export async function setStaffActive(id: string, active: boolean): Promise<Actio
 
   const { error } = await createAdminClient().from('staff').update({ is_active: active }).eq('id', id)
   if (error) return { ok: false, error: 'Could not save' }
+  clearAdminCache()
   revalidatePath('/portal/admin/staff/')
   return { ok: true, message: active ? 'Reactivated' : 'Access removed' }
 }

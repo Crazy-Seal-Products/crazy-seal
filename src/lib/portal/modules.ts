@@ -1,18 +1,54 @@
 /**
  * Business Accelerator Program — module curriculum for the Pro Portal.
  *
- * Mirrors the six public BAP modules (/resources/*) and reuses their real
- * videos and assets, broken into bite-sized lessons with progress tracking.
+ * PORTAL_MODULES mirrors the six public BAP modules (/resources/*) and reuses
+ * their real videos and assets, broken into bite-sized lessons with progress
+ * tracking. It is the built-in program: admins edit the live copy from
+ * Dealers → Accelerator Program (src/lib/portal/accelerator.ts), which is
+ * seeded from this list. Helpers below take the module list they work on.
  */
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
+/** Shown for a module without its own thumbnail. */
+export const DEFAULT_THUMBNAIL = `${MEDIA}/2021/11/21-Reasons-Video-Cover-No-Icon.jpg`
+
 export type LessonKind = 'video' | 'assets' | 'checklist' | 'quiz'
+
+export const LESSON_KINDS: { key: LessonKind; label: string }[] = [
+  { key: 'video', label: 'Video' },
+  { key: 'assets', label: 'Assets' },
+  { key: 'checklist', label: 'Checklist' },
+  { key: 'quiz', label: 'Quick check' },
+]
+
+export const RESOURCE_TYPES = [
+  { key: 'page', label: 'Web page' },
+  { key: 'pdf', label: 'PDF' },
+  { key: 'video', label: 'Videos' },
+  { key: 'images', label: 'Images' },
+  { key: 'folder', label: 'Folder' },
+] as const
+
+export const MODULE_ICON_NAMES = ['PlayCircle', 'Megaphone', 'Presentation', 'Package', 'Wrench', 'FileCheck'] as const
+export type ModuleIcon = (typeof MODULE_ICON_NAMES)[number]
+
+export interface AcceleratorProgram {
+  name: string
+  title: string
+  description: string
+}
+
+export const DEFAULT_PROGRAM: AcceleratorProgram = {
+  name: 'Business Accelerator Program',
+  title: 'Launch your business like a boss',
+  description: 'Six short modules — videos, ready-made assets, checklists and quick checks. Your progress saves as you go.',
+}
 
 export interface LessonResource {
   label: string
   href: string
-  type: 'pdf' | 'page' | 'video' | 'images' | 'folder'
+  type: (typeof RESOURCE_TYPES)[number]['key']
   note?: string
 }
 
@@ -47,7 +83,8 @@ export interface PortalModule {
   outcome: string
   thumbnail: string
   /** lucide icon name, resolved in the UI */
-  icon: 'PlayCircle' | 'Megaphone' | 'Presentation' | 'Package' | 'Wrench' | 'FileCheck'
+  icon: ModuleIcon
+  /** Matching public page under /resources, if there is one. */
   publicHref: string
   lessons: Lesson[]
 }
@@ -468,15 +505,17 @@ export const PORTAL_MODULES: PortalModule[] = [
   },
 ]
 
-export function getPortalModule(slug: string): PortalModule | undefined {
-  return PORTAL_MODULES.find((m) => m.slug === slug)
+export function findModule(modules: readonly PortalModule[], slug: string): PortalModule | undefined {
+  return modules.find((m) => m.slug === slug)
 }
 
 export function lessonKey(moduleSlug: string, lessonId: string): string {
   return `${moduleSlug}/${lessonId}`
 }
 
-export const TOTAL_LESSONS = PORTAL_MODULES.reduce((n, m) => n + m.lessons.length, 0)
+export function totalLessons(modules: readonly PortalModule[]): number {
+  return modules.reduce((n, m) => n + m.lessons.length, 0)
+}
 
 export function moduleMinutes(m: PortalModule): number {
   return m.lessons.reduce((n, l) => n + l.minutes, 0)
@@ -484,15 +523,19 @@ export function moduleMinutes(m: PortalModule): number {
 
 export function moduleProgress(m: PortalModule, completed: ReadonlySet<string>) {
   const done = m.lessons.filter((l) => completed.has(lessonKey(m.slug, l.id))).length
-  return { done, total: m.lessons.length, pct: Math.round((done / m.lessons.length) * 100) }
+  return { done, total: m.lessons.length, pct: m.lessons.length ? Math.round((done / m.lessons.length) * 100) : 100 }
+}
+
+/** Progress across the whole program. Only counts lessons that still exist. */
+export function programProgress(modules: readonly PortalModule[], completed: ReadonlySet<string>) {
+  const total = totalLessons(modules)
+  const done = modules.reduce((n, m) => n + moduleProgress(m, completed).done, 0)
+  return { done, total, pct: total ? Math.round((done / total) * 100) : 0 }
 }
 
 /** First module that isn't finished (or the last one when everything is done). */
-export function currentModule(completed: ReadonlySet<string>): PortalModule {
-  return (
-    PORTAL_MODULES.find((m) => m.lessons.some((l) => !completed.has(lessonKey(m.slug, l.id)))) ??
-    PORTAL_MODULES[PORTAL_MODULES.length - 1]
-  )
+export function currentModule(modules: readonly PortalModule[], completed: ReadonlySet<string>): PortalModule {
+  return modules.find((m) => m.lessons.some((l) => !completed.has(lessonKey(m.slug, l.id)))) ?? modules[modules.length - 1]
 }
 
 export function nextLesson(m: PortalModule, completed: ReadonlySet<string>): Lesson {

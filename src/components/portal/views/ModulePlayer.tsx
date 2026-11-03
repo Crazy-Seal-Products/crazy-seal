@@ -26,8 +26,7 @@ import {
 } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import {
-  PORTAL_MODULES,
-  getPortalModule,
+  findModule,
   lessonKey,
   moduleMinutes,
   moduleProgress,
@@ -58,8 +57,8 @@ const RESOURCE_ICONS: Record<LessonResource['type'], LucideIcon> = {
 }
 
 export function ModulePlayer({ slug, initialLesson }: { slug: string; initialLesson?: string }) {
-  const mod = getPortalModule(slug) as PortalModule
-  const { completed, setLesson } = usePortal()
+  const { modules, completed, setLesson } = usePortal()
+  const mod = findModule(modules, slug) as PortalModule
   const [activeId, setActiveId] = useState<string>(() => initialLesson ?? nextLesson(mod, completed).id)
   const [celebrate, setCelebrate] = useState(false)
   const hydrated = useHydrated()
@@ -77,7 +76,7 @@ export function ModulePlayer({ slug, initialLesson }: { slug: string; initialLes
   const index = mod.lessons.findIndex((l) => l.id === activeId)
   const lesson = mod.lessons[Math.max(0, index)]
   const progress = moduleProgress(mod, completed)
-  const nextMod = PORTAL_MODULES.find((m) => m.number === mod.number + 1)
+  const nextMod = modules.find((m) => m.number === mod.number + 1)
   const isDone = (l: Lesson) => completed.has(lessonKey(mod.slug, l.id))
 
   const select = (id: string) => {
@@ -129,10 +128,15 @@ export function ModulePlayer({ slug, initialLesson }: { slug: string; initialLes
             <h1 className="text-2xl font-extrabold tracking-tight md:text-4xl">{mod.title}</h1>
             <p className="mt-2 max-w-2xl text-sm text-blue-100/65 md:text-base">{mod.summary}</p>
             <p className="mt-3 text-xs text-blue-100/50">
-              Module {mod.number} of {PORTAL_MODULES.length} · {mod.lessons.length} lessons · ~{moduleMinutes(mod)} min ·{' '}
-              <Link href={mod.publicHref} className="underline decoration-white/20 underline-offset-4 hover:text-white">
-                public page
-              </Link>
+              Module {mod.number} of {modules.length} · {mod.lessons.length} lessons · ~{moduleMinutes(mod)} min
+              {mod.publicHref && (
+                <>
+                  {' · '}
+                  <Link href={mod.publicHref} className="underline decoration-white/20 underline-offset-4 hover:text-white">
+                    public page
+                  </Link>
+                </>
+              )}
             </p>
           </div>
           <ProgressRing pct={progress.pct} size={112} stroke={10}>

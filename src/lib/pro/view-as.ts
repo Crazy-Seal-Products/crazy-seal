@@ -103,25 +103,3 @@ export async function endViewAs(): Promise<void> {
   ;(await cookies()).delete(VIEW_AS_COOKIE)
   if (viewing) await log(viewing.admin, viewing.user, 'exit')
 }
-
-export interface ViewAsLogEntry {
-  id: string
-  admin_email: string
-  admin_name: string | null
-  pro_user_id: string | null
-  pro_user_email: string
-  action: string
-  created_at: string
-}
-
-/** Recent View as starts, newest first, for the admin. */
-export async function recentViewAs(limit = 10): Promise<ViewAsLogEntry[]> {
-  const { data, error } = await createAdminClient()
-    .from('admin_view_as_log')
-    .select('*')
-    .eq('action', 'start')
-    .order('created_at', { ascending: false })
-    .limit(limit)
-  if (error) console.error('[view-as] log read failed', error.message)
-  return (data ?? []) as ViewAsLogEntry[]
-}
