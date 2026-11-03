@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useActionState } from 'react'
+import React, { useActionState, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
+  AlertCircle,
   ArrowRight,
   GraduationCap,
   Inbox,
@@ -35,8 +36,26 @@ const FEATURES = [
   { icon: ShieldCheck, title: 'Warranty registration', desc: 'File the 50 year warranty for every job you finish.' },
 ]
 
+const INVALID = 'border-red-400/60 ring-4 ring-red-500/15 focus:border-red-400/70 focus:ring-red-500/20'
+
+function FieldError({ message }: { message?: string }) {
+  return (
+    <span id="signin-error" role="alert" className="mt-1.5 flex items-start gap-1.5 text-[13px] leading-snug text-red-200">
+      <AlertCircle className="mt-px h-4 w-4 shrink-0 text-red-400" />
+      {message}
+    </span>
+  )
+}
+
 export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
   const [state, formAction, pending] = useActionState<SignInState, FormData>(portalSignIn, {})
+  const [email, setEmail] = useState('')
+  const passwordRef = useRef<HTMLInputElement>(null)
+
+  // After a wrong password, put the cursor back in the (now empty) password box
+  useEffect(() => {
+    if (state.field === 'password') passwordRef.current?.focus()
+  }, [state])
 
   return (
     <div className="min-h-screen bg-[#00152b] text-white lg:grid lg:grid-cols-[1.05fr_0.95fr]">
@@ -116,15 +135,21 @@ export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
               <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Email</span>
               <span className="relative block">
                 <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
+                {/* Controlled so it survives the form reset after a failed sign-in */}
                 <input
                   name="email"
                   type="email"
                   required
                   autoComplete="username"
                   placeholder="you@company.com"
-                  className={twMerge(portalInput, 'pl-10')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={state.field === 'email' || undefined}
+                  aria-describedby={state.field === 'email' ? 'signin-error' : undefined}
+                  className={twMerge(portalInput, 'pl-10', state.field === 'email' && INVALID)}
                 />
               </span>
+              {state.field === 'email' && <FieldError message={state.error} />}
             </label>
             <label className="block">
               <span className="mb-1.5 flex items-baseline justify-between text-xs font-semibold text-blue-100/60">
@@ -136,18 +161,20 @@ export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
               <span className="relative block">
                 <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
                 <input
+                  ref={passwordRef}
                   name="password"
                   type="password"
                   required
                   autoComplete="current-password"
-                  className={twMerge(portalInput, 'pl-10')}
+                  aria-invalid={state.field === 'password' || undefined}
+                  aria-describedby={state.field === 'password' ? 'signin-error' : undefined}
+                  className={twMerge(portalInput, 'pl-10', state.field === 'password' && INVALID)}
                 />
               </span>
+              {state.field === 'password' && <FieldError message={state.error} />}
             </label>
 
-            {state.error && (
-              <p role="alert" className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-200 ring-1 ring-red-400/30">{state.error}</p>
-            )}
+            {state.error && !state.field && <FieldError message={state.error} />}
 
             <button
               type="submit"

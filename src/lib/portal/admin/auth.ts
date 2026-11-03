@@ -30,10 +30,19 @@ const LOCKOUT_MS = 15 * 60 * 1000
 export interface PortalAdmin {
   email: string
   name: string
+  role: string
+  /** How they signed in: their staff account, or the env backup login. */
+  via: 'staff' | 'env'
 }
 
-interface AdminEntry extends PortalAdmin {
+interface AdminEntry {
+  email: string
+  name: string
   hash: string
+}
+
+function envAdmin(entry: AdminEntry): PortalAdmin {
+  return { email: entry.email, name: entry.name, role: 'admin', via: 'env' }
 }
 
 function adminEntries(): Map<string, AdminEntry> {
@@ -78,7 +87,7 @@ export async function verifyAdminCredentials(email: string, password: string): P
     return null
   }
   failures.delete(key)
-  return { email: entry.email, name: entry.name }
+  return envAdmin(entry)
 }
 
 function sign(payload: string, secret: string) {
@@ -131,7 +140,7 @@ async function activeStaff(column: 'email' | 'auth_user_id', value: string): Pro
 
 function staffAdmin(row: StaffRow): PortalAdmin {
   const email = row.email.toLowerCase()
-  return { email, name: row.name?.trim() || email.split('@')[0] }
+  return { email, name: row.name?.trim() || email.split('@')[0], role: row.role || 'admin', via: 'staff' }
 }
 
 export async function isStaffEmail(email: string): Promise<boolean> {
@@ -187,7 +196,7 @@ async function getEnvAdmin(): Promise<PortalAdmin | null> {
     if (!e || !x || x * 1000 < Date.now()) return null
     // Removing someone from PORTAL_ADMIN_USERS ends their session too.
     const entry = adminEntries().get(e)
-    return entry ? { email: entry.email, name: entry.name } : null
+    return entry ? envAdmin(entry) : null
   } catch {
     return null
   }

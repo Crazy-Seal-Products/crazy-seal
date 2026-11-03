@@ -44,7 +44,7 @@ import { adminSignOut } from '@/lib/portal/actions'
 import { syncShopifyNow } from '@/lib/portal/admin/actions'
 import type { Activity } from '@/lib/portal/admin/activity'
 import { ago } from '@/lib/portal/admin/format'
-import { initials } from '@/lib/portal/accounts'
+import { AccountMenu } from './AccountMenu'
 import { RAIL_COOKIE, THEME_COOKIE, type AdminTheme } from './prefs'
 
 const LOGO = 'https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-150.png'
@@ -142,7 +142,7 @@ function crumbs(pathname: string): [string, string] {
 }
 
 export interface AdminShellProps {
-  admin: { name: string; email: string }
+  admin: { name: string; email: string; role: string }
   badges: { openOrders: number; newApplications: number }
   sync: { lastSyncedAt: string | null; error: string | null }
   activity: Activity
@@ -321,13 +321,7 @@ function Sidebar({ pathname, admin, badges }: { pathname: string; admin: AdminSh
       </nav>
 
       <div className={twMerge('flex shrink-0 items-center gap-3 border-t px-4 py-3', SIDE_LINE)}>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-adm-gold-bright to-adm-gold text-[12px] font-bold text-adm-gold-ink ring-2 ring-[rgb(245_197_66/0.25)]">
-          {initials(admin.name)}
-        </span>
-        <span className="min-w-0 flex-1 leading-tight" title={admin.email}>
-          <span className="block truncate text-[13.5px] font-semibold text-white">{admin.name}</span>
-          <span className="block truncate text-[11.5px] text-[#9fb6d3]">Owner</span>
-        </span>
+        <AccountMenu admin={admin} />
         <form action={adminSignOut}>
           <button
             className="grid h-8 w-8 place-items-center rounded-full text-[#9fb6d3] transition hover:bg-white/10 hover:text-white"

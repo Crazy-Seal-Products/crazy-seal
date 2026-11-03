@@ -17,6 +17,10 @@ import {
 
 export interface SignInState {
   error?: string
+  /** Which input the error is about, so the form can mark it. */
+  field?: 'email' | 'password'
+  /** The email that was tried, so the form keeps it after an error. */
+  email?: string
 }
 
 async function setDemoSession() {
@@ -33,22 +37,24 @@ async function setDemoSession() {
 export async function portalSignIn(_prev: SignInState, formData: FormData): Promise<SignInState> {
   const email = String(formData.get('email') ?? '').trim().toLowerCase()
   const password = String(formData.get('password') ?? '')
-  if (!email || !password) return { error: 'Enter your email and password.' }
+  if (!email) return { error: 'Enter your email.', field: 'email', email }
+  if (!password) return { error: 'Enter your password.', field: 'password', email }
 
-  if (isAdminEmail(email)) {
-    if (isLockedOut(email)) return { error: 'Too many attempts. Try again in 15 minutes.' }
-    const admin = await verifyAdminCredentials(email, password)
-    if (!admin) return { error: 'That email and password don’t match.' }
-    await startAdminSession(admin)
-    redirect('/portal/admin/')
-  }
-
-  // Staff accounts: the same Supabase logins the old site admin used
-  if (await isStaffEmail(email)) {
-    if (isLockedOut(email)) return { error: 'Too many attempts. Try again in 15 minutes.' }
-    const admin = await verifyStaffCredentials(email, password)
-    if (!admin) return { error: 'That email and password don’t match.' }
-    redirect('/portal/admin/')
+  // Admins: a backup env login and/or a staff account (the Supabase login the
+  // old site admin used). Either password works.
+  const envUser = isAdminEmail(email)
+  const staffUser = await isStaffEmail(email)
+  if (envUser || staffUser) {
+    if (isLockedOut(email)) return { error: 'Too many attempts. Try again in 15 minutes.', field: 'password', email }
+    if (envUser) {
+      const admin = await verifyAdminCredentials(email, password)
+      if (admin) {
+        await startAdminSession(admin)
+        redirect('/portal/admin/')
+      }
+    }
+    if (staffUser && (await verifyStaffCredentials(email, password))) redirect('/portal/admin/')
+    return { error: 'That password isn’t right. Try again, or use “Forgot your password?”.', field: 'password', email }
   }
 
   if (email === DEMO_ACCOUNT.email.toLowerCase() && isPortalDemoEnabled()) {
@@ -56,7 +62,11 @@ export async function portalSignIn(_prev: SignInState, formData: FormData): Prom
     redirect('/portal/?welcome=1')
   }
 
-  return { error: 'Dealer sign-in isn’t open yet. Explore the demo below, or use the Pro Hub for orders today.' }
+  return {
+    error: 'There’s no admin account for this email. Dealer sign-in isn’t open yet: explore the demo below, or use the Pro Hub for orders today.',
+    field: 'email',
+    email,
+  }
 }
 
 export async function portalStartDemo() {
