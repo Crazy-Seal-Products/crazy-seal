@@ -92,7 +92,7 @@ function ProWarrantyFormInner({
         uploadPhotos(afterFiles, 'warranty'),
       ])
       if (!before_photo_urls.length || !after_photo_urls.length) {
-        setError('Photo upload failed. Please try a smaller JPEG or PNG.')
+        setError("Some photos didn't upload. Check your connection and submit again. Photos that already uploaded won't upload twice.")
         return
       }
       const firstName = (formData.get('first_name') as string || '').trim()
@@ -269,6 +269,7 @@ function ProWarrantyFormInner({
         label={<>Before photos <span className="text-red-500">*</span></>}
         hint="Roof before Crazy Seal. JPG, PNG, or HEIC."
         inputLabel="Upload before photos"
+        folder="warranty"
         files={beforeFiles}
         onChange={setBeforeFiles}
       />
@@ -276,6 +277,7 @@ function ProWarrantyFormInner({
         label={<>After photos <span className="text-red-500">*</span></>}
         hint="Finished roof. JPG, PNG, or HEIC."
         inputLabel="Upload after photos"
+        folder="warranty"
         files={afterFiles}
         onChange={setAfterFiles}
       />

@@ -38,6 +38,9 @@ export function WarrantyClaimForm() {
 
     try {
       const photo_urls = await uploadPhotos(photoFiles, 'warranty')
+      if (photoFiles.length && !photo_urls.length) {
+        throw new Error("Some photos didn't upload. Check your connection and submit again. Photos that already uploaded won't upload twice.")
+      }
       const firstName = (formData.get('first_name') as string || '').trim()
       const lastName = (formData.get('last_name') as string || '').trim()
 
@@ -119,6 +122,7 @@ export function WarrantyClaimForm() {
             label="Photos (optional)"
             files={photoFiles}
             onChange={setPhotoFiles}
+            folder="warranty"
           />
         </FormSection>
 
