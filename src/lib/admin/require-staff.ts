@@ -1,7 +1,8 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { getPortalAdmin } from '@/lib/portal/admin/auth'
 
 export interface StaffRecord {
+  /** Empty for an env-only admin with no row in `staff`. */
   id: string
   auth_user_id: string | null
   name: string | null
@@ -11,19 +12,29 @@ export interface StaffRecord {
   is_active: boolean
 }
 
+/**
+ * Guard for the staff APIs under /api/admin. Accepts anyone signed in to the
+ * Crazy Seal Admin, by staff account or env user (see lib/portal/admin/auth).
+ */
 export async function requireStaff(): Promise<StaffRecord | null> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+  const admin = await getPortalAdmin()
+  if (!admin) return null
 
-  const admin = createAdminClient()
-  const { data, error } = await admin
+  const { data } = await createAdminClient()
     .from('staff')
     .select('*')
-    .eq('auth_user_id', user.id)
+    .eq('email', admin.email)
     .eq('is_active', true)
     .maybeSingle()
 
-  if (error || !data) return null
-  return data as StaffRecord
+  return (
+    (data as StaffRecord | null) ?? {
+      id: '',
+      auth_user_id: null,
+      name: admin.name,
+      email: admin.email,
+      role: 'admin',
+      is_active: true,
+    }
+  )
 }

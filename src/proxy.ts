@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { hasAuthSearch } from '@/lib/auth/recovery'
 
 // Admin-managed redirects (managed_redirects table), applied at request time
-// so redirects added in /admin/redirects work without a deploy. Rules are
+// so redirects added in the admin's Redirects page work without a deploy. Rules are
 // cached in module scope for a minute to keep the hot path fast.
 // Next 16 proxy convention (formerly middleware.ts).
 
@@ -47,7 +47,7 @@ export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
   if (normalize(pathname) === '/' && hasAuthSearch(search)) {
     const dest = request.nextUrl.clone()
-    dest.pathname = '/admin/reset-password/'
+    dest.pathname = '/portal/reset-password/'
     return NextResponse.redirect(dest)
   }
 
@@ -64,6 +64,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip Next internals, API routes, and static files
+  // Skip Next internals, API routes, and static files. The admin's Redirects
+  // page refuses sources this skips (PROXY_SKIPS in lib/portal/admin/redirects.ts).
   matcher: ['/((?!_next/|api/|admin|pro|.*\\.).*)'],
 }

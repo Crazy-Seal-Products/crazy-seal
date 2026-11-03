@@ -71,6 +71,80 @@ export async function saveInstaller(id: string, _prev: ActionResult | null, form
   return r.ok ? { ok: true, message: 'Saved' } : r
 }
 
+/** The designer's finished photos for a registration (uploaded from the detail page). */
+export async function updateEditedPhotos(id: string, urls: string[]): Promise<ActionResult> {
+  const clean = urls.filter((u) => typeof u === 'string' && /^https?:\/\//.test(u))
+  return updateRegistration(id, { edited_photo_urls: clean.length ? clean : null })
+}
+
+// ─── Contact / order corrections (the old site admin's "Edit" form) ───
+
+function detailsReader(form: FormData) {
+  return (k: string) => String(form.get(k) ?? '').trim() || null
+}
+
+/** Name and a valid email are required, as in the old site admin. */
+function nameAndEmail(name: string | null, email: string | null): string | null {
+  if (!name) return 'Name is required'
+  if (!email || !EMAIL_RE.test(email)) return 'A valid email is required'
+  return null
+}
+
+export async function saveRegistrationDetails(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
+  const text = detailsReader(form)
+  const email = text('email')?.toLowerCase() ?? null
+  const invalid = nameAndEmail(text('name'), email)
+  if (invalid) return { ok: false, error: invalid }
+  const r = await updateRegistration(id, {
+    name: text('name')!,
+    email: email!,
+    phone: text('phone'),
+    order_number: text('order_number'),
+    customer_details: text('customer_details'),
+    experience_notes: text('experience_notes'),
+    contractor_notes: text('contractor_notes'),
+  })
+  return r.ok ? { ok: true, message: 'Saved' } : r
+}
+
+export async function saveClaimDetails(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
+  await requirePortalAdmin()
+  const text = detailsReader(form)
+  const email = text('email')?.toLowerCase() ?? null
+  const invalid = nameAndEmail(text('name'), email)
+  if (invalid) return { ok: false, error: invalid }
+  const { error } = await createAdminClient()
+    .from('warranty_claims')
+    .update({ name: text('name'), email, phone: text('phone'), order_number: text('order_number'), failure_description: text('failure_description') })
+    .eq('id', id)
+  if (error) return { ok: false, error: 'Could not save' }
+  done()
+  return { ok: true, message: 'Saved' }
+}
+
+export async function saveTransferDetails(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
+  await requirePortalAdmin()
+  const text = detailsReader(form)
+  const email = text('new_owner_email')?.toLowerCase() ?? null
+  const invalid = nameAndEmail(text('new_owner_name'), email)
+  if (invalid) return { ok: false, error: invalid }
+  const original = text('original_owner_email')?.toLowerCase() ?? null
+  if (original && !EMAIL_RE.test(original)) return { ok: false, error: 'Original owner email looks wrong' }
+  const { error } = await createAdminClient()
+    .from('warranty_transfers')
+    .update({
+      new_owner_name: text('new_owner_name'),
+      new_owner_email: email,
+      new_owner_phone: text('new_owner_phone'),
+      original_owner_email: original,
+      order_number: text('order_number'),
+    })
+    .eq('id', id)
+  if (error) return { ok: false, error: 'Could not save' }
+  done()
+  return { ok: true, message: 'Saved' }
+}
+
 export async function resendWarrantyEmails(id: string): Promise<ActionResult> {
   await requirePortalAdmin()
   const { data } = await createAdminClient().from('warranty_registrations').select('*').eq('id', id).maybeSingle<Registration>()

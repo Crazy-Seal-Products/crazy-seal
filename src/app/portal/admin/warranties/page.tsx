@@ -12,7 +12,7 @@ import {
   REVIEW_FILTERS,
   TRANSFER_STATUSES,
 } from '@/lib/portal/admin/warranty'
-import { saveClaim, saveTransfer, setRegistrationStatus } from '@/lib/portal/admin/warranty-actions'
+import { saveClaim, saveClaimDetails, saveTransfer, saveTransferDetails, setRegistrationStatus } from '@/lib/portal/admin/warranty-actions'
 import { dateShort, dateTime, num, pct } from '@/lib/portal/admin/format'
 import { one, pageNum, pick, type SearchParams } from '@/lib/portal/admin/params'
 import {
@@ -35,7 +35,7 @@ import {
   Tr,
 } from '@/components/portal/admin/ui'
 import { StatusSelect } from '@/components/portal/admin/controls'
-import { ReviewLauncher, StatusNotesForm } from '@/components/portal/admin/warranty-client'
+import { DetailsForm, ReviewLauncher, StatusNotesForm } from '@/components/portal/admin/warranty-client'
 
 export const metadata: Metadata = { title: 'Warranties' }
 
@@ -220,6 +220,16 @@ export default async function AdminWarrantiesPage({ searchParams }: { searchPara
                     </div>
                   )}
                   <StatusNotesForm action={saveClaim.bind(null, c.id)} status={c.status} statuses={CLAIM_STATUSES} notes={c.resolution_notes} notesName="resolution_notes" notesLabel="Resolution notes" />
+                  <DetailsForm
+                    action={saveClaimDetails.bind(null, c.id)}
+                    fields={[
+                      { name: 'name', label: 'Name', value: c.name, required: true },
+                      { name: 'email', label: 'Email', value: c.email, type: 'email', required: true },
+                      { name: 'phone', label: 'Phone', value: c.phone, type: 'tel' },
+                      { name: 'order_number', label: 'Order number', value: c.order_number },
+                      { name: 'failure_description', label: 'What failed', value: c.failure_description, multiline: true },
+                    ]}
+                  />
                 </li>
               ))}
             </ul>
@@ -244,6 +254,16 @@ export default async function AdminWarrantiesPage({ searchParams }: { searchPara
                   </div>
                   <p className="text-[12px] text-adm-muted">From original owner {t.original_owner_email ?? 'not given'}</p>
                   <StatusNotesForm action={saveTransfer.bind(null, t.id)} status={t.status} statuses={TRANSFER_STATUSES} notes={t.transfer_notes} notesName="transfer_notes" notesLabel="Transfer notes" />
+                  <DetailsForm
+                    action={saveTransferDetails.bind(null, t.id)}
+                    fields={[
+                      { name: 'new_owner_name', label: 'New owner name', value: t.new_owner_name, required: true },
+                      { name: 'new_owner_email', label: 'New owner email', value: t.new_owner_email, type: 'email', required: true },
+                      { name: 'new_owner_phone', label: 'New owner phone', value: t.new_owner_phone, type: 'tel' },
+                      { name: 'original_owner_email', label: 'Original owner email', value: t.original_owner_email, type: 'email' },
+                      { name: 'order_number', label: 'Order number', value: t.order_number },
+                    ]}
+                  />
                 </li>
               ))}
             </ul>

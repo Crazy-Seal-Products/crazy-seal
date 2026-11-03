@@ -184,6 +184,50 @@ export function InstallerForm({
   )
 }
 
+export interface DetailsField {
+  name: string
+  label: string
+  value: string | null
+  type?: 'text' | 'email' | 'tel'
+  multiline?: boolean
+  required?: boolean
+}
+
+/** Collapsed "Edit details" form for correcting contact and order info. */
+export function DetailsForm({ action, fields, className }: { action: FormAction; fields: DetailsField[]; className?: string }) {
+  const [state, formAction, pending] = useActionState(action, null)
+  return (
+    <details className={twMerge('group', className)}>
+      <summary className="cursor-pointer list-none text-[12px] font-medium text-adm-blue-bright hover:underline [&::-webkit-details-marker]:hidden">
+        <span className="group-open:hidden">Edit details</span>
+        <span className="hidden group-open:inline">Close editing</span>
+      </summary>
+      <form action={formAction} className="mt-2 grid gap-2 sm:grid-cols-2">
+        {fields.map((f) => (
+          <label key={f.name} className={twMerge(labelCls, f.multiline && 'sm:col-span-2')}>
+            <span>
+              {f.label}
+              {f.required && ' *'}
+            </span>
+            {f.multiline ? (
+              <textarea name={f.name} defaultValue={f.value ?? ''} rows={3} className={textareaCls} />
+            ) : (
+              <input name={f.name} type={f.type ?? 'text'} required={f.required} defaultValue={f.value ?? ''} className={inputCls} />
+            )}
+          </label>
+        ))}
+        <div className="flex items-center gap-2 sm:col-span-2">
+          <button type="submit" disabled={pending} className={BUTTON.default}>
+            {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            Save details
+          </button>
+          <Result state={state} />
+        </div>
+      </form>
+    </details>
+  )
+}
+
 /** Status plus a notes field, for claims and transfers. */
 export function StatusNotesForm({
   action,

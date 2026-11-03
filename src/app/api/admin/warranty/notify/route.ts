@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { requireStaff } from '@/lib/admin/require-staff'
 import { certificateUrl } from '@/lib/warranty/certificate'
 import { sendWarrantyRegistrationConfirmations } from '@/lib/email/warranty'
 import { isSendableCustomerEmail, isWarrantyRegistrationForm, mapLegacyWarrantyEntry, WARRANTY_REGISTRATION_FORM_IDS } from '@/lib/warranty/legacy'
@@ -8,22 +8,6 @@ import { isSendableCustomerEmail, isWarrantyRegistrationForm, mapLegacyWarrantyE
 export const maxDuration = 60
 
 const REG_SELECT = 'id, name, email, phone, customer_details, order_number, install_type, installer_name, installer_phone, installer_email, photo_urls, before_photo_urls, after_photo_urls, rating, experience_notes, contractor_notes, gf_entry_id'
-
-async function requireStaff() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-
-  const admin = createAdminClient()
-  const { data: staff } = await admin
-    .from('staff')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .eq('is_active', true)
-    .single()
-
-  return staff
-}
 
 async function loadOrMapRegistration(input: {
   id?: string

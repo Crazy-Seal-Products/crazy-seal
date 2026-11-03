@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T10:00:03.592Z",
+  "generatedAt": "2026-11-03T02:09:23.411Z",
   "routes": [
     {
       "path": "/",
@@ -10,76 +10,6 @@
       "path": "/about/",
       "dynamic": false,
       "admin": false
-    },
-    {
-      "path": "/admin/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/assets/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/commerce/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/entries/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/faq/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/gallery/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/leads/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/login/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/projects/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/pros/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/redirects/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/reset-password/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/sitemap/",
-      "dynamic": false,
-      "admin": true
-    },
-    {
-      "path": "/admin/warranty/",
-      "dynamic": false,
-      "admin": true
     },
     {
       "path": "/advantages/",
@@ -367,6 +297,21 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/archive/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/archive/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/assets/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/customers/",
       "dynamic": false,
       "admin": false
@@ -442,7 +387,22 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/redirects/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/search/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/sitemap/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/staff/",
       "dynamic": false,
       "admin": false
     },
@@ -478,6 +438,11 @@
     },
     {
       "path": "/portal/orders/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/reset-password/",
       "dynamic": false,
       "admin": false
     },

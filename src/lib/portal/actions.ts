@@ -6,10 +6,13 @@ import { DEMO_ACCOUNT } from './accounts'
 import { isPortalDemoEnabled, PORTAL_COOKIE, PORTAL_COOKIE_MAX_AGE } from './session'
 import {
   endAdminSession,
+  getPortalAdmin,
   isAdminEmail,
   isLockedOut,
+  isStaffEmail,
   startAdminSession,
   verifyAdminCredentials,
+  verifyStaffCredentials,
 } from './admin/auth'
 
 export interface SignInState {
@@ -40,6 +43,14 @@ export async function portalSignIn(_prev: SignInState, formData: FormData): Prom
     redirect('/portal/admin/')
   }
 
+  // Staff accounts: the same Supabase logins the old site admin used
+  if (await isStaffEmail(email)) {
+    if (isLockedOut(email)) return { error: 'Too many attempts. Try again in 15 minutes.' }
+    const admin = await verifyStaffCredentials(email, password)
+    if (!admin) return { error: 'That email and password don’t match.' }
+    redirect('/portal/admin/')
+  }
+
   if (email === DEMO_ACCOUNT.email.toLowerCase() && isPortalDemoEnabled()) {
     await setDemoSession()
     redirect('/portal/?welcome=1')
@@ -58,6 +69,11 @@ export async function portalSignOut() {
   const store = await cookies()
   store.delete(PORTAL_COOKIE)
   redirect('/portal/login/')
+}
+
+/** After a password reset: is the new Supabase session a Crazy Seal Admin? */
+export async function checkStaffSession(): Promise<boolean> {
+  return Boolean(await getPortalAdmin())
 }
 
 export async function adminSignOut() {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireStaff } from '@/lib/admin/require-staff'
 import { MediaConvertClient, GetJobCommand } from '@aws-sdk/client-mediaconvert'
 
 const mediaConvertClient = new MediaConvertClient({
@@ -11,6 +12,9 @@ const mediaConvertClient = new MediaConvertClient({
 })
 
 export async function GET(request: NextRequest) {
+  const staff = await requireStaff()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const { searchParams } = new URL(request.url)
     const jobId = searchParams.get('jobId')

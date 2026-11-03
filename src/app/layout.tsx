@@ -73,7 +73,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${jakarta.variable} font-sans antialiased`}>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var p=location.pathname.replace(/\\/+$/,'')||'/';if(p==='/admin/reset-password'||p==='/admin/login')return;var h=location.hash||'';var auth=/access_token=/.test(h)&&/type=(recovery|invite|signup|magiclink|email)/.test(h);var err=/error=/.test(h)&&(/error_code=/.test(h)||/error_description=/.test(h));if(auth||err){location.replace('/admin/reset-password/'+location.search+location.hash);}})();`,
+            __html: `(function(){var p=location.pathname.replace(/\\/+$/,'')||'/';if(p==='/portal/reset-password'||p==='/portal/login'||p==='/admin/reset-password')return;var h=location.hash||'';var auth=/access_token=/.test(h)&&/type=(recovery|invite|signup|magiclink|email)/.test(h);var err=/error=/.test(h)&&(/error_code=/.test(h)||/error_description=/.test(h));if(auth||err){location.replace('/portal/reset-password/'+location.search+location.hash);}})();`,
           }}
         />
         <MetaPixel />

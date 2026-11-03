@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireStaff } from '@/lib/admin/require-staff'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,6 +8,9 @@ const BATCH_LIMIT = 30
 // Checks a batch of site paths and reports the final HTTP status after
 // following redirects. Used by the /admin/sitemap health check.
 export async function POST(request: NextRequest) {
+  const staff = await requireStaff()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   const { paths } = await request.json()
 
   if (

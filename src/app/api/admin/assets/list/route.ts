@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireStaff } from '@/lib/admin/require-staff'
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
 
 const s3 = new S3Client({
@@ -14,6 +15,9 @@ const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env
 const PREFIX = 'site-assets/'
 
 export async function GET(request: NextRequest) {
+  const staff = await requireStaff()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')

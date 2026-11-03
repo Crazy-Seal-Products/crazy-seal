@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'A sign-in link was already sent recently.' })
     }
 
-    await markInvited(email, staff.id)
+    await markInvited(email, staff.id || null)
     const url = `${requestOrigin(request)}/api/pro/auth/callback/?token=${encodeURIComponent(token)}`
     await sendProMagicLink(email, url)
 

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireStaff } from '@/lib/admin/require-staff'
 import {
   MediaConvertClient,
   CreateJobCommand,
   AudioDefaultSelection,
   OutputGroupType,
   AacCodingMode,
+  type CreateJobCommandInput,
 } from '@aws-sdk/client-mediaconvert'
 
 const mediaConvertClient = new MediaConvertClient({
@@ -19,6 +21,9 @@ const mediaConvertClient = new MediaConvertClient({
 const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 
 export async function POST(request: NextRequest) {
+  const staff = await requireStaff()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const body = await request.json()
     const { inputKey, filename } = body
@@ -218,7 +223,7 @@ export async function POST(request: NextRequest) {
       },
     }
 
-    const command = new CreateJobCommand(jobSettings as any)
+    const command = new CreateJobCommand(jobSettings as unknown as CreateJobCommandInput)
     const response = await mediaConvertClient.send(command)
 
     return NextResponse.json({

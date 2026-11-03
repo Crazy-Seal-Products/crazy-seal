@@ -1,17 +1,25 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
+import { cache } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyPassword } from '@/lib/pro/password'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Crazy Seal Admin sign-in (the owner side of the portal at /portal/admin).
  *
- * Admin users live in env, not the database:
- *   PORTAL_ADMIN_USERS=email|Display Name|salt:hash[,email|Name|salt:hash…]
- *   PORTAL_SESSION_SECRET=<32+ random characters>
- * Hashes use the same scrypt format as Pro Hub passwords — generate one with
- * `node scripts/portal-admin-hash.mjs "<password>"`. With either variable
- * missing, admin sign-in is off (fails closed).
+ * Two ways in, checked in this order:
+ *
+ * 1. Staff accounts: the Supabase logins in the `staff` table (active rows
+ *    only) that the old site admin used. Adding or removing someone is a row
+ *    in that table, managed from the admin's Staff page.
+ * 2. Env users, a fallback that works even if Supabase auth is down:
+ *      PORTAL_ADMIN_USERS=email|Display Name|salt:hash[,email|Name|salt:hash…]
+ *      PORTAL_SESSION_SECRET=<32+ random characters>
+ *    Hashes use the same scrypt format as Pro Hub passwords — generate one
+ *    with `node scripts/portal-admin-hash.mjs "<password>"`. With either
+ *    variable missing, this path is off (fails closed).
  */
 
 export const ADMIN_COOKIE = 'cs_portal_admin'
@@ -96,9 +104,73 @@ export async function startAdminSession(admin: PortalAdmin) {
 export async function endAdminSession() {
   const store = await cookies()
   store.delete(ADMIN_COOKIE)
+  await (await createClient()).auth.signOut()
 }
 
-export async function getPortalAdmin(): Promise<PortalAdmin | null> {
+// ─── Staff accounts (Supabase auth + the `staff` table) ───
+
+export interface StaffRow {
+  id: string
+  auth_user_id: string | null
+  name: string | null
+  email: string
+  role: string | null
+  is_active: boolean
+  created_at?: string
+}
+
+async function activeStaff(column: 'email' | 'auth_user_id', value: string): Promise<StaffRow | null> {
+  const { data } = await createAdminClient()
+    .from('staff')
+    .select('*')
+    .eq(column, value)
+    .eq('is_active', true)
+    .maybeSingle()
+  return (data as StaffRow | null) ?? null
+}
+
+function staffAdmin(row: StaffRow): PortalAdmin {
+  const email = row.email.toLowerCase()
+  return { email, name: row.name?.trim() || email.split('@')[0] }
+}
+
+export async function isStaffEmail(email: string): Promise<boolean> {
+  return Boolean(await activeStaff('email', email.trim().toLowerCase()))
+}
+
+/** Signs in with the staff member's Supabase password (sets the Supabase session cookies). */
+export async function verifyStaffCredentials(email: string, password: string): Promise<PortalAdmin | null> {
+  const key = email.trim().toLowerCase()
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.signInWithPassword({ email: key, password })
+  const staff = !error && data.user ? await activeStaff('auth_user_id', data.user.id) : null
+  if (!staff) {
+    if (data?.user) await supabase.auth.signOut()
+    const prev = failures.get(key)
+    const count = prev && Date.now() < prev.until ? prev.count + 1 : 1
+    failures.set(key, { count, until: Date.now() + LOCKOUT_MS })
+    return null
+  }
+  failures.delete(key)
+  return staffAdmin(staff)
+}
+
+async function getStaffAdmin(): Promise<PortalAdmin | null> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return null
+  const staff = await activeStaff('auth_user_id', user.id)
+  return staff ? staffAdmin(staff) : null
+}
+
+/** The signed-in admin from either path. Cached per request. */
+export const getPortalAdmin = cache(async (): Promise<PortalAdmin | null> => {
+  return (await getEnvAdmin()) ?? (await getStaffAdmin())
+})
+
+async function getEnvAdmin(): Promise<PortalAdmin | null> {
   const secret = sessionSecret()
   if (!secret) return null
   const token = (await cookies()).get(ADMIN_COOKIE)?.value

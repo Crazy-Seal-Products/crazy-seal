@@ -12,7 +12,7 @@ import {
 /**
  * Supabase recovery/invite emails default to the Site URL (the public
  * homepage). Tokens arrive in the hash or ?code= and would otherwise
- * sit unused on the marketing site. Forward them to the admin reset page.
+ * sit unused on the marketing site. Forward them to the staff reset page.
  */
 export function AuthRedirectCatcher() {
   const pathname = usePathname()

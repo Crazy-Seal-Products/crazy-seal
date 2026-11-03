@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireStaff } from '@/lib/admin/require-staff'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { listContactMarketingReviews, updateContactMarketingReview, ZohoScopeError } from '@/lib/zoho/client'
 import { MARKETING_REVIEW_VALUES } from '@/lib/warranty/marketing-reviews'
 
 export async function POST() {
+  const staff = await requireStaff()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const contacts = await listContactMarketingReviews(MARKETING_REVIEW_VALUES)
     const supabase = createAdminClient()
@@ -60,6 +64,9 @@ export async function POST() {
 }
 
 export async function PATCH(request: NextRequest) {
+  const staff = await requireStaff()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const body = await request.json()
     const { id, reviews_for_marketing, email, push_to_zoho } = body as {

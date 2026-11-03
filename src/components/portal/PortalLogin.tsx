@@ -127,7 +127,12 @@ export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
               </span>
             </label>
             <label className="block">
-              <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Password</span>
+              <span className="mb-1.5 flex items-baseline justify-between text-xs font-semibold text-blue-100/60">
+                Password
+                <Link href="/portal/reset-password/" className="font-semibold text-blue-100/60 hover:text-white">
+                  Forgot your password?
+                </Link>
+              </span>
               <span className="relative block">
                 <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-100/40" />
                 <input

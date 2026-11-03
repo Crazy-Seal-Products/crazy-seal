@@ -52,11 +52,12 @@ export function hasAuthSearch(search: string, pathname = '/'): boolean {
   return normalized === '/' || normalized === '/admin'
 }
 
+/** The staff sign-in and reset pages, which handle auth tokens themselves. */
 export function isPublicAdminAuthPath(pathname: string): boolean {
   const normalized = pathname.replace(/\/+$/, '') || '/'
-  return normalized === '/admin/login' || normalized === '/admin/reset-password'
+  return normalized === '/portal/login' || normalized === '/portal/reset-password' || normalized === '/admin/reset-password'
 }
 
 export function resetPasswordPath(search = '', hash = ''): string {
-  return `/admin/reset-password/${search}${hash}`
+  return `/portal/reset-password/${search}${hash}`
 }

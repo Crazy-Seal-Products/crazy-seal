@@ -29,6 +29,20 @@ export const REDIRECTS: Redirect[] = [
   { source: '/double-layer-kit', destination: '/kit-builder', permanent: false },
   { source: '/direct-to-deck-kit', destination: '/kit-builder', permanent: false },
   { source: '/crazy-good-repair-kit', destination: '/kit-builder', permanent: false },
+  // Old site admin retired into the Crazy Seal Admin (Nov 2026). Each page
+  // goes to its new home; reset links keep their ?code / #token.
+  { source: '/admin/reset-password', destination: '/portal/reset-password', permanent: false },
+  { source: '/admin/login', destination: '/portal/login', permanent: false },
+  { source: '/admin/leads', destination: '/portal/admin/leads', permanent: false },
+  { source: '/admin/pros', destination: '/portal/admin/dealers/portal', permanent: false },
+  { source: '/admin/commerce', destination: '/portal/admin/orders', permanent: false },
+  { source: '/admin/warranty', destination: '/portal/admin/warranties', permanent: false },
+  { source: '/admin/entries', destination: '/portal/admin/archive', permanent: false },
+  { source: '/admin/projects', destination: '/portal/admin/projects', permanent: false },
+  { source: '/admin/assets', destination: '/portal/admin/assets', permanent: false },
+  { source: '/admin/sitemap', destination: '/portal/admin/sitemap', permanent: false },
+  { source: '/admin/redirects', destination: '/portal/admin/redirects', permanent: false },
+  { source: '/admin/:path*', destination: '/portal/admin', permanent: false },
   // Was a generic clone page; /applications is the real directory (Aug 2026)
   { source: '/roofing-applications', destination: '/applications', permanent: true },
   // Live site served marketing assets at both /marketing/* and

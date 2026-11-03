@@ -3,14 +3,15 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Star } from 'lucide-react'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
-import { getRegistration, REGISTRATION_STATUSES } from '@/lib/portal/admin/warranty'
-import { resendWarrantyEmails, saveInstaller } from '@/lib/portal/admin/warranty-actions'
+import { getRegistration, needsEditedPhotos, REGISTRATION_STATUSES } from '@/lib/portal/admin/warranty'
+import { resendWarrantyEmails, saveInstaller, saveRegistrationDetails, updateEditedPhotos } from '@/lib/portal/admin/warranty-actions'
+import { EditedPhotos } from '@/components/portal/admin/EditedPhotos'
 import { customerName } from '@/lib/portal/admin/sales'
 import { certificateUrl } from '@/lib/warranty/certificate'
 import { dateTime, money0, num } from '@/lib/portal/admin/format'
 import { BackLink, Badge, CellLink, ExternalButton, KV, PageHeader, Panel } from '@/components/portal/admin/ui'
 import { ActionButton } from '@/components/portal/admin/controls'
-import { ClassifyForm, InstallerForm, ReviewLauncher } from '@/components/portal/admin/warranty-client'
+import { ClassifyForm, DetailsForm, InstallerForm, ReviewLauncher } from '@/components/portal/admin/warranty-client'
 
 type Params = Promise<{ id: string }>
 
@@ -86,6 +87,20 @@ export default async function AdminWarrantyPage({ params }: { params: Params }) 
             )}
           </Panel>
 
+          {hasPhotos && (
+            <Panel
+              title="Edited photos"
+              meta={needsEditedPhotos(r) ? 'marked for edits · none uploaded yet' : 'designer finals for marketing'}
+              tone="dealers"
+            >
+              <EditedPhotos
+                urls={r.edited_photo_urls ?? []}
+                favorites={r.favorite_photo_urls ?? []}
+                save={updateEditedPhotos.bind(null, r.id)}
+              />
+            </Panel>
+          )}
+
           <Panel title="What they said">
             <KV
               rows={[
@@ -141,6 +156,19 @@ export default async function AdminWarrantyPage({ params }: { params: Params }) 
                       ['Orders · lifetime', `${num(customer.number_of_orders)} · ${money0(customer.amount_spent)}`],
                     ] as [string, ReactNode][])
                   : []),
+              ]}
+            />
+            <DetailsForm
+              action={saveRegistrationDetails.bind(null, r.id)}
+              className="border-t border-adm-line-soft px-3 py-2"
+              fields={[
+                { name: 'name', label: 'Name', value: r.name, required: true },
+                { name: 'email', label: 'Email', value: r.email, type: 'email', required: true },
+                { name: 'phone', label: 'Phone', value: r.phone, type: 'tel' },
+                { name: 'order_number', label: 'Order number', value: r.order_number },
+                { name: 'customer_details', label: 'Job details', value: r.customer_details, multiline: true },
+                { name: 'experience_notes', label: 'Experience notes', value: r.experience_notes, multiline: true },
+                { name: 'contractor_notes', label: 'Installer notes', value: r.contractor_notes, multiline: true },
               ]}
             />
           </Panel>
