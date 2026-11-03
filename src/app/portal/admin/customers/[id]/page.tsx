@@ -27,6 +27,7 @@ import {
   Tr,
 } from '@/components/portal/admin/ui'
 import { BarList } from '@/components/portal/admin/BarList'
+import { ViewAsButton } from '@/components/portal/admin/ViewAsButton'
 import { SERIES } from '@/components/portal/admin/series'
 
 type Params = Promise<{ id: string }>
@@ -189,7 +190,11 @@ export default async function AdminCustomerPage({ params }: { params: Params }) 
               <Empty>No address on file.</Empty>
             )}
           </Panel>
-          <Panel title="Pro Hub" tone="dealers">
+          <Panel
+            title="Pro Hub"
+            tone="dealers"
+            actions={proUser ? <ViewAsButton proUserId={proUser.id} name={proUser.email} /> : undefined}
+          >
             {proUser ? (
               <KV
                 rows={[

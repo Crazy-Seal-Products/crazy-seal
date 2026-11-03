@@ -181,7 +181,7 @@ export interface CustomerDetail {
   }
   orders: { shopify_id: string; legacy_resource_id: string | null; name: string; created: string; sales: number; financial_status: string | null; fulfillment_status: string | null; items: string; units: number; source_name: string | null }[]
   products: { title: string; units: number; sales: number }[]
-  proUser: { email: string; last_login_at: string | null; created_at: string; password_hash: string | null; status_override: string | null } | null
+  proUser: { id: string; email: string; last_login_at: string | null; created_at: string; password_hash: string | null; status_override: string | null } | null
   leads: { id: string; created_at: string; lead_type: string | null; project_type: string | null; business_name: string | null; status: string | null; message: string | null }[]
   warranties: { id: string; created_at: string; install_type: string | null; status: string | null; name: string | null }[]
 }
@@ -205,7 +205,7 @@ export const getCustomerDetail = cache(async (legacyId: string): Promise<Custome
     allLineItems(),
     supabase
       .from('pro_users')
-      .select('email, last_login_at, created_at, password_hash, status_override')
+      .select('id, email, last_login_at, created_at, password_hash, status_override')
       .or(email ? `shopify_customer_id.eq."${row.shopify_id}",email.eq."${email}"` : `shopify_customer_id.eq."${row.shopify_id}"`)
       .limit(1)
       .maybeSingle(),

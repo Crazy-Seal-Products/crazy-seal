@@ -2,15 +2,21 @@ import { NextResponse } from 'next/server'
 import { getProUser } from '@/lib/pro/auth'
 import { loadProContext, publicUser } from '@/lib/pro/context'
 import { shopifyErrorMessage } from '@/lib/pro/shopify'
+import { getViewAs } from '@/lib/pro/view-as'
 
 export async function GET() {
   const user = await getProUser()
   if (!user) return NextResponse.json({ user: null }, { status: 401 })
 
+  // Set when an admin is viewing this account (read-only), for the banner
+  const viewing = await getViewAs()
+  const viewAs = viewing ? { adminName: viewing.admin.name, expiresAt: viewing.expiresAt } : null
+
   try {
     const ctx = await loadProContext(user)
     return NextResponse.json({
       user: publicUser(ctx),
+      viewAs,
       shopifyError: ctx.shopifyError ? shopifyErrorMessage(ctx.shopifyError) : null,
     })
   } catch (err) {
@@ -25,6 +31,7 @@ export async function GET() {
         statuses: ['member'],
         hasPassword: Boolean(user.password_hash),
       },
+      viewAs,
       shopifyError: shopifyErrorMessage(err),
     })
   }

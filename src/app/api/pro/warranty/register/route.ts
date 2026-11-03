@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWarrantyAutoReply, sendWarrantyNotification } from '@/lib/email/gmail'
 import { getProUser } from '@/lib/pro/auth'
+import { isViewingAs, VIEW_AS_READ_ONLY } from '@/lib/pro/view-as'
 import { loadProContext } from '@/lib/pro/context'
 import { normalizeOrderNumber, orderNumberVariants } from '@/lib/pro/status'
 import { certificateUrl } from '@/lib/warranty/certificate'
@@ -10,6 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getProUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (await isViewingAs()) return NextResponse.json({ error: VIEW_AS_READ_ONLY }, { status: 403 })
 
     const body = await request.json()
     const {

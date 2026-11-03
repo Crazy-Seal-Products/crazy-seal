@@ -8,6 +8,7 @@ import {
   SESSION_COOKIE,
   SESSION_DAYS,
 } from './config'
+import { getViewAs } from './view-as'
 
 export interface ProUser {
   id: string
@@ -222,6 +223,10 @@ export function clearSessionCookie(response: NextResponse): NextResponse {
 }
 
 export async function getProUser(): Promise<ProUser | null> {
+  // An admin viewing as this dealer (read-only); see ./view-as
+  const viewing = await getViewAs()
+  if (viewing) return viewing.user
+
   const jar = await cookies()
   const token = jar.get(SESSION_COOKIE)?.value
   if (!token) return null

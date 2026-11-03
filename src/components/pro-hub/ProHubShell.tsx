@@ -14,6 +14,7 @@ import {
   X,
   LogOut,
   ExternalLink,
+  Eye,
   Phone,
   type LucideIcon,
 } from 'lucide-react'
@@ -46,6 +47,12 @@ export interface ProMe {
   hasPassword?: boolean
 }
 
+/** Present when a Crazy Seal Admin is viewing this account (read-only). */
+export interface ViewAsInfo {
+  adminName: string
+  expiresAt: number
+}
+
 function isActive(href: string, pathname: string): boolean {
   const normalized = pathname.replace(/\/+$/, '') || '/'
   const target = href.replace(/\/+$/, '') || '/'
@@ -59,6 +66,7 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
   const [me, setMe] = useState<ProMe | null>(null)
+  const [viewAs, setViewAs] = useState<ViewAsInfo | null>(null)
 
   const normalized = pathname.replace(/\/+$/, '') || '/'
   const isPublicAuth = ['/pro/login', '/pro/signup', '/pro/forgot', '/pro/reset'].includes(normalized)
@@ -81,6 +89,7 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
           return
         }
         setMe(data.user)
+        setViewAs(data.viewAs ?? null)
         setAuthChecked(true)
       })
       .catch(() => router.replace('/pro/login/'))
@@ -109,10 +118,13 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
     )
   }
 
+  // In an admin view the logout route ends the view instead of signing anyone out
   const handleLogout = async () => {
     await fetch('/api/pro/auth/logout/', { method: 'POST' })
-    router.replace('/pro/login/')
+    if (viewAs) window.location.href = '/portal/admin/dealers/portal/'
+    else router.replace('/pro/login/')
   }
+  const signOutLabel = viewAs ? 'Exit admin view' : 'Sign out'
 
   const label = me?.businessName || me?.displayName || me?.email || 'Pro Hub'
 
@@ -161,7 +173,7 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-1.5 text-[11px] text-white/50 hover:text-red-300 w-full"
           >
             <LogOut className="w-3 h-3" />
-            Sign out
+            {signOutLabel}
           </button>
         </div>
       </aside>
@@ -196,7 +208,7 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
             <div className="px-4 py-3 border-t border-white/10 space-y-2">
               {me && <StatusPills statuses={me.statuses} variant="dark" />}
               <button onClick={handleLogout} className="flex items-center gap-2 text-xs text-white/60">
-                <LogOut className="w-3.5 h-3.5" /> Sign out
+                <LogOut className="w-3.5 h-3.5" /> {signOutLabel}
               </button>
             </div>
           </aside>
@@ -204,6 +216,26 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
       )}
 
       <main className="flex-1 min-h-screen md:ml-56 pt-14 md:pt-0">
+        {viewAs && (
+          <div
+            role="status"
+            className="sticky top-14 md:top-0 z-20 flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-[#e3b42a] bg-[#F9EA1C] px-4 py-2 text-[13px] text-[#003365]"
+          >
+            <Eye className="h-4 w-4 shrink-0" />
+            <p className="min-w-0 flex-1 leading-snug">
+              <span className="font-bold">Admin view.</span> {viewAs.adminName} is viewing the Pro Hub as{' '}
+              <span className="font-semibold">{label}</span>. Read-only: nothing here changes their account. Ends at{' '}
+              {new Date(viewAs.expiresAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.
+            </p>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="shrink-0 rounded-full bg-[#003365] px-3.5 py-1.5 text-[12px] font-bold text-white transition hover:bg-[#002a54]"
+            >
+              Exit admin view
+            </button>
+          </div>
+        )}
         {children}
       </main>
     </div>

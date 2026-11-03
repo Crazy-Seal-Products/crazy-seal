@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getProUser, isMissingRelation, setPasswordHash } from '@/lib/pro/auth'
 import { hashPassword, passwordError, verifyPassword } from '@/lib/pro/password'
+import { isViewingAs, VIEW_AS_READ_ONLY } from '@/lib/pro/view-as'
 
 export async function POST(request: NextRequest) {
   try {
     const user = await getProUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (await isViewingAs()) return NextResponse.json({ error: VIEW_AS_READ_ONLY }, { status: 403 })
 
     const body = await request.json().catch(() => null)
     const current = typeof body?.current === 'string' ? body.current : ''

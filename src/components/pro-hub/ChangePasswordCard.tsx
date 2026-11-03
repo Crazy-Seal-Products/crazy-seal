@@ -5,13 +5,27 @@ import { MIN_PASSWORD_LENGTH } from '@/lib/pro/config'
 
 export function ChangePasswordGate() {
   const [hasPassword, setHasPassword] = useState<boolean | null>(null)
+  const [viewAs, setViewAs] = useState(false)
   useEffect(() => {
     fetch('/api/pro/me/')
       .then((r) => r.json())
-      .then((d) => setHasPassword(Boolean(d.user?.hasPassword)))
+      .then((d) => {
+        setHasPassword(Boolean(d.user?.hasPassword))
+        setViewAs(Boolean(d.viewAs))
+      })
       .catch(() => setHasPassword(false))
   }, [])
   if (hasPassword === null) return null
+  if (viewAs) {
+    return (
+      <div className="rounded-2xl border border-[#e3b42a] bg-[#fff8dc] p-5 text-sm text-[#003365]">
+        <p className="font-bold">Password</p>
+        <p className="mt-1 text-[#003365]/80">
+          Hidden in admin view. {hasPassword ? 'This dealer has a password set.' : 'This dealer signs in with email links and has no password yet.'}
+        </p>
+      </div>
+    )
+  }
   return <ChangePasswordCard hasPassword={hasPassword} />
 }
 

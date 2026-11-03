@@ -4,7 +4,9 @@ import { requirePortalAdmin } from '@/lib/portal/admin/auth'
 import { getPortalAccounts } from '@/lib/portal/admin/dealers'
 import { DEMO_ACCOUNT, TIER_LABELS } from '@/lib/portal/accounts'
 import { PORTAL_MODULES, TOTAL_LESSONS } from '@/lib/portal/modules'
-import { ago, dateShort, money0, num } from '@/lib/portal/admin/format'
+import { ago, dateShort, dateTime, money0, num } from '@/lib/portal/admin/format'
+import { recentViewAs } from '@/lib/pro/view-as'
+import { ViewAsButton } from '@/components/portal/admin/ViewAsButton'
 import {
   Badge,
   CellLink,
@@ -28,7 +30,7 @@ export const metadata: Metadata = { title: 'Portal accounts' }
 
 export default async function AdminPortalAccountsPage() {
   await requirePortalAdmin()
-  const { rows, summary } = await getPortalAccounts()
+  const [{ rows, summary }, views] = await Promise.all([getPortalAccounts(), recentViewAs(8)])
 
   return (
     <>
@@ -59,6 +61,9 @@ export default async function AdminPortalAccountsPage() {
                 <Th align="right" className="hidden @xl:table-cell">Lifetime</Th>
                 <Th className="hidden @6xl:table-cell">Sign-in</Th>
                 <Th className="hidden @6xl:table-cell">Joined</Th>
+                <Th align="right">
+                  <span className="sr-only">View as</span>
+                </Th>
               </THead>
               <TBody>
                 {rows.map((r) => (
@@ -101,6 +106,9 @@ export default async function AdminPortalAccountsPage() {
                     <Td muted className="hidden @6xl:table-cell">
                       {dateShort(r.created_at)}
                     </Td>
+                    <Td align="right">
+                      <ViewAsButton proUserId={r.id} name={r.name} />
+                    </Td>
                   </Tr>
                 ))}
               </TBody>
@@ -113,6 +121,25 @@ export default async function AdminPortalAccountsPage() {
         <div className="grid content-start gap-2">
           <Panel title="Invite to the Pro Hub" tone="dealers">
             <ProInviteForm />
+          </Panel>
+
+          <Panel title="Recent admin views" meta="View as · read-only">
+            {views.length ? (
+              <ul className="divide-y divide-adm-line-soft">
+                {views.map((v) => (
+                  <li key={v.id} className="px-3 py-2 text-[12px] leading-snug">
+                    <span className="font-medium text-adm-ink">{v.admin_name || v.admin_email}</span>
+                    <span className="text-adm-muted"> viewed </span>
+                    <span className="font-medium text-adm-ink">{v.pro_user_email}</span>
+                    <span className="block text-[11px] text-adm-muted">{dateTime(v.created_at)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="px-3 py-2.5 text-[12px] leading-snug text-adm-muted">
+                Use View as on an account to see the Pro Hub exactly as that dealer does, read-only. Every view is listed here.
+              </p>
+            )}
           </Panel>
 
           <Panel
