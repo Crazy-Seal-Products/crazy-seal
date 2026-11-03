@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   FileText,
   ShieldCheck,
+  ShieldX,
   Download,
   Check,
   LifeBuoy,
@@ -24,7 +25,6 @@ import {
   SECTION_WHITE,
   fadeDelay,
 } from '@/components/system-pages/blocks'
-import { StepTimeline } from '@/components/system-pages/motion-blocks'
 
 export const metadata: Metadata = {
   title: 'Crazy Seal Warranty',
@@ -34,24 +34,21 @@ export const metadata: Metadata = {
 
 const STEPS = [
   {
-    label: 'Step 1',
     title: 'Take Your Photos',
-    icon: <Camera className="h-5 w-5" />,
+    icon: Camera,
     desc: 'Take before and after photos of your application.',
-    link: { label: 'See Photo Guidelines', href: `${MEDIA}/2020/05/Photo-Guidelines.pdf` },
+    link: { label: 'Photo Guidelines', href: `${MEDIA}/2020/05/Photo-Guidelines.pdf` },
   },
   {
-    label: 'Step 2',
     title: 'Submit the Form',
-    icon: <FileText className="h-5 w-5" />,
-    desc: 'Submit our simple warranty form with your before & after photos.',
+    icon: FileText,
+    desc: 'Send our simple warranty form with your before & after photos.',
     link: { label: 'Warranty Form', href: '#warranty-form' },
   },
   {
-    label: 'Step 3',
     title: "You're Covered",
-    icon: <ShieldCheck className="h-5 w-5" />,
-    desc: 'Congratulations! Your application is covered for 50 years!',
+    icon: ShieldCheck,
+    desc: 'Congratulations! Your application is covered for 50 years.',
     link: { label: 'Warranty PDF', href: `${MEDIA}/2021/04/Warranty-Certificate-2021.pdf` },
   },
 ]
@@ -204,7 +201,66 @@ export default function WarrantyPage() {
             heading="How to Receive Your Warranty"
             subheading="Three simple steps to 50 years of coverage."
           />
-          <StepTimeline steps={STEPS} className="max-w-5xl mx-auto" />
+          {/* Three matching cards, centered under the heading; the last one is
+              the payoff, so it gets the navy treatment like "Register" below. */}
+          <Stagger className="mx-auto grid max-w-5xl grid-cols-1 gap-7 pt-3 md:grid-cols-3 md:gap-6" stagger={0.12}>
+            {STEPS.map((step, i) => {
+              const last = i === STEPS.length - 1
+              const external = step.link.href.startsWith('http')
+              return (
+                <StaggerItem key={step.title} className="relative">
+                  <div
+                    className={`group relative flex h-full flex-col items-center rounded-3xl px-6 pb-5 pt-7 text-center ring-1 md:pb-6 md:pt-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl ${
+                      last
+                        ? 'bg-gradient-to-br from-primary via-primary to-secondary text-white shadow-xl ring-white/10'
+                        : 'bg-gradient-to-b from-slate-50 to-white text-primary shadow-sm ring-primary/[0.08]'
+                    }`}
+                  >
+                    <span
+                      className={`absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] shadow-md ${
+                        last ? 'bg-highlight text-primary' : 'bg-primary text-white'
+                      }`}
+                    >
+                      Step {i + 1}
+                    </span>
+                    <span
+                      className={`grid h-12 w-12 place-items-center rounded-2xl transition-transform md:h-14 md:w-14 duration-500 group-hover:-rotate-6 ${
+                        last
+                          ? 'bg-highlight text-primary shadow-glow-highlight'
+                          : 'bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent'
+                      }`}
+                    >
+                      <step.icon className="h-6 w-6" />
+                    </span>
+                    <h3 className="mt-3 text-xl font-extrabold md:mt-4">{step.title}</h3>
+                    <p className={`mt-1.5 max-w-[17rem] flex-1 text-sm leading-relaxed ${last ? 'text-white/75' : 'text-gray-600'}`}>
+                      {step.desc}
+                    </p>
+                    <a
+                      href={step.link.href}
+                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className={`mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold ring-1 md:mt-5 transition-all duration-300 ${
+                        last
+                          ? 'bg-highlight/15 text-highlight ring-highlight/40 hover:bg-highlight hover:text-primary'
+                          : 'bg-accent/10 text-accent-dark ring-accent/25 hover:bg-accent hover:text-white'
+                      }`}
+                    >
+                      {step.link.label}
+                      {external ? <Download className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+                    </a>
+                  </div>
+                  {!last && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute -right-[30px] top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white text-accent-dark shadow-md ring-1 ring-primary/10 md:grid"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  )}
+                </StaggerItem>
+              )
+            })}
+          </Stagger>
         </div>
       </Container>
 
@@ -305,15 +361,20 @@ export default function WarrantyPage() {
                 ))}
               </Stagger>
             </div>
-            <div className="rounded-3xl bg-white/[0.05] p-6 lg:p-8 ring-1 ring-white/10">
-              <h3 className="mb-5 text-center text-xl font-extrabold text-white/60">The Other Guys</h3>
-              <ul className="space-y-3">
+            {/* Red throughout so it reads as the one to avoid */}
+            <div className="relative overflow-hidden rounded-3xl bg-red-950/30 p-6 lg:p-8 ring-1 ring-red-400/35">
+              <div aria-hidden="true" className="pointer-events-none absolute -top-10 left-6 h-24 w-24 rounded-full bg-red-500/25 blur-2xl" />
+              <h3 className="relative mb-5 flex items-center justify-center gap-2 text-xl font-extrabold text-red-200">
+                <ShieldX className="h-6 w-6 text-red-400" />
+                The Other Guys
+              </h3>
+              <ul className="relative space-y-3">
                 {COMPARISON.otherGuys.map((item) => (
-                  <li key={item} className="flex items-center gap-3 rounded-xl px-3 py-2.5">
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10 ring-1 ring-white/15">
-                      <X className="h-4 w-4 text-white/50" strokeWidth={3} />
+                  <li key={item} className="flex items-center gap-3 rounded-xl bg-red-500/[0.12] px-3 py-2.5 ring-1 ring-red-400/30">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-red-400 to-red-600 text-white shadow-[0_6px_16px_-6px_rgb(239_68_68/0.8)]">
+                      <X className="h-4 w-4" strokeWidth={3} />
                     </span>
-                    <span className="font-semibold text-white/55">{item}</span>
+                    <span className="font-bold text-red-100">{item}</span>
                   </li>
                 ))}
               </ul>
