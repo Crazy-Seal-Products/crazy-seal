@@ -9,6 +9,8 @@ interface PhotoUploadFieldProps {
   files: File[]
   onChange: (files: File[]) => void
   inputLabel?: string
+  /** When set, photos start uploading to this folder as soon as they are picked. */
+  folder?: string
 }
 
 const IMAGE_EXT_RE = /\.(heic|heif|jpe?g|png|gif|webp|bmp|tiff?)$/i
@@ -25,13 +27,14 @@ const EXT_TO_MIME: Record<string, string> = {
   tiff: 'image/tiff',
 }
 
-export function PhotoUploadField({ label, hint, files, onChange, inputLabel }: PhotoUploadFieldProps) {
+export function PhotoUploadField({ label, hint, files, onChange, inputLabel, folder }: PhotoUploadFieldProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
   function addFiles(incoming: FileList | File[]) {
     const images = Array.from(incoming).filter(isImageFile)
     if (!images.length) return
+    if (folder) images.forEach((file) => startUpload(file, folder).catch(() => {}))
     onChange([...files, ...images])
   }
 
@@ -128,14 +131,33 @@ function imageContentType(file: File): string {
   return EXT_TO_MIME[ext] || 'image/jpeg'
 }
 
-async function uploadViaPresign(file: File, folder: string): Promise<string | null> {
+const MAX_ATTEMPTS = 3
+const MAX_PARALLEL_UPLOADS = 3
+
+const uploads = new WeakMap<File, Promise<string>>()
+const waiting: (() => void)[] = []
+let activeUploads = 0
+
+async function withUploadSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (activeUploads < MAX_PARALLEL_UPLOADS) activeUploads++
+  else await new Promise<void>((resolve) => waiting.push(resolve))
+  try {
+    return await fn()
+  } finally {
+    const next = waiting.shift()
+    if (next) next()
+    else activeUploads--
+  }
+}
+
+async function uploadViaPresign(file: File, folder: string): Promise<string> {
   const contentType = imageContentType(file)
   const res = await fetch('/api/upload/presign/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ fileName: file.name, fileType: contentType, folder }),
   })
-  if (!res.ok) return null
+  if (!res.ok) throw new Error(`Presign failed (${res.status})`)
   const { presignedUrl, publicUrl } = await res.json()
 
   const put = await fetch(presignedUrl, {
@@ -143,7 +165,40 @@ async function uploadViaPresign(file: File, folder: string): Promise<string | nu
     headers: { 'Content-Type': contentType },
     body: file,
   })
-  return put.ok ? publicUrl : null
+  if (!put.ok) throw new Error(`S3 upload failed (${put.status})`)
+  return publicUrl
+}
+
+/**
+ * Cellular connections drop mid-upload often enough that a single attempt
+ * surfaces as "Failed to fetch" / "Load failed", so each photo gets retries.
+ */
+async function uploadWithRetry(file: File, folder: string): Promise<string> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    try {
+      return await withUploadSlot(() => uploadViaPresign(file, folder))
+    } catch (err) {
+      lastError = err
+      if (attempt < MAX_ATTEMPTS - 1) await new Promise((r) => setTimeout(r, 1500 * 2 ** attempt))
+    }
+  }
+  throw lastError
+}
+
+/**
+ * Starts (or reuses) the upload for one file. Successful uploads are cached
+ * per File so resubmitting the form never uploads the same photo twice.
+ */
+export function startUpload(file: File, folder: string): Promise<string> {
+  const existing = uploads.get(file)
+  if (existing) return existing
+  const pending = uploadWithRetry(file, folder)
+  uploads.set(file, pending)
+  pending.catch(() => {
+    if (uploads.get(file) === pending) uploads.delete(file)
+  })
+  return pending
 }
 
 /**
@@ -154,11 +209,10 @@ async function uploadViaPresign(file: File, folder: string): Promise<string | nu
  */
 export async function uploadPhotos(files: File[], folder: string): Promise<string[]> {
   if (!files.length) return []
-  const urls: string[] = []
-  for (const file of files) {
-    const url = await uploadViaPresign(file, folder)
-    if (!url) return []
-    urls.push(url)
+  try {
+    return await Promise.all(files.map((file) => startUpload(file, folder)))
+  } catch (err) {
+    console.error('[uploadPhotos]', err)
+    return []
   }
-  return urls
 }
