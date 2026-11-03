@@ -61,7 +61,6 @@ export function mapLegacyWarrantyEntry(entry: {
   const customer_details = [
     get('customer_details'),
     get('project_type') ? `Project type: ${get('project_type')}` : null,
-    get('rv_length') ? `RV length: ${get('rv_length')}` : null,
     get('square_footage') ? `Square footage: ${get('square_footage')}` : null,
   ].filter(Boolean).join('\n') || null
 

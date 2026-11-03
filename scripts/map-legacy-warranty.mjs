@@ -98,7 +98,6 @@ function toRegistration(entry, mapping) {
   const detailLines = [
     get('customer_details'),
     get('project_type') ? `Project type: ${get('project_type')}` : null,
-    get('rv_length') ? `RV length: ${get('rv_length')} ft` : null,
     get('square_footage') ? `Square footage: ${get('square_footage')}` : null,
   ].filter(Boolean)
 

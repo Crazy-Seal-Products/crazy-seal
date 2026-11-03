@@ -65,7 +65,7 @@ export function WarrantyRegistrationForm() {
         uploadPhotos(afterFiles, 'warranty'),
       ])
       if (!before_photo_urls.length || !after_photo_urls.length) {
-        setError('Photo upload failed. Please try a smaller JPEG or PNG, or try again.')
+        setError("Some photos didn't upload. Check your connection and submit again. Photos that already uploaded won't upload twice.")
         return
       }
       const photo_urls = [...before_photo_urls, ...after_photo_urls]
@@ -273,6 +273,7 @@ export function WarrantyRegistrationForm() {
               label={<>Before photos of your application <span className="text-red-500">*</span></>}
               hint="Show the roof before Crazy Seal was applied. JPG, PNG, or HEIC."
               inputLabel="Upload before photos"
+              folder="warranty"
               files={beforeFiles}
               onChange={setBeforeFiles}
             />
@@ -280,6 +281,7 @@ export function WarrantyRegistrationForm() {
               label={<>After photos of your application <span className="text-red-500">*</span></>}
               hint="Show the finished roof. JPG, PNG, or HEIC."
               inputLabel="Upload after photos"
+              folder="warranty"
               files={afterFiles}
               onChange={setAfterFiles}
             />

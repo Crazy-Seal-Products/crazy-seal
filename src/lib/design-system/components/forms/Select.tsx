@@ -30,11 +30,14 @@ export function Select({
   placeholder,
   id,
   className,
+  value,
+  defaultValue,
   ...props
 }: SelectProps) {
   const autoId = useId()
   const selectId = id ?? `select-${autoId}`
   const hasError = Boolean(error)
+  const controlled = value !== undefined
 
   return (
     <div className="w-full">
@@ -62,6 +65,9 @@ export function Select({
         aria-invalid={hasError}
         aria-describedby={hasError ? `${selectId}-error` : undefined}
         {...props}
+        {...(controlled
+          ? { value }
+          : { defaultValue: defaultValue ?? (placeholder ? '' : undefined) })}
       >
         {placeholder && (
           <option value="" disabled>
