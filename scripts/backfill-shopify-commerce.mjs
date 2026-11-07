@@ -1,5 +1,7 @@
 /**
- * Full Shopify customers + orders backfill into Supabase.
+ * Full Shopify customers + orders backfill into Supabase. Writes through the
+ * same SQL functions as the app (supabase/migrations/019), so it never writes
+ * an older version over a newer one or brings back a deleted record.
  *
  *   node --experimental-strip-types scripts/backfill-shopify-commerce.mjs
  *   node --experimental-strip-types scripts/backfill-shopify-commerce.mjs --reset
@@ -75,7 +77,6 @@ function customerRow(node) {
     is_commercial: lower.some((t) => COMMERCIAL_TAGS.some((c) => t.includes(c))),
     shopify_created_at: node.createdAt ?? null,
     shopify_updated_at: node.updatedAt ?? null,
-    deleted_at: null,
     synced_at: new Date().toISOString(),
     payload: node,
   }
@@ -133,16 +134,14 @@ function orderRow(node) {
     payment_gateway_names: node.paymentGatewayNames ?? [],
     shopify_created_at: node.createdAt ?? null,
     shopify_updated_at: node.updatedAt ?? null,
-    deleted_at: null,
     synced_at: new Date().toISOString(),
     payload: node,
   }
 }
 
-function lineItemRows(orderId, orderShopifyId, nodes) {
+function lineItemRows(orderShopifyId, nodes) {
   return (nodes ?? []).map((node) => ({
     shopify_id: node.id,
-    order_id: orderId,
     order_shopify_id: orderShopifyId,
     title: node.title ?? null,
     name: node.name ?? null,
@@ -250,9 +249,7 @@ async function syncCustomers() {
     const data = await graphql(CUSTOMERS_PAGE_QUERY, { cursor })
     const nodes = data.customers?.nodes ?? []
     if (nodes.length) {
-      const { error } = await supabase
-        .from('shopify_customers')
-        .upsert(nodes.map(customerRow), { onConflict: 'shopify_id' })
+      const { error } = await supabase.rpc('upsert_shopify_customers', { p_rows: nodes.map(customerRow) })
       if (error) throw new Error(`customer upsert failed: ${error.message}`)
       records += nodes.length
     }
@@ -278,25 +275,10 @@ async function syncOrders() {
     const data = await graphql(ORDERS_PAGE_QUERY, { cursor })
     const nodes = data.orders?.nodes ?? []
     if (nodes.length) {
-      const { data: saved, error } = await supabase
-        .from('shopify_orders')
-        .upsert(nodes.map(orderRow), { onConflict: 'shopify_id' })
-        .select('id, shopify_id')
+      const rows = nodes.map((node) => ({ ...orderRow(node), line_items: lineItemRows(node.id, node.lineItems?.nodes) }))
+      const { error } = await supabase.rpc('upsert_shopify_orders', { p_orders: rows })
       if (error) throw new Error(`order upsert failed: ${error.message}`)
-      const idByShopify = new Map((saved ?? []).map((r) => [r.shopify_id, r.id]))
-      const items = []
-      for (const node of nodes) {
-        const orderId = idByShopify.get(node.id)
-        if (!orderId) continue
-        items.push(...lineItemRows(orderId, node.id, node.lineItems?.nodes ?? []))
-      }
-      if (items.length) {
-        const { error: lineError } = await supabase
-          .from('shopify_order_line_items')
-          .upsert(items, { onConflict: 'shopify_id' })
-        if (lineError) throw new Error(`line item upsert failed: ${lineError.message}`)
-        lineItems += items.length
-      }
+      lineItems += rows.reduce((n, row) => n + row.line_items.length, 0)
       records += nodes.length
     }
     page += 1

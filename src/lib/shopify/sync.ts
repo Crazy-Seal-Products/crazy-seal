@@ -67,51 +67,35 @@ async function saveState(row: {
   if (error) throw new Error(`sync state save failed: ${error.message}`)
 }
 
-export async function upsertShopifyCustomer(node: ShopifyCustomerNode) {
+// Webhooks, the admin refresh, the full sync and one-off fetches overlap, so a slow one can hold an
+// older version than the one stored. The SQL functions (supabase/migrations/019) write a record only
+// when Shopify's updatedAt is the same or newer, never bring back a deleted one, and replace an order's
+// line items in the same transaction. Each returns whether it wrote.
+
+export async function upsertShopifyCustomer(node: ShopifyCustomerNode): Promise<boolean> {
   const supabase = createAdminClient()
-  const row = customerRow(node)
-  const { error } = await supabase.from('shopify_customers').upsert(row, { onConflict: 'shopify_id' })
+  const { data, error } = await supabase.rpc('upsert_shopify_customers', { p_rows: [customerRow(node)] })
   if (error) throw new Error(`customer upsert failed: ${error.message}`)
+  return data === 1
 }
 
-export async function upsertShopifyOrder(node: ShopifyOrderNode) {
+export async function upsertShopifyOrder(node: ShopifyOrderNode): Promise<boolean> {
   const supabase = createAdminClient()
-  const row = orderRow(node)
-  const { data, error } = await supabase
-    .from('shopify_orders')
-    .upsert(row, { onConflict: 'shopify_id' })
-    .select('id')
-    .single()
-  if (error || !data) throw new Error(`order upsert failed: ${error?.message ?? 'no row'}`)
-
-  const items = lineItemRows(data.id, node.id, node.lineItems?.nodes ?? [])
-  if (items.length) {
-    const { error: lineError } = await supabase
-      .from('shopify_order_line_items')
-      .upsert(items, { onConflict: 'shopify_id' })
-    if (lineError) throw new Error(`line item upsert failed: ${lineError.message}`)
-  }
-
-  const keepIds = items.map((i) => i.shopify_id)
-  const { data: existing } = await supabase
-    .from('shopify_order_line_items')
-    .select('id, shopify_id')
-    .eq('order_id', data.id)
-  const stale = (existing ?? []).filter((row) => !keepIds.includes(row.shopify_id))
-  if (stale.length) {
-    await supabase
-      .from('shopify_order_line_items')
-      .delete()
-      .in('id', stale.map((r) => r.id))
-  }
+  const row = { ...orderRow(node), line_items: lineItemRows(node.id, node.lineItems?.nodes ?? []) }
+  const { data, error } = await supabase.rpc('upsert_shopify_orders', { p_orders: [row] })
+  if (error) throw new Error(`order upsert failed: ${error.message}`)
+  return data === 1
 }
 
 export async function markShopifyDeleted(table: 'shopify_customers' | 'shopify_orders', shopifyId: string) {
   const supabase = createAdminClient()
-  await supabase
+  const now = new Date().toISOString()
+  const { error } = await supabase
     .from(table)
-    .update({ deleted_at: new Date().toISOString(), synced_at: new Date().toISOString() })
+    .update({ deleted_at: now, synced_at: now })
     .eq('shopify_id', shopifyId)
+    .is('deleted_at', null)
+  if (error) throw new Error(`delete mark failed: ${error.message}`)
 }
 
 export async function fetchAndUpsertCustomer(shopifyId: string) {

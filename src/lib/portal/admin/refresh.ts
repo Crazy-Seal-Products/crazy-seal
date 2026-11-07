@@ -7,9 +7,18 @@ import { clearAdminCache } from './cache'
 
 /**
  * Keeps the Supabase copy of Shopify current for the admin: pulls orders and
- * customers updated since the newest row already stored, oldest first, so a
- * capped run resumes where it stopped. Complements the full sync in
- * src/lib/shopify/sync.ts and the webhooks (which may not be registered).
+ * customers Shopify changed since this refresh last looked, oldest first.
+ * Complements the full sync in src/lib/shopify/sync.ts and the webhooks (which
+ * may not be registered).
+ *
+ * Each kind keeps its own starting point in shopify_sync_state
+ * (orders_refresh, customers_refresh). Webhooks, staff opening an order and
+ * the Pro Hub's customer fetch write newer rows without reading what came
+ * before them, so the newest stored row is not a safe place to start. A run
+ * that reads to the end starts the next one a minute before it asked Shopify
+ * (changes made while it ran come again, writes skip what is current); a run
+ * that stops at its page cap continues from the last change it wrote; a run
+ * that fails leaves the starting point where it was.
  */
 
 const ORDERS_SINCE_QUERY = /* GraphQL */ `
@@ -42,49 +51,66 @@ const STALE_MS = 10 * 60_000
 let running: Promise<RefreshResult> | null = null
 let lastRun: { at: number; result: RefreshResult } | null = null
 
-async function watermark(table: 'shopify_orders' | 'shopify_customers'): Promise<string | null> {
+// Clock difference allowed between this server and Shopify's updated_at.
+const OVERLAP_MS = 60_000
+
+async function loadStart(resource: string): Promise<string | null> {
   const supabase = createAdminClient()
-  const { data } = await supabase
-    .from(table)
-    .select('shopify_updated_at')
-    .not('shopify_updated_at', 'is', null)
-    .order('shopify_updated_at', { ascending: false })
-    .limit(1)
+  const { data, error } = await supabase
+    .from('shopify_sync_state')
+    .select('cursor')
+    .eq('resource', resource)
     .maybeSingle()
-  return data?.shopify_updated_at ?? null
+  if (error) throw new Error(`refresh state load failed: ${error.message}`)
+  return data?.cursor ? new Date(data.cursor).toISOString() : null
+}
+
+async function saveStart(resource: string, cursor: string) {
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('shopify_sync_state')
+    .upsert({ resource, cursor, updated_at: new Date().toISOString() }, { onConflict: 'resource' })
+  if (error) throw new Error(`refresh state save failed: ${error.message}`)
 }
 
 async function inBatches<T>(items: T[], size: number, run: (item: T) => Promise<unknown>) {
   for (let i = 0; i < items.length; i += size) await Promise.all(items.slice(i, i + size).map(run))
 }
 
-async function pull<T>(
+async function pull<T extends { updatedAt?: string | null }>(
+  key: 'orders' | 'customers',
   query: string,
-  since: string | null,
   maxPages: number,
   upsert: (node: T) => Promise<unknown>,
-  key: 'orders' | 'customers',
 ): Promise<{ count: number; hasMore: boolean }> {
+  const resource = `${key}_refresh`
+  const since = await loadStart(resource)
+  const askedAt = Date.now()
+  const filter = since ? `updated_at:>='${since}'` : null
   let cursor: string | null = null
   let count = 0
-  // Re-read a minute of overlap: upserts are idempotent, gaps are not.
-  const filter = since ? `updated_at:>='${new Date(new Date(since).getTime() - 60_000).toISOString()}'` : null
+  let reached = since
   for (let page = 0; page < maxPages; page++) {
     const data: Record<string, ConnectionPage<T>> = await shopifyAdminGraphql(query, { cursor, query: filter })
     const conn = data[key]
-    await inBatches(conn.nodes ?? [], 5, upsert)
-    count += conn.nodes?.length ?? 0
-    if (!conn.pageInfo?.hasNextPage) return { count, hasMore: false }
+    const nodes = conn.nodes ?? []
+    await inBatches(nodes, 5, upsert)
+    count += nodes.length
+    reached = nodes[nodes.length - 1]?.updatedAt ?? reached
+    if (!conn.pageInfo?.hasNextPage) {
+      await saveStart(resource, new Date(askedAt - OVERLAP_MS).toISOString())
+      return { count, hasMore: false }
+    }
     cursor = conn.pageInfo.endCursor
   }
+  if (reached) await saveStart(resource, reached)
   return { count, hasMore: true }
 }
 
 async function run(): Promise<RefreshResult> {
   try {
-    const [ordersSince, customersSince] = await Promise.all([watermark('shopify_orders'), watermark('shopify_customers')])
-    const orders = await pull<ShopifyOrderNode>(ORDERS_SINCE_QUERY, ordersSince, 12, upsertShopifyOrder, 'orders')
-    const customers = await pull<ShopifyCustomerNode>(CUSTOMERS_SINCE_QUERY, customersSince, 10, upsertShopifyCustomer, 'customers')
+    const orders = await pull<ShopifyOrderNode>('orders', ORDERS_SINCE_QUERY, 12, upsertShopifyOrder)
+    const customers = await pull<ShopifyCustomerNode>('customers', CUSTOMERS_SINCE_QUERY, 10, upsertShopifyCustomer)
     return {
       orders: orders.count,
       customers: customers.count,
