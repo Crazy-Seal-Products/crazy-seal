@@ -5,6 +5,7 @@ Each folder models one flow where the order of events matters, checks it with TL
 | Flow | Folder | Recheck skill |
 |---|---|---|
 | Who can get into a Pro Hub account | [`pro-access/`](pro-access/) | `verify-pro-access-model` |
+| The local copy of Shopify orders | [`shopify-copy/`](shopify-copy/) | `verify-shopify-copy-model` |
 
 `replay/` runs the real code through each bug path with a fake database, a fake Shopify and a fake Gmail, using plain Node (22.18+) and this repo's installed packages: from `replay/crazy-seal/`, `node --import ./register.mjs --test <name>.test.mjs`.
 
