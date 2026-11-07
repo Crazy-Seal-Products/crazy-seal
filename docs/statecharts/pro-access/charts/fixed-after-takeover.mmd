@@ -1,0 +1,19 @@
+---
+title: "Who can get into a Pro Hub account"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Signed in
+    lg1: Taken over
+  }
+  class lg0 teal
+  class lg1 pink
+  s0: A stranger set the password, and the stranger is signed in
+  s1: The pro set the password, and the pro is signed in
+  s2: A stranger set the password, and both the stranger and the pro are signed in
+  [*] --> s0
+  s0 --> s1: the pro sets a password from the link, which signs everyone else out
+  s0 --> s2: the link signs the pro in
+  class s0 pink
+  class s1 teal
+  class s2 pink

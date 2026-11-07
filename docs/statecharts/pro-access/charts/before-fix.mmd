@@ -1,0 +1,72 @@
+---
+title: "Who can get into a Pro Hub account"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Signed out
+    lg1: Signed in
+    lg2: Taken over
+    lg3: Breaks AResetLocksOthersOut or LinkWorksOnce or OnlyTheOwnerGetsIn or OwnerKeepsTheAccount
+    lg4: Path to the AResetLocksOthersOut or LinkWorksOnce or OnlyTheOwnerGetsIn or OwnerKeepsTheAccount bug
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 pink
+  class lg3 breaks
+  class lg4 bugPath
+  s0: No password yet
+  s1: The pro set the password, and the pro is signed in
+  s2: A stranger set the password, and the stranger is signed in
+  s3: No password, a sign-in link is in the pro's inbox
+  s4: No password yet, and the pro is signed in
+  s5: The pro set the password, and both the stranger and the pro are signed in
+  s6: A stranger set the password, and both the stranger and the pro are signed in
+  s7: The pro set the password, and the pro is signed in twice from one link
+  s8: No password yet, and the pro is signed in twice from one link
+  s9: The pro set the password, and both the stranger and the pro are signed in twice from one link
+  s10: A stranger set the password, and both the stranger and the pro are signed in twice from one link
+  [*] --> s0
+  s0 --> s1: the pro signs up
+  s0 --> s2: a stranger signs up with the pro's email
+  s0 --> s3: the pro asks for a sign-in link
+  s3 --> s1: the pro signs up or the pro sets a password from the link
+  s3 --> s2: a stranger signs up with the pro's email
+  s3 --> s3: the link is opened
+  s3 --> s4: the link signs the pro in
+  s2 --> s5: the pro sets a password from the link
+  s2 --> s6: the link signs the pro in
+  s4 --> s1: the pro signs up
+  s4 --> s6: a stranger signs up with the pro's email
+  s1 --> s7: the link signs the pro in
+  s4 --> s7: the pro sets a password from the link
+  s4 --> s8: the link signs the pro in
+  s5 --> s9: the link signs the pro in
+  s6 --> s9: the pro sets a password from the link
+  s6 --> s10: the link signs the pro in
+  s8 --> s7: the pro signs up
+  s8 --> s10: a stranger signs up with the pro's email
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s2 pink
+  class s2 breaks
+  class s2 bugPath
+  class s3 tan
+  class s3 bugPath
+  class s4 teal
+  class s4 bugPath
+  class s5 pink
+  class s5 breaks
+  class s5 bugPath
+  class s6 pink
+  class s6 breaks
+  class s7 teal
+  class s7 breaks
+  class s8 teal
+  class s8 breaks
+  class s8 bugPath
+  class s9 pink
+  class s9 breaks
+  class s10 pink
+  class s10 breaks
