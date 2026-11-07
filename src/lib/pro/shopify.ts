@@ -103,10 +103,10 @@ export async function findShopifyCustomerByEmail(email: string): Promise<Shopify
     }`,
     { query: `email:${escaped}` },
   )
-  const nodes = data.customers?.nodes ?? []
-  const exact = nodes.find((n) => n.email?.toLowerCase() === email.toLowerCase())
-  const pick = exact ?? nodes[0]
-  return pick ? mapCustomer(pick) : null
+  // Shopify's search is fuzzy; only a customer with exactly this email counts.
+  const wanted = email.trim().toLowerCase()
+  const exact = (data.customers?.nodes ?? []).find((n) => n.email?.trim().toLowerCase() === wanted)
+  return exact ? mapCustomer(exact) : null
 }
 
 export async function getShopifyOrdersForCustomer(customerId: string): Promise<ShopifyOrder[]> {

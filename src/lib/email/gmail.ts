@@ -255,6 +255,32 @@ export async function sendProMagicLink(email: string, url: string) {
   })
 }
 
+export async function sendProSignupLink(email: string, url: string) {
+  await sendEmail({
+    to: email,
+    subject: 'Finish creating your Crazy Seal Pro Hub account',
+    html: `
+      <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#333;max-width:600px;">
+        <div style="background:#003365;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Hub</p>
+          <h1 style="margin:8px 0 0;font-size:22px;">Choose your password</h1>
+        </div>
+        <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 12px 12px;">
+          <p>Tap the button below to choose a password and open your orders, warranties, and tools. This link expires in 20 minutes.</p>
+          <p style="margin:28px 0;">
+            <a href="${url}" target="_blank"
+               style="display:inline-block;background:#5BA411;color:#fff;font-weight:bold;padding:12px 24px;border-radius:8px;text-decoration:none;">
+              Choose a password
+            </a>
+          </p>
+          <p style="font-size:12px;color:#888;">If you didn't ask for this email, you can ignore it.</p>
+          <p style="font-size:12px;color:#888;">Questions? Call (800) 963-0131 (M–F 9AM–6PM EST).</p>
+        </div>
+      </div>
+    `,
+  })
+}
+
 export async function sendProPasswordReset(email: string, url: string) {
   await sendEmail({
     to: email,

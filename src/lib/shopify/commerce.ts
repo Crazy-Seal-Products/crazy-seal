@@ -68,19 +68,25 @@ function mapOrder(row: OrderRow): ShopifyOrder {
   }
 }
 
+/**
+ * The customer with exactly this email, ignoring case (the copy keeps emails as Shopify has them).
+ * The email is never a pattern: % and _ are escaped, only an exact match counts, and there is no
+ * falling back to some other row.
+ */
 export async function getLocalCustomerByEmail(email: string): Promise<ShopifyCustomerSummary | null> {
+  const wanted = email.trim().toLowerCase()
+  if (!wanted) return null
   const supabase = createAdminClient()
   const { data } = await supabase
     .from('shopify_customers')
     .select('shopify_id, display_name, email, phone, tags, number_of_orders, amount_spent, amount_spent_currency')
-    .ilike('email', email)
+    .ilike('email', wanted.replace(/[\\%_]/g, '\\$&'))
     .is('deleted_at', null)
     .limit(5)
 
   const rows = (data ?? []) as CustomerRow[]
-  const exact = rows.find((r) => r.email?.toLowerCase() === email.toLowerCase())
-  const pick = exact ?? rows[0]
-  return pick ? mapCustomer(pick) : null
+  const exact = rows.find((r) => r.email?.trim().toLowerCase() === wanted)
+  return exact ? mapCustomer(exact) : null
 }
 
 export async function getLocalOrdersForCustomer(customerShopifyId: string): Promise<ShopifyOrder[]> {

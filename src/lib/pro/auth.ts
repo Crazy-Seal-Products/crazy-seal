@@ -160,23 +160,28 @@ export async function touchLogin(userId: string): Promise<void> {
     .eq('id', userId)
 }
 
+/**
+ * Uses a sign-in, sign-up or reset link. Marking it used is one conditional update, so when the
+ * same link is opened twice at once only the request that wins it gets the account back.
+ */
 export async function consumeMagicLink(token: string): Promise<ProUser | null> {
   if (!token) return null
   const supabase = createAdminClient()
-  const { data: link } = await supabase
+  const now = new Date().toISOString()
+  const { data: won, error } = await supabase
     .from('pro_magic_links')
-    .select('*')
+    .update({ used_at: now })
     .eq('token_hash', hashToken(token))
     .is('used_at', null)
-    .gt('expires_at', new Date().toISOString())
-    .maybeSingle()
+    .gt('expires_at', now)
+    .select('id, email')
 
+  if (error) {
+    console.error('[pro/auth] could not use the link:', error)
+    return null
+  }
+  const link = won?.length === 1 ? won[0] : null
   if (!link) return null
-
-  await supabase
-    .from('pro_magic_links')
-    .update({ used_at: new Date().toISOString() })
-    .eq('id', link.id)
 
   const user = await upsertProUser(link.email)
   await supabase
@@ -198,6 +203,13 @@ export async function createSession(proUserId: string): Promise<string> {
   })
   if (error) throw error
   return token
+}
+
+/** Signs the account out everywhere, e.g. before a password reset signs this browser back in. */
+export async function endAllSessions(proUserId: string): Promise<void> {
+  const supabase = createAdminClient()
+  const { error } = await supabase.from('pro_sessions').delete().eq('pro_user_id', proUserId)
+  if (error) throw error
 }
 
 export function applySessionCookie(response: NextResponse, token: string): NextResponse {

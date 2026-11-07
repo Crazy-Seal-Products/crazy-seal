@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { applySessionCookie, consumeMagicLink, createSession, isMissingRelation, setPasswordHash } from '@/lib/pro/auth'
+import {
+  applySessionCookie,
+  consumeMagicLink,
+  createSession,
+  endAllSessions,
+  isMissingRelation,
+  setPasswordHash,
+} from '@/lib/pro/auth'
 import { hashPassword, passwordError } from '@/lib/pro/password'
 
+// Sets the password from an emailed link: a reset from /pro/forgot/, or the link sign-up sends.
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
@@ -15,10 +23,12 @@ export async function POST(request: NextRequest) {
 
     const user = await consumeMagicLink(token)
     if (!user) {
-      return NextResponse.json({ error: 'That reset link expired. Request a new one.' }, { status: 400 })
+      return NextResponse.json({ error: 'That link expired or was already used. Request a new one.' }, { status: 400 })
     }
 
+    // New password first, so the old one can't start new sessions, then sign out everywhere else.
     await setPasswordHash(user.id, await hashPassword(password))
+    await endAllSessions(user.id)
     const sessionToken = await createSession(user.id)
     const response = NextResponse.json({ success: true })
     return applySessionCookie(response, sessionToken)

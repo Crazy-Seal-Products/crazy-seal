@@ -18,6 +18,8 @@ function ProResetForm() {
   const router = useRouter()
   const params = useSearchParams()
   const token = params.get('token') || ''
+  // The link sign-up emails lands here too.
+  const welcome = params.get('welcome') === '1'
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState<string | null>(token ? null : 'That reset link is missing or expired.')
@@ -48,11 +50,11 @@ function ProResetForm() {
   }
 
   return (
-    <ProAuthLayout subtitle="Choose a new password for your Pro Hub account.">
+    <ProAuthLayout subtitle={welcome ? 'Choose a password to finish creating your Pro Hub account.' : 'Choose a new password for your Pro Hub account.'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            New password <span className="font-normal text-gray-400">({MIN_PASSWORD_LENGTH}+ characters)</span>
+            {welcome ? 'Password' : 'New password'} <span className="font-normal text-gray-400">({MIN_PASSWORD_LENGTH}+ characters)</span>
           </label>
           <input
             id="password"
