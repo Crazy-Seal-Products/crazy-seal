@@ -27,7 +27,7 @@ function fileName(url: string) {
 }
 
 export default async function AdminArchiveEntryPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('archive')
   const found = await getArchiveEntry((await params).id)
   if (!found) notFound()
   const { entry: e, registration } = found

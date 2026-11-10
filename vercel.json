@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/contractor-quotes/",
+      "schedule": "0 14 * * *"
+    }
+  ]
+}

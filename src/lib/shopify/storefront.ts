@@ -15,7 +15,16 @@ export interface CheckoutLineItem {
   quantity: number
 }
 
-export async function createCheckoutUrl(items: CheckoutLineItem[]): Promise<string> {
+/**
+ * Cart attributes become the order's "additional details" in Shopify. Keys
+ * starting with an underscore stay hidden from the shopper at checkout.
+ */
+export interface CartAttribute {
+  key: string
+  value: string
+}
+
+export async function createCheckoutUrl(items: CheckoutLineItem[], attributes: CartAttribute[] = []): Promise<string> {
   const token = process.env.SHOPIFY_STOREFRONT_TOKEN
   if (!token) {
     return buildCartPermalink(items)
@@ -49,6 +58,7 @@ export async function createCheckoutUrl(items: CheckoutLineItem[]): Promise<stri
               : `gid://shopify/ProductVariant/${i.variantId}`,
             quantity: i.quantity,
           })),
+          ...(attributes.length ? { attributes } : {}),
         },
       },
     }),

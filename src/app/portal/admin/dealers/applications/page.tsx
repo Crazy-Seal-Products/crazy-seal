@@ -12,7 +12,7 @@ import { StatusSelect } from '@/components/portal/admin/controls'
 export const metadata: Metadata = { title: 'Dealer applications' }
 
 export default async function AdminApplicationsPage() {
-  await requirePortalAdmin()
+  await requirePortalAdmin('applications')
   const { rows, summary, types } = await getApplications()
 
   return (

@@ -45,7 +45,7 @@ function Photos({ title, urls, favorites }: { title: string; urls: string[] | nu
 }
 
 export default async function AdminWarrantyPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const found = await getRegistration((await params).id)
   if (!found) notFound()
   const { reg: r, order, customer } = found

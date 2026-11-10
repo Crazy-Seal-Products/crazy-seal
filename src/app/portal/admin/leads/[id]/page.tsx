@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 const TYPE_LABEL = { quote: 'Purchase quote', business: 'Dealer / partner inquiry', contact: 'Contact message' } as const
 
 export default async function AdminLeadPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('leads')
   const found = await getLead((await params).id)
   if (!found) notFound()
   const { lead: r, customer } = found

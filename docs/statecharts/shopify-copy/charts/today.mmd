@@ -1,0 +1,38 @@
+---
+title: "Crazy Seal's copy of Shopify orders"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Up to date
+    lg1: Catching up
+    lg2: Wrong
+    lg3: Breaks DeletedStaysDeleted or NeverGoesBack
+    lg4: Path to the DeletedStaysDeleted or NeverGoesBack bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 pink
+  class lg3 breaks
+  class lg4 bugPath
+  s0: Our copy matches Shopify
+  s1: An order is behind Shopify, the next refresh will fetch it
+  s2: An order deleted in Shopify is still in our copy, after a delete was undone
+  s3: An order is behind Shopify, the next refresh will fetch it, after an older copy overwrote a newer one
+  [*] --> s0
+  s0 --> s0: an admin page load starts a refresh or the order is deleted in Shopify
+  s0 --> s1: an order changes in Shopify
+  s1 --> s1: the update webhook asks Shopify for the order
+  s0 --> s2: the refresh writes an order it fetched earlier
+  s1 --> s0: the webhook writes what it got
+  s0 --> s3: the refresh writes an order it fetched earlier
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 blue
+  class s1 bugPath
+  class s2 pink
+  class s2 breaks
+  class s2 bugPath
+  class s3 pink
+  class s3 breaks
+  class s3 bugPath

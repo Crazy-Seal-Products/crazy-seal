@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function AdminProjectPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('projects')
   const { id } = await params
   const isNew = id === 'new'
   const [project, next] = await Promise.all([isNew ? null : getProject(id), nextProjectNumber()])

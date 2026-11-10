@@ -19,7 +19,7 @@ function refresh() {
 }
 
 async function editor() {
-  const admin = await requirePortalAdmin()
+  const admin = await requirePortalAdmin('accelerator')
   return { by: admin.name || admin.email, at: new Date().toISOString() }
 }
 

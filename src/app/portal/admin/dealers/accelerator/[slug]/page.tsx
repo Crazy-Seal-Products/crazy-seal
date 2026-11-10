@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function AdminAcceleratorModulePage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('accelerator')
   const { slug } = await params
   const { modules } = await getAcceleratorAdmin()
   const index = modules.findIndex((m) => m.slug === slug)

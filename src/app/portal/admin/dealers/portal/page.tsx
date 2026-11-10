@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ArrowUpRight } from 'lucide-react'
-import { requirePortalAdmin } from '@/lib/portal/admin/auth'
+import { adminCan, requirePortalAdmin } from '@/lib/portal/admin/auth'
 import { getPortalAccounts } from '@/lib/portal/admin/dealers'
 import { ago, dateShort, money0, num } from '@/lib/portal/admin/format'
 import { ViewAsButton } from '@/components/portal/admin/ViewAsButton'
@@ -26,8 +26,8 @@ import { PORTAL_BADGE } from '@/components/portal/admin/portal-state'
 export const metadata: Metadata = { title: 'Portal accounts' }
 
 export default async function AdminPortalAccountsPage() {
-  await requirePortalAdmin()
-  const { rows, summary } = await getPortalAccounts()
+  await requirePortalAdmin('portal_accounts')
+  const [{ rows, summary }, canViewAs] = await Promise.all([getPortalAccounts(), adminCan('view_as')])
 
   return (
     <>
@@ -63,9 +63,11 @@ export default async function AdminPortalAccountsPage() {
               <Th align="right" className="hidden @xl:table-cell">Lifetime</Th>
               <Th className="hidden @6xl:table-cell">Sign-in</Th>
               <Th className="hidden @6xl:table-cell">Joined</Th>
-              <Th align="right">
-                <span className="sr-only">View as</span>
-              </Th>
+              {canViewAs && (
+                <Th align="right">
+                  <span className="sr-only">View as</span>
+                </Th>
+              )}
             </THead>
             <TBody>
               {rows.map((r) => (
@@ -108,9 +110,11 @@ export default async function AdminPortalAccountsPage() {
                   <Td muted className="hidden @6xl:table-cell">
                     {dateShort(r.created_at)}
                   </Td>
-                  <Td align="right">
-                    <ViewAsButton proUserId={r.id} name={r.name} />
-                  </Td>
+                  {canViewAs && (
+                    <Td align="right">
+                      <ViewAsButton proUserId={r.id} name={r.name} />
+                    </Td>
+                  )}
                 </Tr>
               ))}
             </TBody>

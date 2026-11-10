@@ -32,7 +32,7 @@ function refreshPublic(slug?: string) {
 }
 
 export async function saveProject(id: string | null, input: ProjectInput): Promise<ActionResult & { id?: string }> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('projects')
   const title = input.title?.trim()
   const slug = input.slug?.trim().toLowerCase()
   if (!title) return { ok: false, error: 'Title is required' }
@@ -70,7 +70,7 @@ export async function saveProject(id: string | null, input: ProjectInput): Promi
 }
 
 export async function setProjectPublished(id: string, published: boolean): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('projects')
   const { data, error } = await createAdminClient().from('projects').update({ published }).eq('id', id).select('slug').single()
   if (error) return { ok: false, error: 'Could not save' }
   refreshPublic(data.slug)
@@ -78,7 +78,7 @@ export async function setProjectPublished(id: string, published: boolean): Promi
 }
 
 export async function deleteProject(id: string): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('projects')
   const { data, error } = await createAdminClient().from('projects').delete().eq('id', id).select('slug').single()
   if (error) return { ok: false, error: 'Could not delete' }
   refreshPublic(data.slug)

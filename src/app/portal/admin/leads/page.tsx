@@ -31,7 +31,7 @@ const BASE = '/portal/admin/leads/'
 const TYPE_BADGE = { quote: { tone: 'good', label: 'Quote' }, business: { tone: 'gold', label: 'Dealer' }, contact: { tone: 'neutral', label: 'Contact' } } as const
 
 export default async function AdminLeadsPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('leads')
   const sp = await searchParams
   const type = pick(sp.type, LEAD_TYPES, 'all')
   const status = pick(sp.status, LEAD_STATUS_FILTERS, 'open')

@@ -1,0 +1,28 @@
+---
+title: "What the contractor finder shows"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Map only
+    lg1: Results
+  }
+  class lg0 tan
+  class lg1 teal
+  s0: Map only
+  s1: Map only, a search is still out
+  s2: Results for the latest search
+  s3: Results for the latest search, a search is still out
+  [*] --> s0
+  s0 --> s1: the visitor searches a ZIP or the visitor taps Use my location
+  s1 --> s2: the latest search's answer comes back
+  s1 --> s3: the latest search's answer comes back or the visitor searches a ZIP
+  s1 --> s0: an earlier search's answer comes back
+  s2 --> s3: the visitor searches a ZIP
+  s2 --> s1: the visitor searches a ZIP or the visitor taps Use my location
+  s3 --> s1: the visitor searches a ZIP or the visitor taps Use my location
+  s3 --> s2: an earlier search's answer comes back or the latest search's answer comes back
+  s0 --> s3: the visitor searches a ZIP
+  class s0 tan
+  class s1 tan
+  class s2 teal
+  class s3 teal

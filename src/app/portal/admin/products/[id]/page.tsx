@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function AdminProductPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('products')
   const { id } = await params
   const detail = await getProductDetail(id)
   if (!detail) notFound()

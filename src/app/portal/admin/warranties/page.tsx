@@ -61,7 +61,7 @@ function classificationTone(v: string | null) {
 }
 
 export default async function AdminWarrantiesPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const sp = await searchParams
   const tab = pick(sp.tab, TABS, 'registrations')
   const review = pick(sp.review, REVIEW_FILTERS, 'needs_review')

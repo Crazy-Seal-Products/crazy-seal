@@ -6,6 +6,8 @@ import { verifyPassword } from '@/lib/pro/password'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { memo } from './cache'
+import { homeFor, sectionsForRole } from './permissions'
+import { normalizeRole, TOP_ROLE, type AdminRole, type AdminSection } from './sections'
 
 /**
  * Crazy Seal Admin sign-in (the owner side of the portal at /portal/admin).
@@ -14,13 +16,15 @@ import { memo } from './cache'
  *
  * 1. Staff accounts: the Supabase logins in the `staff` table (active rows
  *    only) that the old site admin used. Adding or removing someone is a row
- *    in that table, managed from the admin's Staff page.
+ *    in that table, managed from the admin's Users & roles page. Their
+ *    `staff.role` decides which sections they can open (see ./permissions).
  * 2. Env users, a fallback that works even if Supabase auth is down:
  *      PORTAL_ADMIN_USERS=email|Display Name|salt:hash[,email|Name|salt:hash…]
  *      PORTAL_SESSION_SECRET=<32+ random characters>
  *    Hashes use the same scrypt format as Pro Hub passwords — generate one
  *    with `node scripts/portal-admin-hash.mjs "<password>"`. With either
- *    variable missing, this path is off (fails closed).
+ *    variable missing, this path is off (fails closed). Env users always get
+ *    the top role: they're the break-glass way in.
  */
 
 export const ADMIN_COOKIE = 'cs_portal_admin'
@@ -31,7 +35,7 @@ const LOCKOUT_MS = 15 * 60 * 1000
 export interface PortalAdmin {
   email: string
   name: string
-  role: string
+  role: AdminRole
   /** How they signed in: their staff account, or the env backup login. */
   via: 'staff' | 'env'
 }
@@ -43,7 +47,12 @@ interface AdminEntry {
 }
 
 function envAdmin(entry: AdminEntry): PortalAdmin {
-  return { email: entry.email, name: entry.name, role: 'admin', via: 'env' }
+  return { email: entry.email, name: entry.name, role: TOP_ROLE, via: 'env' }
+}
+
+/** The backup logins from PORTAL_ADMIN_USERS (email and name only). */
+export function envAdminList(): { email: string; name: string }[] {
+  return [...adminEntries().values()].map(({ email, name }) => ({ email, name }))
 }
 
 function adminEntries(): Map<string, AdminEntry> {
@@ -141,7 +150,7 @@ async function activeStaff(column: 'email' | 'auth_user_id', value: string): Pro
 
 function staffAdmin(row: StaffRow): PortalAdmin {
   const email = row.email.toLowerCase()
-  return { email, name: row.name?.trim() || email.split('@')[0], role: row.role || 'admin', via: 'staff' }
+  return { email, name: row.name?.trim() || email.split('@')[0], role: normalizeRole(row.role), via: 'staff' }
 }
 
 export async function isStaffEmail(email: string): Promise<boolean> {
@@ -206,8 +215,33 @@ async function getEnvAdmin(): Promise<PortalAdmin | null> {
   }
 }
 
-export async function requirePortalAdmin(): Promise<PortalAdmin> {
+/** The sections the signed-in admin's role can open. Cached per request. */
+export const getAdminSections = cache(async (): Promise<AdminSection[]> => {
+  const admin = await getPortalAdmin()
+  return admin ? sectionsForRole(admin.role) : []
+})
+
+export async function adminCan(section: AdminSection): Promise<boolean> {
+  return (await getAdminSections()).includes(section)
+}
+
+/**
+ * Signed-in admin, or off to the sign-in page. With `section` (or a list,
+ * any one of which will do), someone whose role can't open it is sent to a
+ * page that explains why. Use it at the top of every admin page, server
+ * action and route.
+ */
+export async function requirePortalAdmin(section?: AdminSection | AdminSection[]): Promise<PortalAdmin> {
   const admin = await getPortalAdmin()
   if (!admin) redirect('/portal/login/')
+  if (section) {
+    const wanted = Array.isArray(section) ? section : [section]
+    const allowed = await getAdminSections()
+    if (!wanted.some((s) => allowed.includes(s))) {
+      // Overview is where sign-in lands, so skip straight to a section they have.
+      if (wanted[0] === 'overview') redirect(homeFor(allowed))
+      redirect(`/portal/admin/no-access/?section=${wanted[0]}`)
+    }
+  }
   return admin
 }

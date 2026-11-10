@@ -1,0 +1,34 @@
+---
+title: "Contractor pages: the dealer-list import and admin edits"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Not listed
+    lg1: Listed
+  }
+  class lg0 tan
+  class lg1 teal
+  s0: The dealer has no page
+  s1: The dealer has no page, but the other contact at the company has one
+  s2: The dealer has a page
+  s3: The dealer has no page, but the other contact at the company has one#59; a shared link works
+  s4: The dealer has a page, and so does the other contact at the company
+  s5: The dealer has a page#59; a shared link works
+  s6: The dealer has a page, and so does the other contact at the company#59; a shared link works
+  [*] --> s0
+  s0 --> s1: an admin adds another contact at the same company
+  s0 --> s2: an admin adds the dealer by hand or the import adds a page for the dealer
+  s1 --> s3: someone shares a page's address
+  s1 --> s4: an admin adds the dealer by hand
+  s2 --> s4: an admin adds another contact at the same company
+  s2 --> s5: someone shares a page's address
+  s3 --> s6: an admin adds the dealer by hand
+  s4 --> s6: someone shares a page's address
+  s5 --> s6: an admin adds another contact at the same company
+  class s0 tan
+  class s1 tan
+  class s2 teal
+  class s3 tan
+  class s4 teal
+  class s5 teal
+  class s6 teal

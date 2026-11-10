@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin UI Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --line: #e3e2dd; --ink: #18181b; --ink-2: #52525b; --ink-3: #71717a;
+    --accent: #2f6fb0; --pick: #f9d423;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #0f1012; --panel: #17181b; --line: #2a2b30; --ink: #f4f4f5; --ink-2: #b4b4bb; --ink-3: #8b8b93; --accent: #6cb6ff; }
+  }
+  :root[data-theme="dark"] { --bg: #0f1012; --panel: #17181b; --line: #2a2b30; --ink: #f4f4f5; --ink-2: #b4b4bb; --ink-3: #8b8b93; --accent: #6cb6ff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.45 Inter, system-ui, sans-serif; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 20px 16px 40px; }
+  header { margin-bottom: 6px; }
+  h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; }
+  header p { margin: 2px 0 0; color: var(--ink-2); max-width: 75ch; }
+  h2.round { margin: 18px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
+  .lead { margin: 0 0 8px; color: var(--ink-2); max-width: 85ch; }
+  .lead a { color: var(--ink); font-weight: 600; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+  @media (max-width: 420px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .shot { display: block; aspect-ratio: 3 / 2; overflow: hidden; border-bottom: 1px solid var(--line); background: #000; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .25s ease; }
+  .shot:hover img { transform: scale(1.02); }
+  .shot:focus-visible, .actions a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .body { padding: 10px 12px 12px; display: grid; gap: 6px; }
+  .title { display: flex; align-items: baseline; gap: 8px; }
+  .num { font-variant-numeric: tabular-nums; color: var(--ink-3); font-size: 12px; }
+  .title h3 { margin: 0; font-size: 15px; }
+  .tag { margin-left: auto; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+  .tag.pick { background: var(--pick); border-color: transparent; color: #1b1b1b; }
+  .pitch { margin: 0; color: var(--ink-2); }
+  .actions { display: flex; gap: 6px; margin-top: 2px; }
+  .actions a { font-weight: 600; font-size: 12px; color: var(--ink); text-decoration: none; border: 1px solid var(--line); border-radius: 6px; padding: 4px 9px; }
+  .actions a:hover { border-color: var(--ink-3); }
+  .pending { color: var(--ink-3); padding: 16px; border: 1px dashed var(--line); border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Crazy Seal Admin: UI directions</h1>
+    <p>Your two favourites so far, plus a round of image concepts from Codex around the logo colours (green, blue) with gold accents and different layouts. Click any image to open it full size.</p>
+  </header>
+
+  <h2 class="round">Built · in the real admin</h2>
+  <p class="lead">Concepts 18 and 25 combined, now live at <a href="http://localhost:3004/portal/admin/">localhost:3004/portal/admin</a> with real Shopify data.</p>
+  <div class="grid">
+    <article class="card">
+      <a class="shot" href="shots/built-dark-overview.png"><img src="shots/built-dark-overview.png" alt="The built Crazy Seal Admin overview in dark mode" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><h3>Brand Blue + Activity rail</h3><span class="tag pick">Built</span></div>
+        <p class="pitch">Blue glass sidebar with the Crazy Seal logo, gold Sales number and range, and a right-hand activity rail you can hide.</p>
+      </div>
+    </article>
+  </div>
+
+  <h2 class="round">Light mode concepts</h2>
+  <p class="lead">The same screen with the sidebar kept exactly as it is and everything else turned light. Images by Codex, made from a screenshot of the built admin.</p>
+  <div class="grid">
+    <article class="card">
+      <a class="shot" href="concepts/light-1-clean-white.png"><img src="concepts/light-1-clean-white.png" alt="Light mode: clean white" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">L1</span><h3>Clean White</h3></div>
+        <p class="pitch">Light cool-grey canvas, white panels, navy numbers, and a soft gold Sales tile.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/light-2-sky-tint.png"><img src="concepts/light-2-sky-tint.png" alt="Light mode: sky tint" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">L2</span><h3>Sky Tint</h3></div>
+        <p class="pitch">A pale sky-blue wash with frosted white cards that echoes the dark glow, and a gold underline under Sales.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/light-3-warm-paper.png"><img src="concepts/light-3-warm-paper.png" alt="Light mode: warm paper" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">L3</span><h3>Warm Paper</h3></div>
+        <p class="pitch">Warm off-white with bolder gold: a gold Sales tile, a gold range pill and gold panel ticks.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/light-4-twin-rails.png"><img src="concepts/light-4-twin-rails.png" alt="Light mode: twin rails" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">L4</span><h3>Twin Rails</h3></div>
+        <p class="pitch">Both the sidebar and the activity rail stay deep blue, framing a light centre.</p>
+      </div>
+    </article>
+  </div>
+
+  <h2 class="round">Keepers · working pages</h2>
+  <p class="lead">Aurora Glass layout in the two colourways you kept. These are real pages with hover tooltips and a phone layout. <a href="aurora.html">Open the switcher</a> to flip between them.</p>
+  <div class="grid">
+    <article class="card">
+      <a class="shot" href="03-aurora-brand-blue.html"><img src="shots/03-aurora-brand-blue.png" alt="Aurora Glass in Brand Blue" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><h3>Brand Blue</h3><span class="tag">Blue-led</span></div>
+        <p class="pitch">Blue-tinted sidebar; Crazy Seal blue fills the Sales tile, the selected range and the chart. Yellow is kept for dealer items.</p>
+        <div class="actions"><a href="03-aurora-brand-blue.html">Open page</a></div>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="03-aurora-navy-gold.html"><img src="shots/03-aurora-navy-gold.png" alt="Aurora Glass in Navy and Gold" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><h3>Navy &amp; Gold</h3><span class="tag">Balanced</span></div>
+        <p class="pitch">A real navy sidebar with a gold active bar, a navy Sales tile with a gold number, gold for the selected range.</p>
+        <div class="actions"><a href="03-aurora-navy-gold.html">Open page</a></div>
+      </div>
+    </article>
+  </div>
+
+  <h2 class="round">Round 4 · Image concepts by Codex</h2>
+  <p class="lead">Twelve mockup images: green-led, blue-led and green-plus-blue (the logo's colours), all with gold accents, across different layouts. These are pictures for direction, not working pages, so the numbers and buttons in them don't do anything.</p>
+  <h2 class="round">Green leads</h2>
+  <div class="grid">
+    <article class="card">
+      <a class="shot" href="concepts/14-seal-green-aurora.png"><img src="concepts/14-seal-green-aurora.png" alt="Seal Green Aurora concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">14</span><h3>Seal Green Aurora</h3><span class="tag">Same layout</span></div>
+        <p class="pitch">Your Aurora layout in the logo's green, with a gold Sales number, a gold selected range and gold-edged call-outs.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/15-field-green-light.png"><img src="concepts/15-field-green-light.png" alt="Field Green Light concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">15</span><h3>Field Green Light</h3><span class="tag pick">New layout</span></div>
+        <p class="pitch">Light theme with no sidebar: Sales, Dealers and Tools become grouped menus across the top, giving the content the full width.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/16-emerald-bento.png"><img src="concepts/16-emerald-bento.png" alt="Emerald Bento concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">16</span><h3>Emerald Bento</h3><span class="tag">New layout</span></div>
+        <p class="pitch">Icon rail plus a tab bar, an oversized Sales tile, and monospace numbers in mixed-size tiles.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/17-green-on-navy.png"><img src="concepts/17-green-on-navy.png" alt="Green on Navy concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">17</span><h3>Green on Navy</h3><span class="tag">Brand mix</span></div>
+        <p class="pitch">Navy sidebar, charcoal panels, green chart and Paid badges, and a solid gold "28 applications" button.</p>
+      </div>
+    </article>
+  </div>
+
+  <h2 class="round">Blue leads</h2>
+  <div class="grid">
+    <article class="card">
+      <a class="shot" href="concepts/18-brand-blue-plus.png"><img src="concepts/18-brand-blue-plus.png" alt="Brand Blue Plus concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">18</span><h3>Brand Blue Plus</h3><span class="tag pick">Closest to your keeper</span></div>
+        <p class="pitch">Brand Blue pushed further: a richer blue glass sidebar, glowing blue chart, gold Sales number and a solid gold applications button.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/19-harbor-light-split.png"><img src="concepts/19-harbor-light-split.png" alt="Harbor Light Split concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">19</span><h3>Harbor Light Split</h3><span class="tag pick">New layout</span></div>
+        <p class="pitch">Light theme where clicking an order opens its detail on the right (items, totals, a Fulfill button) without leaving the overview.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/20-navy-command.png"><img src="concepts/20-navy-command.png" alt="Navy Command concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">20</span><h3>Navy Command</h3><span class="tag">New layout</span></div>
+        <p class="pitch">No sidebar: a top tab bar, a full-width sales chart band, then three equal columns for orders, channels and dealers.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/21-blue-horizon.png"><img src="concepts/21-blue-horizon.png" alt="Blue Horizon concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">21</span><h3>Blue Horizon</h3><span class="tag">Light</span></div>
+        <p class="pitch">A bright blue gradient header carrying white KPI cards, light content below, and a floating card sidebar.</p>
+      </div>
+    </article>
+  </div>
+
+  <h2 class="round">Green and blue together (the logo's colours)</h2>
+  <div class="grid">
+    <article class="card">
+      <a class="shot" href="concepts/22-logo-duo-dark.png"><img src="concepts/22-logo-duo-dark.png" alt="Logo Duo Dark concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">22</span><h3>Logo Duo Dark</h3><span class="tag">Logo colours</span></div>
+        <p class="pitch">Blue for navigation and links, green for money and positive numbers, gold for anything needing attention.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/23-seal-duo-light.png"><img src="concepts/23-seal-duo-light.png" alt="Seal Duo Light concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">23</span><h3>Seal Duo Light</h3><span class="tag">Light</span></div>
+        <p class="pitch">White and clean: green chart, blue navigation, gold buttons, plus Top products and Abandoned carts along the bottom.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/24-gradient-rail.png"><img src="concepts/24-gradient-rail.png" alt="Gradient Rail concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">24</span><h3>Gradient Rail</h3><span class="tag">New sidebar</span></div>
+        <p class="pitch">The sidebar floats as its own card with a glowing green-to-blue edge; the green-to-blue blend carries into the channel bar.</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="shot" href="concepts/25-navy-gold-three-col.png"><img src="concepts/25-navy-gold-three-col.png" alt="Navy and Gold three-column concept" loading="lazy"></a>
+      <div class="body">
+        <div class="title"><span class="num">25</span><h3>Navy &amp; Gold + Activity</h3><span class="tag pick">New layout</span></div>
+        <p class="pitch">Your Navy &amp; Gold plus a right-hand activity rail: orders to ship, latest orders, dealer applications and sync status, always in view.</p>
+      </div>
+    </article>
+  </div>
+</div>
+</body>
+</html>

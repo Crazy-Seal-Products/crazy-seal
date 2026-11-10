@@ -1,0 +1,58 @@
+---
+title: "View as: an admin opens a dealer's Pro Hub, read-only"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: No view
+    lg1: Viewing
+    lg2: Paused
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 yellow
+  s0: No view open
+  s1: Viewing Mike's account
+  s2: Viewing Ruth's base page
+  s3: Viewing Mike's account, paused
+  s4: Viewing Ruth's base page, paused
+  s5: Viewing Ruth's account
+  s6: Viewing Ruth, opened before she signed up
+  s7: Viewing Ruth's account, paused
+  s8: Viewing Ruth, opened before she signed up, paused
+  [*] --> s0
+  s0 --> s1: A presses View as on Mike
+  s0 --> s2: A presses View as on Ruth
+  s1 --> s0: Exit admin view
+  s1 --> s2: A presses View as on Ruth
+  s1 --> s3: A's role loses View as or A signs out of the admin
+  s2 --> s1: A presses View as on Mike
+  s2 --> s0: Exit admin view
+  s2 --> s4: A's role loses View as or A signs out of the admin
+  s2 --> s6: Ruth signs up for the Pro Hub
+  s0 --> s5: A presses View as on Ruth
+  s3 --> s0: Exit admin view
+  s4 --> s0: Exit admin view
+  s4 --> s8: Ruth signs up for the Pro Hub
+  s3 --> s1: A signs in to the admin
+  s4 --> s2: A signs in to the admin
+  s1 --> s5: A presses View as on Ruth
+  s5 --> s1: A presses View as on Mike
+  s5 --> s0: Exit admin view
+  s5 --> s7: A's role loses View as or A signs out of the admin
+  s6 --> s1: A presses View as on Mike
+  s6 --> s5: A presses View as on Ruth
+  s6 --> s0: Exit admin view
+  s6 --> s8: A's role loses View as or A signs out of the admin
+  s7 --> s0: Exit admin view
+  s8 --> s0: Exit admin view
+  s7 --> s5: A signs in to the admin
+  s8 --> s6: A signs in to the admin
+  class s0 tan
+  class s1 teal
+  class s2 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 teal
+  class s7 yellow
+  class s8 yellow

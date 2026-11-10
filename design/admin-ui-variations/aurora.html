@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aurora Colourways</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0c0d0f; --bar: #141518; --line: #2a2c31; --ink: #f2f3f5; --ink-2: #a9adb5; --focus: #f9ea1c; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 12px/1.4 Inter, system-ui, sans-serif; display: flex; flex-direction: column; }
+  header { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: var(--bar); border-bottom: 1px solid var(--line); }
+  header a.back { color: var(--ink-2); text-decoration: none; white-space: nowrap; }
+  header a.back:hover { color: var(--ink); }
+  .chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; padding: 2px; flex: 1; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; height: 30px; padding: 0 10px 0 7px; border-radius: 7px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); font: inherit; cursor: pointer; }
+  .chip:hover { color: var(--ink); border-color: #44474f; }
+  .chip[aria-pressed="true"] { color: var(--ink); border-color: #6b6f78; background: #ffffff0d; }
+  .chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .sw { display: inline-flex; }
+  .sw i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #00000060; }
+  .sw i + i { margin-left: -4px; }
+  .note { padding: 6px 16px; color: var(--ink-2); border-bottom: 1px solid var(--line); background: var(--bar); min-height: 28px; }
+  .note b { color: var(--ink); font-weight: 600; }
+  iframe { flex: 1; width: 100%; border: 0; background: #111; }
+</style>
+</head>
+<body>
+  <header>
+    <a class="back" href="index.html">← All directions</a>
+    <div class="chips" role="group" aria-label="Colourway"></div>
+  </header>
+  <div class="note" aria-live="polite"></div>
+  <iframe title="Aurora Glass preview"></iframe>
+<script>
+  const WAYS = [
+    { slug: 'brand-blue', name: 'Brand Blue', c: ['#4a9ff5', '#f9ea1c'], note: 'Blue-led. Blue-tinted sidebar; Crazy Seal blue fills the Sales tile, the selected range and the chart. Yellow is kept for dealer items.' },
+    { slug: 'navy-gold', name: 'Navy & Gold', c: ['#0d2a4c', '#f9d423'], note: 'Balanced and closest to the brand. A real navy sidebar with a gold active bar, a navy Sales tile with a gold number, gold for the selected range.' },
+  ]
+  const chips = document.querySelector('.chips')
+  const note = document.querySelector('.note')
+  const frame = document.querySelector('iframe')
+  function show(slug) {
+    const w = WAYS.find((x) => x.slug === slug) || WAYS[0]
+    frame.src = `03-aurora-${w.slug}.html`
+    note.innerHTML = `<b>${w.name}</b> · ${w.note} Use ← → to switch.`
+    chips.querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.slug === w.slug)))
+    history.replaceState(null, '', `#${w.slug}`)
+  }
+  for (const w of WAYS) {
+    const b = document.createElement('button')
+    b.className = 'chip'
+    b.type = 'button'
+    b.dataset.slug = w.slug
+    b.innerHTML = `<span class="sw">${w.c.map((c) => `<i style="background:${c}"></i>`).join('')}</span>${w.name}`
+    b.addEventListener('click', () => show(w.slug))
+    chips.append(b)
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+    const i = WAYS.findIndex((w) => frame.src.endsWith(`03-aurora-${w.slug}.html`))
+    show(WAYS[(i + (e.key === 'ArrowRight' ? 1 : WAYS.length - 1)) % WAYS.length].slug)
+  })
+  show(location.hash.slice(1))
+</script>
+</body>
+</html>

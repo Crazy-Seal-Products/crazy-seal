@@ -141,7 +141,7 @@ interface Window {
   days: number
 }
 
-function shiftDay(key: string, days: number): string {
+export function shiftDay(key: string, days: number): string {
   const [y, m, d] = key.split('-').map(Number)
   const dt = new Date(Date.UTC(y, m - 1, d + days))
   return dt.toISOString().slice(0, 10)
@@ -153,7 +153,7 @@ function daysBetween(a: string, b: string): number {
   return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86_400_000)
 }
 
-function windowFor(range: RangeKey, firstDay: string | null): Window {
+export function windowFor(range: RangeKey, firstDay: string | null): Window {
   const to = dayKey(new Date())
   const preset = RANGES.find((r) => r.key === range)
   let from: string
@@ -233,7 +233,7 @@ function groupItems(items: LineItemLite[]) {
 
 export type Bucket = 'day' | 'week' | 'month'
 
-function bucketKey(day: string, bucket: Bucket): string {
+export function bucketKey(day: string, bucket: Bucket): string {
   if (bucket === 'day') return day
   if (bucket === 'month') return day.slice(0, 7)
   const [y, m, d] = day.split('-').map(Number)

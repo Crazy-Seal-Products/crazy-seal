@@ -62,7 +62,7 @@ function Address({ a }: { a: MailingAddress | null }) {
 }
 
 export default async function AdminOrderPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('orders')
   const { id } = await params
   const detail = await getOrderDetail(id)
   if (!detail) notFound()

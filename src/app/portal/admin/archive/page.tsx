@@ -20,7 +20,7 @@ function year(iso: string | null) {
 }
 
 export default async function AdminArchivePage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('archive')
   const sp = await searchParams
   const overview = await getArchiveOverview()
   const formParam = Number(one(sp.form))

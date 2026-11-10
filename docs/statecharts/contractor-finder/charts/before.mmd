@@ -1,0 +1,78 @@
+---
+title: "What the contractor finder shows"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Map only
+    lg1: Results
+    lg2: Breaks LatestSearchShows or NeverSwitchesToAnOlderSearch or ResultsStayPut
+    lg3: Breaks NeverSwitchesToAnOlderSearch or ResultsStayPut or SpinnerMeansSearching in some cases
+    lg4: Path to the LatestSearchShows or NeverSwitchesToAnOlderSearch or ResultsStayPut or SpinnerMeansSearching bug
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 breaks
+  class lg3 mayBreak
+  class lg4 bugPath
+  s0: Map only
+  s1: Map only, a search is still out
+  s2: Results for the latest search
+  s3: Results for the latest search, a search is still out
+  s4: Results for an older search, a search is still out
+  s5: Results for an older search, the visitor started over
+  s6: Map only, the latest search never shows
+  s7: Results for an older search, the latest search never shows
+  [*] --> s0
+  s0 --> s1: the visitor searches a ZIP or the visitor taps Use my location
+  s1 --> s1: the visitor searches a ZIP or the visitor taps Use my location or an earlier search's answer comes back
+  s1 --> s2: the latest search's answer comes back
+  s1 --> s3: the latest search's answer comes back or the visitor searches a ZIP
+  s1 --> s4: an earlier search's answer comes back
+  s1 --> s0: an earlier search's answer comes back
+  s2 --> s3: the visitor searches a ZIP or the visitor taps Use my location
+  s2 --> s1: the visitor searches a ZIP
+  s2 --> s4: the visitor taps Use my location
+  s2 --> s5: the visitor follows the menu link back to the finder
+  s1 --> s5: an earlier search's answer comes back
+  s3 --> s1: the visitor searches a ZIP or an earlier search's answer comes back
+  s3 --> s4: the visitor taps Use my location or the visitor follows the menu link back to the finder or an earlier search's answer comes back
+  s3 --> s6: an earlier search's answer comes back
+  s4 --> s1: the visitor searches a ZIP or an earlier search's answer comes back
+  s4 --> s3: the visitor taps Use my location or the visitor searches a ZIP or the latest search's answer comes back
+  s4 --> s7: the latest search's answer comes back or an earlier search's answer comes back
+  s3 --> s2: an earlier search's answer comes back or the latest search's answer comes back
+  s3 --> s7: an earlier search's answer comes back
+  s4 --> s2: the latest search's answer comes back
+  s0 --> s3: the visitor searches a ZIP
+  s5 --> s1: the visitor searches a ZIP
+  s5 --> s3: the visitor taps Use my location or the visitor searches a ZIP
+  s4 --> s5: an earlier search's answer comes back
+  s6 --> s1: the visitor searches a ZIP or the visitor taps Use my location
+  s6 --> s3: the visitor searches a ZIP
+  s7 --> s3: the visitor searches a ZIP or the visitor taps Use my location
+  s7 --> s1: the visitor searches a ZIP
+  s7 --> s5: the visitor follows the menu link back to the finder
+  s1 --> s7: an earlier search's answer comes back
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 tan
+  class s0 bugPath
+  class s1 tan
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 tan
+  class s6 breaks
+  class s6 bugPath
+  class s7 teal
+  class s7 breaks

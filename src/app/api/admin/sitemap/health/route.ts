@@ -8,7 +8,7 @@ const BATCH_LIMIT = 30
 // Checks a batch of site paths and reports the final HTTP status after
 // following redirects. Used by the /admin/sitemap health check.
 export async function POST(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('sitemap')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { paths } = await request.json()

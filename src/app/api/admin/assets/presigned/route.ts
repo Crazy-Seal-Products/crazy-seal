@@ -15,7 +15,7 @@ const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env.CLOUDFRONT_DOMAIN || 'media.crazyseal.com'}`
 
 export async function POST(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('assets')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {

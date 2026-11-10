@@ -6,7 +6,7 @@ import { buildSitemapEntries } from '@/lib/sitemap-data'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const staff = await requireStaff()
+  const staff = await requireStaff('sitemap')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const supabase = createAdminClient()

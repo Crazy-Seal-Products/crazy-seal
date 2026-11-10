@@ -38,7 +38,7 @@ function loopError(chain: string[]) {
 }
 
 export async function saveRedirect(id: string | null, input: RedirectInput): Promise<ActionResult & { id?: string }> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('redirects')
   if (id && !UUID_RE.test(id)) return { ok: false, error: 'Unknown redirect' }
   const source = String(input?.source ?? '')
   const destination = String(input?.destination ?? '')
@@ -72,7 +72,7 @@ export async function saveRedirect(id: string | null, input: RedirectInput): Pro
 }
 
 export async function setRedirectEnabled(id: string, enabled: boolean): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('redirects')
   if (!UUID_RE.test(id)) return { ok: false, error: 'Unknown redirect' }
   const supabase = createAdminClient()
 
@@ -97,7 +97,7 @@ export async function setRedirectEnabled(id: string, enabled: boolean): Promise<
 }
 
 export async function deleteRedirect(id: string): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('redirects')
   if (!UUID_RE.test(id)) return { ok: false, error: 'Unknown redirect' }
   const { error } = await createAdminClient().from('managed_redirects').delete().eq('id', id)
   if (error) return { ok: false, error: 'Could not delete' }

@@ -7,7 +7,7 @@ import { AssetManager } from '@/components/portal/admin/assets/AssetManager'
 export const metadata: Metadata = { title: 'Site assets' }
 
 export default async function AdminAssetsPage() {
-  await requirePortalAdmin()
+  await requirePortalAdmin('assets')
   return (
     <>
       <PageHeader

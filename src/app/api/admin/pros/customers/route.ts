@@ -5,7 +5,7 @@ import { listHighVolumeCustomers, listTaggedDealers, shopifyErrorMessage } from 
 import { listLocalDealers, listLocalHighVolume } from '@/lib/shopify/commerce'
 
 export async function GET(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('portal_accounts')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const tab = request.nextUrl.searchParams.get('tab') || 'dealers'

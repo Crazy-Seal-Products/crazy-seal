@@ -10,7 +10,7 @@ export async function GET() {
 
   // Set when an admin is viewing this account (read-only), for the banner
   const viewing = await getViewAs()
-  const viewAs = viewing ? { adminName: viewing.admin.name, expiresAt: viewing.expiresAt } : null
+  const viewAs = viewing ? { adminName: viewing.admin.name, expiresAt: viewing.expiresAt, hasAccount: viewing.hasAccount } : null
 
   try {
     const ctx = await loadProContext(user)

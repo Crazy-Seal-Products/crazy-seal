@@ -1,0 +1,39 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "crazy-seal-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3004
+    },
+    {
+      "name": "crazy-seal-start-alt",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "start",
+        "-p",
+        "3015"
+      ],
+      "port": 3015
+    },
+    {
+      "name": "admin-ui-variations",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4010",
+        "--bind",
+        "127.0.0.1",
+        "-d",
+        "design/admin-ui-variations"
+      ],
+      "port": 4010
+    }
+  ]
+}

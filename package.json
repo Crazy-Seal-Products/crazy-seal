@@ -12,6 +12,7 @@
     "env:check": "node scripts/check-env.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.7.0",
     "@aws-sdk/client-mediaconvert": "^3.1018.0",
     "@aws-sdk/client-s3": "^3.1000.0",
     "@aws-sdk/client-ses": "^3.1000.0",
@@ -20,11 +21,14 @@
     "@next/third-parties": "^16.2.2",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.98.0",
+    "@vercel/oidc": "4.0.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.4",
     "lucide-react": "^0.576.0",
+    "maplibre-gl": "^5.24.0",
     "next": "16.1.6",
     "nodemailer": "^8.0.4",
+    "openai": "^7.54.0",
     "pdf-lib": "^1.17.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",

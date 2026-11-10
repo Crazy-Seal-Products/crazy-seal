@@ -7,7 +7,7 @@ import { CellLink, Empty, PageHeader, Panel, Stat, StatGrid, Table, TBody, Td, T
 export const metadata: Metadata = { title: 'Abandoned carts' }
 
 export default async function AdminAbandonedPage() {
-  await requirePortalAdmin()
+  await requirePortalAdmin('abandoned')
   const { count, rows, last30 } = await getAbandonedCheckouts()
   const value = rows.reduce((n, r) => n + Number(r.totalPriceSet.shopMoney.amount), 0)
   const known = rows.filter((r) => r.customer?.defaultEmailAddress?.emailAddress)

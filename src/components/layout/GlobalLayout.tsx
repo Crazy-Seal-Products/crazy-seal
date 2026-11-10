@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { PageLayout } from '@/lib/design-system'
 import { Header } from '@/components/layout/Header'
@@ -12,6 +13,9 @@ import { CartProvider } from '@/contexts/CartContext'
 import { CartDrawer } from '@/components/store/CartDrawer'
 import { MobileStickyCta } from '@/components/layout/MobileStickyCta'
 import { SiteMotion } from '@/components/layout/SiteMotion'
+
+// Loaded after the page, so the chat never slows the first paint.
+const SiteChatGate = dynamic(() => import('@/components/assistant/SiteChatWidget').then((m) => m.SiteChatGate), { ssr: false })
 
 interface GlobalLayoutProps {
   children: React.ReactNode
@@ -39,6 +43,7 @@ export function GlobalLayout({ children }: GlobalLayoutProps) {
           {layout.pageWrapper && <SiteMotion rootId="site-main" />}
           {layout.footer && <Footer />}
           {layout.header && <MobileStickyCta />}
+          {layout.header && <SiteChatGate />}
         </div>
         <CartDrawer />
       </CartProvider>

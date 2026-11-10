@@ -50,7 +50,7 @@ const SOURCE = {
 } as const
 
 export default async function AdminDealersPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('dealers')
   const sp = await searchParams
   const q = one(sp.q)?.toLowerCase()
   const filter: Filter = FILTERS.some((f) => f.key === one(sp.filter)) ? (one(sp.filter) as Filter) : 'all'

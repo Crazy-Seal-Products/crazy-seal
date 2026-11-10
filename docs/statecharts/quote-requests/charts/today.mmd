@@ -1,0 +1,45 @@
+---
+title: "A quote request from a contractor's page"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: In progress
+    lg1: Delivered
+    lg2: Stuck
+    lg3: Turned away
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 orange
+  class lg3 tan
+  s0: Contractor's page is live
+  s1: Page hidden
+  s2: Visitor has the page open
+  s3: Visitor has the page open at its old address
+  s4: Saved, visitor told it's on its way, emails not sent yet
+  s5: Contractor emailed
+  s6: Saved, nobody told yet, waiting to send again
+  s7: Turned away: the page was hidden
+  s8: Crazy Seal told to pass it on
+  [*] --> s0
+  s0 --> s1: an admin hides the page
+  s0 --> s2: a visitor opens the page
+  s2 --> s3: an admin changes the page address
+  s2 --> s4: the visitor sends the form
+  s3 --> s4: the visitor sends the form
+  s2 --> s7: the visitor sends the form
+  s4 --> s5: the email to the contractor goes out
+  s4 --> s6: both emails fail or the server stops right after answering
+  s4 --> s8: the contractor email fails, the copy to Crazy Seal goes out
+  s3 --> s7: the visitor sends the form
+  s6 --> s5: the email to the contractor goes out
+  s6 --> s8: the contractor email fails, the copy to Crazy Seal goes out
+  class s0 blue
+  class s1 blue
+  class s2 blue
+  class s3 blue
+  class s4 blue
+  class s5 teal
+  class s6 orange
+  class s7 tan
+  class s8 teal

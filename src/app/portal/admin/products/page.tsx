@@ -38,7 +38,7 @@ function price(p: { priceRangeV2: { minVariantPrice: { amount: string }; maxVari
 }
 
 export default async function AdminProductsPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('products')
   const sp = await searchParams
   const status = STATUS.some((s) => s.key === one(sp.status)) ? (one(sp.status) as (typeof STATUS)[number]['key']) : 'active'
   const [all, coverage] = await Promise.all([getProductsWithStats(), getCoverage()])

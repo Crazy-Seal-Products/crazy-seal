@@ -4,6 +4,7 @@ import { REBATE_MILESTONES, type ProStatus } from './config'
 import { loadCustomerAndOrders } from '@/lib/shopify/commerce'
 import type { ShopifyCustomerSummary, ShopifyOrder } from './shopify'
 import { deriveStatuses, orderNumberVariants } from './status'
+import { isViewingAs, NO_ACCOUNT_ID } from './view-as'
 
 export interface ProContext {
   user: ProUser
@@ -22,7 +23,8 @@ export async function loadProContext(user: ProUser): Promise<ProContext> {
     const loaded = await loadCustomerAndOrders(user.email)
     customer = loaded.customer
     orders = loaded.orders
-    if (customer) {
+    // Keep the account in step with Shopify, except while an admin is only viewing it (View as).
+    if (customer && user.id !== NO_ACCOUNT_ID && !(await isViewingAs())) {
       if (customer.id !== user.shopify_customer_id || customer.displayName !== user.display_name) {
         const supabase = createAdminClient()
         await supabase

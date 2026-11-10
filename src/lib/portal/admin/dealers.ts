@@ -90,6 +90,8 @@ export interface DealerRow {
   lastOrderAt: string | null
   statuses: string[]
   portal: PortalState
+  /** Their Pro Hub account, when they have one. */
+  proUserId: string | null
   lastLoginAt: string | null
   warranties: number
   /** How we know they're a dealer: a customer tag, Dealer-tagged orders, or both. */
@@ -169,6 +171,7 @@ export async function getDealers() {
         lastOrderAt: c.last_order_at ?? r?.last ?? null,
         statuses: statuses.map((s) => PRO_STATUS_LABEL[s]),
         portal: portalState(user),
+        proUserId: user?.id ?? null,
         lastLoginAt: user?.last_login_at ?? null,
         warranties: (c.email ? warranties.get(c.email.toLowerCase()) ?? 0 : 0) + (user ? warranties.get(user.id) ?? 0 : 0),
         source: c.is_dealer && b ? 'both' : c.is_dealer ? 'tag' : 'orders',
@@ -250,6 +253,94 @@ export async function getPortalAccounts() {
       warranties: rows.reduce((n, r) => n + r.warranties, 0),
     },
   }
+}
+
+export interface ViewAsRow {
+  key: string
+  name: string
+  /** The contact when `name` is their company. */
+  contact: string | null
+  email: string | null
+  location: string
+  /** Shopify customer id, for roster dealers. */
+  customerId: string | null
+  customerLegacyId: string | null
+  proUserId: string | null
+  portal: PortalState
+  lastLoginAt: string | null
+  statuses: string[]
+  spent: number
+}
+
+const PORTAL_RANK: Record<PortalState, number> = { active: 0, idle: 1, invited: 2, none: 3 }
+
+/**
+ * Everyone an admin can view the Pro Hub as: every roster dealer, with or
+ * without an account (no account opens the base view), plus Pro Hub accounts
+ * that aren't on the roster. Accounts in use first.
+ */
+export async function getViewAsTargets(): Promise<ViewAsRow[]> {
+  const [{ dealers }, { rows: accounts }] = await Promise.all([getDealers(), getPortalAccounts()])
+  const onRoster = new Set(dealers.map((d) => d.proUserId))
+  const rows: ViewAsRow[] = [
+    ...dealers.map((d) => ({
+      key: d.key,
+      name: d.company || d.name,
+      contact: d.company ? d.name : null,
+      email: d.email,
+      location: d.location,
+      customerId: d.key,
+      customerLegacyId: d.customer?.legacy_resource_id ?? null,
+      proUserId: d.proUserId,
+      portal: d.portal,
+      lastLoginAt: d.lastLoginAt,
+      statuses: d.statuses,
+      spent: d.spent,
+    })),
+    ...accounts
+      .filter((a) => !onRoster.has(a.id))
+      .map((a) => ({
+        key: a.id,
+        name: a.business_name || a.name,
+        contact: a.business_name && a.name !== a.email ? a.name : null,
+        email: a.email,
+        location: a.location,
+        customerId: null,
+        customerLegacyId: a.customerLegacyId,
+        proUserId: a.id,
+        portal: a.state,
+        lastLoginAt: a.last_login_at,
+        statuses: a.statuses,
+        spent: a.spent,
+      })),
+  ]
+  return rows.sort(
+    (a, b) => PORTAL_RANK[a.portal] - PORTAL_RANK[b.portal] || (b.lastLoginAt ?? '').localeCompare(a.lastLoginAt ?? '') || b.spent - a.spent,
+  )
+}
+
+export interface ViewAsLogRow {
+  admin_name: string | null
+  admin_email: string
+  pro_user_email: string
+  pro_user_id: string | null
+  created_at: string
+}
+
+/** Recent View as starts, and how many in the last 30 days. */
+export async function getViewAsLog(limit = 8): Promise<{ recent: ViewAsLogRow[]; last30: number }> {
+  const db = createAdminClient()
+  const since = new Date(Date.now() - 30 * 86_400_000).toISOString()
+  const [recent, count] = await Promise.all([
+    db
+      .from('admin_view_as_log')
+      .select('admin_name, admin_email, pro_user_email, pro_user_id, created_at')
+      .eq('action', 'start')
+      .order('created_at', { ascending: false })
+      .limit(limit),
+    db.from('admin_view_as_log').select('id', { count: 'exact', head: true }).eq('action', 'start').gte('created_at', since),
+  ])
+  return { recent: (recent.data ?? []) as ViewAsLogRow[], last30: count.count ?? 0 }
 }
 
 export interface ApplicationRow {

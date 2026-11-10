@@ -35,7 +35,7 @@ export const metadata: Metadata = { title: { absolute: 'Overview | Crazy Seal Ad
 type SP = Promise<Record<string, string | string[] | undefined>>
 
 export default async function AdminOverviewPage({ searchParams }: { searchParams: SP }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('overview')
   const sp = await searchParams
   const range = parseRange(sp.range)
   const [o, dealers, portal, newApps] = await Promise.all([

@@ -34,7 +34,7 @@ export const metadata: Metadata = { title: 'Customers' }
 const BASE = '/portal/admin/customers/'
 
 export default async function AdminCustomersPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('customers')
   const sp = await searchParams
   const q = one(sp.q)
   const segment = pick(sp.segment, CUSTOMER_SEGMENTS, 'all')

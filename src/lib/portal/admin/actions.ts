@@ -5,7 +5,7 @@ import { requirePortalAdmin } from './auth'
 import { refreshFromShopify, type RefreshResult } from './refresh'
 
 export async function syncShopifyNow(): Promise<RefreshResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin(['orders', 'customers'])
   const result = await refreshFromShopify()
   revalidatePath('/portal/admin', 'layout')
   return result

@@ -27,7 +27,7 @@ export const metadata: Metadata = { title: 'Orders' }
 const BASE = '/portal/admin/orders/'
 
 export default async function AdminOrdersPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('orders')
   const sp = await searchParams
   const q = one(sp.q)
   const tab = pick(sp.tab, ORDER_TABS, 'all')

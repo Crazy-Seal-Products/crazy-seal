@@ -5,7 +5,7 @@ import { listContactMarketingReviews, updateContactMarketingReview, ZohoScopeErr
 import { MARKETING_REVIEW_VALUES } from '@/lib/warranty/marketing-reviews'
 
 export async function POST() {
-  const staff = await requireStaff()
+  const staff = await requireStaff('warranties')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
@@ -64,7 +64,7 @@ export async function POST() {
 }
 
 export async function PATCH(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('warranties')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {

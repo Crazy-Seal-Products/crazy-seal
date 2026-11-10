@@ -1,0 +1,63 @@
+Use case: style-transfer / ui-mockup.
+Asset type: high fidelity raster concept of the existing Crazy Seal Admin.
+Input image: the supplied built-dark-overview.png is the EDIT TARGET and authoritative source for geometry, logo, icons, typography, chart, text, data, and panel hierarchy.
+Create one flat full-frame 1536x1024 PNG, no device frame, browser chrome, perspective, watermark, or surrounding margin. Source is 1536x960; keep every original horizontal position and width, and use the extra 64 pixels as a modest continuation of the page at the bottom. Do not redesign, rearrange, enlarge typography, simplify, merge panels, remove rows, or invent data.
+
+CRITICAL INVARIANT: Left sidebar at x=0..231 remains EXACTLY the same deep blue glass gradient and original color scheme as the reference. Preserve cartoon seal logo with green and blue, Crazy Seal wordmark, gold ADMIN letters, white and pale blue text, blue selection, thin gold active stripe, blue Orders count 13, gold Applications count 28, icons and bottom user footer. The sidebar MUST NOT become white, pale blue, gray, or light. Everything to the RIGHT of x=231 becomes light, including top bar, cards, chart, tables, activity rail, and empty background.
+
+LAYOUT AND VERBATIM CONTENT:
+Three columns: 232px sidebar, central workspace x=232..1271 (1040px), activity rail x=1272..1535 (264px). Preserve 20px central padding, compact 8px gaps, rounded cards with crisp 1px borders, small clean sans serif interface type.
+
+LEFT SIDEBAR: logo at upper left, "Crazy Seal" and "ADMIN". Selected "Overview". SALES group: Orders with 13 badge; Customers; Products; Sales history; Discounts; Abandoned carts. DEALERS group: Dealer roster; Portal accounts; Applications with 28 gold badge. TOOLS group: Dealer portal demo; Site admin; Shopify admin, external link arrows. Footer Eric and truncated "eric@companyengineers.c..." plus logout icon. Match source including logo.
+
+TOP BAR: left breadcrumb "Admin / Overview"; right compact search "Search orders, customers...", green dot and sync icon "Synced just now", small rail-toggle icon. Activity rail top heading "Activity" with green dot and "Live". This top bar becomes light.
+
+CENTRAL HEADER: "Overview". Subline "30 days · Sep 28, 2026 – Oct 27, 2026 · order history since Jun 28, 2026". Right segmented date filter: "7 days", "30 days" selected gold with dark text, "90 days", "Year to date", "All history".
+
+SIX KPI TILES in one horizontal row y=120..206: "Sales" "$100,242", downward "22%" and "vs prior 30 days"; "Orders" "76", downward "10%" and "vs prior 30 days"; "Average order" "$1,319", downward "14%" and "vs prior 30 days"; "Units sold" "359", upward "0%" and "vs prior 30 days"; "Discounts given" "$13,093", downward "55%" and "vs prior 30 days"; "Refunded" "$530", upward "195%" and "vs prior 30 days". Preserve red negative delta pills and blue neutral/positive pills, adapted to light backgrounds.
+
+MAIN CHART at x252..915, y215..575: header blue vertical accent then "Sales", subtitle "Daily · totals after refunds, incl. tax & shipping". White/light plot, subtle grey-blue horizontal grid lines labeled "$20K", "$10K", "$0". Same blue gradient daily bars and spacing as source: source dates across bottom "Sep 28", "Oct 2", "Oct 6", "Oct 10", "Oct 14", "Oct 18", "Oct 22", "Oct 26". Highest bar near Oct 7 around $16K, second later peak near Oct 19 about $10K, final about $11K, retain all small intervening daily columns. Below chart divider: "Show data table".
+
+SALES BY CHANNEL panel at x924..1252, y215..333: blue title accent, "Sales by channel" "30 days". Rank 1 "Draft orders (phone & speci..." with "64 orders" "$72,215"; long blue progress line. Rank 2 "Online store" "12 orders" "$28,027"; shorter blue progress line. Same right aligned dollar amounts.
+
+NEEDS FULFILLMENT panel below channel at x924..1252, y342..575: gold title accent, "Needs fulfillment", "13 open", right link "View all". Six tight rows, right date "Oct 26" and small gold-fill/dark-ink "Unfulfilled" badges:
+"#7095" "Bryan (Willie) Hall";
+"#7094" "Jose Pastarana";
+"#7093" "Kelly Adams";
+"#7092" "Chris Walker";
+"#7091" "Luke";
+"#7090" "Alex Koelsch".
+
+BOTTOM LEFT PANEL x252..748, y585..949: "Top products" "30 days", right "All products". Eight ranked rows, each a product title, muted units/orders metadata, right aligned dollar amount, thin blue progress bar:
+1 "Crazy Seal" "124 units · 41 orders" "$46,800"
+2 "Crazy Patch" "66 units · 42 orders" "$13,950"
+3 "2,000 SQ FT Commercial Kit" "1 units · 1 orders" "$13,391"
+4 "SEAMLESS ROOFING KIT" "9 units · 9 orders" "$13,030"
+5 "RV ROOFING KIT" "7 units · 8 orders" "$11,540"
+6 "Crazy Tape" "81 units · 25 orders" "$7,128"
+7 "DIRECT TO DECK RV ROOFING KIT" "2 units · 2 orders" "$4,230"
+8 "Crazy Caulk" "38 units · 19 orders" "$950".
+
+BOTTOM RIGHT PANEL x756..1252, y585..949: "Recent orders", right "All orders". Column labels "ORDER", "CUSTOMER", "PAYMENT", "TOTAL". Eight rows, each date "Oct 26", blue "Paid" badge:
+"#7095" "Bryan (Willie) Hall" "$2,325.60"
+"#7094" "Jose Pastarana" "$2,088.00"
+"#7093" "Kelly Adams" "$402.45"
+"#7092" "Chris Walker" "$193.95"
+"#7091" "Luke" "$2,405.50"
+"#7090" "Alex Koelsch" "$0.00"
+"#7089" "James Sanders" "$2,570.00"
+"#7088" "John Yoch" "$79.25".
+
+ACTIVITY RAIL x1272..1535: preserve all sections and dividers. Top gold shipping callout with truck icon, bold "13 orders waiting to ship", smaller "Oldest is 2mo old", right arrow.
+"LATEST ORDERS" and right "All", five rows with blue cart icons:
+"#7095 · Bryan (Willie) Hall" / "$2,325.60 · 9h ago"
+"#7094 · Jose Pastarana" / "$2,088.00 · 10h ago"
+"#7093 · Kelly Adams" / "$402.45 · 12h ago"
+"#7092 · Chris Walker" / "$193.95 · 13h ago"
+"#7091 · Luke" / "$2,405.50 · 13h ago".
+"DEALER APPLICATIONS" with gold count "28"; "David's Mobile RV Repairs and Insp..." "7h ago"; "BILLY RUSSELL" "8d ago"; "Roam RV Repair" "24d ago". Full width gold button "Review applications" with right arrow.
+"SYNC STATUS": green dot "Shopify", right green "Connected"; "Last sync" / "just now"; "Orders in history" / "331". Remaining rail is light empty space.
+
+TEXT AND COLOR RULES: Retain exact spelling and numbers from the reference. Sharp readable small text, navy major text and headings, muted slate secondary labels. Blue stays primary data color for chart, progress bars, links and Paid badges. Gold is for selected date pill, Sales emphasis, shipping callout, Review applications button, count 28, fulfillment badge fills. Never use tiny gold text on white; use dark ink on gold fills. Every central card, table row and chart surface is light. No dark center or dark activity rail. The ONLY dark surface is the unchanged deep-blue left sidebar.
+
+SPECIFIC TREATMENT: LIGHT 1 CLEAN WHITE. Canvas very light cool grey #F4F7FB. White panels with soft 1px grey-blue borders #DCE5F0 and faint restrained shadows. Navy #0B2545 headings and numbers. The entire Sales KPI tile is filled with a soft luminous gold gradient from #FFE27A to #F5C542 with dark navy ink including $100,242. Other five KPI tiles white. Activity rail pure white with a pale gold callout card, gold border and dark readable shipping text. White top bar. Light clean highly legible professional admin UI, faithful to reference layout. Output exact 1536x1024.

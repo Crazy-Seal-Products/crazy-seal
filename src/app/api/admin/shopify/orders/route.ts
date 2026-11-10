@@ -7,7 +7,7 @@ function searchTerm(raw: string | null) {
 }
 
 export async function GET(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('orders')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const q = searchTerm(request.nextUrl.searchParams.get('q'))

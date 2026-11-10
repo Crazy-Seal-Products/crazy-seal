@@ -29,7 +29,7 @@ function Route({ source, destination, permanent }: { source: string; destination
 }
 
 export default async function AdminRedirectsPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('redirects')
   const sp = await searchParams
   const q = one(sp.q)
   const show = pick(sp.show, REDIRECT_FILTERS, 'all')

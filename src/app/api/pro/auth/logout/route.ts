@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { clearSessionCookie, destroySession, requestOrigin } from '@/lib/pro/auth'
-import { endViewAs, isViewingAs } from '@/lib/pro/view-as'
+import { endViewAs, hasViewAsCookie } from '@/lib/pro/view-as'
 
-// In an admin view, "sign out" ends the view and leaves any real Pro Hub
-// session in this browser alone.
+// With a View as cookie in this browser, "sign out" is "Exit admin view": it
+// ends the view (even one that no longer counts, so it can't come back) and
+// leaves any real Pro Hub session in this browser alone.
 
 export async function POST() {
-  if (await isViewingAs()) {
+  if (await hasViewAsCookie()) {
     await endViewAs()
     return NextResponse.json({ success: true, viewAsEnded: true })
   }
@@ -16,9 +17,9 @@ export async function POST() {
 }
 
 export async function GET(request: NextRequest) {
-  if (await isViewingAs()) {
+  if (await hasViewAsCookie()) {
     await endViewAs()
-    return NextResponse.redirect(`${requestOrigin(request)}/portal/admin/dealers/portal/`)
+    return NextResponse.redirect(`${requestOrigin(request)}/portal/admin/dealers/view-as/`)
   }
   await destroySession()
   const response = NextResponse.redirect(`${requestOrigin(request)}/pro/login/`)

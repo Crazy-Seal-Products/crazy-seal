@@ -6,7 +6,7 @@
  * about the current page's layout context.
  */
 
-export type LayoutZone = 'marketing' | 'admin' | 'pro' | 'bare'
+export type LayoutZone = 'marketing' | 'admin' | 'pro' | 'bare' | 'contractor'
 
 export interface LayoutConfig {
   zone: LayoutZone
@@ -56,6 +56,19 @@ const ZONE_RULES: ZoneRule[] = [
       pageWrapper: false,
       sidebar: 'pro',
       tracking: false,
+    },
+  },
+  {
+    // A contractor's white-label page (/contractor/<slug>) carries their
+    // brand, not the site's. The finder at /contractor keeps the site chrome.
+    match: (p) => /^\/contractor\/[^/]+/.test(p),
+    config: {
+      zone: 'contractor',
+      header: false,
+      footer: false,
+      pageWrapper: false,
+      sidebar: 'none',
+      tracking: true,
     },
   },
   {

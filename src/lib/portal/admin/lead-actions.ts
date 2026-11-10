@@ -8,7 +8,7 @@ import { clearAdminCache } from './cache'
 import { LEAD_STATUSES } from './leads'
 
 export async function setLeadStatus(id: string, status: string): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin(['leads', 'applications'])
   if (!LEAD_STATUSES.some((s) => s.key === status)) return { ok: false, error: 'Unknown status' }
   const { error } = await createAdminClient().from('leads').update({ status }).eq('id', id)
   if (error) return { ok: false, error: 'Could not save' }

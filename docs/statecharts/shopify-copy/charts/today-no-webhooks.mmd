@@ -1,0 +1,29 @@
+---
+title: "Crazy Seal's copy of Shopify orders"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Up to date
+    lg1: Catching up
+    lg2: Breaks NothingLeftBehind
+    lg3: Path to the NothingLeftBehind bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 breaks
+  class lg3 bugPath
+  s0: Our copy matches Shopify
+  s1: An order is behind Shopify, the next refresh will fetch it
+  s2: An order is behind Shopify, and no refresh will fetch it
+  [*] --> s0
+  s0 --> s1: an order changes in Shopify
+  s1 --> s1: a minute passes or a new order comes in
+  s1 --> s2: staff open the new order, which copies it
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 blue
+  class s1 bugPath
+  class s2 blue
+  class s2 breaks
+  class s2 bugPath

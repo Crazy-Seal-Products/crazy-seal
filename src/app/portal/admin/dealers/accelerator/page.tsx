@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: 'Accelerator Program' }
 const BASE = '/portal/admin/dealers/accelerator/'
 
 export default async function AdminAcceleratorPage() {
-  await requirePortalAdmin()
+  await requirePortalAdmin('accelerator')
   const { program, modules } = await getAcceleratorAdmin()
 
   let number = 0

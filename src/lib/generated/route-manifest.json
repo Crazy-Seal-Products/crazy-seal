@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T06:12:11.476Z",
+  "generatedAt": "2026-11-10T00:25:52.816Z",
   "routes": [
     {
       "path": "/",
@@ -297,6 +297,16 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/ai/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/ai/conversations/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/archive/",
       "dynamic": false,
       "admin": false
@@ -308,6 +318,11 @@
     },
     {
       "path": "/portal/admin/assets/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/assistant/",
       "dynamic": false,
       "admin": false
     },
@@ -367,6 +382,11 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/no-access/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/orders/",
       "dynamic": false,
       "admin": false
@@ -413,6 +433,21 @@
     },
     {
       "path": "/portal/admin/staff/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/support/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/support/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/users/",
       "dynamic": false,
       "admin": false
     },
@@ -518,6 +553,11 @@
     },
     {
       "path": "/pro/signup/",
+      "dynamic": false,
+      "admin": true
+    },
+    {
+      "path": "/pro/support/",
       "dynamic": false,
       "admin": true
     },

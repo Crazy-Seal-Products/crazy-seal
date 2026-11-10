@@ -8,7 +8,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('portal_accounts')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json().catch(() => null)

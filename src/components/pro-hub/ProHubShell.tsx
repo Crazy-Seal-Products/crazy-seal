@@ -10,6 +10,7 @@ import {
   FileCheck,
   Wrench,
   BadgeDollarSign,
+  LifeBuoy,
   Menu,
   X,
   LogOut,
@@ -35,6 +36,7 @@ const NAV: NavItem[] = [
   { name: 'File warranty', href: '/pro/warranty', icon: FileCheck },
   { name: 'Tools', href: '/pro/tools', icon: Wrench },
   { name: 'Perks', href: '/pro/perks', icon: BadgeDollarSign },
+  { name: 'Support', href: '/pro/support', icon: LifeBuoy },
 ]
 
 export interface ProMe {
@@ -51,6 +53,8 @@ export interface ProMe {
 export interface ViewAsInfo {
   adminName: string
   expiresAt: number
+  /** False in the base view of a dealer who hasn't made a Pro Hub account. */
+  hasAccount: boolean
 }
 
 function isActive(href: string, pathname: string): boolean {
@@ -121,7 +125,7 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
   // In an admin view the logout route ends the view instead of signing anyone out
   const handleLogout = async () => {
     await fetch('/api/pro/auth/logout/', { method: 'POST' })
-    if (viewAs) window.location.href = '/portal/admin/dealers/portal/'
+    if (viewAs) window.location.href = '/portal/admin/dealers/view-as/'
     else router.replace('/pro/login/')
   }
   const signOutLabel = viewAs ? 'Exit admin view' : 'Sign out'
@@ -223,9 +227,19 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
           >
             <Eye className="h-4 w-4 shrink-0" />
             <p className="min-w-0 flex-1 leading-snug">
-              <span className="font-bold">Admin view.</span> {viewAs.adminName} is viewing the Pro Hub as{' '}
-              <span className="font-semibold">{label}</span>. Read-only: nothing here changes their account. Ends at{' '}
-              {new Date(viewAs.expiresAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.
+              <span className="font-bold">Admin view.</span>{' '}
+              {viewAs.hasAccount ? (
+                <>
+                  {viewAs.adminName} is viewing the Pro Hub as <span className="font-semibold">{label}</span>. Read-only: nothing here
+                  changes their account.
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">{label}</span> hasn&apos;t made a Pro Hub account yet. This is the base view they&apos;d
+                  see after signing up with {me?.email}, built from their Shopify record. Read-only.
+                </>
+              )}{' '}
+              Ends at {new Date(viewAs.expiresAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.
             </p>
             <button
               type="button"

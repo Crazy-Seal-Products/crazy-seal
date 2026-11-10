@@ -6,7 +6,8 @@ import { twMerge } from 'tailwind-merge'
 import { initials } from '@/lib/portal/accounts'
 import { adminSignOut } from '@/lib/portal/actions'
 import { changeMyPassword, getMyAccount, type MyAccount } from '@/lib/portal/admin/account-actions'
-import { ago, dateShort, humanize } from '@/lib/portal/admin/format'
+import { ago, dateShort } from '@/lib/portal/admin/format'
+import { roleLabel } from '@/lib/portal/admin/sections'
 import type { ActionResult } from './controls'
 import { Modal } from './modal'
 import { BUTTON, inputCls, labelCls } from './styles'
@@ -19,8 +20,8 @@ interface Who {
 
 const SIGN_IN_URL = 'https://www.crazyseal.com/portal/login/'
 
-/** The name in the sidebar footer. Click it for the account pop-up. */
-export function AccountMenu({ admin }: { admin: Who }) {
+/** The name in the sidebar footer (just the avatar when the sidebar is collapsed). Click it for the account pop-up. */
+export function AccountMenu({ admin, compact = false }: { admin: Who; compact?: boolean }) {
   const [open, setOpen] = useState(false)
   return (
     <>
@@ -28,16 +29,22 @@ export function AccountMenu({ admin }: { admin: Who }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        title="Your account"
-        className="-my-1 -ml-1.5 flex min-w-0 flex-1 items-center gap-3 rounded-lg px-1.5 py-1 text-left transition hover:bg-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        aria-label={compact ? `${admin.name}: your account and sign out` : undefined}
+        title={compact ? `${admin.name} · your account` : 'Your account'}
+        className={twMerge(
+          'flex min-w-0 items-center gap-2.5 rounded-lg text-left transition hover:bg-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+          compact ? 'p-0.5' : '-my-1 -ml-1.5 flex-1 px-1.5 py-1',
+        )}
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-adm-gold-bright to-adm-gold text-[12px] font-bold text-adm-gold-ink ring-2 ring-[rgb(245_197_66/0.25)]">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-adm-gold-bright to-adm-gold text-[11.5px] font-bold text-adm-gold-ink ring-2 ring-[rgb(245_197_66/0.25)]">
           {initials(admin.name)}
         </span>
-        <span className="min-w-0 flex-1 leading-tight">
-          <span className="block truncate text-[13.5px] font-semibold text-white">{admin.name}</span>
-          <span className="block truncate text-[11.5px] text-[#9fb6d3]">{humanize(admin.role)} · your account</span>
-        </span>
+        {!compact && (
+          <span className="min-w-0 flex-1 leading-tight">
+            <span className="block truncate text-[13px] font-semibold text-white">{admin.name}</span>
+            <span className="block truncate text-[11px] text-[#9fb6d3]">{roleLabel(admin.role)} · your account</span>
+          </span>
+        )}
       </button>
       {open && <AccountModal admin={admin} onClose={() => setOpen(false)} />}
     </>
@@ -77,7 +84,7 @@ function AccountModal({ admin, onClose }: { admin: Who; onClose: () => void }) {
             <CopyButton text={admin.email} label="Copy email" />
           </span>
         </Row>
-        <Row label="Role">{humanize(admin.role)}</Row>
+        <Row label="Role">{roleLabel(admin.role)}</Row>
         <Row label="Signed in with">
           {account ? (account.via === 'staff' ? 'Staff account' : 'Backup login (Vercel)') : <Loading failed={loadError} />}
         </Row>

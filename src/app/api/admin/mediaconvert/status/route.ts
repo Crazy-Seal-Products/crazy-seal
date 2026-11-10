@@ -12,7 +12,7 @@ const mediaConvertClient = new MediaConvertClient({
 })
 
 export async function GET(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('assets')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {

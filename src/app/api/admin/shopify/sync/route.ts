@@ -6,7 +6,7 @@ import { shopifyErrorMessage } from '@/lib/pro/shopify'
 export const maxDuration = 60
 
 export async function GET() {
-  const staff = await requireStaff()
+  const staff = await requireStaff(['orders', 'customers'])
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
@@ -18,7 +18,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff(['orders', 'customers'])
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json().catch(() => ({})) as {

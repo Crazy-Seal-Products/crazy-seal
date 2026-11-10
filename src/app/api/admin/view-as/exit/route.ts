@@ -8,5 +8,5 @@ export async function POST(request: NextRequest) {
   if (origin && origin !== url.origin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   await endViewAs()
-  return NextResponse.redirect(new URL('/portal/admin/dealers/portal/', url), 303)
+  return NextResponse.redirect(new URL('/portal/admin/dealers/view-as/', url), 303)
 }

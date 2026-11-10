@@ -30,7 +30,7 @@ const TABS = [
 ] as const
 
 export default async function AdminDiscountsPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('discounts')
   const sp = await searchParams
   const tab = TABS.some((t) => t.key === one(sp.tab)) ? (one(sp.tab) as (typeof TABS)[number]['key']) : 'active'
   const all = await getDiscounts()

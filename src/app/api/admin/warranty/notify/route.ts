@@ -94,7 +94,7 @@ async function loadOrMapRegistration(input: {
 
 export async function POST(request: NextRequest) {
   try {
-    const staff = await requireStaff()
+    const staff = await requireStaff(['warranties', 'archive'])
     if (!staff) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

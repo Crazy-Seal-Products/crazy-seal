@@ -44,7 +44,7 @@ function addressText(a: MailingAddress) {
 }
 
 export default async function AdminCustomerPage({ params }: { params: Params }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('customers')
   const { id } = await params
   const detail = await getCustomerDetail(id)
   if (!detail) notFound()

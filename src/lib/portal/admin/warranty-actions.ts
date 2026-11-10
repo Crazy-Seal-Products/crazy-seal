@@ -20,7 +20,7 @@ function done(): ActionResult {
 }
 
 async function updateRegistration(id: string, patch: Partial<Registration>): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const { error } = await createAdminClient().from('warranty_registrations').update(patch).eq('id', id)
   return error ? { ok: false, error: 'Could not save' } : done()
 }
@@ -108,7 +108,7 @@ export async function saveRegistrationDetails(id: string, _prev: ActionResult | 
 }
 
 export async function saveClaimDetails(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const text = detailsReader(form)
   const email = text('email')?.toLowerCase() ?? null
   const invalid = nameAndEmail(text('name'), email)
@@ -123,7 +123,7 @@ export async function saveClaimDetails(id: string, _prev: ActionResult | null, f
 }
 
 export async function saveTransferDetails(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const text = detailsReader(form)
   const email = text('new_owner_email')?.toLowerCase() ?? null
   const invalid = nameAndEmail(text('new_owner_name'), email)
@@ -146,7 +146,7 @@ export async function saveTransferDetails(id: string, _prev: ActionResult | null
 }
 
 export async function resendWarrantyEmails(id: string): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const { data } = await createAdminClient().from('warranty_registrations').select('*').eq('id', id).maybeSingle<Registration>()
   if (!data) return { ok: false, error: 'Registration not found' }
   if (!isSendableCustomerEmail(data.email)) return { ok: false, error: 'No customer email to send to' }
@@ -175,7 +175,7 @@ export async function resendWarrantyEmails(id: string): Promise<ActionResult> {
 }
 
 export async function saveClaim(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const status = String(form.get('status') ?? '')
   if (!CLAIM_STATUSES.some((s) => s.key === status)) return { ok: false, error: 'Unknown status' }
   const notes = String(form.get('resolution_notes') ?? '').trim() || null
@@ -186,7 +186,7 @@ export async function saveClaim(id: string, _prev: ActionResult | null, form: Fo
 }
 
 export async function saveTransfer(id: string, _prev: ActionResult | null, form: FormData): Promise<ActionResult> {
-  await requirePortalAdmin()
+  await requirePortalAdmin('warranties')
   const status = String(form.get('status') ?? '')
   if (!TRANSFER_STATUSES.some((s) => s.key === status)) return { ok: false, error: 'Unknown status' }
   const notes = String(form.get('transfer_notes') ?? '').trim() || null

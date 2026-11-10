@@ -24,7 +24,7 @@ import { BarList } from '@/components/portal/admin/BarList'
 export const metadata: Metadata = { title: 'Sales history' }
 
 export default async function AdminHistoryPage() {
-  await requirePortalAdmin()
+  await requirePortalAdmin('history')
   const [months, insights, coverage] = await Promise.all([getMonthlyHistory(), getCustomerInsights(), getCoverage()])
   const firstDay = coverage.first ? dayKey(coverage.first) : null
   const thisMonth = dayKey(new Date()).slice(0, 7)

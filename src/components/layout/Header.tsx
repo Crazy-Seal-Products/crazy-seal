@@ -27,6 +27,7 @@ const APPLICATIONS_DROPDOWN = [
   { href: '/transportation', label: 'Transportation' },
   { href: '/applications', label: 'All Applications' },
   { href: '/projects', label: 'Customer Projects' },
+  { href: '/contractor', label: 'Find a Contractor' },
 ]
 
 const PROFESSIONALS_DROPDOWN = [

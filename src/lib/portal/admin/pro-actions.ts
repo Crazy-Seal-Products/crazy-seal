@@ -18,7 +18,7 @@ const EMAIL_RE = /^[^\s@",()]+@[^\s@",()]+\.[^\s@",()]+$/
  * site admin's invite, so `invited_by` points at your staff record.
  */
 export async function inviteToProHub(_prev: ActionResult | null, form: FormData): Promise<ActionResult> {
-  const admin = await requirePortalAdmin()
+  const admin = await requirePortalAdmin('portal_accounts')
   const email = String(form.get('email') ?? '').trim().toLowerCase()
   if (!EMAIL_RE.test(email)) return { ok: false, error: 'Enter a valid email address' }
   const status = String(form.get('status') ?? '')

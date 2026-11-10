@@ -22,7 +22,7 @@ const VISIBILITY = [
 ] as const
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin()
+  await requirePortalAdmin('projects')
   const sp = await searchParams
   const category = CATEGORY_FILTERS.some((c) => c.key === one(sp.category)) ? one(sp.category)! : 'all'
   const visibility = VISIBILITY.some((v) => v.key === one(sp.show)) ? one(sp.show)! : 'all'

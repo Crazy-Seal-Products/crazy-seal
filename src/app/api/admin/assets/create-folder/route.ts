@@ -13,7 +13,7 @@ const s3 = new S3Client({
 const BUCKET = process.env.S3_BUCKET_NAME || 'crazy-seal-media'
 
 export async function POST(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('assets')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {

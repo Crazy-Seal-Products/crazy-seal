@@ -1,0 +1,58 @@
+---
+title: "A quote request from a contractor's page"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: In progress
+    lg1: Delivered
+    lg2: Stuck
+    lg3: Turned away
+    lg4: Breaks ListedPagesTakeRequests or NoRequestIsLost
+    lg5: Path to the ListedPagesTakeRequests or NoRequestIsLost bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 orange
+  class lg3 tan
+  class lg4 breaks
+  class lg5 bugPath
+  s0: Contractor's page is live
+  s1: Page hidden
+  s2: Visitor has the page open
+  s3: Visitor has the page open at its old address
+  s4: Saved, visitor told it's on its way, emails not sent yet
+  s5: Visitor told the contractor isn't taking requests
+  s6: Saved, but nobody was ever told
+  s7: Contractor emailed
+  s8: Turned away: the page was hidden
+  s9: Crazy Seal told to pass it on
+  [*] --> s0
+  s0 --> s1: an admin hides the page
+  s0 --> s2: a visitor opens the page
+  s2 --> s3: an admin changes the page address
+  s2 --> s4: the visitor sends the form
+  s3 --> s5: the visitor sends the form
+  s2 --> s8: the visitor sends the form
+  s4 --> s6: both emails fail or the server stops right after answering
+  s4 --> s7: the email to the contractor goes out
+  s4 --> s9: the contractor email fails, the copy to Crazy Seal goes out
+  s3 --> s8: the visitor sends the form
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 blue
+  class s0 bugPath
+  class s1 blue
+  class s2 blue
+  class s2 bugPath
+  class s3 blue
+  class s3 bugPath
+  class s4 blue
+  class s4 bugPath
+  class s5 tan
+  class s5 breaks
+  class s5 bugPath
+  class s6 orange
+  class s6 breaks
+  class s6 bugPath
+  class s7 teal
+  class s8 tan
+  class s9 teal

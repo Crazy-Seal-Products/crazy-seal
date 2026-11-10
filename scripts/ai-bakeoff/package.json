@@ -1,0 +1,17 @@
+{
+  "name": "crazy-seal-ai-bakeoff",
+  "private": true,
+  "type": "module",
+  "description": "Compares LLMs for the Crazy Seal customer and dealer assistants.",
+  "scripts": {
+    "kb": "node build-kb.mjs",
+    "run": "node run.mjs",
+    "judge": "node judge.mjs",
+    "report": "node report.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.7.0",
+    "@google/genai": "^3.0.0",
+    "openai": "^7.54.0"
+  }
+}

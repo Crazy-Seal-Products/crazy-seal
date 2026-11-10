@@ -15,7 +15,7 @@ const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env
 const PREFIX = 'site-assets/'
 
 export async function GET(request: NextRequest) {
-  const staff = await requireStaff()
+  const staff = await requireStaff('assets')
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {

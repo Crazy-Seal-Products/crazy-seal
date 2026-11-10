@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { DEMO_ACCOUNT } from './accounts'
+import { logAccess } from './admin/access-log'
 import { isPortalDemoEnabled, PORTAL_COOKIE, PORTAL_COOKIE_MAX_AGE } from './session'
 import {
   endAdminSession,
@@ -50,10 +51,15 @@ export async function portalSignIn(_prev: SignInState, formData: FormData): Prom
       const admin = await verifyAdminCredentials(email, password)
       if (admin) {
         await startAdminSession(admin)
+        await logAccess(admin, 'sign_in', admin.email, { via: 'env' })
         redirect('/portal/admin/')
       }
     }
-    if (staffUser && (await verifyStaffCredentials(email, password))) redirect('/portal/admin/')
+    const staff = staffUser ? await verifyStaffCredentials(email, password) : null
+    if (staff) {
+      await logAccess(staff, 'sign_in', staff.email, { via: 'staff' })
+      redirect('/portal/admin/')
+    }
     return { error: 'That password isn’t right. Try again, or use “Forgot your password?”.', field: 'password', email }
   }
 

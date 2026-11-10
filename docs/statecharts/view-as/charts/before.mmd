@@ -1,0 +1,62 @@
+---
+title: "View as: an admin opens a dealer's Pro Hub, read-only"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: No view
+    lg1: Viewing
+    lg2: Paused
+    lg3: Breaks ExitEndsTheView or LogShowsEveryView or NoBaseViewOnceTheyHaveAnAccount or NothingChangesWhileViewing
+    lg4: Path to the ExitEndsTheView or LogShowsEveryView or NoBaseViewOnceTheyHaveAnAccount or NothingChangesWhileViewing bug
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 yellow
+  class lg3 breaks
+  class lg4 bugPath
+  s0: No view open
+  s1: Viewing Mike's account
+  s2: Viewing Ruth's base page
+  s3: Viewing Mike's account, paused
+  s4: Viewing Ruth, opened before she signed up
+  s5: Viewing Mike's account#59; Mike's account was changed
+  s6: Viewing Mike's account#59; a view is missing its end in the log
+  s7: Viewing Mike's account, paused, after Exit
+  s8: Viewing Ruth, opened before she signed up#59; base page shown to an account
+  s9: Viewing Mike's account, after Exit
+  [*] --> s0
+  s0 --> s0: A signs in to the admin
+  s0 --> s1: A presses View as on Mike
+  s0 --> s2: A presses View as on Ruth
+  s1 --> s3: A signs out of the admin
+  s1 --> s5: a Pro Hub page loads and syncs Mike's details
+  s1 --> s6: A presses View as on Mike
+  s2 --> s4: Ruth signs up for the Pro Hub
+  s3 --> s7: Exit admin view [while the view is paused]
+  s4 --> s8: a Pro Hub page loads the base page
+  s7 --> s9: A signs in to the admin
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 yellow
+  class s3 bugPath
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 teal
+  class s6 breaks
+  class s6 bugPath
+  class s7 yellow
+  class s7 bugPath
+  class s8 teal
+  class s8 breaks
+  class s8 bugPath
+  class s9 teal
+  class s9 breaks
+  class s9 bugPath

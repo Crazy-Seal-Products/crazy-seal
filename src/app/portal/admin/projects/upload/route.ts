@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { getPortalAdmin } from '@/lib/portal/admin/auth'
+import { adminCan, getPortalAdmin } from '@/lib/portal/admin/auth'
 
 /**
  * Project photo upload for the admin's project editor. Same S3 bucket and
@@ -18,7 +18,7 @@ const CDN_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || `https://${process.env
 const MAX_BYTES = 8 * 1024 * 1024
 
 export async function POST(request: NextRequest) {
-  if (!(await getPortalAdmin())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!(await getPortalAdmin()) || !(await adminCan('projects'))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const form = await request.formData()
   const file = form.get('file')

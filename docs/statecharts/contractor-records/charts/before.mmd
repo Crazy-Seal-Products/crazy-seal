@@ -1,0 +1,45 @@
+---
+title: "Contractor pages: the dealer-list import and admin edits"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Not listed
+    lg1: Listed
+    lg2: Wrong
+    lg3: Breaks AdminEditsStick or OnePagePerDealer or SharedLinksKeepWorking
+    lg4: Path to the AdminEditsStick or OnePagePerDealer or SharedLinksKeepWorking bug
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 pink
+  class lg3 breaks
+  class lg4 bugPath
+  s0: The dealer has no page
+  s1: The dealer has a page
+  s2: The dealer has two pages
+  s3: The dealer has a page#59; a shared link works
+  s4: The dealer has a page#59; a shared link is dead
+  s5: The dealer has a page, and an admin's edit was undone
+  [*] --> s0
+  s0 --> s1: an admin adds the dealer by hand or the import adds a page for the dealer
+  s1 --> s2: the import adds a page for the dealer
+  s1 --> s3: someone shares a page's address
+  s1 --> s1: an admin changes a phone number
+  s3 --> s4: an admin renames a page address
+  s1 --> s5: the import rewrites the dealer's details
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 pink
+  class s2 breaks
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 pink
+  class s4 breaks
+  class s4 bugPath
+  class s5 pink
+  class s5 breaks
+  class s5 bugPath
