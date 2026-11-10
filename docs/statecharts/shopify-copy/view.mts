@@ -12,6 +12,8 @@ export const title = "Crazy Seal's copy of Shopify orders";
 const newest = (v: Vars) => Math.max(...Object.values(v.copy).map((o) => o.upd));
 
 // The worst order decides the label: deleted ones that came back, then ones no refresh will fetch.
+// "Will fetch" follows the before-fix refresh (from the newest stored change). The fixed configs are
+// over the chart budget and draw no chart; to draw one, label from v.cursor instead.
 export const state = (v: Vars) => {
   const orders = Object.keys(v.shop).filter((o) => v.shop[o].ver > 0);
   let label = "Our copy matches Shopify";

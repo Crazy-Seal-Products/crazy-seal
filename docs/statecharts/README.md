@@ -11,9 +11,9 @@ Each folder models one flow where the order of events matters, checks it with TL
 | Quote requests from contractor pages | [`quote-requests/`](quote-requests/) | `verify-quote-requests-model` |
 | The public contractor finder's search | [`contractor-finder/`](contractor-finder/) | `verify-contractor-finder-model` |
 
-In the four contractor-era folders (View as, contractor records, quote requests, the finder), `today.cfg` is the code as it is and `before.cfg` the code before its 2026-11-10 fix; their charts follow the same names. The Pro Hub access and Shopify copy folders still use `today.cfg` for the code as it was modeled and `fixed.cfg` for the proposed fix.
+In the four contractor-era folders (View as, contractor records, quote requests, the finder), `today.cfg` is the code as it is and `before.cfg` the code before its 2026-11-10 fix; their charts follow the same names. The Pro Hub access and Shopify copy folders use `before-fix*.cfg` for the code before their fixes and `fixed*.cfg` for the code with them.
 
-`replay/` runs the real code through each bug path with a fake database and a fake Shopify, using plain Node (22.18+) and this repo's installed packages. From `replay/crazy-seal/`:
+`replay/` runs the real code through each bug path with a fake database, a fake Shopify and a fake Gmail, using plain Node (22.18+) and this repo's installed packages. From `replay/crazy-seal/`:
 
 | Replay | Command |
 |---|---|

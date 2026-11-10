@@ -115,14 +115,16 @@ export async function loadJobsForPro(ctx: ProContext): Promise<{
 
   for (const row of filed ?? []) registrationsById.set(row.id, row as WarrantyRow)
 
-  const { data: byEmail } = await supabase
-    .from('warranty_registrations')
-    .select('id, name, email, phone, customer_details, order_number, install_type, status, created_at, before_photo_urls, after_photo_urls')
-    .or(`email.eq."${ctx.user.email}",installer_email.eq."${ctx.user.email}"`)
-    .order('created_at', { ascending: false })
-    .limit(200)
-
-  for (const row of byEmail ?? []) registrationsById.set(row.id, row as WarrantyRow)
+  // One .eq() per column rather than an .or() string, so the email is never parsed as filter syntax.
+  for (const column of ['email', 'installer_email']) {
+    const { data: byEmail } = await supabase
+      .from('warranty_registrations')
+      .select('id, name, email, phone, customer_details, order_number, install_type, status, created_at, before_photo_urls, after_photo_urls')
+      .eq(column, ctx.user.email)
+      .order('created_at', { ascending: false })
+      .limit(200)
+    for (const row of byEmail ?? []) registrationsById.set(row.id, row as WarrantyRow)
+  }
 
   if (uniqueVariants.length) {
     const { data: byOrder } = await supabase
@@ -145,13 +147,15 @@ export async function loadJobsForPro(ctx: ProContext): Promise<{
     .limit(100)
   for (const row of claimsEmail ?? []) claimsById.set(row.id, row as ClaimRow)
 
-  const { data: transfersEmail } = await supabase
-    .from('warranty_transfers')
-    .select('id, new_owner_name, new_owner_email, order_number, status, created_at')
-    .or(`new_owner_email.eq."${ctx.user.email}",original_owner_email.eq."${ctx.user.email}"`)
-    .order('created_at', { ascending: false })
-    .limit(100)
-  for (const row of transfersEmail ?? []) transfersById.set(row.id, row as TransferRow)
+  for (const column of ['new_owner_email', 'original_owner_email']) {
+    const { data: transfersEmail } = await supabase
+      .from('warranty_transfers')
+      .select('id, new_owner_name, new_owner_email, order_number, status, created_at')
+      .eq(column, ctx.user.email)
+      .order('created_at', { ascending: false })
+      .limit(100)
+    for (const row of transfersEmail ?? []) transfersById.set(row.id, row as TransferRow)
+  }
 
   if (uniqueVariants.length) {
     const { data: claimsOrder } = await supabase

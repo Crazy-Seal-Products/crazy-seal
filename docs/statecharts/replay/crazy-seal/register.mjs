@@ -11,6 +11,7 @@ register('../loader.mjs', import.meta.url, {
     swaps: {
       [path.join(src, 'lib/supabase/admin.ts')]: fakes,
       [path.join(src, 'lib/shopify/admin.ts')]: fakes,
+      [path.join(src, 'lib/email/gmail.ts')]: fakes,
       [path.join(src, 'lib/pro/view-as.ts')]: fakes,
     },
   },

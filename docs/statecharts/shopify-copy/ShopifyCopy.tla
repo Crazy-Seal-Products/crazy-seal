@@ -1,18 +1,21 @@
 ---- MODULE ShopifyCopy ----
 \* Crazy Seal's copy of Shopify orders while webhooks, the admin refresh and one-off fetches overlap.
 \*
-\* Code this model describes (Crazy-Seal-Products/crazy-seal main at 96e6068):
-\*   src/lib/shopify/sync.ts                 fetchAndUpsertOrder, upsertShopifyOrder (upsert on shopify_id),
-\*                                           markShopifyDeleted
-\*   src/lib/shopify/commerce-map.ts         orderRow: every write sets deleted_at to null
+\* Code this model describes (Crazy-Seal-Products/crazy-seal):
+\*   src/lib/shopify/sync.ts                 fetchAndUpsertOrder, upsertShopifyOrder, markShopifyDeleted
+\*   supabase/migrations/019_shopify_copy_newest_wins.sql
+\*                                           upsert_shopify_orders, the write every path above goes through
 \*   src/app/api/shopify/webhooks/route.ts   orders/* call fetchAndUpsertOrder; orders/delete marks deleted
-\*   src/lib/portal/admin/refresh.ts         refresh after admin page loads and "Sync now": starts from
-\*                                           the newest stored shopify_updated_at minus 60 seconds
+\*   src/lib/portal/admin/refresh.ts         refresh after admin page loads and "Sync now"
 \*   src/lib/portal/admin/details.ts         staff opening an order not yet copied fetches and writes it
 \*
-\* Fixed = FALSE is the code as it is. Fixed = TRUE is the proposed change: a write only replaces a
-\* stored order when Shopify's updated_at is newer and never clears a delete, and the refresh keeps its
-\* own cursor, set to the time it asked Shopify (not when it finished, and not the newest stored time).
+\* Fixed = TRUE is the code on branch fix/shopify-copy: a write replaces a stored order only when
+\* Shopify's updated_at is the same or newer and never clears a delete (upsert_shopify_orders), and the
+\* refresh keeps its own starting point in shopify_sync_state, set to the time it asked Shopify less the
+\* 60-second overlap (not when it finished, and not the newest stored time).
+\* Fixed = FALSE is main at 96e6068, before the fix: upsertShopifyOrder upserted on shopify_id with no
+\* compare, orderRow set deleted_at to null on every write, and the refresh started from the newest
+\* stored shopify_updated_at minus 60 seconds.
 \*
 \* Abstractions: two orders. O exists and is edited or deleted; N is a new order. Time is a tick, and
 \* a change gets the next tick as its updated_at; Idle lets time pass. The 60-second overlap is one tick.
@@ -56,9 +59,10 @@ Init ==
 Newest == CHOOSE m \in {copy[o].upd : o \in Orders} : \A o \in Orders : copy[o].upd <= m
 From == IF Fixed THEN cursor ELSE Newest
 
-\* One write of a fetched order. Fixed: only if newer, and never over a delete.
+\* One write of a fetched order. Fixed: only if the same or newer, and never over a delete. A tick names
+\* one version of an order, so the same tick writes the same version again.
 Write(o, got) ==
-    /\ copy' = IF ~Fixed \/ (got.upd > copy[o].upd /\ ~copy[o].gone)
+    /\ copy' = IF ~Fixed \/ (got.upd >= copy[o].upd /\ ~copy[o].gone)
                THEN [copy EXCEPT ![o] = [ver |-> got.ver, upd |-> got.upd, gone |-> FALSE]]
                ELSE copy
     /\ undeleted' = (undeleted \/ (copy[o].gone /\ ~copy'[o].gone /\ shop[o].gone))

@@ -170,6 +170,10 @@ export function customerFlags(tags: string[]): { is_dealer: boolean; is_commerci
   }
 }
 
+// customerRow, orderRow and lineItemRows are written column by column by the SQL functions in
+// supabase/migrations/019_shopify_copy_newest_wins.sql, which set deleted_at and order_id themselves.
+// A new key needs its column added there too.
+
 export function customerRow(node: ShopifyCustomerNode) {
   const tags = tagsOf(node.tags)
   const flags = customerFlags(tags)
@@ -201,7 +205,6 @@ export function customerRow(node: ShopifyCustomerNode) {
     is_commercial: flags.is_commercial,
     shopify_created_at: node.createdAt ?? null,
     shopify_updated_at: node.updatedAt ?? null,
-    deleted_at: null,
     synced_at: new Date().toISOString(),
     payload: node,
   }
@@ -259,16 +262,14 @@ export function orderRow(node: ShopifyOrderNode) {
     payment_gateway_names: node.paymentGatewayNames ?? [],
     shopify_created_at: node.createdAt ?? null,
     shopify_updated_at: node.updatedAt ?? null,
-    deleted_at: null,
     synced_at: new Date().toISOString(),
     payload: node,
   }
 }
 
-export function lineItemRows(orderId: string, orderShopifyId: string, nodes: ShopifyLineItemNode[]) {
+export function lineItemRows(orderShopifyId: string, nodes: ShopifyLineItemNode[]) {
   return nodes.map((node) => ({
     shopify_id: node.id,
-    order_id: orderId,
     order_shopify_id: orderShopifyId,
     title: node.title ?? null,
     name: node.name ?? null,

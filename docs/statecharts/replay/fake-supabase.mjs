@@ -25,9 +25,14 @@ class Query {
   neq(k, v) { this.filters.push((r) => r[k] !== v); return this }
   in(k, vs) { this.filters.push((r) => vs.includes(r[k])); return this }
   is(k, v) { this.filters.push((r) => (r[k] ?? null) === v); return this }
-  // Postgres ILIKE: % matches any run of characters and _ any one character, ignoring case.
+  // Postgres ILIKE through PostgREST: % (or *) matches any run of characters and _ any one
+  // character, ignoring case; a backslash makes the next character literal.
   ilike(k, v) {
-    const pattern = new RegExp(`^${String(v).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.')}$`, 'is')
+    const literal = (c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const source = [...String(v).matchAll(/\\(.)|([%*])|(_)|(.)/gs)]
+      .map(([, escaped, many, one, plain]) => (escaped != null ? literal(escaped) : many ? '.*' : one ? '.' : literal(plain)))
+      .join('')
+    const pattern = new RegExp(`^${source}$`, 'is')
     this.filters.push((r) => pattern.test(String(r[k] ?? '')))
     return this
   }

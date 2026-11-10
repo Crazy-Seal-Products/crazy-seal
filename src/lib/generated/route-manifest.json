@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T00:25:52.816Z",
+  "generatedAt": "2026-11-10T11:19:52.173Z",
   "routes": [
     {
       "path": "/",
@@ -59,6 +59,16 @@
     {
       "path": "/contact/",
       "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/contractor/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/contractor/[slug]/",
+      "dynamic": true,
       "admin": false
     },
     {
@@ -357,7 +367,27 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/dealers/contractors/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/contractors/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/contractors/new/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/dealers/portal/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/dealers/view-as/",
       "dynamic": false,
       "admin": false
     },
@@ -379,6 +409,11 @@
     {
       "path": "/portal/admin/leads/[id]/",
       "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/marketing/",
+      "dynamic": false,
       "admin": false
     },
     {

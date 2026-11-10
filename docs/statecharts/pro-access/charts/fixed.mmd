@@ -11,9 +11,12 @@ stateDiagram-v2
   s0: No password yet
   s1: No password, a sign-in link is in the pro's inbox
   s2: The pro set the password, and the pro is signed in
+  s3: No password yet, and the pro is signed in
   [*] --> s0
   s0 --> s1: the pro asks for a sign-in link or someone signs up, so a link is emailed to the address
-  s1 --> s2: the link signs the pro in
+  s1 --> s2: the pro sets a password from the link
+  s1 --> s3: the link signs the pro in
   class s0 tan
   class s1 tan
   class s2 teal
+  class s3 teal
