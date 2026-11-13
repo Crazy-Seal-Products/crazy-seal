@@ -54,6 +54,7 @@ import type { Activity } from '@/lib/portal/admin/activity'
 import { ago } from '@/lib/portal/admin/format'
 import type { AdminSection } from '@/lib/portal/admin/sections'
 import { AccountMenu } from './AccountMenu'
+import { FeedbackButton } from './FeedbackButton'
 import { NAV_COOKIE, RAIL_COOKIE, THEME_COOKIE, type AdminTheme } from './prefs'
 
 const LOGO = 'https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-150.png'
@@ -303,6 +304,8 @@ export function AdminShell({ admin, sections, badges, sync, activity, railOpen, 
             <ActivityRail activity={activity} sections={sections} />
           </aside>
         )}
+
+        <FeedbackButton pageLabel={crumbs(pathname).join(' › ')} firstName={admin.name.split(' ')[0]} />
 
         <AnimatePresence>
           {activityOpen && (

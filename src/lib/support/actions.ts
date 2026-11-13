@@ -7,6 +7,7 @@ import { clearAdminCache } from '@/lib/portal/admin/cache'
 import { siteOrigin } from '@/lib/pro/auth'
 import type { ActionResult } from '@/components/portal/admin/controls'
 import { refreshSiteKnowledge } from '@/lib/ai/knowledge'
+import { roleLabel } from '@/lib/portal/admin/sections'
 import {
   addTicketReply,
   createTicket,
@@ -204,4 +205,68 @@ export async function sendStaffFeedback(kind: string, subject: string, body: str
   })
   if (!ticket) return { ok: false, error: 'Could not send' }
   return done(`Sent as #${ticket.number}. Thanks!`)
+}
+
+// ─── Feedback button (bottom-right of every admin page) ──────────────────
+
+export interface PageFeedback {
+  message: string
+  /** Path and query of the admin page they were on. */
+  path: string
+  /** Where that page sits in the sidebar, e.g. "Sales › Orders". */
+  pageLabel: string
+  timeZone: string
+  /** Browser window, e.g. "1536×864". */
+  viewport: string
+  userAgent: string
+}
+
+function browserName(ua: string): string {
+  const browser =
+    /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'Unknown browser'
+  const os =
+    /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'unknown OS'
+  return `${browser} on ${os}`
+}
+
+function sentAt(timeZone: string): string {
+  const opts: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeStyle: 'short' }
+  try {
+    return `${new Date().toLocaleString('en-US', { ...opts, timeZone })} (${timeZone})`
+  } catch {
+    return `${new Date().toLocaleString('en-US', { ...opts, timeZone: 'America/Denver' })} (Mountain)`
+  }
+}
+
+/**
+ * Feedback from the floating button. Any signed-in admin or staff member can
+ * send it, whatever their sections. It lands in the Support inbox as
+ * Feedback (which emails the queue owners) with the page, time, sender and
+ * browser underneath, and replies go back to the sender by email.
+ */
+export async function sendPageFeedback(input: PageFeedback): Promise<ActionResult & { number?: number }> {
+  const admin = await requirePortalAdmin()
+  const text = String(input.message ?? '').trim()
+  if (!text) return { ok: false, error: 'Write a few words first' }
+  const path = String(input.path ?? '').startsWith('/portal/admin') ? String(input.path).slice(0, 500) : '/portal/admin/'
+  const pageLabel = String(input.pageLabel ?? '').slice(0, 80) || 'Admin'
+  const details = [
+    `Page: ${pageLabel} · ${siteOrigin()}${path}`,
+    `Sent: ${sentAt(String(input.timeZone ?? '').slice(0, 60) || 'America/Denver')}`,
+    `From: ${admin.name} <${admin.email}> · ${roleLabel(admin.role)}`,
+    `Browser: ${browserName(String(input.userAgent ?? ''))} · window ${String(input.viewport ?? '').slice(0, 20) || 'unknown'}`,
+  ]
+  const firstLine = text.split('\n')[0].trim()
+  const ticket = await createTicket({
+    kind: 'general_feedback',
+    subject: `${pageLabel.split(' › ').pop()}: ${firstLine.length > 90 ? `${firstLine.slice(0, 89)}…` : firstLine}`,
+    body: `${text.slice(0, 4000)}\n\n———\n${details.join('\n')}`,
+    author: { type: 'staff', name: admin.name, email: admin.email },
+    staffEmail: admin.email,
+    contact: { name: admin.name, email: admin.email },
+  })
+  if (!ticket) return { ok: false, error: 'Could not send. Try again in a moment.' }
+  clearAdminCache()
+  revalidatePath('/portal/admin/support')
+  return { ok: true, message: `Sent as #${ticket.number}`, number: ticket.number }
 }
