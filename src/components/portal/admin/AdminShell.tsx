@@ -55,6 +55,7 @@ import { ago } from '@/lib/portal/admin/format'
 import type { AdminSection } from '@/lib/portal/admin/sections'
 import { AccountMenu } from './AccountMenu'
 import { FeedbackButton } from './FeedbackButton'
+import { RowLinks } from './RowLinks'
 import { NAV_COOKIE, RAIL_COOKIE, THEME_COOKIE, type AdminTheme } from './prefs'
 
 const LOGO = 'https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-150.png'
@@ -288,7 +289,8 @@ export function AdminShell({ admin, sections, badges, sync, activity, railOpen, 
             onToggleTheme={toggleTheme}
             onOpenActivity={() => setActivityPath(pathname)}
           />
-          <main className="flex-1 px-3 py-3 sm:px-4 lg:px-5 lg:py-4">
+          <main id="adm-main" className="flex-1 px-3 py-3 sm:px-4 lg:px-5 lg:py-4">
+            <RowLinks root="#adm-main" />
             <div className="mx-auto w-full max-w-[1500px]">{children}</div>
           </main>
           <footer className="px-5 pb-3 text-[11px] text-adm-faint">

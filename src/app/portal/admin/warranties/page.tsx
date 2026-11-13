@@ -1,5 +1,6 @@
+import React from 'react'
 import type { Metadata } from 'next'
-import { Star } from 'lucide-react'
+import { ChevronDown, Star } from 'lucide-react'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
 import {
   CLAIM_STATUSES,
@@ -58,6 +59,90 @@ function classificationTone(v: string | null) {
   if (v === 'Use For Marketing/Website') return 'gold' as const
   if (v.startsWith('Good')) return 'good' as const
   return 'neutral' as const
+}
+
+type Tone = React.ComponentProps<typeof Badge>['tone']
+const CLAIM_TONE: Record<string, Tone> = { submitted: 'warn', in_review: 'gold', resolved: 'good', denied: 'bad' }
+const TRANSFER_TONE: Record<string, Tone> = { submitted: 'warn', processed: 'good', denied: 'bad' }
+
+function orderLabel(order: string | null) {
+  return order ? `Order #${order.replace(/^#/, '')}` : null
+}
+
+/** Label/value pairs in two tight columns; empty values are skipped. */
+function Facts({ rows }: { rows: [string, React.ReactNode][] }) {
+  return (
+    <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-4 gap-y-1 text-[12px]">
+      {rows
+        .filter(([, v]) => v != null && v !== '')
+        .map(([k, v]) => (
+          <React.Fragment key={k}>
+            <dt className="text-adm-muted">{k}</dt>
+            <dd className="min-w-0 truncate text-adm-text">{v}</dd>
+          </React.Fragment>
+        ))}
+    </dl>
+  )
+}
+
+/**
+ * One claim or transfer: a single compact line (status, who, what, photos,
+ * date) that opens in place to the full record and its forms. The whole line
+ * is the toggle.
+ */
+function CaseRow({
+  status,
+  statuses,
+  tones,
+  title,
+  sub,
+  summary,
+  photos,
+  at,
+  side,
+  children,
+}: {
+  status: string
+  statuses: readonly { key: string; label: string }[]
+  tones: Record<string, Tone>
+  title: string
+  sub: string
+  summary: string | null
+  photos?: string[]
+  at: string
+  side: React.ReactNode
+  children: React.ReactNode
+}) {
+  const label = statuses.find((x) => x.key === status)?.label ?? status
+  return (
+    <details className="group/case border-b border-adm-line-soft last:border-b-0 open:bg-adm-ink/[0.025]">
+      <summary className="grid cursor-pointer list-none grid-cols-[5.75rem_minmax(0,1fr)_auto_auto] items-center gap-x-3 px-3 py-2 transition-colors hover:bg-adm-blue-bright/[0.06] @3xl:grid-cols-[5.75rem_minmax(9rem,15rem)_minmax(0,1fr)_4.5rem_4.5rem_auto] [&::-webkit-details-marker]:hidden">
+        <span>
+          <Badge tone={tones[status] ?? 'neutral'}>{label}</Badge>
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate text-[12.5px] font-semibold text-adm-ink">{title}</span>
+          <span className="block truncate text-[11px] text-adm-muted">{sub}</span>
+        </span>
+        <span className="hidden truncate text-[12px] text-adm-muted @3xl:block">{summary}</span>
+        <span className="hidden items-center @3xl:flex">
+          {photos?.slice(0, 3).map((src, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={src} src={src} alt="" loading="lazy" className={`h-6 w-6 rounded-md object-cover ring-2 ring-adm-bg ${i ? '-ml-2' : ''}`} />
+          ))}
+          {(photos?.length ?? 0) > 3 && <span className="ml-1 text-[11px] text-adm-muted">+{photos!.length - 3}</span>}
+        </span>
+        <span className="text-right text-[11.5px] tabular-nums text-adm-muted" title={dateTime(at)}>
+          {dateShort(at)}
+        </span>
+        <ChevronDown aria-hidden="true" className="h-4 w-4 text-adm-faint transition-transform group-open/case:rotate-180" />
+      </summary>
+      <div className="grid gap-4 px-3 pb-3 pt-1 @3xl:grid-cols-[minmax(0,1fr)_19rem]">
+        <div className="min-w-0 space-y-3">{children}</div>
+        <div className="space-y-2.5 rounded-lg border border-adm-line bg-adm-input/60 p-3">{side}</div>
+      </div>
+    </details>
+  )
 }
 
 export default async function AdminWarrantiesPage({ searchParams }: { searchParams: SearchParams }) {
@@ -200,39 +285,74 @@ export default async function AdminWarrantiesPage({ searchParams }: { searchPara
       {tab === 'claims' && (
         <Panel title={`${num(claims.length)} warranty claims`} meta={`${num(openClaims)} open`} tone="dealers">
           {claims.length ? (
-            <ul className="divide-y divide-adm-line-soft">
-              {claims.map((c) => (
-                <li key={c.id} className="grid gap-2 px-3 py-3">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                    <span className="font-semibold">{c.name}</span>
-                    <span className="text-[12px] text-adm-muted">{[c.email, c.phone, c.order_number ? `order #${c.order_number.replace(/^#/, '')}` : null].filter(Boolean).join(' · ')}</span>
-                    <span className="ml-auto text-[11.5px] text-adm-muted">{dateTime(c.created_at)}</span>
-                  </div>
-                  {c.failure_description && <p className="whitespace-pre-line text-[12.5px] leading-relaxed text-adm-text">{c.failure_description}</p>}
-                  {(c.photo_urls?.length ?? 0) > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {c.photo_urls!.map((src) => (
-                        <a key={src} href={src} target="_blank" rel="noopener noreferrer">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={src} alt="" loading="lazy" className="h-16 w-16 rounded-md border border-adm-line object-cover" />
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                  <StatusNotesForm action={saveClaim.bind(null, c.id)} status={c.status} statuses={CLAIM_STATUSES} notes={c.resolution_notes} notesName="resolution_notes" notesLabel="Resolution notes" />
-                  <DetailsForm
-                    action={saveClaimDetails.bind(null, c.id)}
-                    fields={[
-                      { name: 'name', label: 'Name', value: c.name, required: true },
-                      { name: 'email', label: 'Email', value: c.email, type: 'email', required: true },
-                      { name: 'phone', label: 'Phone', value: c.phone, type: 'tel' },
-                      { name: 'order_number', label: 'Order number', value: c.order_number },
-                      { name: 'failure_description', label: 'What failed', value: c.failure_description, multiline: true },
-                    ]}
-                  />
-                </li>
-              ))}
-            </ul>
+            <div>
+              {claims.map((c) => {
+                const photos = c.photo_urls?.filter(Boolean) ?? []
+                return (
+                  <CaseRow
+                    key={c.id}
+                    status={c.status}
+                    statuses={CLAIM_STATUSES}
+                    tones={CLAIM_TONE}
+                    title={c.name}
+                    sub={[c.email, orderLabel(c.order_number)].filter(Boolean).join(' · ')}
+                    summary={c.failure_description}
+                    photos={photos}
+                    at={c.created_at}
+                    side={
+                      <>
+                        <StatusNotesForm action={saveClaim.bind(null, c.id)} status={c.status} statuses={CLAIM_STATUSES} notes={c.resolution_notes} notesName="resolution_notes" notesLabel="Resolution notes" />
+                        <DetailsForm
+                          className="border-t border-adm-line-soft pt-2.5"
+                          action={saveClaimDetails.bind(null, c.id)}
+                          fields={[
+                            { name: 'name', label: 'Name', value: c.name, required: true },
+                            { name: 'email', label: 'Email', value: c.email, type: 'email', required: true },
+                            { name: 'phone', label: 'Phone', value: c.phone, type: 'tel' },
+                            { name: 'order_number', label: 'Order number', value: c.order_number },
+                            { name: 'failure_description', label: 'What failed', value: c.failure_description, multiline: true },
+                          ]}
+                        />
+                      </>
+                    }
+                  >
+                    <Facts
+                      rows={[
+                        ['Email', <a key="e" href={`mailto:${c.email}`} className="text-adm-blue-bright hover:underline">{c.email}</a>],
+                        ['Phone', c.phone ? <a key="p" href={`tel:${c.phone}`} className="text-adm-blue-bright hover:underline">{c.phone}</a> : null],
+                        ['Order', orderLabel(c.order_number)],
+                        ['Submitted', dateTime(c.created_at)],
+                      ]}
+                    />
+                    {c.failure_description && (
+                      <div>
+                        <p className="mb-1 text-[11px] font-medium text-adm-muted">What failed</p>
+                        <p className="whitespace-pre-line text-[12.5px] leading-relaxed text-adm-text">{c.failure_description}</p>
+                      </div>
+                    )}
+                    {photos.length > 0 && (
+                      <div>
+                        <p className="mb-1.5 text-[11px] font-medium text-adm-muted">Photos · {photos.length}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {photos.map((src) => (
+                            <a
+                              key={src}
+                              href={src}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group/ph block h-24 w-24 overflow-hidden rounded-lg ring-1 ring-inset ring-adm-line transition hover:ring-adm-blue-bright"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={src} alt="" loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover/ph:scale-105" />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CaseRow>
+                )
+              })}
+            </div>
           ) : (
             <Empty>No claims yet.</Empty>
           )}
@@ -242,31 +362,47 @@ export default async function AdminWarrantiesPage({ searchParams }: { searchPara
       {tab === 'transfers' && (
         <Panel title={`${num(transfers.length)} warranty transfers`} meta={`${num(openTransfers)} waiting`} tone="info">
           {transfers.length ? (
-            <ul className="divide-y divide-adm-line-soft">
+            <div>
               {transfers.map((t) => (
-                <li key={t.id} className="grid gap-2 px-3 py-3">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                    <span className="font-semibold">{t.new_owner_name}</span>
-                    <span className="text-[12px] text-adm-muted">
-                      {[t.new_owner_email, t.new_owner_phone, t.order_number ? `order #${t.order_number.replace(/^#/, '')}` : null].filter(Boolean).join(' · ')}
-                    </span>
-                    <span className="ml-auto text-[11.5px] text-adm-muted">{dateTime(t.created_at)}</span>
-                  </div>
-                  <p className="text-[12px] text-adm-muted">From original owner {t.original_owner_email ?? 'not given'}</p>
-                  <StatusNotesForm action={saveTransfer.bind(null, t.id)} status={t.status} statuses={TRANSFER_STATUSES} notes={t.transfer_notes} notesName="transfer_notes" notesLabel="Transfer notes" />
-                  <DetailsForm
-                    action={saveTransferDetails.bind(null, t.id)}
-                    fields={[
-                      { name: 'new_owner_name', label: 'New owner name', value: t.new_owner_name, required: true },
-                      { name: 'new_owner_email', label: 'New owner email', value: t.new_owner_email, type: 'email', required: true },
-                      { name: 'new_owner_phone', label: 'New owner phone', value: t.new_owner_phone, type: 'tel' },
-                      { name: 'original_owner_email', label: 'Original owner email', value: t.original_owner_email, type: 'email' },
-                      { name: 'order_number', label: 'Order number', value: t.order_number },
+                <CaseRow
+                  key={t.id}
+                  status={t.status}
+                  statuses={TRANSFER_STATUSES}
+                  tones={TRANSFER_TONE}
+                  title={t.new_owner_name}
+                  sub={[t.new_owner_email, orderLabel(t.order_number)].filter(Boolean).join(' · ')}
+                  summary={t.original_owner_email ? `From ${t.original_owner_email}` : 'Original owner not given'}
+                  at={t.created_at}
+                  side={
+                    <>
+                      <StatusNotesForm action={saveTransfer.bind(null, t.id)} status={t.status} statuses={TRANSFER_STATUSES} notes={t.transfer_notes} notesName="transfer_notes" notesLabel="Transfer notes" />
+                      <DetailsForm
+                        className="border-t border-adm-line-soft pt-2.5"
+                        action={saveTransferDetails.bind(null, t.id)}
+                        fields={[
+                          { name: 'new_owner_name', label: 'New owner name', value: t.new_owner_name, required: true },
+                          { name: 'new_owner_email', label: 'New owner email', value: t.new_owner_email, type: 'email', required: true },
+                          { name: 'new_owner_phone', label: 'New owner phone', value: t.new_owner_phone, type: 'tel' },
+                          { name: 'original_owner_email', label: 'Original owner email', value: t.original_owner_email, type: 'email' },
+                          { name: 'order_number', label: 'Order number', value: t.order_number },
+                        ]}
+                      />
+                    </>
+                  }
+                >
+                  <Facts
+                    rows={[
+                      ['New owner', t.new_owner_name],
+                      ['Email', <a key="e" href={`mailto:${t.new_owner_email}`} className="text-adm-blue-bright hover:underline">{t.new_owner_email}</a>],
+                      ['Phone', t.new_owner_phone ? <a key="p" href={`tel:${t.new_owner_phone}`} className="text-adm-blue-bright hover:underline">{t.new_owner_phone}</a> : null],
+                      ['Original owner', t.original_owner_email],
+                      ['Order', orderLabel(t.order_number)],
+                      ['Submitted', dateTime(t.created_at)],
                     ]}
                   />
-                </li>
+                </CaseRow>
               ))}
-            </ul>
+            </div>
           ) : (
             <Empty>No transfers yet.</Empty>
           )}

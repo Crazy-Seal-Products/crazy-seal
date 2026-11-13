@@ -679,6 +679,19 @@ h1, h2, h3 {
     radial-gradient(40rem 20rem at 80% -8%, rgb(245 197 66 / 0.08), transparent 70%);
 }
 
+/* Rows that open a record when clicked anywhere (see RowLinks.tsx). */
+.cs-admin tr:has(a[data-row-link]),
+.cs-admin [data-row]:has(a[data-row-link]) {
+  cursor: pointer;
+}
+.cs-admin tr:has(a[data-row-link]):hover,
+.cs-admin [data-row]:has(a[data-row-link]):hover {
+  background-color: rgb(108 182 255 / 0.06);
+}
+.cs-admin tr:has(a[data-row-link]) :is(select, input, textarea) {
+  cursor: auto;
+}
+
 .cs-admin[data-theme='light'] .adm-glass {
   background: #ffffff;
   box-shadow: 0 1px 2px rgb(15 35 70 / 0.05), 0 10px 26px -20px rgb(15 35 70 / 0.3);

@@ -39,14 +39,14 @@ export function BarList({
     <ol className={twMerge('divide-y', DIVIDE, className)}>
       {shown.map((r, i) => {
         const label = r.href ? (
-          <Link href={r.href} className="truncate font-medium text-adm-ink hover:text-adm-blue-bright hover:underline">
+          <Link href={r.href} data-row-link="" className="truncate font-medium text-adm-ink hover:text-adm-blue-bright hover:underline">
             {r.label}
           </Link>
         ) : (
           <span className="truncate font-medium text-adm-ink">{r.label}</span>
         )
         return (
-          <li key={r.key} className="px-3 py-1.5 transition-colors hover:bg-adm-ink/[0.03]">
+          <li key={r.key} data-row="" className="px-3 py-1.5 transition-colors hover:bg-adm-ink/[0.03]">
             <div className="flex items-baseline gap-2 text-[12.5px]">
               <span className="w-4 shrink-0 text-right text-[10.5px] tabular-nums text-adm-faint">{i + 1}</span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5">

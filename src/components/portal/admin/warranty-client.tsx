@@ -246,7 +246,7 @@ export function StatusNotesForm({
 }) {
   const [state, formAction, pending] = useActionState(action, null)
   return (
-    <form action={formAction} className="grid gap-2 sm:grid-cols-[10rem_minmax(0,1fr)_auto] sm:items-end">
+    <form action={formAction} className="grid gap-2">
       <label className={labelCls}>
         <span>Status</span>
         <select name="status" defaultValue={status} className={inputCls}>
@@ -259,10 +259,10 @@ export function StatusNotesForm({
       </label>
       <label className={labelCls}>
         <span>{notesLabel}</span>
-        <textarea name={notesName} defaultValue={notes ?? ''} rows={2} className={twMerge(textareaCls, 'min-h-8')} />
+        <textarea name={notesName} defaultValue={notes ?? ''} rows={3} className={textareaCls} />
       </label>
       <div className="flex items-center gap-2">
-        <button type="submit" disabled={pending} className={BUTTON.default}>
+        <button type="submit" disabled={pending} className={BUTTON.gold}>
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           Save
         </button>

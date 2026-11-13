@@ -234,9 +234,13 @@ export function Td({
   )
 }
 
+/**
+ * A row's name link. The first one in a table row (or `data-row` element) is
+ * also where a click anywhere else on the row goes (see RowLinks).
+ */
 export function CellLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   return (
-    <Link href={href} className={twMerge('font-semibold text-adm-ink underline-offset-2 hover:text-adm-blue-bright hover:underline', className)}>
+    <Link href={href} data-row-link="" className={twMerge('font-semibold text-adm-ink underline-offset-2 hover:text-adm-blue-bright hover:underline', className)}>
       {children}
     </Link>
   )

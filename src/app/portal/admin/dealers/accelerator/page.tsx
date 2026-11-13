@@ -64,7 +64,7 @@ export default async function AdminAcceleratorPage() {
               const Icon = MODULE_ICON_META[mod.icon].icon
               const href = `${BASE}${row.slug}/`
               return (
-                <li key={row.id} className="flex items-center gap-3 px-3 py-2.5">
+                <li key={row.id} data-row="" className="flex items-center gap-3 px-3 py-2.5">
                   <span
                     className={
                       row.is_published
@@ -78,7 +78,7 @@ export default async function AdminAcceleratorPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={mod.thumbnail} alt="" className="hidden h-11 w-[72px] shrink-0 rounded-md object-cover ring-1 ring-adm-line sm:block" />
                   <div className="min-w-0 flex-1">
-                    <Link href={href} className="flex items-center gap-2 text-[13px] font-semibold text-adm-ink hover:underline">
+                    <Link href={href} data-row-link="" className="flex items-center gap-2 text-[13px] font-semibold text-adm-ink hover:underline">
                       <span className="truncate">{row.title}</span>
                       {!row.is_published && <Badge tone="warn">Draft</Badge>}
                     </Link>

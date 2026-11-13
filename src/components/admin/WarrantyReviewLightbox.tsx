@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, Star, X } from 'lucide-react'
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Loader2, Maximize2, Quote, ShieldAlert, Star, X } from 'lucide-react'
+import { twMerge } from 'tailwind-merge'
 import {
   IMAGE_TYPES,
   REVIEW_CLASSIFICATIONS,
@@ -32,26 +33,32 @@ interface Slide {
   label: 'Before' | 'After' | 'Photo'
 }
 
-const TONE_CLASS: Record<string, string> = {
-  marketing:
-    'bg-emerald-500/15 text-emerald-50 border-emerald-400/30 hover:bg-emerald-500/25 hover:border-emerald-300/50',
-  strong:
-    'bg-sky-500/15 text-sky-50 border-sky-400/30 hover:bg-sky-500/25 hover:border-sky-300/50',
-  good:
-    'bg-white/8 text-white border-white/15 hover:bg-white/14 hover:border-white/30',
-  neutral:
-    'bg-white/5 text-white/80 border-white/10 hover:bg-white/10',
-  reject:
-    'bg-red-500/15 text-red-50 border-red-400/30 hover:bg-red-500/25 hover:border-red-300/50',
+/** Classification colours: a dot at rest, a tinted card when chosen. */
+const TONE_DOT: Record<string, string> = {
+  marketing: 'bg-emerald-400',
+  strong: 'bg-sky-400',
+  good: 'bg-zinc-200',
+  neutral: 'bg-zinc-500',
+  reject: 'bg-rose-400',
 }
 
 const TONE_ACTIVE: Record<string, string> = {
-  marketing: 'bg-emerald-400 text-emerald-950 border-emerald-300',
-  strong: 'bg-sky-300 text-sky-950 border-sky-200',
-  good: 'bg-white text-zinc-900 border-white',
-  neutral: 'bg-zinc-300 text-zinc-900 border-zinc-200',
-  reject: 'bg-red-400 text-red-950 border-red-300',
+  marketing: 'bg-emerald-400/[0.14] ring-emerald-400/60 text-emerald-50',
+  strong: 'bg-sky-400/[0.14] ring-sky-400/60 text-sky-50',
+  good: 'bg-white/[0.1] ring-white/50 text-white',
+  neutral: 'bg-zinc-400/[0.12] ring-zinc-400/50 text-zinc-100',
+  reject: 'bg-rose-400/[0.14] ring-rose-400/60 text-rose-50',
 }
+
+const LABEL_CHIP: Record<string, string> = {
+  Before: 'text-amber-200 ring-amber-300/30 [&>i]:bg-amber-300',
+  After: 'text-emerald-200 ring-emerald-300/30 [&>i]:bg-emerald-300',
+  Photo: 'text-zinc-200 ring-white/15 [&>i]:bg-zinc-400',
+}
+
+/** Round glass button used for every icon control on the photos. */
+const GLASS_ICON =
+  'inline-flex items-center justify-center rounded-full bg-black/45 text-white/85 ring-1 ring-inset ring-white/15 backdrop-blur-md transition hover:bg-black/65 hover:text-white disabled:pointer-events-none disabled:opacity-0'
 
 function slidesFor(reg: ReviewRegistration): Slide[] {
   const before = (reg.before_photo_urls || []).filter(Boolean)
@@ -87,6 +94,63 @@ function toggleFavorite(reg: ReviewRegistration, url: string): string[] {
   return current.includes(url) ? current.filter((item) => item !== url) : [...current, url]
 }
 
+function LabelChip({ label, text }: { label: Slide['label']; text?: string }) {
+  return (
+    <span
+      className={twMerge(
+        'inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold tracking-wide ring-1 ring-inset backdrop-blur-md',
+        LABEL_CHIP[label],
+      )}
+    >
+      <i aria-hidden="true" className="h-1.5 w-1.5 rounded-full" />
+      {text ?? label}
+    </span>
+  )
+}
+
+/** "Mark as Before / After" control for a photo that has no label yet. */
+function AssignToggle({ onAssign, size = 'sm' }: { onAssign: (kind: 'Before' | 'After') => void; size?: 'sm' | 'md' }) {
+  return (
+    <div className="flex items-center rounded-full bg-black/45 p-0.5 ring-1 ring-inset ring-white/15 backdrop-blur-md">
+      <span className={twMerge('pl-2 pr-1 text-white/55', size === 'md' ? 'text-[12px]' : 'text-[11px]')}>Mark as</span>
+      {(['Before', 'After'] as const).map((option) => (
+        <button
+          key={option}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onAssign(option)
+          }}
+          className={twMerge(
+            'rounded-full font-semibold text-white/85 transition',
+            size === 'md' ? 'px-3 py-1.5 text-[12px]' : 'px-2.5 py-1 text-[11px]',
+            option === 'Before' ? 'hover:bg-amber-300 hover:text-amber-950' : 'hover:bg-emerald-300 hover:text-emerald-950',
+          )}
+        >
+          {option}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function FavoriteButton({ on, onToggle, className }: { on: boolean; onToggle: () => void; className?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onToggle()
+      }}
+      title={on ? 'Remove favorite' : 'Mark as favorite'}
+      aria-pressed={on}
+      className={twMerge(GLASS_ICON, 'h-8 w-8', on && 'bg-amber-300 text-amber-950 ring-amber-200 hover:bg-amber-200 hover:text-amber-950', className)}
+    >
+      <Star className={twMerge('h-4 w-4', on && 'fill-current')} />
+    </button>
+  )
+}
+
 function PhotoStage({
   label,
   slides,
@@ -108,98 +172,97 @@ function PhotoStage({
 }) {
   const slide = slides[index]
   const unlabeled = slide?.label === 'Photo'
+  const shown = unlabeled ? label : slide?.label || label
+  const chipLabel: Slide['label'] = shown === 'Before' || shown === 'After' ? shown : 'Photo'
   return (
-    <div className="relative min-h-0 h-full flex-1 flex flex-col rounded-2xl overflow-hidden bg-zinc-950 ring-1 ring-white/10">
-      <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
-        <span className={`text-[11px] font-bold uppercase tracking-[0.18em] backdrop-blur-sm px-2.5 py-1 rounded-full ${
-          (unlabeled ? label : slide?.label) === 'Before'
-            ? 'bg-amber-400 text-amber-950'
-            : (unlabeled ? label : slide?.label) === 'After'
-              ? 'bg-emerald-400 text-emerald-950'
-              : 'bg-black/70'
-        }`}>
-          {unlabeled ? label : slide?.label || label}
-        </span>
+    <div className="group relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-2xl bg-[radial-gradient(120%_80%_at_50%_0%,rgb(255_255_255/0.05),transparent_70%)] ring-1 ring-inset ring-white/[0.07]">
+      <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5">
+        <LabelChip label={chipLabel} text={shown} />
         {slides.length > 1 && (
-          <span className="text-[11px] text-white/70 bg-black/50 px-2 py-1 rounded-full">
-            {index + 1}/{slides.length}
+          <span className="rounded-full bg-black/45 px-2 py-1 text-[11px] font-medium tabular-nums text-white/70 ring-1 ring-inset ring-white/10 backdrop-blur-md">
+            {index + 1} / {slides.length}
           </span>
         )}
       </div>
       {slide && (onAssign || onFavorite) && (
-        <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-          {onAssign && unlabeled && (
-            <div className="flex rounded-full overflow-hidden bg-black/70 text-[11px] font-bold uppercase tracking-[0.12em]">
-              {(['Before', 'After'] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); onAssign(option) }}
-                  className={`px-2.5 py-1 ${
-                    option === 'Before'
-                      ? 'hover:bg-amber-400 hover:text-amber-950'
-                      : 'hover:bg-emerald-400 hover:text-emerald-950'
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          )}
-          {onFavorite && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onFavorite() }}
-              title={favorite ? 'Remove favorite' : 'Mark as favorite'}
-              className={`p-1.5 rounded-full ${
-                favorite ? 'bg-amber-400 text-amber-950' : 'bg-black/70 text-white/80 hover:text-white'
-              }`}
-            >
-              <Star className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
-            </button>
-          )}
+        <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5">
+          {onAssign && unlabeled && <AssignToggle onAssign={onAssign} />}
+          {onFavorite && <FavoriteButton on={!!favorite} onToggle={onFavorite} />}
         </div>
       )}
       <button
         type="button"
         onClick={onZoom}
-        className="flex-1 min-h-0 flex items-center justify-center p-3"
+        className="flex min-h-0 flex-1 cursor-zoom-in items-center justify-center p-3 pt-12"
         aria-label={`Zoom ${label} photo`}
       >
         {slide ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={slide.url}
-            alt={`${label} photo`}
-            className="h-full w-full max-h-full max-w-full object-contain drop-shadow-2xl"
-          />
+          <img src={slide.url} alt={`${label} photo`} className="h-full w-full max-h-full max-w-full rounded-lg object-contain" />
         ) : (
-          <p className="text-sm text-white/40">No {label.toLowerCase()} photos</p>
+          <span className="text-[13px] text-white/35">No {label.toLowerCase()} photos</span>
         )}
       </button>
+      {slide && (
+        <span className={twMerge(GLASS_ICON, 'pointer-events-none absolute bottom-3 right-3 h-7 w-7 opacity-0 group-hover:opacity-100')}>
+          <Maximize2 className="h-3.5 w-3.5" />
+        </span>
+      )}
       {slides.length > 1 && (
         <>
           <button
             type="button"
             onClick={() => onIndex(Math.max(0, index - 1))}
             disabled={index === 0}
-            className="absolute left-2 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/55 hover:bg-black/80 disabled:opacity-20"
+            className={twMerge(GLASS_ICON, 'absolute left-3 top-1/2 h-10 w-10 -translate-y-1/2 lg:opacity-0 lg:group-hover:opacity-100')}
             aria-label={`Previous ${label} photo`}
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={() => onIndex(Math.min(slides.length - 1, index + 1))}
             disabled={index === slides.length - 1}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/55 hover:bg-black/80 disabled:opacity-20"
+            className={twMerge(GLASS_ICON, 'absolute right-3 top-1/2 h-10 w-10 -translate-y-1/2 lg:opacity-0 lg:group-hover:opacity-100')}
             aria-label={`Next ${label} photo`}
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         </>
       )}
     </div>
+  )
+}
+
+function SectionLabel({ children, aside }: { children: React.ReactNode; aside?: React.ReactNode }) {
+  return (
+    <div className="mb-2 flex items-baseline justify-between gap-2">
+      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">{children}</h3>
+      {aside && <span className="text-[11px] text-zinc-500">{aside}</span>}
+    </div>
+  )
+}
+
+function Kbd({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <kbd
+      className={twMerge(
+        'inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-white/[0.06] px-1 font-mono text-[10.5px] font-medium text-zinc-400 ring-1 ring-inset ring-white/[0.08]',
+        className,
+      )}
+    >
+      {children}
+    </kbd>
+  )
+}
+
+function Stars({ rating }: { rating: number }) {
+  return (
+    <span className="inline-flex items-center gap-px" aria-label={`${rating} out of 5`}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star key={n} className={twMerge('h-3.5 w-3.5', n <= rating ? 'fill-amber-300 text-amber-300' : 'text-white/15')} />
+      ))}
+    </span>
   )
 }
 
@@ -348,72 +411,97 @@ export function WarrantyReviewLightbox({
 
   if (!current) return null
 
+  const favorites = current.favorite_photo_urls || []
   const zoomedList = zoom
     ? (compare
       ? (zoom.label === 'Before' ? beforeSlides : afterSlides)
       : slides)
     : []
   const zoomedAt = zoom ? zoomedList.findIndex((s) => s.url === zoom.url) : -1
+  const showStrip = slides.length > 2 || (compare && unlabeledSlides.length > 0)
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Review warranty photos"
-      className="fixed inset-0 z-50 bg-[#070b12] text-white flex flex-col"
+      className="fixed inset-0 z-50 flex flex-col bg-[#0b0e13] text-zinc-100 antialiased [font-feature-settings:'cv11']"
     >
-      <header className="shrink-0 px-4 sm:px-6 pt-4 pb-3">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40">
-              Photo review · {index + 1} of {registrations.length}
-            </p>
-            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight truncate mt-0.5">
-              {current.name}
-            </h2>
-            <p className="text-sm text-white/55 truncate mt-0.5">
-              {current.email}
-              {current.order_number ? ` · #${current.order_number}` : ''}
-              {current.rating != null && (
-                <span className="inline-flex items-center gap-1 ml-2 text-amber-300">
-                  <Star className="w-3.5 h-3.5 fill-amber-300" />
-                  {current.rating}/5
-                </span>
-              )}
-            </p>
-            {current.customer_details && (
-              <p className="text-xs text-white/40 truncate mt-1">{current.customer_details}</p>
-            )}
-          </div>
+      {/* Top bar: where you are in the queue, who this is, close. */}
+      <header className="relative flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.06] px-3 sm:px-4">
+        <div className="flex shrink-0 items-center gap-0.5 rounded-full bg-white/[0.04] p-0.5 ring-1 ring-inset ring-white/[0.06]">
           <button
             type="button"
-            onClick={onClose}
-            className="p-2.5 rounded-full bg-white/8 hover:bg-white/16 transition-colors"
-            aria-label="Close"
+            onClick={() => setIndex((i) => Math.max(0, i - 1))}
+            disabled={index === 0}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full text-zinc-300 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
+            aria-label="Previous registration"
           >
-            <X className="w-5 h-5" />
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="px-1 text-[12px] tabular-nums text-zinc-400">
+            <span className="font-semibold text-zinc-100">{index + 1}</span> of {registrations.length}
+          </span>
+          <button
+            type="button"
+            onClick={() => setIndex((i) => Math.min(registrations.length - 1, i + 1))}
+            disabled={index === registrations.length - 1}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full text-zinc-300 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
+            aria-label="Next registration"
+          >
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        <div className="mt-3 h-1 rounded-full bg-white/10 overflow-hidden">
-          <div className="h-full bg-white/80 transition-all duration-300" style={{ width: `${progress}%` }} />
+
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <h2 className="truncate text-[15px] font-semibold leading-tight tracking-tight">{current.name || current.email}</h2>
+            {current.rating != null && <Stars rating={current.rating} />}
+          </div>
+          <p className="truncate text-[12px] leading-tight text-zinc-500">
+            {current.email}
+            {current.order_number ? ` · Order #${current.order_number.replace(/^#/, '')}` : ''}
+            {slides.length ? ` · ${slides.length} photo${slides.length === 1 ? '' : 's'}` : ''}
+          </p>
+        </div>
+
+        {saving && (
+          <span className="hidden items-center gap-1.5 text-[12px] text-zinc-400 sm:inline-flex">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Saving
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-400 transition hover:bg-white/10 hover:text-white"
+          aria-label="Close"
+        >
+          <X className="h-[18px] w-[18px]" />
+        </button>
+
+        <div className="absolute inset-x-0 -bottom-px h-[2px] bg-transparent">
+          <div className="h-full bg-gradient-to-r from-amber-300 to-amber-400 transition-[width] duration-300" style={{ width: `${progress}%` }} />
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 px-4 sm:px-5 pb-4">
-        <section className="flex-1 min-h-[42vh] lg:min-h-0 min-w-0 flex flex-col gap-2">
+      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_356px] lg:grid-rows-1">
+        {/* Photos */}
+        <section className="flex min-h-[42vh] min-w-0 flex-col gap-3 p-3 sm:p-4 lg:min-h-0">
           {compare ? (
-            <div className={`flex-1 min-h-0 overflow-y-auto grid gap-3 ${
-              unlabeledSlides.length > 0
-                ? 'grid-cols-1 lg:grid-cols-3 auto-rows-[minmax(320px,1fr)]'
-                : 'grid-cols-1 sm:grid-cols-2'
-            }`}>
+            <div
+              className={twMerge(
+                'grid min-h-0 flex-1 gap-3 overflow-y-auto',
+                unlabeledSlides.length > 0 ? 'grid-cols-1 auto-rows-[minmax(300px,1fr)] lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2',
+              )}
+            >
               <PhotoStage
                 label="Before"
                 slides={beforeSlides}
                 index={Math.min(beforeIndex, Math.max(0, beforeSlides.length - 1))}
                 onIndex={setBeforeIndex}
                 onZoom={() => beforeSlides[beforeIndex] && setZoom(beforeSlides[beforeIndex])}
-                favorite={!!beforeSlides[beforeIndex] && (current.favorite_photo_urls || []).includes(beforeSlides[beforeIndex].url)}
+                favorite={!!beforeSlides[beforeIndex] && favorites.includes(beforeSlides[beforeIndex].url)}
                 onFavorite={() => beforeSlides[beforeIndex] && onUpdatePhotos(current.id, {
                   favorite_photo_urls: toggleFavorite(current, beforeSlides[beforeIndex].url),
                 })}
@@ -424,7 +512,7 @@ export function WarrantyReviewLightbox({
                 index={Math.min(afterIndex, Math.max(0, afterSlides.length - 1))}
                 onIndex={setAfterIndex}
                 onZoom={() => afterSlides[afterIndex] && setZoom(afterSlides[afterIndex])}
-                favorite={!!afterSlides[afterIndex] && (current.favorite_photo_urls || []).includes(afterSlides[afterIndex].url)}
+                favorite={!!afterSlides[afterIndex] && favorites.includes(afterSlides[afterIndex].url)}
                 onFavorite={() => afterSlides[afterIndex] && onUpdatePhotos(current.id, {
                   favorite_photo_urls: toggleFavorite(current, afterSlides[afterIndex].url),
                 })}
@@ -436,7 +524,7 @@ export function WarrantyReviewLightbox({
                   index={safeUnlabeledIndex}
                   onIndex={setUnlabeledIndex}
                   onZoom={() => unlabeledSlides[safeUnlabeledIndex] && setZoom(unlabeledSlides[safeUnlabeledIndex])}
-                  favorite={!!unlabeledSlides[safeUnlabeledIndex] && (current.favorite_photo_urls || []).includes(unlabeledSlides[safeUnlabeledIndex].url)}
+                  favorite={!!unlabeledSlides[safeUnlabeledIndex] && favorites.includes(unlabeledSlides[safeUnlabeledIndex].url)}
                   onFavorite={() => unlabeledSlides[safeUnlabeledIndex] && onUpdatePhotos(current.id, {
                     favorite_photo_urls: toggleFavorite(current, unlabeledSlides[safeUnlabeledIndex].url),
                   })}
@@ -451,7 +539,7 @@ export function WarrantyReviewLightbox({
               index={photoIndex}
               onIndex={setPhotoIndex}
               onZoom={() => slides[photoIndex] && setZoom(slides[photoIndex])}
-              favorite={!!slides[photoIndex] && (current.favorite_photo_urls || []).includes(slides[photoIndex].url)}
+              favorite={!!slides[photoIndex] && favorites.includes(slides[photoIndex].url)}
               onFavorite={() => slides[photoIndex] && onUpdatePhotos(current.id, {
                 favorite_photo_urls: toggleFavorite(current, slides[photoIndex].url),
               })}
@@ -459,8 +547,8 @@ export function WarrantyReviewLightbox({
             />
           )}
 
-          {(slides.length > 2 || (compare && unlabeledSlides.length > 0)) && (
-            <div className="flex gap-2 overflow-x-auto pb-1 w-full min-w-0">
+          {showStrip && (
+            <div className="-mx-1 flex w-full min-w-0 shrink-0 gap-2 overflow-x-auto px-1 py-1">
               {slides.map((slide, i) => {
                 const active = compare
                   ? (slide.label === 'Before' && beforeSlides[beforeIndex]?.url === slide.url)
@@ -477,25 +565,22 @@ export function WarrantyReviewLightbox({
                       else if (compare) setUnlabeledIndex(unlabeledSlides.indexOf(slide))
                       else setPhotoIndex(i)
                     }}
-                    className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden ring-2 transition ${
-                      active ? 'ring-white' : 'ring-transparent opacity-55 hover:opacity-100'
-                    }`}
+                    aria-label={`${slide.label} photo ${i + 1}`}
+                    className={twMerge(
+                      'relative h-14 w-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-inset ring-white/10 transition',
+                      active ? 'ring-2 ring-amber-300 ring-offset-2 ring-offset-[#0b0e13]' : 'opacity-50 hover:opacity-100',
+                    )}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={slide.url} alt="" className="w-full h-full object-cover" />
-                    {(current.favorite_photo_urls || []).includes(slide.url) && (
-                      <Star className="absolute top-0.5 right-0.5 w-3 h-3 text-amber-300 fill-amber-300" />
+                    <img src={slide.url} alt="" className="h-full w-full object-cover" />
+                    {favorites.includes(slide.url) && (
+                      <Star className="absolute right-1 top-1 h-3 w-3 fill-amber-300 text-amber-300 drop-shadow" />
                     )}
                     {slide.label !== 'Photo' && (
                       <span
-                        className={`absolute bottom-0.5 left-0.5 text-[8px] font-bold uppercase tracking-wide px-1 py-px rounded ${
-                          slide.label === 'Before'
-                            ? 'bg-amber-400 text-amber-950'
-                            : 'bg-emerald-400 text-emerald-950'
-                        }`}
-                      >
-                        {slide.label}
-                      </span>
+                        aria-hidden="true"
+                        className={twMerge('absolute inset-x-0 bottom-0 h-[3px]', slide.label === 'Before' ? 'bg-amber-300' : 'bg-emerald-300')}
+                      />
                     )}
                   </button>
                 )
@@ -504,166 +589,163 @@ export function WarrantyReviewLightbox({
           )}
         </section>
 
-        <aside className="lg:w-[340px] shrink-0 flex flex-col gap-3 lg:overflow-y-auto lg:max-h-full">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/40 mb-2">Image type</p>
-            <div className="flex flex-wrap gap-1.5">
-              {IMAGE_TYPES.map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setImageType(type)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition ${
-                    imageType === type
-                      ? 'bg-white text-zinc-900'
-                      : 'bg-white/8 text-white/75 hover:bg-white/14'
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Review panel */}
+        <aside className="flex min-h-0 flex-col border-t border-white/[0.06] bg-white/[0.015] lg:border-l lg:border-t-0">
+          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4">
+            {(current.experience_notes || current.customer_details || current.photo_display_consent === false) && (
+              <div className="space-y-2">
+                {current.photo_display_consent === false && (
+                  <p className="flex items-start gap-2 rounded-xl bg-amber-400/[0.08] px-3 py-2 text-[12px] leading-snug text-amber-200 ring-1 ring-inset ring-amber-300/20">
+                    <ShieldAlert className="mt-px h-3.5 w-3.5 shrink-0" />
+                    Customer did not consent to showing these photos.
+                  </p>
+                )}
+                {current.experience_notes && (
+                  <figure className="rounded-xl bg-white/[0.03] p-3 ring-1 ring-inset ring-white/[0.06]">
+                    <Quote className="mb-1.5 h-3.5 w-3.5 text-zinc-500" />
+                    <blockquote className="max-h-40 overflow-y-auto whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-300">
+                      {current.experience_notes}
+                    </blockquote>
+                  </figure>
+                )}
+                {current.customer_details && <p className="text-[12px] leading-snug text-zinc-500">{current.customer_details}</p>}
+              </div>
+            )}
 
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/40 mb-2">
-              Classify · tap to save & next
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {REVIEW_CLASSIFICATIONS.map((option) => {
-                const active = reviews === option.value
-                return (
+            <div>
+              <SectionLabel>Image type</SectionLabel>
+              <div className="flex flex-wrap gap-1.5">
+                {IMAGE_TYPES.map((type) => (
                   <button
-                    key={option.value}
+                    key={type}
                     type="button"
-                    disabled={saving}
-                    onClick={() => classify(option.value)}
-                    className={`text-left rounded-xl border px-3 py-2.5 transition disabled:opacity-50 ${
-                      active ? TONE_ACTIVE[option.tone] : TONE_CLASS[option.tone]
-                    } ${option.tone === 'marketing' || option.tone === 'reject' ? 'col-span-2' : ''}`}
+                    onClick={() => setImageType(type)}
+                    aria-pressed={imageType === type}
+                    className={twMerge(
+                      'whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-medium ring-1 ring-inset transition',
+                      imageType === type
+                        ? 'bg-white text-zinc-900 ring-white'
+                        : 'bg-white/[0.03] text-zinc-400 ring-white/[0.08] hover:bg-white/[0.07] hover:text-zinc-100',
+                    )}
                   >
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-sm leading-tight">{option.label}</span>
-                      <kbd className={`text-[11px] font-mono px-1.5 py-0.5 rounded shrink-0 ${active ? 'bg-black/15' : 'bg-black/30 text-white/70'}`}>
-                        {option.shortcut}
-                      </kbd>
-                    </span>
-                    <span className={`block text-[11px] mt-0.5 ${active ? 'opacity-70' : 'opacity-55'}`}>
-                      {option.hint}
-                    </span>
+                    {type}
                   </button>
-                )
-              })}
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <SectionLabel aside="Saves and moves on">Classify</SectionLabel>
+              <div className="space-y-1.5">
+                {REVIEW_CLASSIFICATIONS.map((option) => {
+                  const active = reviews === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      disabled={saving}
+                      onClick={() => classify(option.value)}
+                      aria-pressed={active}
+                      className={twMerge(
+                        'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left ring-1 ring-inset transition disabled:opacity-50',
+                        active ? TONE_ACTIVE[option.tone] : 'bg-white/[0.025] text-zinc-100 ring-white/[0.06] hover:bg-white/[0.06] hover:ring-white/[0.12]',
+                      )}
+                    >
+                      <Kbd className={active ? 'bg-white/15 text-white' : undefined}>{option.shortcut}</Kbd>
+                      <span aria-hidden="true" className={twMerge('h-2 w-2 shrink-0 rounded-full', TONE_DOT[option.tone])} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[13px] font-medium leading-tight">{option.label}</span>
+                        <span className="block truncate text-[11.5px] leading-tight text-zinc-500">{option.hint}</span>
+                      </span>
+                      {active && <Check className="h-4 w-4 shrink-0" />}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
-          {current.photo_display_consent === false && (
-            <p className="text-xs text-amber-200 bg-amber-500/10 border border-amber-400/20 rounded-xl px-3 py-2">
-              Customer did not consent to photo display.
+          <div className="shrink-0 space-y-2.5 border-t border-white/[0.06] p-3">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIndex((i) => Math.max(0, i - 1))}
+                disabled={index === 0}
+                className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/[0.05] text-[13px] font-medium text-zinc-200 ring-1 ring-inset ring-white/[0.08] transition hover:bg-white/[0.1] disabled:opacity-30"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (index < registrations.length - 1) setIndex((i) => i + 1)
+                  else onClose()
+                }}
+                className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/[0.05] text-[13px] font-medium text-zinc-200 ring-1 ring-inset ring-white/[0.08] transition hover:bg-white/[0.1]"
+              >
+                Skip
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="hidden flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-zinc-500 lg:flex">
+              <span className="inline-flex items-center gap-1"><Kbd>←</Kbd><Kbd>→</Kbd> photos</span>
+              <span className="inline-flex items-center gap-1"><Kbd>1–6</Kbd> classify</span>
+              <span className="inline-flex items-center gap-1"><Kbd>[</Kbd><Kbd>]</Kbd> skip</span>
+              <span className="inline-flex items-center gap-1"><Kbd>Esc</Kbd> close</span>
             </p>
-          )}
-          {current.experience_notes && (
-            <p className="text-sm text-white/70 whitespace-pre-wrap leading-relaxed">
-              {current.experience_notes}
-            </p>
-          )}
-
-          <div className="flex gap-2 pt-1">
-            <button
-              type="button"
-              onClick={() => setIndex((i) => Math.max(0, i - 1))}
-              disabled={index === 0}
-              className="flex-1 py-2.5 rounded-xl bg-white/8 text-sm font-medium hover:bg-white/14 disabled:opacity-30"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (index < registrations.length - 1) setIndex((i) => i + 1)
-                else onClose()
-              }}
-              className="flex-1 py-2.5 rounded-xl bg-white/8 text-sm font-medium hover:bg-white/14"
-            >
-              Skip
-            </button>
           </div>
-          <p className="text-[11px] text-white/35 pb-2">
-            {saving ? 'Saving…' : '← → photos · 1–6 classify · [ ] skip · Esc close'}
-          </p>
         </aside>
       </div>
 
       {zoom && (
-        <div className="absolute inset-0 z-20 bg-black/92 flex items-center justify-center">
-          {zoom.label === 'Photo' && (
-            <div className="absolute top-4 left-4 z-10 flex rounded-full overflow-hidden bg-black/70 text-[11px] font-bold uppercase tracking-[0.12em]">
-              {(['Before', 'After'] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => onUpdatePhotos(current.id, assignPhotoKind(current, zoom.url, option))}
-                  className={`px-3 py-1.5 ${
-                    option === 'Before'
-                      ? 'hover:bg-amber-400 hover:text-amber-950'
-                      : 'hover:bg-emerald-400 hover:text-emerald-950'
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => onUpdatePhotos(current.id, { favorite_photo_urls: toggleFavorite(current, zoom.url) })}
-            className={`absolute top-4 right-16 p-2.5 rounded-full ${
-              (current.favorite_photo_urls || []).includes(zoom.url)
-                ? 'bg-amber-400 text-amber-950'
-                : 'bg-white/10 hover:bg-white/20'
-            }`}
-            aria-label="Toggle favorite"
-          >
-            <Star className={`w-5 h-5 ${(current.favorite_photo_urls || []).includes(zoom.url) ? 'fill-current' : ''}`} />
-          </button>
-          <button
-            type="button"
-            onClick={() => setZoom(null)}
-            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20"
-            aria-label="Close zoom"
-          >
-            <X className="w-6 h-6" />
-          </button>
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/95 backdrop-blur-sm">
+          <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
+            <LabelChip label={zoom.label} />
+            {zoom.label === 'Photo' && <AssignToggle size="md" onAssign={(option) => onUpdatePhotos(current.id, assignPhotoKind(current, zoom.url, option))} />}
+          </div>
+          <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+            <FavoriteButton
+              on={favorites.includes(zoom.url)}
+              onToggle={() => onUpdatePhotos(current.id, { favorite_photo_urls: toggleFavorite(current, zoom.url) })}
+              className="h-10 w-10"
+            />
+            <button type="button" onClick={() => setZoom(null)} className={twMerge(GLASS_ICON, 'h-10 w-10')} aria-label="Close zoom">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
           {zoomedAt > 0 && (
             <button
               type="button"
               onClick={() => setZoom(zoomedList[zoomedAt - 1])}
-              className="absolute left-4 p-3 rounded-full bg-white/10 hover:bg-white/20"
+              className={twMerge(GLASS_ICON, 'absolute left-4 z-10 h-12 w-12')}
               aria-label="Previous zoomed photo"
             >
-              <ChevronLeft className="w-7 h-7" />
+              <ChevronLeft className="h-6 w-6" />
             </button>
           )}
           {zoomedAt >= 0 && zoomedAt < zoomedList.length - 1 && (
             <button
               type="button"
               onClick={() => setZoom(zoomedList[zoomedAt + 1])}
-              className="absolute right-4 p-3 rounded-full bg-white/10 hover:bg-white/20"
+              className={twMerge(GLASS_ICON, 'absolute right-4 z-10 h-12 w-12')}
               aria-label="Next zoomed photo"
             >
-              <ChevronRight className="w-7 h-7" />
+              <ChevronRight className="h-6 w-6" />
             </button>
           )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={zoom.url}
             alt={`${zoom.label} full size`}
-            className="max-h-[92vh] max-w-[92vw] object-contain"
+            className="max-h-[90vh] max-w-[90vw] cursor-zoom-out rounded-lg object-contain"
             onClick={() => setZoom(null)}
           />
-          <span className="absolute bottom-5 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.2em] text-white/70">
-            {zoom.label}
-          </span>
+          {zoomedList.length > 1 && zoomedAt >= 0 && (
+            <span className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-[12px] tabular-nums text-white/75 backdrop-blur-md">
+              {zoomedAt + 1} / {zoomedList.length}
+            </span>
+          )}
         </div>
       )}
     </div>
