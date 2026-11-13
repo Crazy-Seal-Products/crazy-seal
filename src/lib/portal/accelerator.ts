@@ -12,7 +12,7 @@ import {
 } from './modules'
 
 /**
- * The live Business Accelerator Program, edited from the admin's Dealers →
+ * The live Business Accelerator Program, edited from the admin's Contractors →
  * Accelerator Program page and stored in accelerator_program /
  * accelerator_modules (migration 017). Until the admin seeds those tables,
  * or if they can't be read, the portal shows the built-in PORTAL_MODULES.

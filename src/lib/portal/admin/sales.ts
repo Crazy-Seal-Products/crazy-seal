@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { fetchAllRows, memo } from './cache'
-import { dayKey, monthKey } from './format'
+import { dayKey, monthKey, storeHour, weekdayLabel } from './format'
 
 /**
  * Sales data for the Crazy Seal Admin, read from the Supabase copy of Shopify
@@ -120,7 +120,12 @@ export function channelLabel(source: string | null): string {
 
 // ─── Date ranges ──────────────────────────────────────────────────────────
 
+/**
+ * Every date filter in the admin offers Daily: one store-time day, today
+ * unless a `day` param (YYYY-MM-DD) picks another.
+ */
 export const RANGES = [
+  { key: 'day', label: 'Daily', days: 1 },
   { key: '7d', label: '7 days', days: 7 },
   { key: '30d', label: '30 days', days: 30 },
   { key: '90d', label: '90 days', days: 90 },
@@ -130,12 +135,23 @@ export const RANGES = [
 
 export type RangeKey = (typeof RANGES)[number]['key']
 
+/** RangeKey plus month to date, which only the Sales reps page offers. */
+export type PeriodKey = RangeKey | 'mtd'
+
 export function parseRange(raw: string | string[] | undefined, fallback: RangeKey = '30d'): RangeKey {
   const v = Array.isArray(raw) ? raw[0] : raw
   return RANGES.some((r) => r.key === v) ? (v as RangeKey) : fallback
 }
 
-interface Window {
+/** A `day` param: a real YYYY-MM-DD no later than today (store time), else undefined. */
+export function parseDay(raw: string | string[] | undefined): string | undefined {
+  const v = (Array.isArray(raw) ? raw[0] : raw)?.trim()
+  if (!v || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return undefined
+  if (shiftDay(v, 0) !== v) return undefined // e.g. 2026-02-31
+  return v <= dayKey(new Date()) ? v : undefined
+}
+
+export interface Window {
   from: string // YYYY-MM-DD inclusive
   to: string // YYYY-MM-DD inclusive
   days: number
@@ -153,17 +169,59 @@ function daysBetween(a: string, b: string): number {
   return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86_400_000)
 }
 
-export function windowFor(range: RangeKey, firstDay: string | null): Window {
-  const to = dayKey(new Date())
+/** The days a range covers. `day` picks the day for Daily (default today). */
+export function windowFor(range: PeriodKey, firstDay: string | null, day?: string | null): Window {
+  const today = dayKey(new Date())
+  if (range === 'day') {
+    const d = day && day <= today ? day : today
+    return { from: d, to: d, days: 1 }
+  }
+  const to = today
   const preset = RANGES.find((r) => r.key === range)
   let from: string
   if (preset?.days) from = shiftDay(to, -(preset.days - 1))
   else if (range === 'ytd') from = `${to.slice(0, 4)}-01-01`
+  else if (range === 'mtd') from = `${to.slice(0, 7)}-01`
   else from = firstDay ?? to
   return { from, to, days: daysBetween(from, to) + 1 }
 }
 
-function inWindow(iso: string, w: { from: string; to: string }) {
+/**
+ * The period a range is compared with: the day before for Daily, the same
+ * days of last month for month to date, else the same number of days right
+ * before.
+ */
+export function previousWindow(range: PeriodKey, w: Window): Window {
+  if (range === 'mtd') {
+    const [y, m] = w.from.split('-').map(Number)
+    const from = new Date(Date.UTC(y, m - 2, 1)).toISOString().slice(0, 10)
+    const sameDay = `${from.slice(0, 8)}${w.to.slice(8)}`
+    const lastOfMonth = shiftDay(w.from, -1)
+    // Nov 30 → Oct 30; Mar 31 → Feb 28. A string compare also catches "02-31".
+    const to = sameDay > lastOfMonth || shiftDay(sameDay, 0) !== sameDay ? lastOfMonth : sameDay
+    return { from, to, days: daysBetween(from, to) + 1 }
+  }
+  return { from: shiftDay(w.from, -w.days), to: shiftDay(w.from, -1), days: w.days }
+}
+
+/** "Today", "Yesterday" or "Thu, Nov 12" for Daily; the range's own label otherwise. */
+export function periodLabel(range: PeriodKey, w: Pick<Window, 'from'>): string {
+  if (range === 'mtd') return 'This month'
+  if (range !== 'day') return RANGES.find((r) => r.key === range)!.label
+  const today = dayKey(new Date())
+  if (w.from === today) return 'Today'
+  if (w.from === shiftDay(today, -1)) return 'Yesterday'
+  return weekdayLabel(w.from)
+}
+
+/** "vs the day before" / "vs prior 30 days", for stat deltas. */
+export function compareLabel(range: PeriodKey, w: Pick<Window, 'days'>): string {
+  if (range === 'day') return 'vs the day before'
+  if (range === 'mtd') return 'vs same days last month'
+  return `vs prior ${w.days} days`
+}
+
+export function inWindow(iso: string, w: { from: string; to: string }) {
   const k = dayKey(iso)
   return k >= w.from && k <= w.to
 }
@@ -198,7 +256,7 @@ export interface Breakdown {
   href?: string
 }
 
-function totalsFor(orders: OrderLite[], itemsByOrder: Map<string, LineItemLite[]>): Totals {
+export function totalsFor(orders: OrderLite[], itemsByOrder: Map<string, LineItemLite[]>): Totals {
   let sales = 0
   let units = 0
   let refunds = 0
@@ -221,7 +279,7 @@ function totalsFor(orders: OrderLite[], itemsByOrder: Map<string, LineItemLite[]
   return { sales, orders: counted, aov: counted ? sales / counted : 0, units, refunds, discounts, shipping, tax, buyers: buyers.size }
 }
 
-function groupItems(items: LineItemLite[]) {
+export function groupItems(items: LineItemLite[]) {
   const map = new Map<string, LineItemLite[]>()
   for (const li of items) {
     const list = map.get(li.order_shopify_id)
@@ -231,26 +289,42 @@ function groupItems(items: LineItemLite[]) {
   return map
 }
 
-export type Bucket = 'day' | 'week' | 'month'
+export type Bucket = 'hour' | 'day' | 'week' | 'month'
 
+/** Hours for a single day, then days, weeks or months as the window grows. */
+export function bucketFor(days: number): Bucket {
+  return days <= 1 ? 'hour' : days <= 92 ? 'day' : days <= 400 ? 'week' : 'month'
+}
+
+/** The bucket a day falls in. Hour buckets need the order's time: see seriesFor. */
 export function bucketKey(day: string, bucket: Bucket): string {
-  if (bucket === 'day') return day
+  if (bucket === 'day' || bucket === 'hour') return day
   if (bucket === 'month') return day.slice(0, 7)
   const [y, m, d] = day.split('-').map(Number)
   const dow = (new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 6) % 7 // Monday = 0
   return shiftDay(day, -dow)
 }
 
-function buildSeries(orders: OrderLite[], w: Window, bucket: Bucket): SeriesPoint[] {
+/** Sales and order counts per bucket, zero-filled across the window. */
+export function seriesFor(
+  orders: Pick<OrderLite, 'cancelled_at' | 'current_total_price' | 'total_price' | 'shopify_created_at'>[],
+  w: Window,
+  bucket: Bucket,
+): SeriesPoint[] {
   const points = new Map<string, SeriesPoint>()
-  // zero-fill every bucket in the window
+  const hourKey = (day: string, h: number) => `${day}T${String(h).padStart(2, '0')}`
   for (let day = w.from; day <= w.to; day = shiftDay(day, 1)) {
+    if (bucket === 'hour') {
+      for (let h = 0; h < 24; h++) points.set(hourKey(day, h), { key: hourKey(day, h), start: day, sales: 0, orders: 0 })
+      continue
+    }
     const k = bucketKey(day, bucket)
     if (!points.has(k)) points.set(k, { key: k, start: bucket === 'month' ? `${k}-01` : k, sales: 0, orders: 0 })
   }
   for (const o of orders) {
     if (o.cancelled_at) continue
-    const p = points.get(bucketKey(dayKey(o.shopify_created_at), bucket))
+    const day = dayKey(o.shopify_created_at)
+    const p = points.get(bucket === 'hour' ? hourKey(day, storeHour(o.shopify_created_at)) : bucketKey(day, bucket))
     if (!p) continue
     p.sales += orderSales(o)
     p.orders += 1
@@ -258,7 +332,7 @@ function buildSeries(orders: OrderLite[], w: Window, bucket: Bucket): SeriesPoin
   return [...points.values()].sort((a, b) => a.key.localeCompare(b.key))
 }
 
-function productBreakdown(orders: OrderLite[], itemsByOrder: Map<string, LineItemLite[]>): Breakdown[] {
+export function productBreakdown(orders: OrderLite[], itemsByOrder: Map<string, LineItemLite[]>): Breakdown[] {
   const map = new Map<string, Breakdown & { orderIds: Set<string> }>()
   for (const o of orders) {
     if (o.cancelled_at) continue
@@ -284,7 +358,7 @@ function productBreakdown(orders: OrderLite[], itemsByOrder: Map<string, LineIte
     .sort((a, b) => b.sales - a.sales)
 }
 
-function breakdownBy(orders: OrderLite[], keyOf: (o: OrderLite) => string, labelOf: (k: string) => string): Breakdown[] {
+export function breakdownBy(orders: OrderLite[], keyOf: (o: OrderLite) => string, labelOf: (k: string) => string): Breakdown[] {
   const map = new Map<string, Breakdown>()
   for (const o of orders) {
     if (o.cancelled_at) continue
@@ -319,20 +393,22 @@ export async function getCoverage(): Promise<Coverage> {
   }
 }
 
-export async function getSalesOverview(range: RangeKey) {
+export async function getSalesOverview(range: RangeKey, day?: string) {
   const [orders, items] = await Promise.all([allOrders(), allLineItems()])
   const itemsByOrder = groupItems(items)
   const firstDay = orders.length ? dayKey(orders[orders.length - 1].shopify_created_at) : null
-  const w = windowFor(range, firstDay)
+  const w = windowFor(range, firstDay, day)
   const current = orders.filter((o) => inWindow(o.shopify_created_at, w))
 
-  // Same-length window right before this one, only when the copy covers it.
-  const prevW = { from: shiftDay(w.from, -w.days), to: shiftDay(w.from, -1), days: w.days }
+  // The period right before this one, only when the copy covers it.
+  const prevW = previousWindow(range, w)
   const comparable = range !== 'all' && firstDay != null && firstDay <= prevW.from
   const previous = comparable ? totalsFor(orders.filter((o) => inWindow(o.shopify_created_at, prevW)), itemsByOrder) : null
 
-  const bucket: Bucket = w.days <= 92 ? 'day' : w.days <= 400 ? 'week' : 'month'
+  const bucket = bucketFor(w.days)
   const open = orders.filter(isOpenOrder)
+  // Daily lists that day's orders; longer ranges the latest ones.
+  const recent = range === 'day' ? current : orders
 
   return {
     window: w,
@@ -340,7 +416,7 @@ export async function getSalesOverview(range: RangeKey) {
     coverage: { first: orders.at(-1)?.shopify_created_at ?? null, last: orders[0]?.shopify_created_at ?? null, orders: orders.length },
     totals: totalsFor(current, itemsByOrder),
     previous,
-    series: buildSeries(current, w, bucket),
+    series: seriesFor(current, w, bucket),
     products: productBreakdown(current, itemsByOrder),
     channels: breakdownBy(current, (o) => o.source_name ?? 'other', (k) => channelLabel(k === 'other' ? null : k)),
     states: breakdownBy(current, (o) => o.province ?? '—', (k) => k),
@@ -349,7 +425,8 @@ export async function getSalesOverview(range: RangeKey) {
       (o) => o.discount_codes[0].toUpperCase(),
       (k) => k,
     ),
-    recent: orders.slice(0, 8).map((o) => ({ ...o, items: itemSummary(itemsByOrder.get(o.shopify_id) ?? []) })),
+    recent: recent.slice(0, 8).map((o) => ({ ...o, items: itemSummary(itemsByOrder.get(o.shopify_id) ?? []) })),
+    recentCount: recent.length,
     open: open.slice(0, 6).map((o) => ({ ...o, items: itemSummary(itemsByOrder.get(o.shopify_id) ?? []) })),
     openCount: open.length,
   }
@@ -362,27 +439,46 @@ export function itemSummary(items: LineItemLite[]): string {
   return more > 0 ? `${first} +${more}` : first
 }
 
-// ─── Monthly history ──────────────────────────────────────────────────────
+// ─── History ──────────────────────────────────────────────────────────────
 
-export async function getMonthlyHistory() {
+export type HistoryBucket = 'day' | 'week' | 'month'
+
+/**
+ * Totals per day, week (from Monday) or month across the whole history kept
+ * here. Days and weeks are zero-filled so quiet ones still show.
+ */
+export async function getHistory(bucket: HistoryBucket = 'month') {
   const [orders, items] = await Promise.all([allOrders(), allLineItems()])
   const itemsByOrder = groupItems(items)
-  const months = new Map<string, { key: string; sales: number; orders: number; units: number; buyers: Set<string>; refunds: number; discounts: number }>()
+  type Row = { key: string; sales: number; orders: number; units: number; buyers: Set<string>; refunds: number; discounts: number }
+  const empty = (key: string): Row => ({ key, sales: 0, orders: 0, units: 0, buyers: new Set<string>(), refunds: 0, discounts: 0 })
+  const rows = new Map<string, Row>()
+  if (bucket !== 'month' && orders.length) {
+    const today = dayKey(new Date())
+    for (let day = dayKey(orders[orders.length - 1].shopify_created_at); day <= today; day = shiftDay(day, 1)) {
+      const k = bucketKey(day, bucket)
+      if (!rows.has(k)) rows.set(k, empty(k))
+    }
+  }
   for (const o of orders) {
     if (o.cancelled_at) continue
-    const k = monthKey(o.shopify_created_at)
-    const m = months.get(k) ?? { key: k, sales: 0, orders: 0, units: 0, buyers: new Set<string>(), refunds: 0, discounts: 0 }
+    const k = bucket === 'month' ? monthKey(o.shopify_created_at) : bucketKey(dayKey(o.shopify_created_at), bucket)
+    const m = rows.get(k) ?? empty(k)
     m.sales += orderSales(o)
     m.orders += 1
     m.refunds += Number(o.total_refunded ?? 0)
     m.discounts += Number(o.total_discounts ?? 0)
     m.buyers.add(o.customer_shopify_id ?? o.email ?? o.shopify_id)
     for (const li of itemsByOrder.get(o.shopify_id) ?? []) m.units += lineUnits(li)
-    months.set(k, m)
+    rows.set(k, m)
   }
-  return [...months.values()]
+  return [...rows.values()]
     .sort((a, b) => a.key.localeCompare(b.key))
     .map(({ buyers, ...m }) => ({ ...m, buyers: buyers.size, aov: m.orders ? m.sales / m.orders : 0 }))
+}
+
+export function getMonthlyHistory() {
+  return getHistory('month')
 }
 
 // ─── Orders list ──────────────────────────────────────────────────────────
@@ -417,11 +513,11 @@ function matchesTab(o: OrderLite, tab: OrderTab) {
 
 export const PAGE_SIZE = 50
 
-export async function getOrdersPage(opts: { q?: string; tab?: OrderTab; range?: RangeKey; page?: number }) {
+export async function getOrdersPage(opts: { q?: string; tab?: OrderTab; range?: RangeKey; day?: string; page?: number }) {
   const [orders, items] = await Promise.all([allOrders(), allLineItems()])
   const itemsByOrder = groupItems(items)
   const firstDay = orders.length ? dayKey(orders[orders.length - 1].shopify_created_at) : null
-  const w = windowFor(opts.range ?? 'all', firstDay)
+  const w = windowFor(opts.range ?? 'all', firstDay, opts.day)
   const q = (opts.q ?? '').trim().toLowerCase().replace(/^#/, '')
 
   const inRange = orders.filter((o) => inWindow(o.shopify_created_at, w))
@@ -447,6 +543,8 @@ export async function getOrdersPage(opts: { q?: string; tab?: OrderTab; range?: 
     page,
     pages: Math.max(1, Math.ceil(filtered.length / PAGE_SIZE)),
     sum: filtered.reduce((n, o) => n + orderSales(o), 0),
+    window: w,
+    firstDay,
   }
 }
 

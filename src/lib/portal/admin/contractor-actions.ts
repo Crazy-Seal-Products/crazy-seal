@@ -5,13 +5,16 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import type { ActionResult } from '@/components/portal/admin/controls'
 import { SLUG_PATTERN, slugify, uniqueSlug } from '@/lib/contractors/slug'
 import { resendUnsentQuotes } from '@/lib/contractors/quote'
+import { syncShopifyContractors } from '@/lib/contractors/shopify-sync'
 import { isHex, isThemeKey } from '@/lib/contractors/theme'
 import type { Segment, ServiceMode } from '@/lib/contractors/types'
 import { requirePortalAdmin } from './auth'
 
 /**
- * Writes for Dealers → Contractors: add a contractor, or edit one. A save
- * refreshes the contractor's public page and the finder.
+ * Writes for Contractors: add a contractor, edit one, link or unlink
+ * their Shopify customers, and run the Shopify sync that consolidates the
+ * Shopify dealer roster into contractors. A save refreshes the contractor's
+ * public page and the finder.
  */
 
 export interface ContractorInput {
@@ -188,7 +191,7 @@ export async function createContractor(input: ContractorInput): Promise<ActionRe
   const edited = LIST_FIELDS.filter((f) => filled(cleaned.row[f]))
   const { data, error } = await db
     .from('contractors')
-    .insert({ ...cleaned.row, slug, edited_fields: edited })
+    .insert({ ...cleaned.row, slug, edited_fields: edited, source: 'admin' })
     .select('id')
     .single<{ id: string }>()
   if (error) return { ok: false, error: error.code === '23505' ? 'That page address was just taken. Try again.' : 'Could not add the contractor. Try again.' }
@@ -234,4 +237,80 @@ export async function resendQuote(leadId: string): Promise<void> {
   await requirePortalAdmin('contractors')
   await resendUnsentQuotes({ leadId })
   revalidatePath('/portal/admin/dealers/contractors', 'layout')
+}
+
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
+
+/** Link Shopify customers to their contractors and add Shopify dealers who aren't contractors yet, hidden. */
+export async function syncContractorsFromShopify(): Promise<ActionResult> {
+  await requirePortalAdmin('contractors')
+  try {
+    const report = await syncShopifyContractors(createAdminClient())
+    revalidatePath('/portal/admin/dealers/contractors', 'layout')
+    const parts = [report.added.length && `added ${plural(report.added.length, 'contractor')} (hidden)`, report.linked.length && `linked ${plural(report.linked.length, 'customer')}`]
+    return { ok: true, message: parts.filter(Boolean).join(', ').replace(/^./, (c) => c.toUpperCase()) || 'Nothing new' }
+  } catch (e) {
+    console.error('[contractors] Shopify sync failed', e)
+    return { ok: false, error: 'The sync didn’t finish. Try again.' }
+  }
+}
+
+interface LinkRow {
+  id: string
+  slug: string
+  company: string | null
+  first_name: string | null
+  last_name: string | null
+  shopify_customer_ids: string[]
+  unlinked_customer_ids: string[]
+}
+
+const LINK_COLUMNS = 'id, slug, company, first_name, last_name, shopify_customer_ids, unlinked_customer_ids'
+const contractorName = (d: LinkRow) => d.company || [d.first_name, d.last_name].filter(Boolean).join(' ') || d.slug
+
+/** Link the Shopify customer with this email to a contractor, so their orders count as the contractor's. */
+export async function linkContractorCustomer(contractorId: string, email: string): Promise<ActionResult> {
+  await requirePortalAdmin('contractors')
+  const wanted = String(email ?? '').trim().toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(wanted)) return { ok: false, error: 'Enter the email on their Shopify customer record.' }
+  const db = createAdminClient()
+  const [{ data: contractor }, { data: customers }] = await Promise.all([
+    db.from('contractors').select(LINK_COLUMNS).eq('id', contractorId).maybeSingle<LinkRow>(),
+    db.from('shopify_customers').select('shopify_id').ilike('email', wanted.replace(/[\\%_]/g, '\\$&')).is('deleted_at', null).limit(2),
+  ])
+  if (!contractor) return { ok: false, error: 'This contractor no longer exists.' }
+  const customer = (customers ?? [])[0] as { shopify_id: string } | undefined
+  if (!customer) return { ok: false, error: 'No Shopify customer has that email.' }
+  if (contractor.shopify_customer_ids.includes(customer.shopify_id)) return { ok: true, message: 'Already linked' }
+  const { data: other } = await db.from('contractors').select(LINK_COLUMNS).contains('shopify_customer_ids', [customer.shopify_id]).limit(1)
+  const owner = (other ?? [])[0] as LinkRow | undefined
+  if (owner) return { ok: false, error: `That customer is linked to ${contractorName(owner)}. Unlink them there first.` }
+  const { error } = await db
+    .from('contractors')
+    .update({
+      shopify_customer_ids: [...contractor.shopify_customer_ids, customer.shopify_id],
+      unlinked_customer_ids: contractor.unlinked_customer_ids.filter((id) => id !== customer.shopify_id),
+    })
+    .eq('id', contractorId)
+  if (error) return { ok: false, error: 'Could not link them. Try again.' }
+  revalidatePath('/portal/admin/dealers/contractors', 'layout')
+  return { ok: true, message: 'Linked' }
+}
+
+/** Unlink a Shopify customer from a contractor. The sync won't link them to this contractor again. */
+export async function unlinkContractorCustomer(contractorId: string, customerId: string): Promise<ActionResult> {
+  await requirePortalAdmin('contractors')
+  const db = createAdminClient()
+  const { data: contractor } = await db.from('contractors').select(LINK_COLUMNS).eq('id', contractorId).maybeSingle<LinkRow>()
+  if (!contractor) return { ok: false, error: 'This contractor no longer exists.' }
+  const { error } = await db
+    .from('contractors')
+    .update({
+      shopify_customer_ids: contractor.shopify_customer_ids.filter((id) => id !== customerId),
+      unlinked_customer_ids: [...new Set([...contractor.unlinked_customer_ids, customerId])],
+    })
+    .eq('id', contractorId)
+  if (error) return { ok: false, error: 'Could not unlink them. Try again.' }
+  revalidatePath('/portal/admin/dealers/contractors', 'layout')
+  return { ok: true, message: 'Unlinked' }
 }

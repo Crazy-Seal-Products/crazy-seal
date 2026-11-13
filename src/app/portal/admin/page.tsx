@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
-import { getSalesOverview, parseRange, RANGES, type Totals } from '@/lib/portal/admin/sales'
-import { countNewApplications, getDealers, getPortalAccounts } from '@/lib/portal/admin/dealers'
-import { dateLong, dateShort, dayLabel, legacyId, money, money0, monthLabel, num, pct } from '@/lib/portal/admin/format'
+import { compareLabel, getSalesOverview, parseDay, parseRange, periodLabel, RANGES, type Totals } from '@/lib/portal/admin/sales'
+import { countNewApplications, getContractorList, getPortalAccounts } from '@/lib/portal/admin/dealers'
+import { bucketLabel, dateLong, dateShort, dayKey, legacyId, money, money0, num, pct, timeOfDay } from '@/lib/portal/admin/format'
 import {
   Badge,
   CellLink,
@@ -15,7 +15,6 @@ import {
   KV,
   PageHeader,
   Panel,
-  Segmented,
   Stat,
   StatGrid,
   Table,
@@ -28,6 +27,7 @@ import {
 import { ColumnChart } from '@/components/portal/admin/charts'
 import { SERIES } from '@/components/portal/admin/series'
 import { BarList } from '@/components/portal/admin/BarList'
+import { RangePicker } from '@/components/portal/admin/RangePicker'
 
 // Same route segment as the admin layout, so its title template doesn't apply here.
 export const metadata: Metadata = { title: { absolute: 'Overview | Crazy Seal Admin' } }
@@ -38,21 +38,24 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
   await requirePortalAdmin('overview')
   const sp = await searchParams
   const range = parseRange(sp.range)
-  const [o, dealers, portal, newApps] = await Promise.all([
-    getSalesOverview(range),
-    getDealers(),
+  const day = range === 'day' ? parseDay(sp.day) : undefined
+  const [o, contractors, portal, newApps] = await Promise.all([
+    getSalesOverview(range, day),
+    getContractorList(),
     getPortalAccounts(),
     countNewApplications(),
   ])
   const t = o.totals
   const p = o.previous
-  const rangeLabel = RANGES.find((r) => r.key === range)!.label
-  const vs = p ? `vs prior ${o.window.days} days` : undefined
+  const daily = range === 'day'
+  const rangeLabel = periodLabel(range, o.window)
+  const vs = p ? compareLabel(range, o.window) : undefined
   const d = (k: keyof Totals) => (p ? delta(t[k], p[k]) : null)
+  const ordersHref = daily ? `/portal/admin/orders/?range=day${day ? `&day=${day}` : ''}` : '/portal/admin/orders/'
 
   const series = o.series.map((s) => ({
     key: s.key,
-    label: o.bucket === 'day' ? dayLabel(s.key) : o.bucket === 'week' ? `Wk ${dayLabel(s.key)}` : monthLabel(s.key),
+    label: bucketLabel(s.key, o.bucket),
     value: Math.round(s.sales * 100) / 100,
     detail: `${s.orders} order${s.orders === 1 ? '' : 's'}`,
   }))
@@ -63,11 +66,23 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
         title="Overview"
         description={
           <>
-            {rangeLabel} · {dateLong(`${o.window.from}T12:00:00Z`)} – {dateLong(`${o.window.to}T12:00:00Z`)}
+            {daily
+              ? `${rangeLabel === 'Today' || rangeLabel === 'Yesterday' ? `${rangeLabel} · ` : ''}${dateLong(`${o.window.from}T12:00:00Z`)} · by hour`
+              : `${rangeLabel} · ${dateLong(`${o.window.from}T12:00:00Z`)} – ${dateLong(`${o.window.to}T12:00:00Z`)}`}
             {o.coverage.first && <span className="text-adm-faint"> · order history since {dateLong(o.coverage.first)}</span>}
           </>
         }
-        actions={<Segmented options={RANGES} value={range} param="range" base="/portal/admin/" params={{}} />}
+        actions={
+          <RangePicker
+            options={RANGES}
+            value={range}
+            day={o.window.from}
+            today={dayKey(new Date())}
+            min={o.coverage.first ? dayKey(o.coverage.first) : null}
+            base="/portal/admin/"
+            params={{}}
+          />
+        }
       />
 
       <StatGrid>
@@ -82,7 +97,7 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
       <div className="mt-2 grid gap-2 xl:grid-cols-3">
         <Panel
           title="Sales"
-          meta={`${o.bucket === 'day' ? 'Daily' : o.bucket === 'week' ? 'Weekly' : 'Monthly'} · totals after refunds, incl. tax & shipping`}
+          meta={`${{ hour: 'By hour', day: 'Daily', week: 'Weekly', month: 'Monthly' }[o.bucket]} · totals after refunds, incl. tax & shipping`}
           tone="sales"
           className="xl:col-span-2"
           bodyClassName="pt-2"
@@ -143,10 +158,11 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
         </Panel>
 
         <Panel
-          title="Recent orders"
+          title={daily ? `Orders · ${rangeLabel}` : 'Recent orders'}
+          meta={daily ? `${num(o.recentCount)} placed` : undefined}
           actions={
-            <Link href="/portal/admin/orders/" className="text-[11.5px] font-medium text-adm-muted hover:text-adm-ink">
-              All orders
+            <Link href={ordersHref} className="text-[11.5px] font-medium text-adm-muted hover:text-adm-ink">
+              {daily ? 'View all' : 'All orders'}
             </Link>
           }
         >
@@ -164,7 +180,7 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
                   <Tr key={r.shopify_id}>
                     <Td>
                       <CellLink href={`/portal/admin/orders/${legacyId(r.shopify_id)}/`}>{r.name}</CellLink>
-                      <span className="ml-1.5 text-[11px] text-adm-faint">{dateShort(r.shopify_created_at)}</span>
+                      <span className="ml-1.5 text-[11px] text-adm-faint">{daily ? timeOfDay(r.shopify_created_at) : dateShort(r.shopify_created_at)}</span>
                     </Td>
                     <Td className="max-w-[10rem] truncate">{r.customer_display_name ?? r.email ?? '—'}</Td>
                     <Td muted className="hidden max-w-[12rem] truncate @2xl:table-cell">
@@ -181,7 +197,7 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
               </TBody>
             </Table>
           ) : (
-            <Empty>No orders yet.</Empty>
+            <Empty>{daily ? 'No orders on this day.' : 'No orders yet.'}</Empty>
           )}
         </Panel>
       </div>
@@ -198,26 +214,27 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
           />
         </Panel>
         <Panel
-          title="Dealers"
+          title="Contractors"
           tone="dealers"
           actions={
-            <Link href="/portal/admin/dealers/" className="inline-flex items-center gap-1 text-[11.5px] font-medium text-adm-muted hover:text-adm-ink">
-              Dealer roster <ArrowRight className="h-3 w-3" />
+            <Link href="/portal/admin/dealers/contractors/" className="inline-flex items-center gap-1 text-[11.5px] font-medium text-adm-muted hover:text-adm-ink">
+              Contractors <ArrowRight className="h-3 w-3" />
             </Link>
           }
         >
           <KV
             rows={[
-              ['Dealers', `${num(dealers.summary.count)} · ${num(dealers.summary.fromOrdersOnly)} not tagged in Shopify`],
+              ['Contractors', `${num(contractors.summary.count)} · ${num(contractors.summary.listed)} listed publicly`],
+              ['Contractor lifetime spend', `${money0(contractors.summary.lifetime)} (${pct(contractors.summary.lifetimeShare)})`],
               [
-                `Dealer-order sales since ${o.coverage.first ? dateShort(o.coverage.first) : 'start'}`,
-                `${money0(dealers.summary.dealerOrderSales)} (${pct(dealers.summary.dealerOrderShare)})`,
+                `Orders tagged Dealer since ${o.coverage.first ? dateShort(o.coverage.first) : 'start'}`,
+                `${money0(contractors.summary.dealerOrderSales)} (${pct(contractors.summary.dealerOrderShare)})`,
               ],
               [
                 'Top rep',
-                dealers.reps[0] ? `${dealers.reps[0].label} · ${num(dealers.reps[0].orders)} orders · ${money0(dealers.reps[0].sales)}` : '—',
+                contractors.reps[0] ? `${contractors.reps[0].label} · ${num(contractors.reps[0].orders)} orders · ${money0(contractors.reps[0].sales)}` : '—',
               ],
-              [`Dealer sales, last ${dealers.recentDays} days`, `${money0(dealers.summary.recentSales)} (${pct(dealers.summary.recentShare)})`],
+              [`Contractor sales, last ${contractors.recentDays} days`, `${money0(contractors.summary.recentSales)} (${pct(contractors.summary.recentShare)})`],
               ['Pro Hub accounts', `${num(portal.summary.total)} · ${portal.summary.active30} active in 30 days`],
               [
                 'New dealer applications',

@@ -8,7 +8,7 @@ import { requirePortalAdmin } from './auth'
 import { cleanModule, getAcceleratorAdmin, getModuleRow, slugify, toModuleDraft, uniqueSlug, type ModuleDraft } from './accelerator'
 
 /**
- * Writes for Dealers → Accelerator Program. Every change shows in the Pro
+ * Writes for Contractors → Accelerator Program. Every change shows in the Pro
  * Portal on the next page load. Each action loads the program first, which
  * seeds the tables from the built-in modules if nobody has edited them yet.
  */

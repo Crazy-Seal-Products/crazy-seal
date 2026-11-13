@@ -4,7 +4,7 @@
  * PORTAL_MODULES mirrors the six public BAP modules (/resources/*) and reuses
  * their real videos and assets, broken into bite-sized lessons with progress
  * tracking. It is the built-in program: admins edit the live copy from
- * Dealers → Accelerator Program (src/lib/portal/accelerator.ts), which is
+ * Contractors → Accelerator Program (src/lib/portal/accelerator.ts), which is
  * seeded from this list. Helpers below take the module list they work on.
  */
 

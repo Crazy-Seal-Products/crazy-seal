@@ -251,6 +251,7 @@ const ACCESS_TEXT: Record<string, string> = {
   permissions: 'Permission matrix changed',
   password_changed: 'Changed their own password',
   profile_updated: 'Changed their own name',
+  sales_rep_link: 'Sales rep link changed',
 }
 
 export function accessText(row: AccessLogRow): string {
@@ -259,6 +260,7 @@ export function accessText(row: AccessLogRow): string {
   if (row.action === 'role_change' && d.from && d.to) return `${base}: ${d.from} → ${d.to}`
   if (row.action === 'staff_added' && d.role) return `${base} as ${d.role}`
   if (row.action === 'sign_in' && d.via === 'env') return `${base} (backup login)`
+  if (row.action === 'sales_rep_link' && d.rep) return d.linked ? `Linked to sales rep ${d.rep}` : `Unlinked from sales rep ${d.rep}`
   return base
 }
 

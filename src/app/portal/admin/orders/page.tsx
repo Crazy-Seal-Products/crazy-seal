@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
-import { channelLabel, getOrdersPage, ORDER_TABS, RANGES } from '@/lib/portal/admin/sales'
-import { addressLine, dateShort, legacyId, money, money0, num } from '@/lib/portal/admin/format'
+import { channelLabel, getOrdersPage, ORDER_TABS, parseDay, periodLabel, RANGES } from '@/lib/portal/admin/sales'
+import { addressLine, dateShort, dayKey, legacyId, money, money0, num, timeOfDay } from '@/lib/portal/admin/format'
 import { one, pageNum, pick, type SearchParams } from '@/lib/portal/admin/params'
+import { RangePicker } from '@/components/portal/admin/RangePicker'
 import {
   CellLink,
   Empty,
@@ -32,18 +33,28 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
   const q = one(sp.q)
   const tab = pick(sp.tab, ORDER_TABS, 'all')
   const range = pick(sp.range, RANGES, 'all')
-  const params = { q, tab: tab === 'all' ? undefined : tab, range: range === 'all' ? undefined : range }
-  const data = await getOrdersPage({ q, tab, range, page: pageNum(sp.page) })
+  const day = range === 'day' ? parseDay(sp.day) : undefined
+  const params = { q, tab: tab === 'all' ? undefined : tab, range: range === 'all' ? undefined : range, day }
+  const data = await getOrdersPage({ q, tab, range, day, page: pageNum(sp.page) })
+  const daily = range === 'day'
 
   return (
     <>
       <PageHeader
         title="Orders"
-        description={`${num(data.total)} orders · ${money0(data.sum)} in sales${q ? ` matching “${q}”` : ''}`}
+        description={`${daily ? `${periodLabel(range, data.window)} · ` : ''}${num(data.total)} orders · ${money0(data.sum)} in sales${q ? ` matching “${q}”` : ''}`}
       >
         <Toolbar>
           <Segmented options={ORDER_TABS.map((t) => ({ ...t, count: data.counts[t.key] }))} value={tab} param="tab" base={BASE} params={params} />
-          <Segmented options={RANGES} value={range} param="range" base={BASE} params={params} />
+          <RangePicker
+            options={RANGES}
+            value={range}
+            day={data.window.from}
+            today={dayKey(new Date())}
+            min={data.firstDay}
+            base={BASE}
+            params={{ ...params, day: undefined }}
+          />
           <SearchBox base={BASE} params={params} value={q} placeholder="Order #, customer, email, product…" />
         </Toolbar>
       </PageHeader>
@@ -53,7 +64,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
           <Table>
             <THead>
               <Th>Order</Th>
-              <Th>Date</Th>
+              <Th>{daily ? 'Time' : 'Date'}</Th>
               <Th>Customer</Th>
               <Th className="hidden @4xl:table-cell">Items</Th>
               <Th className="hidden @2xl:table-cell">Channel</Th>
@@ -68,7 +79,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                   <Td>
                     <CellLink href={`${BASE}${legacyId(o.shopify_id)}/`}>{o.name}</CellLink>
                   </Td>
-                  <Td muted>{dateShort(o.shopify_created_at)}</Td>
+                  <Td muted>{daily ? timeOfDay(o.shopify_created_at) : dateShort(o.shopify_created_at)}</Td>
                   <Td className="max-w-[13rem] truncate">
                     {o.customer_shopify_id ? (
                       <CellLink href={`/portal/admin/customers/${legacyId(o.customer_shopify_id)}/`} className="font-medium text-adm-text">

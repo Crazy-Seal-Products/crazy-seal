@@ -9,7 +9,7 @@ import { twMerge } from 'tailwind-merge'
 import type { Segment } from '@/lib/contractors/types'
 
 /**
- * The contractor map, shared by the admin (Dealers → Contractors) and the
+ * The contractor map, shared by the admin (Contractors) and the
  * public finder (/contractor). MapLibre on OpenFreeMap tiles (free, no key,
  * no cookies), like the RV Armor Atlas. Pins sit at each contractor's ZIP
  * center. Hover shows who it is; clicking a pin opens their page.

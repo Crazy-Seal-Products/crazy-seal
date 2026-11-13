@@ -38,8 +38,8 @@ import {
   ShieldCheck,
   ShoppingCart,
   Shuffle,
-  Store,
   Sun,
+  Trophy,
   Truck,
   UserCog,
   UserRoundPlus,
@@ -86,6 +86,7 @@ const GROUPS: Group[] = [
       { href: '/portal/admin/orders/', label: 'Orders', icon: ShoppingBag, section: 'orders', badge: 'openOrders' },
       { href: '/portal/admin/customers/', label: 'Customers', icon: Users, section: 'customers' },
       { href: '/portal/admin/leads/', label: 'Leads', icon: Inbox, section: 'leads' },
+      { href: '/portal/admin/reps/', label: 'Sales reps', icon: Trophy, section: 'sales_reps' },
       { href: '/portal/admin/products/', label: 'Products', icon: Package, section: 'products' },
       { href: '/portal/admin/history/', label: 'Sales history', icon: ChartColumn, section: 'history' },
       { href: '/portal/admin/discounts/', label: 'Discounts', icon: BadgePercent, section: 'discounts' },
@@ -99,9 +100,8 @@ const GROUPS: Group[] = [
   },
   {
     id: 'dealers',
-    label: 'Dealers',
+    label: 'Contractors',
     items: [
-      { href: '/portal/admin/dealers/', label: 'Dealer roster', icon: Store, section: 'dealers' },
       { href: '/portal/admin/dealers/contractors/', label: 'Contractors', icon: MapPinned, section: 'contractors' },
       { href: '/portal/admin/dealers/portal/', label: 'Portal accounts', icon: KeyRound, section: 'portal_accounts' },
       { href: '/portal/admin/dealers/view-as/', label: 'View as', icon: Eye, section: 'view_as' },

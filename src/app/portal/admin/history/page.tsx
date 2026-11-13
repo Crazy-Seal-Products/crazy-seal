@@ -1,13 +1,15 @@
 import type { Metadata } from 'next'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
-import { customerName, getCoverage, getCustomerInsights, getMonthlyHistory } from '@/lib/portal/admin/sales'
-import { dateShort, dayKey, legacyId, money0, monthLabel, num, pct } from '@/lib/portal/admin/format'
+import { bucketKey, customerName, getCoverage, getCustomerInsights, getHistory, type HistoryBucket } from '@/lib/portal/admin/sales'
+import { dateShort, dayKey, dayLabel, legacyId, money0, monthLabel, num, pct, weekdayLabel } from '@/lib/portal/admin/format'
+import { pick, type SearchParams } from '@/lib/portal/admin/params'
 import {
   Badge,
   CellLink,
   Empty,
   PageHeader,
   Panel,
+  Segmented,
   Stat,
   StatGrid,
   Table,
@@ -23,38 +25,70 @@ import { BarList } from '@/components/portal/admin/BarList'
 
 export const metadata: Metadata = { title: 'Sales history' }
 
-export default async function AdminHistoryPage() {
+const BASE = '/portal/admin/history/'
+
+const VIEWS = [
+  { key: 'day', label: 'Daily' },
+  { key: 'week', label: 'Weekly' },
+  { key: 'month', label: 'Monthly' },
+] as const
+
+/** Daily shows this many days; weeks and months go back to the start of the history. */
+const DAILY_DAYS = 90
+
+const NOUN: Record<HistoryBucket, { one: string; title: string }> = {
+  day: { one: 'day', title: 'Daily' },
+  week: { one: 'week', title: 'Weekly' },
+  month: { one: 'month', title: 'Monthly' },
+}
+
+export default async function AdminHistoryPage({ searchParams }: { searchParams: SearchParams }) {
   await requirePortalAdmin('history')
-  const [months, insights, coverage] = await Promise.all([getMonthlyHistory(), getCustomerInsights(), getCoverage()])
+  const view: HistoryBucket = pick((await searchParams).view, VIEWS, 'month')
+  const [all, insights, coverage] = await Promise.all([getHistory(view), getCustomerInsights(), getCoverage()])
+  const periods = view === 'day' ? all.slice(-DAILY_DAYS) : all
   const firstDay = coverage.first ? dayKey(coverage.first) : null
-  const thisMonth = dayKey(new Date()).slice(0, 7)
+  const today = dayKey(new Date())
+  const current = view === 'month' ? today.slice(0, 7) : bucketKey(today, view)
+  const first = firstDay ? (view === 'month' ? firstDay.slice(0, 7) : bucketKey(firstDay, view)) : null
+  const startsMidway = firstDay != null && (view === 'month' ? !firstDay.endsWith('-01') : view === 'week' && first !== firstDay)
   const partial = (key: string) =>
-    key === thisMonth ? 'to date' : firstDay && key === firstDay.slice(0, 7) && !firstDay.endsWith('-01') ? `from ${dateShort(coverage.first)}` : null
-  const best = [...months].sort((a, b) => b.sales - a.sales)[0]
-  const sales = months.reduce((n, m) => n + m.sales, 0)
-  const orders = months.reduce((n, m) => n + m.orders, 0)
+    key === current ? (view === 'day' ? 'so far' : 'to date') : key === first && startsMidway ? `from ${dateShort(coverage.first)}` : null
+  const label = (key: string) => (view === 'day' ? weekdayLabel(key) : view === 'week' ? `Week of ${dayLabel(key)}` : monthLabel(key))
+  const tick = (key: string) => (view === 'day' ? dayLabel(key) : view === 'week' ? `Wk ${dayLabel(key)}` : monthLabel(key))
+  const best = [...all].sort((a, b) => b.sales - a.sales)[0]
+  const sales = all.reduce((n, m) => n + m.sales, 0)
+  const orders = all.reduce((n, m) => n + m.orders, 0)
+  const months = new Set(all.map((m) => m.key.slice(0, 7))).size
+  const noun = NOUN[view]
 
   return (
     <>
       <PageHeader
         title="Sales history"
-        description="Month-by-month orders from the history kept here, plus all-time customer value straight from Shopify (back to 2019)."
+        description="Orders by day, week or month from the history kept here, plus all-time customer value straight from Shopify (back to 2019)."
+        actions={<Segmented options={VIEWS} value={view} param="view" base={BASE} params={{}} />}
       >
         <StatGrid>
           <Stat label="All-time customer sales" value={money0(insights.lifetime)} sub={`${num(insights.buyers)} purchasing customers`} />
           <Stat label="Avg. lifetime value" value={money0(insights.avgLtv)} sub="per purchasing customer" />
           <Stat label="Repeat rate" value={pct(insights.repeatRate)} sub={`${num(insights.repeat)} repeat buyers`} />
-          <Stat label="Orders in history" value={num(orders)} sub={`${money0(sales)} · ${months.length} months`} tone="info" />
-          <Stat label="Best month" value={best ? monthLabel(best.key) : '—'} sub={best ? money0(best.sales) : undefined} tone="info" />
+          <Stat label="Orders in history" value={num(orders)} sub={`${money0(sales)} · ${months} months`} tone="info" />
+          <Stat label={`Best ${noun.one}`} value={best?.sales ? label(best.key) : '—'} sub={best?.sales ? money0(best.sales) : undefined} tone="info" />
           <Stat label="Avg. order (history)" value={money0(orders ? sales / orders : 0)} tone="info" />
         </StatGrid>
       </PageHeader>
 
       <div className="grid gap-2 xl:grid-cols-2">
-        <Panel title="Sales by month" meta="orders in the history here" tone="sales" bodyClassName="pt-2">
-          {months.length ? (
+        <Panel
+          title={`Sales by ${noun.one}`}
+          meta={view === 'day' ? `last ${DAILY_DAYS} days` : 'orders in the history here'}
+          tone="sales"
+          bodyClassName="pt-2"
+        >
+          {periods.length ? (
             <ColumnChart
-              data={months.map((m) => ({ key: m.key, label: monthLabel(m.key), value: Math.round(m.sales * 100) / 100, detail: `${m.orders} orders` }))}
+              data={periods.map((m) => ({ key: m.key, label: tick(m.key), value: Math.round(m.sales * 100) / 100, detail: `${m.orders} orders` }))}
               valueLabel="Sales"
               color={SERIES.revenue}
             />
@@ -72,10 +106,10 @@ export default async function AdminHistoryPage() {
         </Panel>
       </div>
 
-      <Panel title="Monthly breakdown" className="mt-2">
+      <Panel title={`${noun.title} breakdown`} meta={view === 'day' ? `last ${DAILY_DAYS} days, newest first` : undefined} className="mt-2">
         <Table>
           <THead>
-            <Th>Month</Th>
+            <Th>{view === 'day' ? 'Day' : view === 'week' ? 'Week' : 'Month'}</Th>
             <Th align="right">Orders</Th>
             <Th align="right">Sales</Th>
             <Th align="right">Avg. order</Th>
@@ -85,10 +119,10 @@ export default async function AdminHistoryPage() {
             <Th align="right" className="hidden @3xl:table-cell">Refunds</Th>
           </THead>
           <TBody>
-            {[...months].reverse().map((m) => (
+            {[...periods].reverse().map((m) => (
               <Tr key={m.key}>
                 <Td className="font-medium text-adm-ink">
-                  {monthLabel(m.key)}
+                  {label(m.key)}
                   {partial(m.key) && <span className="ml-1.5 text-[11px] font-normal text-adm-faint">{partial(m.key)}</span>}
                 </Td>
                 <Td align="right">{num(m.orders)}</Td>

@@ -21,6 +21,11 @@ export function clearAdminCache() {
   store.clear()
 }
 
+/** Drops one cached value, so the next read reloads it. */
+export function forget(key: string) {
+  store.delete(key)
+}
+
 /**
  * Pages through a PostgREST query 1,000 rows at a time (the API's row cap).
  * `page(from, to)` must apply `.range(from, to)` and a stable order.

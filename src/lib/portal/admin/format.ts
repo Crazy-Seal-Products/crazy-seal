@@ -83,6 +83,13 @@ export function dateTime(iso: string | null | undefined): string {
   return iso ? dateTimeFmt.format(new Date(iso)) : '—'
 }
 
+const timeFmt = new Intl.DateTimeFormat('en-US', { timeZone: STORE_TZ, hour: 'numeric', minute: '2-digit' })
+
+/** "2:14 PM" in store time. */
+export function timeOfDay(iso: string | null | undefined): string {
+  return iso ? timeFmt.format(new Date(iso)) : '—'
+}
+
 /** "Oct 26" from a YYYY-MM-DD key (no time-zone shift). */
 export function dayLabel(key: string): string {
   const [y, m, d] = key.split('-').map(Number)
@@ -93,6 +100,63 @@ export function dayLabel(key: string): string {
 export function monthLabel(key: string): string {
   const [y, m] = key.split('-').map(Number)
   return monthFmt.format(new Date(Date.UTC(y, m - 1, 15))).replace(' ', " '")
+}
+
+const weekdayFmt = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' })
+
+/** "Thu, Nov 12" from a YYYY-MM-DD key, with the year when it isn't this year. */
+export function weekdayLabel(key: string): string {
+  const [y, m, d] = key.split('-').map(Number)
+  const label = weekdayFmt.format(new Date(Date.UTC(y, m - 1, d, 12)))
+  return key.slice(0, 4) === dayKey(new Date()).slice(0, 4) ? label : `${label}, ${y}`
+}
+
+const hourFmt = new Intl.DateTimeFormat('en-US', { timeZone: STORE_TZ, hour: 'numeric', hourCycle: 'h23' })
+
+/** The hour (0–23) in store time. */
+export function storeHour(iso: string | Date): number {
+  return Number(hourFmt.format(typeof iso === 'string' ? new Date(iso) : iso)) % 24
+}
+
+/** "9 AM" for an hour from 0 to 23. */
+export function hourLabel(hour: number): string {
+  return `${hour % 12 || 12} ${hour < 12 ? 'AM' : 'PM'}`
+}
+
+/** A chart label for a series bucket: an hour ("…T09"), a day, a week (its Monday) or a month. */
+export function bucketLabel(key: string, bucket: 'hour' | 'day' | 'week' | 'month'): string {
+  if (bucket === 'hour') return hourLabel(Number(key.slice(-2)))
+  if (bucket === 'week') return `Wk ${dayLabel(key)}`
+  if (bucket === 'month') return monthLabel(key)
+  return dayLabel(key)
+}
+
+const partsFmt = new Intl.DateTimeFormat('en-US', {
+  timeZone: STORE_TZ,
+  hourCycle: 'h23',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+})
+
+/** How far store time is from UTC at an instant, in ms (−5h in winter). */
+function storeOffsetMs(ts: number): number {
+  const p = Object.fromEntries(partsFmt.formatToParts(new Date(ts)).map((x) => [x.type, x.value]))
+  const asUtc = Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day), Number(p.hour) % 24, Number(p.minute), Number(p.second))
+  return asUtc - Math.floor(ts / 1000) * 1000
+}
+
+/** The instant a store-time day (YYYY-MM-DD) starts, as an ISO string. */
+export function dayStartIso(key: string): string {
+  const [y, m, d] = key.split('-').map(Number)
+  const midnightUtc = Date.UTC(y, m - 1, d)
+  // Twice, so a day when the clocks change still lands on its own midnight.
+  let t = midnightUtc - storeOffsetMs(midnightUtc)
+  t = midnightUtc - storeOffsetMs(t)
+  return new Date(t).toISOString()
 }
 
 export function ago(iso: string | null | undefined, now = Date.now()): string {

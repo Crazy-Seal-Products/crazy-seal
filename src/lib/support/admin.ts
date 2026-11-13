@@ -123,14 +123,25 @@ export interface AssistantMetrics {
   costPerConversation: number | null
 }
 
-export async function aiMetrics(days: number) {
+/** A stretch of time for the AI review numbers: from `since`, up to (not including) `until` when set. */
+export interface Span {
+  since: string
+  until?: string
+}
+
+/** The last `days` days, up to now. */
+export function lastDays(days: number): Span {
+  return { since: new Date(Date.now() - days * 86_400_000).toISOString() }
+}
+
+export async function aiMetrics(span: Span) {
   const supabase = createAdminClient()
-  const since = new Date(Date.now() - days * 86_400_000).toISOString()
+  const { since, until = '9999-12-31T00:00:00Z' } = span
   const [convs, msgs, tickets, resolved] = await Promise.all([
-    supabase.from('ai_conversations').select('id, assistant').gte('created_at', since).limit(20_000),
-    supabase.from('ai_messages').select('conversation_id, role, ttft_ms, total_ms, cost_usd, error, created_at').eq('role', 'assistant').gte('created_at', since).limit(50_000),
-    supabase.from('support_tickets').select('kind, status').gte('created_at', since).limit(10_000),
-    supabase.from('support_tickets').select('created_at, resolved_at').not('resolved_at', 'is', null).gte('resolved_at', since).limit(10_000),
+    supabase.from('ai_conversations').select('id, assistant').gte('created_at', since).lt('created_at', until).limit(20_000),
+    supabase.from('ai_messages').select('conversation_id, role, ttft_ms, total_ms, cost_usd, error, created_at').eq('role', 'assistant').gte('created_at', since).lt('created_at', until).limit(50_000),
+    supabase.from('support_tickets').select('kind, status').gte('created_at', since).lt('created_at', until).limit(10_000),
+    supabase.from('support_tickets').select('created_at, resolved_at').not('resolved_at', 'is', null).gte('resolved_at', since).lt('resolved_at', until).limit(10_000),
   ])
 
   const assistantOf = new Map((convs.data ?? []).map((c) => [c.id as string, c.assistant as string]))
@@ -175,9 +186,15 @@ export async function openTicketCount(): Promise<number> {
   return count ?? 0
 }
 
-export async function causeBreakdown(days: number): Promise<{ cause: string; count: number }[]> {
-  const since = new Date(Date.now() - days * 86_400_000).toISOString()
-  const { data } = await createAdminClient().from('support_tickets').select('cause').not('cause', 'is', null).gte('created_at', since).limit(10_000)
+export async function causeBreakdown(span: Span): Promise<{ cause: string; count: number }[]> {
+  const { since, until = '9999-12-31T00:00:00Z' } = span
+  const { data } = await createAdminClient()
+    .from('support_tickets')
+    .select('cause')
+    .not('cause', 'is', null)
+    .gte('created_at', since)
+    .lt('created_at', until)
+    .limit(10_000)
   const counts = new Map<string, number>()
   for (const r of data ?? []) counts.set(r.cause as string, (counts.get(r.cause as string) ?? 0) + 1)
   return [...counts.entries()].map(([cause, count]) => ({ cause, count })).sort((a, b) => b.count - a.count)

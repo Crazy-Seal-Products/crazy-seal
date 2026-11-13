@@ -1,25 +1,29 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { deriveStatuses } from '@/lib/pro/status'
 import { PRO_STATUS_LABEL } from '@/lib/pro/config'
+import { listAdminContractors } from '@/lib/contractors/data'
+import { isDealerOrderTags, planShopifySync } from '@/lib/contractors/shopify-match'
+import { placeLabel, type AdminContractor } from '@/lib/contractors/types'
 import { memo } from './cache'
+import { legacyId as legacyIdOf } from './format'
+import { getRepRoster, repsOnTags } from './reps'
 import { allCustomers, allOrders, customerName, orderSales, type CustomerLite, type OrderLite } from './sales'
 
 /**
  * Dealer data for the Crazy Seal Admin:
- * - Dealers: Shopify customers tagged dealer/pro/professional, plus anyone
- *   who has an order tagged "Dealer". Sales reps build dealer orders as draft
- *   orders and tag the order (not always the customer) "Dealer" and their own
- *   name, so the order tag is the more reliable signal.
+ * - Contractors: the contractors table (the dealer list, contractors added by
+ *   hand, and the Shopify dealer roster consolidated into it by the Shopify
+ *   sync: customers tagged dealer/pro/professional, plus anyone with an order
+ *   tagged "Dealer"), each with the Shopify customers linked to them. Sales
+ *   reps build dealer orders as draft orders and tag the order (not always the
+ *   customer) "Dealer" and their own name, so the order tag is the more
+ *   reliable signal.
  * - Portal accounts: everyone with a login to the live Pro Hub (/pro), which
  *   is the dealer portal partners use today.
  * - Applications: "Become a dealer" form submissions (leads.lead_type = business).
  */
 
-/** Rep-name tags the sales team puts on orders (seen in Shopify, Oct 2026). */
-export const SALES_REPS = ['Amber', 'Mike', 'Tina', 'Stephen', 'Vernon']
-
-const isDealerOrder = (o: OrderLite) => o.tags.some((t) => t.trim().toLowerCase() === 'dealer')
-const repsOf = (tags: string[]) => SALES_REPS.filter((r) => tags.some((t) => t.trim().toLowerCase() === r.toLowerCase()))
+const isDealerOrder = (o: OrderLite) => isDealerOrderTags(o.tags)
 
 export type PortalState = 'active' | 'idle' | 'invited' | 'none'
 
@@ -37,7 +41,7 @@ export interface ProUserRow {
   has_password: boolean
 }
 
-function proUsers(): Promise<ProUserRow[]> {
+export function proUsers(): Promise<ProUserRow[]> {
   return memo('pro-users', 60_000, async () => {
     const supabase = createAdminClient()
     const { data, error } = await supabase
@@ -74,136 +78,205 @@ export function portalState(u: ProUserRow | undefined): PortalState {
   return Date.now() - new Date(u.last_login_at).getTime() < 30 * 86_400_000 ? 'active' : 'idle'
 }
 
-export interface DealerRow {
-  key: string
-  customer: CustomerLite | null
-  name: string
-  company: string | null
-  email: string | null
-  phone: string | null
-  location: string
-  tags: string[]
-  orders: number
-  spent: number
-  recentSales: number
-  recentOrders: number
-  lastOrderAt: string | null
-  statuses: string[]
-  portal: PortalState
+export interface ContractorListRow extends AdminContractor {
   /** Their Pro Hub account, when they have one. */
   proUserId: string | null
+  portal: PortalState
   lastLoginAt: string | null
-  warranties: number
-  /** How we know they're a dealer: a customer tag, Dealer-tagged orders, or both. */
-  source: 'tag' | 'orders' | 'both'
-  /** Dealer-tagged orders in the order history kept here. */
-  dealerOrders: number
+  statuses: string[]
+  /** Linked Shopify customer records. */
+  customerCount: number
+  /** The linked customer View as and the customer link use: one with an email, most spent first. */
+  primaryCustomerId: string | null
+  primaryCustomerLegacyId: string | null
+  /** Their email, which a View as base view needs. */
+  primaryCustomerEmail: string | null
+  /** Shopify's lifetime spend and order count across their records (back to 2019). */
+  lifetime: number
+  lifetimeOrders: number
+  /** Orders in the history kept here (see getCoverage). */
+  historySales: number
+  historyOrders: number
+  recentSales: number
+  recentOrders: number
+  /** Their orders the sales team tagged "Dealer". */
   dealerSales: number
+  dealerOrders: number
+  lastOrderAt: string | null
   /** Sales reps on their dealer orders, most orders first. */
   reps: string[]
+  warranties: number
 }
 
 const RECENT_DAYS = 90
 
-export async function getDealers() {
-  const [customers, users, orders, warranties] = await Promise.all([allCustomers(), proUsers(), allOrders(), warrantyCounts()])
-  const since = new Date(Date.now() - RECENT_DAYS * 86_400_000).toISOString()
+/** Shopify ids of the dealer roster: customers tagged Dealer, Pro or Professional, or with an order tagged Dealer. */
+function rosterIds(customers: CustomerLite[], orders: OrderLite[]): Set<string> {
+  const ids = new Set(customers.filter((c) => c.is_dealer).map((c) => c.shopify_id))
+  for (const o of orders) if (!o.cancelled_at && o.customer_shopify_id && isDealerOrder(o)) ids.add(o.customer_shopify_id)
+  return ids
+}
 
-  const userByCustomer = new Map(users.filter((u) => u.shopify_customer_id).map((u) => [u.shopify_customer_id!, u]))
-  const userByEmail = new Map(users.map((u) => [u.email.toLowerCase(), u]))
-  const recent = new Map<string, { sales: number; orders: number; last: string }>()
-  const dealerBuys = new Map<string, { orders: number; sales: number; reps: Map<string, number> }>()
+/**
+ * Contractors: every row of the contractors table (the dealer list,
+ * contractors added by hand, and the Shopify dealers the sync added), with
+ * their linked Shopify customers' spending and their Pro Hub account. Also
+ * what the Shopify sync would do now, so the page can offer it.
+ */
+export async function getContractorList() {
+  const [records, customers, users, orders, warranties, repRoster] = await Promise.all([
+    listAdminContractors(),
+    allCustomers(),
+    proUsers(),
+    allOrders(),
+    warrantyCounts(),
+    getRepRoster(),
+  ])
+  // Rep-name tags the sales team puts on orders (the Sales reps roster).
+  const repNames = repRoster.reps.map((r) => r.name)
+  const repsOf = (tags: string[]) => repsOnTags(tags, repNames)
+  const since = new Date(Date.now() - RECENT_DAYS * 86_400_000).toISOString()
+  const customerById = new Map(customers.map((c) => [c.shopify_id, c]))
+  const ordersBy = new Map<string, OrderLite[]>()
+  for (const o of orders) if (!o.cancelled_at && o.customer_shopify_id) ordersBy.set(o.customer_shopify_id, [...(ordersBy.get(o.customer_shopify_id) ?? []), o])
+
+  const contractors: ContractorListRow[] = records.map((d) => {
+    const linked = d.shopifyCustomerIds.map((id) => customerById.get(id)).filter((c): c is CustomerLite => Boolean(c))
+    const ids = new Set(linked.map((c) => c.shopify_id))
+    const emails = new Set([d.email, ...linked.map((c) => c.email)].filter(Boolean).map((e) => e!.toLowerCase()))
+    // users are newest sign-in first, so the account in use wins.
+    const user = users.find((u) => (u.shopify_customer_id && ids.has(u.shopify_customer_id)) || emails.has(u.email.toLowerCase()))
+    const theirs = linked.flatMap((c) => ordersBy.get(c.shopify_id) ?? [])
+    const recent = theirs.filter((o) => o.shopify_created_at >= since)
+    const dealerOrders = theirs.filter(isDealerOrder)
+    const repCount = new Map<string, number>()
+    for (const o of dealerOrders) for (const rep of repsOf(o.tags)) repCount.set(rep, (repCount.get(rep) ?? 0) + 1)
+    const primary = [...linked].sort((a, b) => Number(Boolean(b.email)) - Number(Boolean(a.email)) || (b.amount_spent ?? 0) - (a.amount_spent ?? 0))[0]
+    const lastOrderAt = [...linked.map((c) => c.last_order_at), ...theirs.map((o) => o.shopify_created_at)].filter(Boolean).sort().at(-1) ?? null
+    const statuses = deriveStatuses({
+      tags: linked.flatMap((c) => c.tags),
+      orderCount: linked.reduce((n, c) => n + c.number_of_orders, 0),
+      statusOverride: user?.status_override,
+    })
+    return {
+      ...d,
+      proUserId: user?.id ?? null,
+      portal: portalState(user),
+      lastLoginAt: user?.last_login_at ?? null,
+      statuses: statuses.map((s) => PRO_STATUS_LABEL[s]),
+      customerCount: linked.length,
+      primaryCustomerId: primary?.shopify_id ?? null,
+      primaryCustomerLegacyId: primary ? primary.legacy_resource_id ?? legacyIdOf(primary.shopify_id) : null,
+      primaryCustomerEmail: primary?.email ?? null,
+      lifetime: linked.reduce((n, c) => n + (c.amount_spent ?? 0), 0),
+      lifetimeOrders: linked.reduce((n, c) => n + c.number_of_orders, 0),
+      historySales: theirs.reduce((n, o) => n + orderSales(o), 0),
+      historyOrders: theirs.length,
+      recentSales: recent.reduce((n, o) => n + orderSales(o), 0),
+      recentOrders: recent.length,
+      dealerSales: dealerOrders.reduce((n, o) => n + orderSales(o), 0),
+      dealerOrders: dealerOrders.length,
+      lastOrderAt,
+      reps: repCount.size ? [...repCount].sort((a, b) => b[1] - a[1]).map(([rep]) => rep) : repsOf(linked.flatMap((c) => c.tags)),
+      warranties: [...emails].reduce((n, e) => n + (warranties.get(e) ?? 0), 0) + (user ? warranties.get(user.id) ?? 0 : 0),
+    } satisfies ContractorListRow
+  })
+
+  // Every order tagged Dealer counts toward the rep totals, linked to a contractor or not.
   const repTotals = new Map<string, { orders: number; sales: number }>()
-  let historySales = 0
-  let dealerHistorySales = 0
-  let dealerHistoryOrders = 0
+  let dealerOrderSales = 0
+  let dealerOrderCount = 0
+  let allHistory = 0
+  let allRecent = 0
   for (const o of orders) {
     if (o.cancelled_at) continue
-    historySales += orderSales(o)
-    if (isDealerOrder(o)) {
-      dealerHistorySales += orderSales(o)
-      dealerHistoryOrders += 1
-      const reps = repsOf(o.tags)
-      for (const rep of reps.length ? reps : ['No rep tag']) {
-        const t = repTotals.get(rep) ?? { orders: 0, sales: 0 }
-        t.orders += 1
-        t.sales += orderSales(o)
-        repTotals.set(rep, t)
-      }
-    }
-    if (!o.customer_shopify_id) continue
-    const r = recent.get(o.customer_shopify_id) ?? { sales: 0, orders: 0, last: o.shopify_created_at }
-    if (o.shopify_created_at >= since) {
-      r.sales += orderSales(o)
-      r.orders += 1
-    }
-    if (o.shopify_created_at > r.last) r.last = o.shopify_created_at
-    recent.set(o.customer_shopify_id, r)
-    if (isDealerOrder(o)) {
-      const b = dealerBuys.get(o.customer_shopify_id) ?? { orders: 0, sales: 0, reps: new Map<string, number>() }
-      b.orders += 1
-      b.sales += orderSales(o)
-      for (const rep of repsOf(o.tags)) b.reps.set(rep, (b.reps.get(rep) ?? 0) + 1)
-      dealerBuys.set(o.customer_shopify_id, b)
+    allHistory += orderSales(o)
+    if (o.shopify_created_at >= since) allRecent += orderSales(o)
+    if (!isDealerOrder(o)) continue
+    dealerOrderSales += orderSales(o)
+    dealerOrderCount += 1
+    const reps = repsOf(o.tags)
+    for (const rep of reps.length ? reps : ['No rep tag']) {
+      const t = repTotals.get(rep) ?? { orders: 0, sales: 0 }
+      t.orders += 1
+      t.sales += orderSales(o)
+      repTotals.set(rep, t)
     }
   }
 
-  const dealers: DealerRow[] = customers
-    .filter((c) => c.is_dealer || dealerBuys.has(c.shopify_id))
-    .map((c) => {
-      const user = userByCustomer.get(c.shopify_id) ?? (c.email ? userByEmail.get(c.email.toLowerCase()) : undefined)
-      const r = recent.get(c.shopify_id)
-      const b = dealerBuys.get(c.shopify_id)
-      const statuses = deriveStatuses({ tags: c.tags, orderCount: c.number_of_orders, statusOverride: user?.status_override })
-      return {
-        key: c.shopify_id,
-        customer: c,
-        name: customerName(c),
-        company: c.company,
-        email: c.email,
-        phone: c.phone,
-        location: [c.city, c.province].filter(Boolean).join(', ') || '—',
-        tags: c.tags.filter((t) => !['dealer', 'pro', 'professional'].includes(t.toLowerCase())),
-        orders: c.number_of_orders,
-        spent: c.amount_spent ?? 0,
-        recentSales: r?.sales ?? 0,
-        recentOrders: r?.orders ?? 0,
-        lastOrderAt: c.last_order_at ?? r?.last ?? null,
-        statuses: statuses.map((s) => PRO_STATUS_LABEL[s]),
-        portal: portalState(user),
-        proUserId: user?.id ?? null,
-        lastLoginAt: user?.last_login_at ?? null,
-        warranties: (c.email ? warranties.get(c.email.toLowerCase()) ?? 0 : 0) + (user ? warranties.get(user.id) ?? 0 : 0),
-        source: c.is_dealer && b ? 'both' : c.is_dealer ? 'tag' : 'orders',
-        dealerOrders: b?.orders ?? 0,
-        dealerSales: b?.sales ?? 0,
-        reps: b ? [...b.reps].sort((x, y) => y[1] - x[1]).map(([rep]) => rep) : repsOf(c.tags),
-      } satisfies DealerRow
-    })
-    .sort((a, b) => b.dealerSales - a.dealerSales || b.spent - a.spent)
+  const plan = planShopifySync({
+    contractors: records.map((d) => ({
+      id: d.id,
+      email: d.email,
+      phone: d.phone,
+      company: d.company,
+      first_name: d.firstName,
+      goes_by: d.goesBy,
+      last_name: d.lastName,
+      state: d.state,
+      service_states: d.serviceStates,
+      shopify_customer_ids: d.shopifyCustomerIds,
+      unlinked_customer_ids: d.unlinkedCustomerIds,
+      created_at: d.createdAt,
+    })),
+    customers,
+    accounts: users,
+    roster: rosterIds(customers, orders),
+  })
+  const contractorById = new Map(contractors.map((d) => [d.id, d]))
 
-  const allSpent = customers.reduce((n, c) => n + (c.amount_spent ?? 0), 0)
-  const dealerSpent = dealers.reduce((n, d) => n + d.spent, 0)
-  const recentAll = orders.filter((o) => !o.cancelled_at && o.shopify_created_at >= since).reduce((n, o) => n + orderSales(o), 0)
-  const recentDealer = dealers.reduce((n, d) => n + d.recentSales, 0)
+  const sum = (pick: (d: ContractorListRow) => number) => contractors.reduce((n, d) => n + pick(d), 0)
+  const allLifetime = customers.reduce((n, c) => n + (c.amount_spent ?? 0), 0)
+  const lifetime = sum((d) => d.lifetime)
+  const historySales = sum((d) => d.historySales)
+  const recentSales = sum((d) => d.recentSales)
 
   return {
-    dealers,
+    contractors,
     summary: {
-      count: dealers.length,
-      tagged: dealers.filter((d) => d.source !== 'orders').length,
-      fromOrdersOnly: dealers.filter((d) => d.source === 'orders').length,
-      spent: dealerSpent,
-      share: allSpent ? dealerSpent / allSpent : 0,
-      recentSales: recentDealer,
-      recentShare: recentAll ? recentDealer / recentAll : 0,
-      dealerOrders: dealerHistoryOrders,
-      dealerOrderSales: dealerHistorySales,
-      dealerOrderShare: historySales ? dealerHistorySales / historySales : 0,
-      orderedRecently: dealers.filter((d) => d.recentOrders > 0).length,
-      onPortal: dealers.filter((d) => d.portal !== 'none').length,
+      count: contractors.length,
+      listed: contractors.filter((d) => d.isListed).length,
+      fromShopify: contractors.filter((d) => d.origin === 'shopify').length,
+      onPortal: contractors.filter((d) => d.portal !== 'none').length,
+      noAccount: contractors.filter((d) => d.portal === 'none').length,
+      withShopify: contractors.filter((d) => d.customerCount > 0).length,
+      orderedRecently: contractors.filter((d) => d.recentOrders > 0).length,
+      lifetime,
+      allLifetime,
+      lifetimeShare: allLifetime ? lifetime / allLifetime : 0,
+      historySales,
+      allHistory,
+      historyShare: allHistory ? historySales / allHistory : 0,
+      recentSales,
+      allRecent,
+      recentShare: allRecent ? recentSales / allRecent : 0,
+      dealerOrders: dealerOrderCount,
+      dealerOrderSales,
+      dealerOrderShare: allHistory ? dealerOrderSales / allHistory : 0,
     },
     reps: [...repTotals].map(([rep, t]) => ({ key: rep, label: rep, ...t })).sort((a, b) => b.sales - a.sales),
+    pending: {
+      adds: plan.adds.length,
+      links: plan.links.length,
+      ambiguous: plan.ambiguous.map((a) => ({
+        customer: customerById.get(a.customerId)!,
+        contractors: a.contractorIds.map((id) => contractorById.get(id)).filter((d): d is ContractorListRow => Boolean(d)),
+      })),
+    },
+    recentDays: RECENT_DAYS,
+  }
+}
+
+/** One contractor with their linked Shopify customers and their orders in the history kept here, newest first. */
+export async function getContractorDetail(id: string) {
+  const [{ contractors }, customers, orders] = await Promise.all([getContractorList(), allCustomers(), allOrders()])
+  const contractor = contractors.find((d) => d.id === id)
+  if (!contractor) return null
+  const ids = new Set(contractor.shopifyCustomerIds)
+  return {
+    contractor,
+    customers: customers.filter((c) => ids.has(c.shopify_id)).sort((a, b) => (b.amount_spent ?? 0) - (a.amount_spent ?? 0)),
+    orders: orders.filter((o) => o.customer_shopify_id && ids.has(o.customer_shopify_id)),
     recentDays: RECENT_DAYS,
   }
 }
@@ -262,7 +335,7 @@ export interface ViewAsRow {
   contact: string | null
   email: string | null
   location: string
-  /** Shopify customer id, for roster dealers. */
+  /** Shopify customer id, for contractors with no account (the base view). */
   customerId: string | null
   customerLegacyId: string | null
   proUserId: string | null
@@ -275,30 +348,34 @@ export interface ViewAsRow {
 const PORTAL_RANK: Record<PortalState, number> = { active: 0, idle: 1, invited: 2, none: 3 }
 
 /**
- * Everyone an admin can view the Pro Hub as: every roster dealer, with or
- * without an account (no account opens the base view), plus Pro Hub accounts
- * that aren't on the roster. Accounts in use first.
+ * Everyone an admin can view the Pro Hub as: every contractor with a Pro Hub
+ * account or a linked Shopify customer with an email (no account opens the
+ * base view from that customer), plus Pro Hub accounts that aren't a
+ * contractor's.
+ * Accounts in use first.
  */
 export async function getViewAsTargets(): Promise<ViewAsRow[]> {
-  const [{ dealers }, { rows: accounts }] = await Promise.all([getDealers(), getPortalAccounts()])
-  const onRoster = new Set(dealers.map((d) => d.proUserId))
+  const [{ contractors }, { rows: accounts }] = await Promise.all([getContractorList(), getPortalAccounts()])
+  const ofContractors = new Set(contractors.map((d) => d.proUserId))
   const rows: ViewAsRow[] = [
-    ...dealers.map((d) => ({
-      key: d.key,
-      name: d.company || d.name,
-      contact: d.company ? d.name : null,
-      email: d.email,
-      location: d.location,
-      customerId: d.key,
-      customerLegacyId: d.customer?.legacy_resource_id ?? null,
-      proUserId: d.proUserId,
-      portal: d.portal,
-      lastLoginAt: d.lastLoginAt,
-      statuses: d.statuses,
-      spent: d.spent,
-    })),
+    ...contractors
+      .filter((d) => d.proUserId || d.primaryCustomerEmail)
+      .map((d) => ({
+        key: d.id,
+        name: d.name,
+        contact: d.contact,
+        email: d.email ?? d.primaryCustomerEmail,
+        location: placeLabel(d) || '—',
+        customerId: d.primaryCustomerId,
+        customerLegacyId: d.primaryCustomerLegacyId,
+        proUserId: d.proUserId,
+        portal: d.portal,
+        lastLoginAt: d.lastLoginAt,
+        statuses: d.statuses,
+        spent: d.lifetime,
+      })),
     ...accounts
-      .filter((a) => !onRoster.has(a.id))
+      .filter((a) => !ofContractors.has(a.id))
       .map((a) => ({
         key: a.id,
         name: a.business_name || a.name,

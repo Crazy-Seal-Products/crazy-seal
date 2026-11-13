@@ -161,40 +161,50 @@ function sumInto(acc: Record<string, number>, values: Record<string, number>) {
   for (const [k, v] of Object.entries(values)) acc[k] = (acc[k] ?? 0) + Number(v ?? 0)
 }
 
-export function getMarketingReport(range: RangeKey) {
+/** Daily's charts show this many days, ending on the picked day. */
+export const DAILY_TREND_DAYS = 14
+
+/** `day` picks the day for the Daily range (default today). */
+export function getMarketingReport(range: RangeKey, day?: string) {
   const today = dayKey(new Date())
-  return memo(`marketing:${range}:${today}`, 5 * 60_000, async () => {
+  const win = windowFor(range, null, day)
+  const daily = range === 'day'
+  return memo(`marketing:${range}:${win.from}:${today}`, 5 * 60_000, async () => {
     const preset = RANGES.find((r) => r.key === range)!
-    const win = windowFor(range, null)
     const from = range === 'all' ? null : win.from
     const prevFrom = preset.days ? shiftDay(win.from, -preset.days) : null
+    const trendFrom = shiftDay(win.to, -(DAILY_TREND_DAYS - 1))
 
-    const { data, error } = await createAdminClient().rpc('admin_marketing_report', {
-      p_from: from,
-      p_to: win.to,
-      p_prev_from: prevFrom,
-    })
+    const db = createAdminClient()
+    const [{ data, error }, trend] = await Promise.all([
+      db.rpc('admin_marketing_report', { p_from: from, p_to: win.to, p_prev_from: prevFrom }),
+      // One day is one column, so Daily charts the two weeks ending on it instead.
+      daily ? db.rpc('admin_marketing_report', { p_from: trendFrom, p_to: win.to, p_prev_from: null }) : null,
+    ])
     if (error) throw new Error(`admin_marketing_report: ${error.message}`)
+    if (trend?.error) throw new Error(`admin_marketing_report: ${trend.error.message}`)
     const raw = data as RawReport
+    const charted = (trend?.data as RawReport | undefined) ?? raw
 
     const trackingDay = raw.tracking_since ? dayKey(raw.tracking_since) : win.to
-    const seriesFrom = from && from > trackingDay ? from : trackingDay
-    const days = Math.round((Date.parse(win.to) - Date.parse(seriesFrom)) / 86_400_000) + 1
+    const chartStart = daily ? trendFrom : from
+    const seriesFrom = chartStart && chartStart > trackingDay ? chartStart : trackingDay
+    const days = daily ? 1 : Math.round((Date.parse(win.to) - Date.parse(seriesFrom)) / 86_400_000) + 1
     // Only compare when the earlier period is fully inside the tracking.
     const prev = prevFrom && prevFrom >= trackingDay ? raw.prev : null
 
     // Visits and leads per day/week, zero-filled across the range.
-    const bucket: Bucket = days <= 92 ? 'day' : 'week'
+    const bucket: Bucket = daily || days <= 92 ? 'day' : 'week'
     const points = new Map<string, MarketingPoint>()
     for (let day = seriesFrom; day <= win.to; day = shiftDay(day, 1)) {
       const key = bucketKey(day, bucket)
       if (!points.has(key)) points.set(key, { key, visits: 0, leads: 0 })
     }
-    for (const d of raw.daily) {
+    for (const d of charted.daily) {
       const p = points.get(bucketKey(d.day, bucket))
       if (p) p.visits += d.visits
     }
-    for (const d of raw.daily_leads) {
+    for (const d of charted.daily_leads) {
       const p = points.get(bucketKey(d.day, bucket))
       if (p) p.leads += d.leads
     }
@@ -251,7 +261,9 @@ export function getMarketingReport(range: RangeKey) {
 
     return {
       range,
-      window: { from: seriesFrom, to: win.to, days },
+      window: daily ? { from: win.from, to: win.to, days: 1 } : { from: seriesFrom, to: win.to, days },
+      /** First and last day of the charts (the two weeks ending on the day, for Daily). */
+      chart: { from: seriesFrom, to: win.to },
       trackingSince: raw.tracking_since,
       bucket,
       series: [...points.values()].sort((a, b) => a.key.localeCompare(b.key)),

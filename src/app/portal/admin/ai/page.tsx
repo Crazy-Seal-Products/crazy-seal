@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
-import { ago, dateTime, num, pct } from '@/lib/portal/admin/format'
+import { ago, dateTime, dayKey, dayStartIso, num, pct } from '@/lib/portal/admin/format'
 import { pageNum, pick, type SearchParams } from '@/lib/portal/admin/params'
+import { parseDay, periodLabel, shiftDay } from '@/lib/portal/admin/sales'
+import { RangePicker } from '@/components/portal/admin/RangePicker'
 import { assistantSettings } from '@/lib/ai/config'
 import { isAssistantConfigured } from '@/lib/ai/chat'
-import { aiMetrics, causeBreakdown, knowledgeOverview, listEvalCases, listReviewers, openTicketCount, recentConversations } from '@/lib/support/admin'
+import { aiMetrics, causeBreakdown, knowledgeOverview, lastDays, type Span, listEvalCases, listReviewers, openTicketCount, recentConversations } from '@/lib/support/admin'
 import { addKnowledgeNote, refreshKnowledge, saveEvalCase, setEvalCaseActive, setKnowledgeNoteActive, updateKnowledgeNote } from '@/lib/support/actions'
 import { TICKET_CAUSES } from '@/lib/support/tickets'
 import { ActionButton } from '@/components/portal/admin/controls'
@@ -33,6 +35,7 @@ export const metadata: Metadata = { title: 'AI review' }
 
 const BASE = '/portal/admin/ai/'
 const PERIODS = [
+  { key: '1', label: 'Daily' },
   { key: '7', label: '7 days' },
   { key: '30', label: '30 days' },
   { key: '90', label: '90 days' },
@@ -59,6 +62,7 @@ export default async function AiReviewPage({ searchParams }: { searchParams: Sea
   const sp = await searchParams
   const tab = pick(sp.tab, TABS, 'overview')
   const period = pick(sp.days, PERIODS, '30')
+  const day = period === '1' ? parseDay(sp.day) ?? dayKey(new Date()) : dayKey(new Date())
   const assistant = pick(sp.assistant, ASSISTANTS, 'all')
   const page = pageNum(sp.page)
   const params = { tab: tab === 'overview' ? undefined : tab, days: period === '30' ? undefined : period, assistant: assistant === 'all' ? undefined : assistant }
@@ -71,11 +75,18 @@ export default async function AiReviewPage({ searchParams }: { searchParams: Sea
       >
         <Toolbar>
           <Segmented options={TABS} value={tab} param="tab" base={BASE} params={params} />
-          {tab === 'overview' && <Segmented options={PERIODS} value={period} param="days" base={BASE} params={params} />}
+          {tab === 'overview' && (
+            <RangePicker options={PERIODS} value={period} param="days" dailyKey="1" day={day} today={dayKey(new Date())} base={BASE} params={params} />
+          )}
           {tab === 'chats' && <Segmented options={ASSISTANTS} value={assistant} param="assistant" base={BASE} params={params} />}
         </Toolbar>
       </PageHeader>
-      {tab === 'overview' && <Overview days={Number(period)} />}
+      {tab === 'overview' && (
+        <Overview
+          span={period === '1' ? { since: dayStartIso(day), until: dayStartIso(shiftDay(day, 1)) } : lastDays(Number(period))}
+          label={period === '1' ? periodLabel('day', { from: day }) : `last ${period} days`}
+        />
+      )}
       {tab === 'knowledge' && <Knowledge />}
       {tab === 'tests' && <Tests />}
       {tab === 'chats' && <Chats assistant={assistant} page={page} params={params} />}
@@ -83,8 +94,8 @@ export default async function AiReviewPage({ searchParams }: { searchParams: Sea
   )
 }
 
-async function Overview({ days }: { days: number }) {
-  const [m, open, causes, reviewers] = await Promise.all([aiMetrics(days), openTicketCount(), causeBreakdown(days), listReviewers()])
+async function Overview({ span, label }: { span: Span; label: string }) {
+  const [m, open, causes, reviewers] = await Promise.all([aiMetrics(span), openTicketCount(), causeBreakdown(span), listReviewers()])
   if (m.missing) {
     return (
       <Panel>
@@ -96,7 +107,7 @@ async function Overview({ days }: { days: number }) {
   return (
     <div className="grid gap-2">
       <StatGrid>
-        <Stat hero label="Customer chats" value={num(m.per.customer.conversations)} sub={`last ${days} days`} />
+        <Stat hero label="Customer chats" value={num(m.per.customer.conversations)} sub={label} />
         <Stat label="Flag rate" value={m.flagRate == null ? '—' : pct(m.flagRate, 1)} sub={`${num(m.autoFlags)} auto-flagged`} tone="dealers" upIsGood={false} />
         <Stat label="Hand-off rate" value={m.handoffRate == null ? '—' : pct(m.handoffRate, 1)} sub={`${num(m.handoffs)} asked for a person`} tone="dealers" upIsGood={false} />
         <Stat label="Open tickets" value={num(open)} sub="all queues" tone="info" />
@@ -145,7 +156,7 @@ async function Overview({ days }: { days: number }) {
       </Panel>
 
       <div className="grid gap-2 lg:grid-cols-2">
-        <Panel title="Why things went wrong" meta={`tickets with a cause, last ${days} days`}>
+        <Panel title="Why things went wrong" meta={`tickets with a cause · ${label}`}>
           {causes.length ? (
             <KV rows={causes.map((c) => [causeLabel(c.cause), num(c.count)] as [string, string])} />
           ) : (

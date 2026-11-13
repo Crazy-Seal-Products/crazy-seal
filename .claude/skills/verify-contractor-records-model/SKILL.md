@@ -1,6 +1,6 @@
 ---
 name: verify-contractor-records-model
-description: Recheck the TLA+ model of contractor records (the dealer-list import, the admin's add and edit, and the public pages at /contractor/<page address>, including old addresses that redirect) after a change to them. Use when a change touches scripts/import-contractors.mjs, src/lib/portal/admin/contractor-actions.ts, src/lib/contractors/slug.ts, getPublicContractor or currentAddressFor in src/lib/contractors/data.ts, src/app/contractor/[slug]/page.tsx, or the contractors and contractor_redirects tables (supabase/migrations/021_contractors.sql, 023_contractor_fixes.sql).
+description: Recheck the TLA+ model of contractor records (the dealer-list import, the admin's add and edit, and the public pages at /contractor/<page address>, including old addresses that redirect) after a change to them. Use when a change touches scripts/import-contractors.mjs, src/lib/portal/admin/contractor-actions.ts, src/lib/contractors/slug.ts, getPublicContractor or currentAddressFor in src/lib/contractors/data.ts, src/app/contractor/[slug]/page.tsx, the Shopify sync that consolidates the dealer roster into contractors (src/lib/contractors/shopify-sync.ts, shopify-match.ts), or the contractors and contractor_redirects tables (supabase/migrations/021_contractors.sql, 023_contractor_fixes.sql, 026_contractor_shopify_links.sql).
 ---
 
 # Verify the contractor records model
@@ -30,6 +30,8 @@ Last confirmed against the uncommitted working tree on 2026-11-10, after the fix
 | `Fixed` actions | the code now (see `Import`, `AdminRenames` and `Opens` above). Two refinements the model's two rows don't exercise: the email link skips a row whose key another sheet row has (one email listed in two states keeps two pages), and a row whose name and state match a listed contractor is held like a same-company one (a dealer with no company under a new email) |
 
 The model leaves out: more than two rows or two imports, hidden contractors, fields other than the phone, two admins saving at once (the unique index on `slug` catches a clash within `contractors`; a clash between a new address and a just-made redirect isn't caught by the database), and the import's name-based key for rows with no email.
+
+It also leaves out the Shopify sync (`src/lib/contractors/shopify-sync.ts`, rules in `shopify-match.ts`, migration `026_contractor_shopify_links.sql`), added 2026-11-13 when the Shopify dealer roster was consolidated into contractors. Why the rules still hold, checked by reading the code rather than by TLC: the sync only adds `shopify_customer_ids` links and hidden rows (`source = 'shopify'`, no `import_key`, empty `edited_fields`). It never edits a listed field or an address, so `AdminEditsStick` and `SharedLinksKeepWorking` are untouched. It adds a row only for a Shopify dealer who matches no contractor by email, phone, company or name, and gives it `uniqueSlug` over current and redirecting addresses, so `AddressesUnique` holds. A later import treats a sync row like one an admin added: same email links it, same company or name and state holds the sheet row. That keeps `OnePagePerDealer`, with the same gap the model already accepts for hand-added rows under a different email. If the sync starts editing fields or listing rows, add it to the model as its own action.
 
 ## Check a change
 

@@ -2,6 +2,8 @@ import type { ContractorBrand } from './theme'
 
 export type Segment = 'rv' | 'commercial'
 export type ServiceMode = 'shop' | 'mobile' | 'both'
+/** Where a contractor came from: the dealer-list import, an admin, or the Shopify dealer roster (the Shopify sync). */
+export type ContractorSource = 'list' | 'admin' | 'shopify'
 
 export const SEGMENT_LABEL: Record<Segment, string> = { rv: 'RV', commercial: 'Commercial' }
 
@@ -37,6 +39,11 @@ export interface ContractorRow {
   tagline: string | null
   is_listed: boolean
   import_key: string | null
+  /** The Shopify customers who are this contractor (supabase/migrations/026_contractor_shopify_links.sql). */
+  shopify_customer_ids: string[]
+  /** Customers an admin unlinked: the Shopify sync leaves them off this contractor. */
+  unlinked_customer_ids: string[]
+  source: ContractorSource
   created_at: string
   updated_at: string
 }
@@ -75,7 +82,12 @@ export interface AdminContractor extends PublicContractor {
   zip: string | null
   notes: string | null
   isListed: boolean
+  createdAt: string
   updatedAt: string
+  shopifyCustomerIds: string[]
+  unlinkedCustomerIds: string[]
+  /** On the dealer list (it has an import key), else where an admin or the sync added them from. */
+  origin: ContractorSource
 }
 
 export function contactName(c: Pick<ContractorRow, 'first_name' | 'goes_by' | 'last_name'>): string {

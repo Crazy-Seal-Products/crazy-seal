@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { adminCan, requirePortalAdmin } from '@/lib/portal/admin/auth'
-import { adMoney, getGoogleReviews, getMarketingReport, getMetaAds } from '@/lib/portal/admin/marketing'
-import { parseRange, RANGES } from '@/lib/portal/admin/sales'
-import { dateLong, dateShort, dayLabel, money0, num, pct, STORE_TZ } from '@/lib/portal/admin/format'
+import { adMoney, DAILY_TREND_DAYS, getGoogleReviews, getMarketingReport, getMetaAds } from '@/lib/portal/admin/marketing'
+import { compareLabel, parseDay, parseRange, periodLabel, RANGES } from '@/lib/portal/admin/sales'
+import { dateLong, dateShort, dayKey, dayLabel, money0, num, pct, STORE_TZ } from '@/lib/portal/admin/format'
+import { RangePicker } from '@/components/portal/admin/RangePicker'
 import type { SearchParams } from '@/lib/portal/admin/params'
 import {
   Badge,
@@ -13,7 +14,6 @@ import {
   KV,
   PageHeader,
   Panel,
-  Segmented,
   Stat,
   StatGrid,
   Table,
@@ -58,8 +58,14 @@ function Stars({ value }: { value: number }) {
 
 export default async function AdminMarketingPage({ searchParams }: { searchParams: SearchParams }) {
   await requirePortalAdmin('marketing')
-  const range = parseRange((await searchParams).range)
-  const [r, reviews, canWarranties] = await Promise.all([getMarketingReport(range), getGoogleReviews(), adminCan('warranties')])
+  const sp = await searchParams
+  const range = parseRange(sp.range)
+  const daily = range === 'day'
+  const [r, reviews, canWarranties] = await Promise.all([
+    getMarketingReport(range, daily ? parseDay(sp.day) : undefined),
+    getGoogleReviews(),
+    adminCan('warranties'),
+  ])
   const ads = await getMetaAds(r)
   const adsOn = ads.status === 'ok'
   const spend0 = adMoney(ads.status === 'ok' ? ads.account.currency : 'USD', 0)
@@ -68,10 +74,12 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
   const p = r.prev
   const c = r.customers
   const w = r.warranty
-  const rangeLabel = RANGES.find((x) => x.key === range)!.label
-  const vs = p ? `vs prior ${r.window.days} days` : undefined
+  const rangeLabel = periodLabel(range, r.window)
+  // "Thu, Nov 12" keeps its capitals mid-sentence; "30 days" and "today" don't need them.
+  const rangeLower = daily && !/^(Today|Yesterday)$/.test(rangeLabel) ? rangeLabel : rangeLabel.toLowerCase()
+  const vs = p ? compareLabel(range, r.window) : undefined
   const tick = (key: string) => (r.bucket === 'day' ? dayLabel(key) : `Wk ${dayLabel(key)}`)
-  const per = r.bucket === 'day' ? 'Daily' : 'Weekly'
+  const per = daily ? `${DAILY_TREND_DAYS} days to ${dayLabel(r.window.to)}` : r.bucket === 'day' ? 'Daily' : 'Weekly'
 
   return (
     <>
@@ -79,16 +87,28 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
         title="Marketing performance"
         description={
           <>
-            {rangeLabel} · {dateLong(`${r.window.from}T12:00:00Z`)} – {dateLong(`${r.window.to}T12:00:00Z`)}
+            {daily
+              ? `${/^(Today|Yesterday)$/.test(rangeLabel) ? `${rangeLabel} · ` : ''}${dateLong(`${r.window.from}T12:00:00Z`)}`
+              : `${rangeLabel} · ${dateLong(`${r.window.from}T12:00:00Z`)} – ${dateLong(`${r.window.to}T12:00:00Z`)}`}
             {r.trackingSince && <span className="text-adm-faint"> · site visit tracking since {dateLong(r.trackingSince)}</span>}
           </>
         }
-        actions={<Segmented options={RANGES} value={range} param="range" base={BASE} params={{}} />}
+        actions={
+          <RangePicker
+            options={RANGES}
+            value={range}
+            day={r.window.from}
+            today={dayKey(new Date())}
+            min={r.trackingSince ? dayKey(r.trackingSince) : null}
+            base={BASE}
+            params={{}}
+          />
+        }
       />
 
       {/* Eight tiles with Meta connected, so four to a row. */}
       <StatGrid className={adsOn ? 'md:grid-cols-4 xl:grid-cols-4' : undefined}>
-        <Stat hero label="Site visits" value={num(t.visits)} delta={p ? delta(t.visits, p.visits) : null} deltaLabel={vs} sub={`${num(r.window.days)} days`} />
+        <Stat hero label="Site visits" value={num(t.visits)} delta={p ? delta(t.visits, p.visits) : null} deltaLabel={vs} sub={daily ? rangeLabel : `${num(r.window.days)} days`} />
         <Stat label="Visits from paid ads" value={num(t.paidVisits)} sub={`${pct(ratio(t.paidVisits, t.visits))} of visits`} />
         <Stat label="Leads" value={num(t.leads)} delta={p ? delta(t.leads, p.leads) : null} deltaLabel={vs} sub={`${num(t.leadsTracked)} with a tracked visit`} />
         <Stat label="Lead rate" value={pct(t.leadRate, 2)} delta={p ? delta(t.leadRate, p.leadRate) : null} deltaLabel={vs} sub="leads per visit" />
@@ -108,7 +128,7 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
             />
           </>
         )}
-        <Stat label="Email subscribers" value={num(c.email_subscribed)} sub={`+${num(c.new_email_subscribers)} opted in · ${rangeLabel.toLowerCase()}`} tone="info" />
+        <Stat label="Email subscribers" value={num(c.email_subscribed)} sub={`+${num(c.new_email_subscribers)} opted in · ${rangeLower}`} tone="info" />
         <Stat
           label="Google rating"
           value={reviews ? `${reviews.rating.toFixed(1)} ★` : '—'}
@@ -413,7 +433,7 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
           )}
         </Panel>
 
-        <Panel title="Discount codes" meta={`orders placed with a code · ${rangeLabel.toLowerCase()}`}>
+        <Panel title="Discount codes" meta={`orders placed with a code · ${rangeLower}`}>
           {r.codes.length ? (
             <Table>
               <THead>
@@ -450,8 +470,8 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
               ['Customers', num(c.total)],
               ['Email subscribers', `${num(c.email_subscribed)} · ${share(c.email_subscribed, c.total)}`],
               ['SMS subscribers', `${num(c.sms_subscribed)} · ${share(c.sms_subscribed, c.total)}`],
-              [`New customers · ${rangeLabel.toLowerCase()}`, num(c.new_customers)],
-              [`New email opt-ins · ${rangeLabel.toLowerCase()}`, num(c.new_email_subscribers)],
+              [`New customers · ${rangeLower}`, num(c.new_customers)],
+              [`New email opt-ins · ${rangeLower}`, num(c.new_email_subscribers)],
             ]}
           />
         </Panel>
@@ -461,7 +481,7 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
             rows={[
               ['Google', reviews ? <><Stars value={reviews.rating} /> {reviews.rating.toFixed(1)} · {num(reviews.count)} reviews</> : 'Feed unavailable'],
               [
-                `Warranty ratings · ${rangeLabel.toLowerCase()}`,
+                `Warranty ratings · ${rangeLower}`,
                 w.rated ? <><Stars value={w.avg_rating ?? 0} /> {Number(w.avg_rating ?? 0).toFixed(2)} · {num(w.rated)} rated</> : 'None yet',
               ],
               [

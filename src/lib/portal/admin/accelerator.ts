@@ -14,7 +14,7 @@ import {
 } from '@/lib/portal/modules'
 
 /**
- * Admin side of the Accelerator Program (Dealers → Accelerator Program):
+ * Admin side of the Accelerator Program (Contractors → Accelerator Program):
  * loading, seeding, and turning the editor's form state into stored rows.
  * Writes live in accelerator-actions.ts.
  */

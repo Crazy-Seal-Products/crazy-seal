@@ -84,7 +84,7 @@ function typeMatches(row: AdminUserRow, type: string) {
   return row.type === type
 }
 
-const ROLE_TONE = { developer: 'gold', admin: 'good', staff: 'info', sales_rep: 'info' } as const
+const ROLE_TONE = { developer: 'gold', admin: 'good', staff: 'info', sales_rep: 'neutral' } as const
 
 export default async function AdminUsersPage({ searchParams }: { searchParams: SearchParams }) {
   const me = await requirePortalAdmin('users')

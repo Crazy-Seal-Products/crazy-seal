@@ -88,7 +88,11 @@ function toAdmin(r: ContractorRow, point: ZipPoint | null): AdminContractor {
     zip: r.zip,
     notes: r.notes,
     isListed: r.is_listed,
+    createdAt: r.created_at,
     updatedAt: r.updated_at,
+    shopifyCustomerIds: r.shopify_customer_ids ?? [],
+    unlinkedCustomerIds: r.unlinked_customer_ids ?? [],
+    origin: r.import_key ? 'list' : (r.source ?? 'admin'),
   }
 }
 
