@@ -251,6 +251,8 @@ const ACCESS_TEXT: Record<string, string> = {
   permissions: 'Permission matrix changed',
   password_changed: 'Changed their own password',
   profile_updated: 'Changed their own name',
+  password_setup_sent: 'Emailed a set-password link',
+  password_set_link: 'Set their password from the emailed link',
   sales_rep_link: 'Sales rep link changed',
 }
 

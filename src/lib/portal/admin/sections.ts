@@ -103,14 +103,18 @@ export function isSection(value: string): value is AdminSection {
 /** The Sales group: what a Sales rep starts with. */
 const SALES_SECTIONS: readonly AdminSection[] = ADMIN_SECTIONS.filter((s) => s.group === 'Sales').map((s) => s.key)
 
+/** The support queue (Support inbox and AI review): Developers only for now, until it's ready for Admins. */
+const SUPPORT_QUEUE: readonly AdminSection[] = ['support', 'ai_review']
+
 /**
- * Out of the box: Developers and Admins get every section (Developers
- * always; a Developer can narrow Admins on Users & roles), Staff everything
- * but Users & roles and the support queue, and Sales reps the Sales group.
+ * Out of the box: Developers get every section, always. Admins get every
+ * section but the support queue (a Developer can change that on Users &
+ * roles), Staff everything but Users & roles and the support queue, and
+ * Sales reps the Sales group.
  */
 export const DEFAULT_PERMISSIONS: Record<AdminRole, readonly AdminSection[]> = {
   developer: SECTION_KEYS,
-  admin: SECTION_KEYS,
-  staff: SECTION_KEYS.filter((s) => s !== 'users' && s !== 'support' && s !== 'ai_review'),
+  admin: SECTION_KEYS.filter((s) => !SUPPORT_QUEUE.includes(s)),
+  staff: SECTION_KEYS.filter((s) => s !== 'users' && !SUPPORT_QUEUE.includes(s)),
   sales_rep: SALES_SECTIONS,
 }
