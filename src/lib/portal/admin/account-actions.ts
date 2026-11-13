@@ -50,8 +50,14 @@ export async function getMyAccount(): Promise<MyAccount> {
 /**
  * Changes the signed-in admin's staff password after checking the current
  * one. The check runs on a throwaway client so the browser's session is left
- * alone, and that check session is closed again straight after. Every other
- * device signed in to this staff login is signed out; this browser stays in.
+ * alone, and that check session is closed again straight after.
+ *
+ * Signed in with a staff login, the password changes through this browser's
+ * own Supabase session, which Supabase keeps signed in. If Supabase asks for
+ * a fresh sign-in first (its secure password change setting), or the admin is
+ * on the backup login, it changes through the admin API instead, which ends
+ * every Supabase session for the login. Either way the reply says whether this
+ * browser is still signed in, from Supabase rather than assumed.
  */
 export async function changeMyPassword(_prev: ActionResult | null, form: FormData): Promise<ActionResult> {
   const admin = await requirePortalAdmin()
@@ -75,22 +81,34 @@ export async function changeMyPassword(_prev: ActionResult | null, form: FormDat
   if (error || data.user?.id !== staff.auth_user_id) return { ok: false, error: 'Your current password isn’t right.' }
   await check.auth.signOut({ scope: 'local' })
 
-  const { error: updateError } = await createAdminClient().auth.admin.updateUserById(staff.auth_user_id, { password: next })
-  if (updateError) return { ok: false, error: updateError.message || 'Could not change your password.' }
-
-  // Only a staff (Supabase) session has other sessions to end; a backup login has none here.
-  let othersSignedOut = false
+  let via: 'session' | 'admin' = 'admin'
   if (admin.via === 'staff') {
-    const { error: signOutError } = await (await createSessionClient()).auth.signOut({ scope: 'others' })
-    othersSignedOut = !signOutError
+    const { error: userError } = await (await createSessionClient()).auth.updateUser({ password: next })
+    if (!userError) via = 'session'
+    else if (userError.code === 'same_password') return { ok: false, error: 'Pick a new password that’s different from the current one.' }
+    else if (userError.code === 'weak_password') return { ok: false, error: userError.message || 'That password is too weak.' }
+    else if (userError.code !== 'reauthentication_needed' && userError.code !== 'reauthentication_not_valid') {
+      return { ok: false, error: userError.message || 'Could not change your password.' }
+    }
   }
-  await logAccess(admin, 'password_changed', staff.email.toLowerCase(), { othersSignedOut })
+  if (via === 'admin') {
+    const { error: updateError } = await createAdminClient().auth.admin.updateUserById(staff.auth_user_id, { password: next })
+    if (updateError) return { ok: false, error: updateError.message || 'Could not change your password.' }
+  }
+
+  // A backup login's own cookie isn't a Supabase session, so it stays signed in either way.
+  let signedOutHere = false
+  if (admin.via === 'staff') {
+    const { data: still, error: stillError } = await (await createSessionClient()).auth.getUser()
+    signedOutHere = Boolean(stillError) || still.user?.id !== staff.auth_user_id
+  }
+  await logAccess(admin, 'password_changed', staff.email.toLowerCase(), { via, signedOutHere })
+  if (admin.via === 'env') return { ok: true, message: 'Staff password changed. Your backup login (set in Vercel) keeps its own password.' }
   return {
     ok: true,
-    message:
-      admin.via === 'env'
-        ? 'Staff password changed. Your backup login (set in Vercel) keeps its own password.'
-        : 'Password changed. Any other devices were signed out. Use the new one next time you sign in.',
+    message: signedOutHere
+      ? 'Password changed. Sign in again with your new password.'
+      : 'Password changed. You’re still signed in here; use the new one next time you sign in.',
   }
 }
 
