@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useActionState, useEffect, useState } from 'react'
-import { Check, ChevronDown, Copy, Eye, EyeOff, KeyRound, Loader2, LogIn, LogOut, UserRound } from 'lucide-react'
+import { Check, ChevronDown, Copy, Eye, EyeOff, KeyRound, Loader2, LogIn, LogOut, PenLine, UserRound } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { initials } from '@/lib/portal/accounts'
 import { adminSignOut } from '@/lib/portal/actions'
-import { changeMyPassword, getMyAccount, type MyAccount } from '@/lib/portal/admin/account-actions'
+import { changeMyPassword, getMyAccount, updateMyName, type MyAccount } from '@/lib/portal/admin/account-actions'
 import { ago, dateShort } from '@/lib/portal/admin/format'
 import { roleLabel } from '@/lib/portal/admin/sections'
 import type { ActionResult } from './controls'
@@ -93,6 +93,13 @@ function AccountModal({ admin, onClose }: { admin: Who; onClose: () => void }) {
       </dl>
 
       <div className="mx-4 mt-3 space-y-2">
+        <Section icon={PenLine} title="Your name">
+          {account && !account.hasStaffLogin ? (
+            <p className="text-[12px] leading-relaxed text-adm-text">You signed in with the backup login, whose name is set in Vercel.</p>
+          ) : (
+            <NameForm name={admin.name} />
+          )}
+        </Section>
         <Section icon={KeyRound} title="Password" defaultOpen>
           <p className="text-[12px] leading-relaxed text-adm-muted">
             Passwords are stored encrypted, so nobody can see them, admins included. If you’ve forgotten yours, sign out and use
@@ -174,6 +181,29 @@ function Section({
       </summary>
       <div className="border-t border-adm-line-soft px-3 py-2.5">{children}</div>
     </details>
+  )
+}
+
+function NameForm({ name }: { name: string }) {
+  const [state, action, pending] = useActionState<ActionResult | null, FormData>(updateMyName, null)
+  return (
+    <form action={action} className="grid gap-2">
+      <label className={labelCls}>
+        <span>Name shown in the admin and the access log</span>
+        <input name="name" defaultValue={name} required maxLength={80} autoComplete="name" className={inputCls} />
+      </label>
+      <div className="flex flex-wrap items-center gap-2 pt-0.5">
+        <button type="submit" disabled={pending} className={BUTTON.gold}>
+          {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+          Save name
+        </button>
+        {state && (
+          <p role={state.ok ? 'status' : 'alert'} className={twMerge('text-[12px]', state.ok ? 'text-adm-green' : 'text-adm-red')}>
+            {state.ok ? state.message : state.error}
+          </p>
+        )}
+      </div>
+    </form>
   )
 }
 

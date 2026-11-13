@@ -249,6 +249,8 @@ const ACCESS_TEXT: Record<string, string> = {
   staff_added: 'Added to staff',
   password_reset: 'Temporary password set',
   permissions: 'Permission matrix changed',
+  password_changed: 'Changed their own password',
+  profile_updated: 'Changed their own name',
 }
 
 export function accessText(row: AccessLogRow): string {

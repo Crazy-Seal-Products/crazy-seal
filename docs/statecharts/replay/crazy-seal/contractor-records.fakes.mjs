@@ -9,7 +9,7 @@ export const createClient = () => globalThis.__cs.db
 
 // src/lib/portal/admin/auth.ts
 export async function requirePortalAdmin() {
-  return { email: 'admin@example.com', name: 'Admin', role: 'super_admin', via: 'env' }
+  return { email: 'admin@example.com', name: 'Admin', role: 'developer', via: 'env' }
 }
 
 // next/cache

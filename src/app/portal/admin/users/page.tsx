@@ -84,7 +84,7 @@ function typeMatches(row: AdminUserRow, type: string) {
   return row.type === type
 }
 
-const ROLE_TONE = { super_admin: 'gold', admin: 'good', staff: 'info' } as const
+const ROLE_TONE = { developer: 'gold', admin: 'good', staff: 'info', sales_rep: 'info' } as const
 
 export default async function AdminUsersPage({ searchParams }: { searchParams: SearchParams }) {
   const me = await requirePortalAdmin('users')
@@ -112,7 +112,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: S
       >
         <StatGrid className="xl:grid-cols-5">
           <Stat label="Admin staff" value={num(staff.filter((s) => s.status !== 'off').length)} sub={`${num(staff.length)} on the list`} tone="info" />
-          <Stat label="Super admins" value={num(roleCounts.super_admin)} sub={`${num(roleCounts.admin)} admins · ${num(roleCounts.staff)} staff`} tone="dealers" />
+          <Stat label="Developers" value={num(roleCounts.developer)} sub={`${num(roleCounts.admin)} admins · ${num(roleCounts.staff)} staff · ${num(roleCounts.sales_rep)} sales reps`} tone="dealers" />
           <Stat label="Pro Hub dealers" value={num(dealers.length)} sub={`${num(dealers.filter((d) => d.status === 'active').length)} active · 30 days`} tone="dealers" />
           <Stat label="Signed in · 7 days" value={num(signedInWithin(users, 7))} sub="all account types" />
           <Stat label="Never signed in" value={num(users.filter((u) => u.status === 'never').length)} sub="invited or added" tone="info" />
@@ -502,7 +502,7 @@ async function RolesTab({ me, counts, users }: { me: PortalAdmin; counts: Record
             })}
           </ul>
           <p className="border-t border-adm-line px-3 py-2 text-[11px] leading-snug text-adm-muted">
-            Super admins manage everyone and this matrix. Admins can add Staff and switch their access off and on. Nobody can change their own role, and the last active Super admin can’t be removed.
+            Developers manage everyone and this matrix. Admins can add Staff and Sales reps and switch their access off and on. Nobody can change their own role, and the last active Developer can’t be removed.
           </p>
         </Panel>
 

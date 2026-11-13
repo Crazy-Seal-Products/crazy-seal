@@ -14,7 +14,7 @@ import {
 
 /**
  * Which admin sections each role can open. The code defaults in ./sections
- * apply until a Super admin changes a box on the Users & roles page; each
+ * apply until a Developer changes a box on the Users & roles page; each
  * change is a row in `admin_role_permissions`. The top role is never read
  * from the table.
  */

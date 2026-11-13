@@ -10,7 +10,7 @@ import type { ActionResult } from './controls'
 import { BUTTON } from './styles'
 import { BORDER } from './ui'
 
-/** Roles × sections. Super admins always have every box; only they can change the rest. */
+/** Roles × sections. Developers always have every box; only they can change the rest. */
 export function PermissionMatrix({ matrix, canEdit, counts }: { matrix: Matrix; canEdit: boolean; counts: Record<string, number> }) {
   const [state, action, pending] = useActionState<ActionResult | null, FormData>(saveRolePermissions, null)
   const [dirty, setDirty] = useState(false)
@@ -58,7 +58,7 @@ export function PermissionMatrix({ matrix, canEdit, counts }: { matrix: Matrix; 
                     return (
                       <td key={r.key} className="px-3 py-1.5 text-center">
                         {top ? (
-                          <span title="Super admins always have every section" className="inline-flex text-adm-faint">
+                          <span title="Developers always have every section" className="inline-flex text-adm-faint">
                             <Lock className="h-3.5 w-3.5" aria-label={`${r.label} always has ${s.label}`} />
                           </span>
                         ) : (
@@ -91,7 +91,7 @@ export function PermissionMatrix({ matrix, canEdit, counts }: { matrix: Matrix; 
             {!dirty && state && <span className={twMerge('text-[11.5px]', state.ok ? 'text-adm-green' : 'text-adm-red')}>{state.ok ? state.message ?? 'Saved' : state.error}</span>}
           </>
         ) : (
-          <span className="text-[11.5px] text-adm-muted">Only a Super admin can change these.</span>
+          <span className="text-[11.5px] text-adm-muted">Only a Developer can change these.</span>
         )}
         <span className="ml-auto text-[11px] text-adm-faint">Takes effect within a minute. Hidden sections also disappear from the sidebar.</span>
       </div>

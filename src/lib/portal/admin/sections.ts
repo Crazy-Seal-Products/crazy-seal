@@ -3,27 +3,38 @@
  * Plain module (no server imports) so the sidebar can use it too. The
  * server-side checks live in ./permissions.
  *
- * Roles are the `staff.role` values. The top role always has every section,
- * so nobody can lock everyone out of the admin.
+ * Roles are the `staff.role` values. The top role (Developer) always has
+ * every section, so nobody can lock everyone out of the admin.
  */
 
 export const ADMIN_ROLES = [
-  { key: 'super_admin', label: 'Super admin', description: 'Everything, including roles and the permission matrix.' },
-  { key: 'admin', label: 'Admin', description: 'The sections ticked below. Can manage Staff-role users.' },
+  { key: 'developer', label: 'Developer', description: 'Everything, including roles and the permission matrix.' },
+  { key: 'admin', label: 'Admin', description: 'The sections ticked below. Can manage Staff and Sales reps.' },
   { key: 'staff', label: 'Staff', description: 'The sections ticked below. Can’t manage other users.' },
+  { key: 'sales_rep', label: 'Sales rep', description: 'The sales sections ticked below. Can’t manage other users.' },
 ] as const
 
 export type AdminRole = (typeof ADMIN_ROLES)[number]['key']
 
-export const TOP_ROLE: AdminRole = 'super_admin'
+export const TOP_ROLE: AdminRole = 'developer'
+
+/**
+ * Old `staff.role` values still read as their new role, so rows written
+ * before 028_developer_role.sql ran keep their access.
+ */
+const LEGACY_ROLES: Record<string, AdminRole> = { super_admin: 'developer' }
+
+/** Every `staff.role` value that means the top role, for queries that count it. */
+export const TOP_ROLE_VALUES: string[] = [TOP_ROLE, ...Object.keys(LEGACY_ROLES).filter((k) => LEGACY_ROLES[k] === TOP_ROLE)]
 
 /** Roles the matrix can change (the top role is fixed to everything). */
 export const EDITABLE_ROLES = ADMIN_ROLES.filter((r) => r.key !== TOP_ROLE).map((r) => r.key)
 
-const RANK: Record<AdminRole, number> = { super_admin: 3, admin: 2, staff: 1 }
+const RANK: Record<AdminRole, number> = { developer: 3, admin: 2, staff: 1, sales_rep: 1 }
 
 export function roleLabel(role: string | null | undefined): string {
-  return ADMIN_ROLES.find((r) => r.key === role)?.label ?? 'Staff'
+  const key = LEGACY_ROLES[(role ?? '').trim().toLowerCase()] ?? role
+  return ADMIN_ROLES.find((r) => r.key === key)?.label ?? 'Staff'
 }
 
 /**
@@ -34,10 +45,11 @@ export function roleLabel(role: string | null | undefined): string {
 export function normalizeRole(raw: string | null | undefined): AdminRole {
   const value = (raw ?? '').trim().toLowerCase()
   if (!value) return 'admin'
+  if (LEGACY_ROLES[value]) return LEGACY_ROLES[value]
   return ADMIN_ROLES.some((r) => r.key === value) ? (value as AdminRole) : 'staff'
 }
 
-/** Who may change whom: the top role manages everyone, Admins manage Staff, Staff manage nobody. */
+/** Who may change whom: the top role manages everyone, Admins manage Staff and Sales reps, they manage nobody. */
 export function canManageRole(actor: AdminRole, target: AdminRole): boolean {
   if (actor === TOP_ROLE) return true
   return actor === 'admin' && RANK[target] < RANK.admin
@@ -88,15 +100,17 @@ export function isSection(value: string): value is AdminSection {
   return (SECTION_KEYS as readonly string[]).includes(value)
 }
 
-/**
- * The support queue and AI review start with Super admins only (they own
- * the queue); a Super admin can open them to other roles on Users & roles.
- */
-const SUPER_ADMIN_ONLY: readonly AdminSection[] = ['support', 'ai_review']
+/** The Sales group: what a Sales rep starts with. */
+const SALES_SECTIONS: readonly AdminSection[] = ADMIN_SECTIONS.filter((s) => s.group === 'Sales').map((s) => s.key)
 
-/** Out of the box: Admins get everything else, Staff everything else but Users & roles. */
+/**
+ * Out of the box: Developers and Admins get every section (Developers
+ * always; a Developer can narrow Admins on Users & roles), Staff everything
+ * but Users & roles and the support queue, and Sales reps the Sales group.
+ */
 export const DEFAULT_PERMISSIONS: Record<AdminRole, readonly AdminSection[]> = {
-  super_admin: SECTION_KEYS,
-  admin: SECTION_KEYS.filter((s) => !SUPER_ADMIN_ONLY.includes(s)),
-  staff: SECTION_KEYS.filter((s) => s !== 'users' && !SUPER_ADMIN_ONLY.includes(s)),
+  developer: SECTION_KEYS,
+  admin: SECTION_KEYS,
+  staff: SECTION_KEYS.filter((s) => s !== 'users' && s !== 'support' && s !== 'ai_review'),
+  sales_rep: SALES_SECTIONS,
 }

@@ -14,6 +14,8 @@ export type AccessAction =
   | 'staff_added'
   | 'password_reset'
   | 'permissions'
+  | 'password_changed'
+  | 'profile_updated'
 
 export interface AccessLogRow {
   id: string

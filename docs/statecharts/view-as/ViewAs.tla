@@ -72,7 +72,7 @@ SignsOut ==
     /\ signedIn' = "none"
     /\ UNCHANGED <<aAllowed, cookieBy, target, ruthAccount, changedInView, staleBase, leaked, exited, logOpen>>
 
-\* A Super admin unticks View as for A's role.
+\* A Developer unticks View as for A's role.
 LosesViewAs ==
     /\ aAllowed
     /\ aAllowed' = FALSE

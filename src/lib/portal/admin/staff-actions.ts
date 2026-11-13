@@ -17,6 +17,7 @@ import {
   normalizeRole,
   roleLabel,
   TOP_ROLE,
+  TOP_ROLE_VALUES,
   type AdminRole,
 } from './sections'
 import { findAuthUserIdByEmail } from './users'
@@ -24,9 +25,9 @@ import { findAuthUserIdByEmail } from './users'
 /**
  * Staff access, from the Users & roles page. Who may do what (see
  * ./sections): the top role manages everyone and edits the permission
- * matrix; Admins manage Staff-role users only; nobody changes their own role
- * or switches off their own access; and there's always one active Super
- * admin left.
+ * matrix; Admins manage Staff and Sales reps only; nobody changes their own
+ * role or switches off their own access; and there's always one active
+ * Developer left.
  */
 
 export type AddStaffState = { ok: true; message: string; tempPassword?: string } | { ok: false; error: string } | null
@@ -51,7 +52,7 @@ function done(message: string): ActionResult {
 
 /** Null when the actor may change this staff member; otherwise why not. */
 function cantManage(actor: PortalAdmin, row: StaffRow): string | null {
-  if (row.email.toLowerCase() === actor.email) return 'You can’t change your own access. Ask another Super admin.'
+  if (row.email.toLowerCase() === actor.email) return 'You can’t change your own access. Ask another Developer.'
   if (!canManageRole(actor.role, normalizeRole(row.role))) return `${roleLabel(actor.role)}s can’t change a ${roleLabel(row.role)}.`
   return null
 }
@@ -61,7 +62,7 @@ async function activeTopRoleCount(): Promise<number> {
     .from('staff')
     .select('id', { count: 'exact', head: true })
     .eq('is_active', true)
-    .eq('role', TOP_ROLE)
+    .in('role', TOP_ROLE_VALUES)
   return count ?? 0
 }
 
@@ -83,7 +84,7 @@ export async function addStaff(_prev: AddStaffState, formData: FormData): Promis
   const { data: existing } = await db.from('staff').select('*').eq('email', email).maybeSingle()
   const row = existing as StaffRow | null
   if (row?.is_active) return { ok: false, error: `${email} is already on the staff list.` }
-  if (row && !canManageRole(admin.role, normalizeRole(row.role))) return { ok: false, error: `${email} was a ${roleLabel(row.role)}; ask a Super admin to bring them back.` }
+  if (row && !canManageRole(admin.role, normalizeRole(row.role))) return { ok: false, error: `${email} was a ${roleLabel(row.role)}; ask a Developer to bring them back.` }
 
   let authUserId = row?.auth_user_id ?? (await findAuthUserIdByEmail(email))
   let password: string | undefined
@@ -125,7 +126,7 @@ export async function setStaffActive(id: string, active: boolean): Promise<Actio
       .select('id', { count: 'exact', head: true })
       .eq('is_active', true)
     if ((count ?? 0) <= 1) return { ok: false, error: 'Keep at least one active admin.' }
-    if (normalizeRole(row.role) === TOP_ROLE && (await activeTopRoleCount()) <= 1) return { ok: false, error: 'Keep at least one active Super admin.' }
+    if (normalizeRole(row.role) === TOP_ROLE && (await activeTopRoleCount()) <= 1) return { ok: false, error: 'Keep at least one active Developer.' }
   }
 
   const { error } = await createAdminClient().from('staff').update({ is_active: active }).eq('id', id)
@@ -146,7 +147,7 @@ export async function setStaffRole(id: string, next: string): Promise<ActionResu
   if (to !== next) return { ok: false, error: 'Unknown role' }
   if (from === to) return { ok: true }
   if (!assignableRoles(admin.role).includes(to)) return { ok: false, error: `${roleLabel(admin.role)}s can’t make someone a ${roleLabel(to)}.` }
-  if (from === TOP_ROLE && row.is_active && (await activeTopRoleCount()) <= 1) return { ok: false, error: 'Keep at least one active Super admin.' }
+  if (from === TOP_ROLE && row.is_active && (await activeTopRoleCount()) <= 1) return { ok: false, error: 'Keep at least one active Developer.' }
 
   const { error } = await createAdminClient().from('staff').update({ role: to }).eq('id', id)
   if (error) return { ok: false, error: 'Could not save' }
@@ -174,7 +175,7 @@ export async function resetStaffPassword(id: string): Promise<ActionResult> {
  */
 export async function saveRolePermissions(_prev: ActionResult | null, form: FormData): Promise<ActionResult> {
   const admin = await requirePortalAdmin('users')
-  if (!canEditPermissions(admin.role)) return { ok: false, error: 'Only a Super admin can change permissions.' }
+  if (!canEditPermissions(admin.role)) return { ok: false, error: 'Only a Developer can change permissions.' }
 
   const before = await getPermissionMatrix()
   const rows: { role: AdminRole; section: string; allowed: boolean; updated_by: string; updated_at: string }[] = []

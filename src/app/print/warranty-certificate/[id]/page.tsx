@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ShieldCheck } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { getAdminSections } from '@/lib/portal/admin/auth'
 import { verifyCertificateToken } from '@/lib/warranty/certificate'
 import { PrintButton } from './PrintButton'
 
@@ -35,21 +35,13 @@ interface Registration {
   created_at: string
 }
 
-/** Staff logged into the admin panel may view any certificate without a token. */
+/**
+ * Admins whose role can open Warranties may view any certificate without a
+ * token. Other roles (Sales reps, say) need the customer's link like anyone else.
+ */
 async function isStaffRequest(): Promise<boolean> {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return false
-
-    const admin = createAdminClient()
-    const { data: staff } = await admin
-      .from('staff')
-      .select('id')
-      .eq('auth_user_id', user.id)
-      .eq('is_active', true)
-      .single()
-    return Boolean(staff)
+    return (await getAdminSections()).includes('warranties')
   } catch {
     return false
   }
