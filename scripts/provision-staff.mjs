@@ -75,6 +75,7 @@ async function findAuthUser(email) {
 
 function otherSignInMethods(user) {
   if (user.phone) return 'a phone number'
+  if (user.new_email || user.new_phone) return 'a pending email or phone change'
   if ((user.identities ?? []).some((identity) => identity.provider !== 'email')) return 'a linked sign-in provider'
   if ((user.factors ?? []).length > 0) return 'two-factor authentication'
   return null
@@ -93,9 +94,17 @@ async function revokeAllSessions(email) {
   if (error) throw new Error(`sign-out: ${error.message}`)
 }
 
+/** Higher means more access. An old super_admin counts as Developer. */
+const RANK = { hiring: 0, sales_rep: 1, staff: 2, admin: 3, developer: 4, super_admin: 4 }
+const rankOf = (role) => RANK[(role ?? '').trim().toLowerCase() || 'admin'] ?? RANK.staff
+
 async function provision(person) {
   const notes = []
   let user = await findAuthUser(person.email)
+
+  const { data: rows, error: readError } = await db.from('staff').select('id, name, email, role, is_active, auth_user_id').ilike('email', person.email)
+  if (readError) return `FAIL ${person.email}: could not read staff (${readError.message})`
+  const row = (rows ?? []).find((r) => (r.email ?? '').toLowerCase() === person.email)
 
   if (!user) {
     if (!person.password) return `SKIP ${person.email}: no login yet and no password given`
@@ -111,22 +120,27 @@ async function provision(person) {
       if (error || !data.user) return `FAIL ${person.email}: could not create login (${error?.message})`
       user = data.user
     }
-  } else if (person.password) {
+  } else {
     const other = otherSignInMethods(user)
     if (other) return `SKIP ${person.email}: login also signs in with ${other}; set it up by hand`
-    notes.push('password replaced, signed out everywhere')
-    if (apply) {
-      const { error } = await db.auth.admin.updateUserById(user.id, { password: person.password, email_confirm: true })
-      if (error) return `FAIL ${person.email}: could not set password (${error.message})`
-      await revokeAllSessions(person.email)
+    // Someone else may know an existing login's password (a self sign-up, say), so it only
+    // gets new or more access together with a new password.
+    const grants = !row || !row.is_active || rankOf(person.role) > rankOf(row.role)
+    if (!person.password && grants) {
+      return `SKIP ${person.email}: has a login already; give a new password to grant or raise its access`
     }
-  } else {
-    notes.push('login kept as is')
+    if (person.password) {
+      notes.push('password replaced, signed out everywhere')
+      if (apply) {
+        const { error } = await db.auth.admin.updateUserById(user.id, { password: person.password, email_confirm: true })
+        if (error) return `FAIL ${person.email}: could not set password (${error.message})`
+        await revokeAllSessions(person.email)
+      }
+    } else {
+      notes.push('login kept as is')
+    }
   }
 
-  const { data: rows, error: readError } = await db.from('staff').select('id, name, email, role, is_active, auth_user_id').ilike('email', person.email)
-  if (readError) return `FAIL ${person.email}: could not read staff (${readError.message})`
-  const row = (rows ?? []).find((r) => (r.email ?? '').toLowerCase() === person.email)
   const authUserId = user?.id ?? null
 
   if (row) {

@@ -83,7 +83,7 @@ export async function changeMyPassword(_prev: ActionResult | null, form: FormDat
 
   let via: 'session' | 'admin' = 'admin'
   if (admin.via === 'staff') {
-    const { error: userError } = await (await createSessionClient()).auth.updateUser({ password: next })
+    const { error: userError } = await (await createSessionClient()).auth.updateUser({ password: next, current_password: current })
     if (!userError) via = 'session'
     else if (userError.code === 'same_password') return { ok: false, error: 'Pick a new password that’s different from the current one.' }
     else if (userError.code === 'weak_password') return { ok: false, error: userError.message || 'That password is too weak.' }
