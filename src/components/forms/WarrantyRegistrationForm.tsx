@@ -1,11 +1,21 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send, Star } from 'lucide-react'
 import { Input, Textarea, Select } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
-import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
+import { PhotoUploadField, startUpload, uploadPhotos } from '@/components/forms/PhotoUploadField'
+import {
+  applyFields,
+  clearDraft,
+  loadDraft,
+  loadDraftFiles,
+  readFields,
+  saveDraft,
+  saveDraftFiles,
+  type FieldValues,
+} from '@/lib/form-draft'
 import { FormTurnstile, ensureTurnstileToken, TURNSTILE_RETRY_MESSAGE } from '@/components/forms/FormTurnstile'
 import {
   FieldLabel,
@@ -20,6 +30,22 @@ import {
   fieldClass,
 } from '@/components/forms/form-ui'
 
+const DRAFT_KEY = 'warranty-registration'
+
+type WarrantyDraft = { fields: FieldValues; projectType: string; installType: string; rating: number }
+type WarrantyPhotoDraft = { before: File[]; after: File[] }
+
+function initialDraft(): WarrantyDraft | null {
+  if (typeof window === 'undefined') return null
+  const draft = loadDraft<WarrantyDraft>(DRAFT_KEY)
+  // Ignore drafts with nothing typed (the photo-consent box starts ticked).
+  const hasContent =
+    draft &&
+    (draft.projectType || draft.installType || draft.rating ||
+      Object.entries(draft.fields).some(([k, v]) => k !== 'photo_display_consent' && v))
+  return hasContent ? draft : null
+}
+
 const RV_LENGTHS = Array.from({ length: 38 }, (_, i) => `${i + 8}`)
 
 export function WarrantyRegistrationForm() {
@@ -29,13 +55,71 @@ export function WarrantyRegistrationForm() {
   const [error, setError] = useState<string | null>(null)
   const [beforeFiles, setBeforeFiles] = useState<File[]>([])
   const [afterFiles, setAfterFiles] = useState<File[]>([])
-  const [projectType, setProjectType] = useState('')
-  const [installType, setInstallType] = useState('')
-  const [rating, setRating] = useState(0)
+  // Restore any saved progress (see src/lib/form-draft.ts).
+  const [draft] = useState(initialDraft)
+  const [projectType, setProjectType] = useState(draft?.projectType ?? '')
+  const [installType, setInstallType] = useState(draft?.installType ?? '')
+  const [rating, setRating] = useState(draft?.rating ?? 0)
+  const [restored, setRestored] = useState(Boolean(draft))
+  const [photosLoaded, setPhotosLoaded] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const pendingFields = useRef<FieldValues | null>(draft ? { ...draft.fields } : null)
   const [hoverRating, setHoverRating] = useState(0)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
   const { visitorId, sessionId, trackEvent } = useTracking()
+
+  // Fill saved values into fields as they render (some only appear after a
+  // restored choice, like RV length or the contractor fields).
+  useEffect(() => {
+    if (formRef.current && pendingFields.current) applyFields(formRef.current, pendingFields.current)
+  })
+
+  useEffect(() => {
+    let cancelled = false
+    loadDraftFiles<WarrantyPhotoDraft>(DRAFT_KEY).then((photos) => {
+      if (cancelled) return
+      if (photos && (photos.before.length || photos.after.length)) {
+        setBeforeFiles(photos.before)
+        setAfterFiles(photos.after)
+        setRestored(true)
+        // Resume uploading in the background, as when they were first picked.
+        ;[...photos.before, ...photos.after].forEach((f) => startUpload(f, 'warranty').catch(() => {}))
+      }
+      setPhotosLoaded(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  function saveProgress() {
+    if (!formRef.current || submitted) return
+    const fields = { ...readFields(formRef.current, ['website']), ...(pendingFields.current ?? {}) }
+    saveDraft<WarrantyDraft>(DRAFT_KEY, { fields, projectType, installType, rating })
+  }
+
+  // Choices held in state change outside the form's input events.
+  useEffect(() => {
+    if (formRef.current) saveProgress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectType, installType, rating])
+
+  useEffect(() => {
+    if (photosLoaded && !submitted) saveDraftFiles<WarrantyPhotoDraft>(DRAFT_KEY, { before: beforeFiles, after: afterFiles })
+  }, [beforeFiles, afterFiles, photosLoaded, submitted])
+
+  function startOver() {
+    pendingFields.current = null
+    formRef.current?.reset()
+    setProjectType('')
+    setInstallType('')
+    setRating(0)
+    setBeforeFiles([])
+    setAfterFiles([])
+    setRestored(false)
+    clearDraft(DRAFT_KEY)
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -116,6 +200,7 @@ export function WarrantyRegistrationForm() {
       const data = await res.json().catch(() => null)
       if (data?.certificate_url) setCertificateUrl(data.certificate_url)
 
+      await clearDraft(DRAFT_KEY)
       await trackEvent('warranty_registered', { order_number: body.order_number })
       setSubmitted(true)
     } catch (err) {
@@ -153,8 +238,16 @@ export function WarrantyRegistrationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form ref={formRef} onSubmit={handleSubmit} onInput={saveProgress} onChange={saveProgress}>
       <div className="space-y-3.5">
+        {restored && (
+          <p className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-accent/[0.08] px-3 py-2 text-sm text-gray-700 ring-1 ring-accent/20">
+            <span>We saved your progress on this device.</span>
+            <button type="button" onClick={startOver} className="font-semibold text-primary underline underline-offset-2">
+              Start over
+            </button>
+          </p>
+        )}
         <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden">
           <label htmlFor="wr-website">Website</label>
           <input type="text" id="wr-website" name="website" tabIndex={-1} autoComplete="off" />
