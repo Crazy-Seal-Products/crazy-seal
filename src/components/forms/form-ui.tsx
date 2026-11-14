@@ -223,8 +223,15 @@ export function FormStepper({
   )
 }
 
+/** True when the stepper's last step is on screen, or when there is no stepper. */
+export function useFinalStepVisible(): boolean {
+  const stepper = useContext(StepperCtx)
+  return !stepper || stepper.active === stepper.total
+}
+
 /** Content shown only on the stepper's last step (Turnstile, errors, submit).
- *  Stays mounted on earlier steps so Turnstile can verify in the background. */
+ *  Stays mounted on earlier steps so typed state is kept. FormTurnstile waits
+ *  until this step is visible before rendering (see FormTurnstile). */
 export function FormStepperFinal({ children }: { children: React.ReactNode }) {
   const stepper = useContext(StepperCtx)
   const isLast = !stepper || stepper.active === stepper.total
