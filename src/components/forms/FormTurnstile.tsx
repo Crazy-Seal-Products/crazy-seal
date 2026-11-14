@@ -45,3 +45,28 @@ export function FormTurnstile({
     />
   )
 }
+
+export const TURNSTILE_RETRY_MESSAGE =
+  "We couldn't verify your connection. Check your signal and tap submit again."
+
+/**
+ * Returns a usable Turnstile token. The widget is often invisible, so when its
+ * token has expired or errored (common on mobile after switching to the camera
+ * or on a weak signal) the user has no way to fix it. Here we reset the widget
+ * and wait for a fresh token instead of failing straight away.
+ */
+export async function ensureTurnstileToken(
+  ref: React.RefObject<TurnstileInstance | null>,
+  current: string | null,
+  timeoutMs = 20000,
+): Promise<string | null> {
+  const widget = ref.current
+  if (!widget) return current
+  if (current && !widget.isExpired()) return current
+  try {
+    widget.reset()
+    return await widget.getResponsePromise(timeoutMs)
+  } catch {
+    return null
+  }
+}

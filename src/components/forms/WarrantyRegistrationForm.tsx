@@ -6,7 +6,7 @@ import { Send, Star } from 'lucide-react'
 import { Input, Textarea, Select } from '@/lib/design-system'
 import { useTracking } from '@/components/tracking'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
-import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import { FormTurnstile, ensureTurnstileToken, TURNSTILE_RETRY_MESSAGE } from '@/components/forms/FormTurnstile'
 import {
   FieldLabel,
   FormError,
@@ -45,8 +45,10 @@ export function WarrantyRegistrationForm() {
     try {
       const formData = new FormData(e.currentTarget)
 
-      if (!turnstileToken) {
-        setError('Please complete the verification check.')
+      const verifiedToken = await ensureTurnstileToken(turnstileRef, turnstileToken)
+
+      if (!verifiedToken) {
+        setError(TURNSTILE_RETRY_MESSAGE)
         return
       }
 
@@ -96,7 +98,7 @@ export function WarrantyRegistrationForm() {
         photo_display_consent: formData.get('photo_display_consent') === 'on',
         visitor_id: visitorId,
         session_id: sessionId,
-        turnstile_token: turnstileToken,
+        turnstile_token: verifiedToken,
         website: formData.get('website') as string,
       }
 

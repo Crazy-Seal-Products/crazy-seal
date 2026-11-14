@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Button, Input, LinkButton, Select, Textarea } from '@/lib/design-system'
-import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import { FormTurnstile, ensureTurnstileToken, TURNSTILE_RETRY_MESSAGE } from '@/components/forms/FormTurnstile'
 import { FormError, SubmitButton, SuccessCheck, fieldClass } from '@/components/forms/form-ui'
 import { FormModal } from '@/components/forms/FormModal'
 import { GlowOrb, EASE_OUT_EXPO } from '@/components/motion'
@@ -580,8 +580,10 @@ function KitLeadForm({ summary, onSubmitted }: { summary: () => string; onSubmit
     setSubmitting(true)
     setError(null)
 
-    if (!turnstileToken) {
-      setError('Please complete the verification check.')
+    const verifiedToken = await ensureTurnstileToken(turnstileRef, turnstileToken)
+
+    if (!verifiedToken) {
+      setError(TURNSTILE_RETRY_MESSAGE)
       setSubmitting(false)
       return
     }
@@ -607,7 +609,7 @@ function KitLeadForm({ summary, onSubmitted }: { summary: () => string; onSubmit
           source_page: 'kit-builder',
           visitor_id: visitorId,
           session_id: sessionId,
-          turnstile_token: turnstileToken,
+          turnstile_token: verifiedToken,
           event_id: eventId,
         }),
       })

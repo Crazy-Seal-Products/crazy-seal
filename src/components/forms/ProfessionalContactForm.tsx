@@ -9,7 +9,7 @@ import { useTracking } from '@/components/tracking'
 import { trackMetaEvent, generateEventId, pushDedupEventId } from '@/lib/tracking/meta-pixel'
 import { reportLeadToGoogleAds } from '@/lib/tracking/google-ads'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
-import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import { FormTurnstile, ensureTurnstileToken, TURNSTILE_RETRY_MESSAGE } from '@/components/forms/FormTurnstile'
 import {
   FieldLabel,
   FormError,
@@ -48,8 +48,10 @@ export function ProfessionalContactForm({
 
     const formData = new FormData(e.currentTarget)
 
-    if (!turnstileToken) {
-      setError('Please complete the verification check.')
+    const verifiedToken = await ensureTurnstileToken(turnstileRef, turnstileToken)
+
+    if (!verifiedToken) {
+      setError(TURNSTILE_RETRY_MESSAGE)
       setSubmitting(false)
       return
     }
@@ -77,7 +79,7 @@ export function ProfessionalContactForm({
       source_page: sourcePage,
       visitor_id: visitorId,
       session_id: sessionId,
-      turnstile_token: turnstileToken,
+      turnstile_token: verifiedToken,
       website: formData.get('website') as string,
       event_id: eventId,
     }

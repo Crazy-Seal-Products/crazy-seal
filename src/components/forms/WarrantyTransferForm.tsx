@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react'
 import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send } from 'lucide-react'
 import { Input, Textarea } from '@/lib/design-system'
-import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import { FormTurnstile, ensureTurnstileToken, TURNSTILE_RETRY_MESSAGE } from '@/components/forms/FormTurnstile'
 import {
   FieldLabel,
   FormError,
@@ -28,8 +28,10 @@ export function WarrantyTransferForm() {
 
     const formData = new FormData(e.currentTarget)
 
-    if (!turnstileToken) {
-      setError('Please complete the verification check.')
+    const verifiedToken = await ensureTurnstileToken(turnstileRef, turnstileToken)
+
+    if (!verifiedToken) {
+      setError(TURNSTILE_RETRY_MESSAGE)
       setSubmitting(false)
       return
     }
@@ -44,7 +46,7 @@ export function WarrantyTransferForm() {
       original_owner_email: formData.get('original_owner_email') as string,
       order_number: formData.get('order_number') as string,
       transfer_notes: formData.get('transfer_notes') as string,
-      turnstile_token: turnstileToken,
+      turnstile_token: verifiedToken,
       website: formData.get('website') as string,
     }
 

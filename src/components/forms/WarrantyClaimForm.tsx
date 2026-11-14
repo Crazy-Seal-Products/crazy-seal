@@ -5,7 +5,7 @@ import { type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Send } from 'lucide-react'
 import { Input, Textarea } from '@/lib/design-system'
 import { PhotoUploadField, uploadPhotos } from '@/components/forms/PhotoUploadField'
-import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import { FormTurnstile, ensureTurnstileToken, TURNSTILE_RETRY_MESSAGE } from '@/components/forms/FormTurnstile'
 import {
   FieldLabel,
   FormError,
@@ -30,8 +30,10 @@ export function WarrantyClaimForm() {
 
     const formData = new FormData(e.currentTarget)
 
-    if (!turnstileToken) {
-      setError('Please complete the verification check.')
+    const verifiedToken = await ensureTurnstileToken(turnstileRef, turnstileToken)
+
+    if (!verifiedToken) {
+      setError(TURNSTILE_RETRY_MESSAGE)
       setSubmitting(false)
       return
     }
@@ -51,7 +53,7 @@ export function WarrantyClaimForm() {
         order_number: formData.get('order_number') as string,
         failure_description: formData.get('failure_description') as string,
         photo_urls,
-        turnstile_token: turnstileToken,
+        turnstile_token: verifiedToken,
         website: formData.get('website') as string,
       }
 
