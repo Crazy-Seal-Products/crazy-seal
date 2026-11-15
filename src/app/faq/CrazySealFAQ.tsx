@@ -3,7 +3,6 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronDown, Hammer, HelpCircle, Layers, ShieldCheck, Truck } from 'lucide-react'
-import { NEW_TPO_WHY } from '@/lib/warranty/new-tpo'
 
 interface FAQItem {
   id: string
@@ -73,12 +72,12 @@ const FAQ_ITEMS: FAQItem[] = [
         <Link href="/installation" className={linkClass}>
           Installation
         </Link>
-        . One exception: new TPO less than 1 year old is not a good fit. {NEW_TPO_WHY}{' '}
-        Applications over TPO less than 1 year old aren&apos;t covered by the{' '}
+        . The one exception is new TPO under 1 year old: its factory oils need to
+        weather off before Crazy Seal can bond (
         <Link href="/warranty#new-tpo" className={linkClass}>
-          warranty
+          why
         </Link>
-        .
+        ).
       </>
     ),
   },

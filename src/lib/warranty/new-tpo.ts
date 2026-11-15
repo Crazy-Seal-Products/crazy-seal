@@ -5,7 +5,8 @@
  * properly. Shared so the warranty page, the certificate, the registration
  * form and the FAQs all say the same thing.
  */
-export const NEW_TPO_TITLE = 'New TPO roofs (under 1 year old) are not a fit'
+/** The one-line version shown on pages (the reason sits behind "Why?"). */
+export const NEW_TPO_NOTE = 'Not for new TPO roofs under 1 year old, which aren’t covered by the warranty.'
 
 export const NEW_TPO_CLAUSE =
   'The Crazy Seal Roofing System is not suited to new TPO membrane less than 1 year old, and applications over TPO less than 1 year old are not covered by the warranty.'

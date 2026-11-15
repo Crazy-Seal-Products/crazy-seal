@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import {
-  AlertTriangle,
   ArrowRight,
   ArrowRightLeft,
   Camera,
@@ -15,7 +14,7 @@ import {
 } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { CtaSection } from '@/components/CtaSection'
-import { NEW_TPO_CLAUSE, NEW_TPO_TITLE, NEW_TPO_WHY } from '@/lib/warranty/new-tpo'
+import { NewTpoNote } from '@/components/system-pages/NewTpoNote'
 import { QuoteButton } from '@/components/QuoteButton'
 import { FormModalButton } from '@/components/forms/FormModalButton'
 import { CountUp, GlowOrb, Stagger, StaggerItem } from '@/components/motion'
@@ -263,22 +262,7 @@ export default function WarrantyPage() {
               )
             })}
           </Stagger>
-          <div
-            id="new-tpo"
-            className="mx-auto mt-8 flex max-w-3xl scroll-mt-24 items-start gap-4 rounded-2xl bg-amber-50 p-5 text-left ring-1 ring-amber-300/70"
-          >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-400/90 text-white">
-              <AlertTriangle className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="font-extrabold text-primary">{NEW_TPO_TITLE}</p>
-              <p className="mt-1 text-sm leading-relaxed text-gray-700">{NEW_TPO_CLAUSE}</p>
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                <span className="font-semibold text-primary">Why: </span>
-                {NEW_TPO_WHY}
-              </p>
-            </div>
-          </div>
+          <NewTpoNote id="new-tpo" className="mt-6" />
         </div>
       </Container>
 

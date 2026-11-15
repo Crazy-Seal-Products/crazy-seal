@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { AlertTriangle, Clock, FileText, Flag, Play, PlayCircle } from 'lucide-react'
-import { NEW_TPO_CLAUSE, NEW_TPO_TITLE, NEW_TPO_WHY } from '@/lib/warranty/new-tpo'
+import { Clock, FileText, Flag, Play, PlayCircle } from 'lucide-react'
+import { NewTpoNote } from '@/components/system-pages/NewTpoNote'
 import {
   Container,
   SectionHeading,
@@ -117,26 +117,12 @@ export default function MembraneRoofPage() {
         </HeroShell>
       </Container>
 
-      {/* ─── NEW TPO NOTICE ─── */}
-      <Container size="xl" className="sm:pt-4 md:pt-8">
-        <div className="mx-auto flex max-w-4xl items-start gap-4 rounded-2xl bg-amber-50 p-5 text-left ring-1 ring-amber-300/70">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-400/90 text-white">
-            <AlertTriangle className="h-5 w-5" />
-          </span>
-          <div>
-            <p className="font-extrabold text-primary">{NEW_TPO_TITLE}</p>
-            <p className="mt-1 text-sm leading-relaxed text-gray-700">
-              {NEW_TPO_WHY} {NEW_TPO_CLAUSE}
-            </p>
-          </div>
-        </div>
-      </Container>
-
       {/* ─── DOWNLOADABLE PDFS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-8">
         <div className={SECTION_WHITE}>
           <SectionHeading eyebrow="Free Downloads" heading="Downloadable PDF's" />
           <PdfCards pdfs={PDFS} />
+          <NewTpoNote className="mt-6" />
         </div>
       </Container>
 
