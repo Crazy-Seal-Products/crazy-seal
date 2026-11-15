@@ -4,6 +4,7 @@ import { ShieldCheck } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAdminSections } from '@/lib/portal/admin/auth'
 import { verifyCertificateToken } from '@/lib/warranty/certificate'
+import { NEW_TPO_CLAUSE } from '@/lib/warranty/new-tpo'
 import { PrintButton } from './PrintButton'
 
 export const dynamic = 'force-dynamic'
@@ -213,6 +214,7 @@ export default async function WarrantyCertificatePage({ params, searchParams }: 
               of purchase. This warranty is transferable — new owners may submit a transfer form at{' '}
               <span className="font-medium text-gray-700">crazyseal.com/warranty-transfer</span>.
             </p>
+            <p>{NEW_TPO_CLAUSE}</p>
             <p>
               Please refer to the warranty terms and conditions provided to you for detailed
               information regarding coverage, limitations, and the claims process. Claims may be

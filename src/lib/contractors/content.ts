@@ -1,4 +1,5 @@
 import type { Segment } from './types'
+import { NEW_TPO_SHORT } from '@/lib/warranty/new-tpo'
 
 /**
  * The copy every contractor page shares. It's Crazy Seal's own wording from
@@ -103,7 +104,7 @@ export const SEGMENT_COPY: Record<Segment, SegmentCopy> = {
     faq: (name) => [
       {
         q: 'What kinds of RV roofs does it go over?',
-        a: 'TPO, EPDM, rubber, vinyl, aluminum and fiberglass.',
+        a: `TPO, EPDM, rubber, vinyl, aluminum and fiberglass. ${NEW_TPO_SHORT}`,
       },
       { q: 'What’s the warranty?', a: 'The Crazy Seal RV Roof System is backed by a 50 year product warranty.' },
       ...sharedFaq(name),

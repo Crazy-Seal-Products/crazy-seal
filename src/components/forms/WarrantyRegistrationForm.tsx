@@ -448,7 +448,8 @@ export function WarrantyRegistrationForm() {
             />
             <span className="text-gray-600">
               I confirm that my application was installed according to the Crazy Seal
-              installation guidelines and I agree to the warranty terms and conditions. <span className="text-red-500">*</span>
+              installation guidelines, that it was not applied over TPO less than 1 year
+              old, and I agree to the warranty terms and conditions. <span className="text-red-500">*</span>
             </span>
           </label>
 
