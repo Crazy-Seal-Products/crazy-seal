@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ProAuthLayout, authInputClass, authPrimaryButtonClass } from '@/components/pro-hub/ProAuthLayout'
@@ -24,6 +24,7 @@ function ProLoginForm() {
   const [error, setError] = useState<string | null>(expired ? 'That sign-in link expired. Request a new one.' : null)
   const [loading, setLoading] = useState(false)
   const turnstile = useProTurnstile('pro-login-turnstile')
+  const honeypotRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch('/api/pro/me/').then((res) => {
@@ -78,7 +79,7 @@ function ProLoginForm() {
       const res = await fetch('/api/pro/auth/request/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, turnstileToken: human.token }),
+        body: JSON.stringify({ email, turnstileToken: human.token, website: honeypotRef.current?.value ?? '' }),
       })
       turnstile.reset()
       const data = await res.json().catch(() => null)
@@ -147,6 +148,10 @@ function ProLoginForm() {
               autoComplete="current-password"
               className={authInputClass}
             />
+          </div>
+          {/* Honeypot: hidden from people, filled in by bots (lib/pro/signup-guard). */}
+          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <input ref={honeypotRef} name="website" tabIndex={-1} autoComplete="off" />
           </div>
           {turnstile.widget}
           {error && (

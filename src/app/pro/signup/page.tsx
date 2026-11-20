@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ProAuthLayout, authInputClass, authPrimaryButtonClass } from '@/components/pro-hub/ProAuthLayout'
@@ -14,6 +14,7 @@ export default function ProSignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const turnstile = useProTurnstile('pro-signup-turnstile')
+  const honeypotRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch('/api/pro/me/').then((res) => {
@@ -34,7 +35,7 @@ export default function ProSignupPage() {
       const res = await fetch('/api/pro/auth/signup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, turnstileToken: human.token }),
+        body: JSON.stringify({ email, turnstileToken: human.token, website: honeypotRef.current?.value ?? '' }),
       })
       turnstile.reset()
       const data = await res.json().catch(() => null)
@@ -78,6 +79,10 @@ export default function ProSignupPage() {
               className={authInputClass}
               placeholder="you@shop.com"
             />
+          </div>
+          {/* Honeypot: hidden from people, filled in by bots (lib/pro/signup-guard). */}
+          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <input ref={honeypotRef} name="website" tabIndex={-1} autoComplete="off" />
           </div>
           {turnstile.widget}
           {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}

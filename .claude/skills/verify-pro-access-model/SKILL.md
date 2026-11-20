@@ -34,13 +34,15 @@ Outside the model, covered by the replays: customer lookups match emails exactly
 
 The model has one link, so from "both the stranger and the pro are signed in" it can't show a later reset; the reset from the first state covers that.
 
+Also outside the model: since branch `claude/pro-signup-guard` (Nov 20, 2026), sign-up and the sign-in link request first pass Turnstile (`passesTurnstile`, `src/lib/turnstile.ts`) and `screenProEmailForm` (`src/lib/pro/signup-guard.ts`: honeypot, per-IP limit), and a new account is recorded and maybe flagged by `recordSignup` (`src/lib/pro/signup-flags.ts`). Both only remove sign-ups or add review notes. Neither gives anyone a link, password or session, so `SignsUp` and `OwnerRequestsLink` still describe the code. `pro-signup-guard.test.mjs` replays them.
+
 ## Check a change
 
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code. `fixed.cfg` and `fixed-after-takeover.cfg` describe the code as it is; `before-fix.cfg` keeps `96e6068` for comparison.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), for example `statechart ProAccess.tla --config fixed.cfg --view view.mts --out <folder>`.
 4. Compare with the expected results, then copy the new `chart.mmd` and `report.md` into `charts/` as `<config>.mmd` and `<config>.report.md`, and render the SVGs with Pele.
-5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./register.mjs --test pro-access.test.mjs`. It runs the real sign-up, login, forgot, reset and callback routes, `consumeMagicLink`, `loadProContext` and `loadJobsForPro` against a fake database, a fake Shopify and a fake Gmail. All 8 tests pass on the branch; against `96e6068` the 7 that cover a bug fail and "an invited pro still signs in with an emailed link" passes.
+5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./register.mjs --test pro-access.test.mjs`. It runs the real sign-up, login, forgot, reset and callback routes, `consumeMagicLink`, `loadProContext` and `loadJobsForPro` against a fake database, a fake Shopify and a fake Gmail. All 8 tests pass on the branch; against `96e6068` the 7 that cover a bug fail and "an invited pro still signs in with an emailed link" passes. Also run `pro-signup-guard.test.mjs` (bot screening and flags, 12 tests).
 
 Expected results:
 

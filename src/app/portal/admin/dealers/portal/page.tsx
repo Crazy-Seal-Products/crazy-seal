@@ -5,6 +5,7 @@ import { getPortalAccounts } from '@/lib/portal/admin/dealers'
 import { ago, dateShort, money0, num } from '@/lib/portal/admin/format'
 import { ViewAsButton } from '@/components/portal/admin/ViewAsButton'
 import { ProInviteButton } from '@/components/portal/admin/ProInviteButton'
+import { FlaggedSignups } from '@/components/portal/admin/FlaggedSignups'
 import { BUTTON } from '@/components/portal/admin/styles'
 import {
   Badge,
@@ -50,6 +51,8 @@ export default async function AdminPortalAccountsPage() {
           <Stat label="Warranties filed" value={num(summary.warranties)} sub="by these accounts" tone="info" />
         </StatGrid>
       </PageHeader>
+
+      <FlaggedSignups accounts={rows} />
 
       <Panel title="Pro Hub accounts" meta="sorted by last sign-in" tone="dealers">
         {rows.length ? (
