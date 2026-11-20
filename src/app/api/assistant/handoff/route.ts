@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/gmail'
-import { assistantSettings } from '@/lib/ai/config'
+import { assistantOpen, assistantSettings } from '@/lib/ai/config'
 import { chatToken, passesHumanCheck, rateLimited, verifyChatToken } from '@/lib/ai/guard'
 import { createConversation, getConversation } from '@/lib/ai/store'
 import { createTicket, escapeHtml } from '@/lib/support/tickets'
@@ -10,6 +10,7 @@ import { createTicket, escapeHtml } from '@/lib/support/tickets'
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST(request: NextRequest) {
+  if (!assistantOpen('customer')) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (rateLimited(request, 'site-handoff', 5, 10 * 60_000)) {
     return NextResponse.json({ error: 'Please wait a few minutes before sending another request.' }, { status: 429 })
   }

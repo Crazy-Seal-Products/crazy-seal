@@ -17,6 +17,27 @@
 export type Assistant = 'customer' | 'dealer' | 'staff'
 export type Effort = 'low' | 'medium' | 'high'
 
+/**
+ * The assistants customers and dealers would talk to stay off until they're
+ * switched on in Vercel (then redeploy, since these are read at build time):
+ *
+ *   NEXT_PUBLIC_SITE_CHAT=on    the chat on crazyseal.com
+ *   NEXT_PUBLIC_DEALER_CHAT=on  the support agent in the Pro Hub
+ *
+ * The staff assistant in the Crazy Seal Admin is always on. Written out in
+ * full so Next can inline the values into browser code.
+ */
+export const ASSISTANT_SWITCHED_ON: Record<Assistant, boolean> = {
+  customer: process.env.NEXT_PUBLIC_SITE_CHAT === 'on',
+  dealer: process.env.NEXT_PUBLIC_DEALER_CHAT === 'on',
+  staff: true,
+}
+
+/** Whether an assistant takes messages. Local development takes them all, so they can still be worked on. */
+export function assistantOpen(assistant: Assistant): boolean {
+  return ASSISTANT_SWITCHED_ON[assistant] || process.env.NODE_ENV !== 'production'
+}
+
 /** Bump when a system prompt changes, so reviews can tell answers apart. */
 export const PROMPT_VERSION = '2026-11-09.1'
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getProUser } from '@/lib/pro/auth'
 import { isViewingAs, VIEW_AS_READ_ONLY } from '@/lib/pro/view-as'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { DEALER_CHAT_LIMIT } from '@/lib/ai/config'
+import { assistantOpen, DEALER_CHAT_LIMIT } from '@/lib/ai/config'
 import { isAssistantConfigured } from '@/lib/ai/chat'
 import { createTicket } from '@/lib/support/tickets'
 
@@ -31,7 +31,7 @@ export async function GET() {
     tickets: tickets.data ?? [],
     chatLimit: DEALER_CHAT_LIMIT,
     readOnly: await isViewingAs(),
-    assistantOn: isAssistantConfigured('dealer'),
+    assistantOn: assistantOpen('dealer') && isAssistantConfigured('dealer'),
   })
 }
 
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   if (await isViewingAs()) return NextResponse.json({ error: VIEW_AS_READ_ONLY }, { status: 403 })
 
   const body = (await request.json().catch(() => null)) as { kind?: string; subject?: string; body?: string } | null
-  const kind = body?.kind === 'feature_request' ? 'feature_request' : 'general_feedback'
+  const kind = body?.kind === 'feature_request' || body?.kind === 'dealer_support' ? body.kind : 'general_feedback'
   const text = body?.body?.trim().slice(0, 4000) ?? ''
   const subject = body?.subject?.trim().slice(0, 150) || text.split('\n')[0].slice(0, 100)
   if (!text) return NextResponse.json({ error: 'Write a few words first.' }, { status: 400 })

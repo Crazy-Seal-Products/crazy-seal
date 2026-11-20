@@ -1,7 +1,8 @@
 import { after, NextRequest, NextResponse } from 'next/server'
 import { getProUser } from '@/lib/pro/auth'
 import { isViewingAs, VIEW_AS_READ_ONLY } from '@/lib/pro/view-as'
-import { assistantSettings, MAX_USER_CHARS } from '@/lib/ai/config'
+import { assistantOpen, assistantSettings, MAX_USER_CHARS } from '@/lib/ai/config'
+import { SUPPORT_PHONE } from '@/lib/pro/config'
 import { chatResponse, titleFrom } from '@/lib/ai/chat'
 import { rateLimited } from '@/lib/ai/guard'
 import { createConversation, getConversation, pruneDealerChats } from '@/lib/ai/store'
@@ -15,6 +16,9 @@ export async function POST(request: NextRequest) {
   const user = await getProUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (await isViewingAs()) return NextResponse.json({ error: VIEW_AS_READ_ONLY }, { status: 403 })
+  if (!assistantOpen('dealer')) {
+    return NextResponse.json({ error: `The support agent isn’t switched on. Use “Ask the team”, or call ${SUPPORT_PHONE}.` }, { status: 403 })
+  }
   if (rateLimited(request, `pro-chat:${user.id}`, 30, 5 * 60_000)) {
     return NextResponse.json({ error: 'You’re sending messages too quickly. Please wait a minute.' }, { status: 429 })
   }

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Loader2, MessageCircle, RotateCcw, UserRound, X } from 'lucide-react'
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
 import { FormTurnstile } from '@/components/forms/FormTurnstile'
+import { ASSISTANT_SWITCHED_ON } from '@/lib/ai/config'
 import { ChatThread, type ChatMessage } from './ChatThread'
 
 /**
@@ -53,8 +54,9 @@ interface Reply {
 const PREVIEW_KEY = 'cs_site_chat_preview'
 
 /**
- * Shown to everyone when NEXT_PUBLIC_SITE_CHAT=on. Before that, open any
- * page with ?chat=on to try it in this browser (?chat=off hides it again).
+ * Shown to everyone when NEXT_PUBLIC_SITE_CHAT=on. Until then it's off on the
+ * live site, with no way around it; in local development, open any page with
+ * ?chat=on to try it (?chat=off hides it again).
  */
 // The widget only renders in the browser (loaded with ssr: false), so state
 // can start from browser storage directly.
@@ -79,7 +81,7 @@ function wasOpen(): boolean {
 }
 
 export function SiteChatGate() {
-  const [show] = useState(() => process.env.NEXT_PUBLIC_SITE_CHAT === 'on' || previewOn())
+  const [show] = useState(() => ASSISTANT_SWITCHED_ON.customer || (process.env.NODE_ENV !== 'production' && previewOn()))
   return show ? <SiteChatWidget /> : null
 }
 

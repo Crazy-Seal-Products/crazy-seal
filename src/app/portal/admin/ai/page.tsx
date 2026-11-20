@@ -4,7 +4,7 @@ import { ago, dateTime, dayKey, dayStartIso, num, pct } from '@/lib/portal/admin
 import { pageNum, pick, type SearchParams } from '@/lib/portal/admin/params'
 import { parseDay, periodLabel, shiftDay } from '@/lib/portal/admin/sales'
 import { RangePicker } from '@/components/portal/admin/RangePicker'
-import { assistantSettings } from '@/lib/ai/config'
+import { ASSISTANT_SWITCHED_ON, assistantSettings } from '@/lib/ai/config'
 import { isAssistantConfigured } from '@/lib/ai/chat'
 import { aiMetrics, causeBreakdown, knowledgeOverview, lastDays, type Span, listEvalCases, listReviewers, openTicketCount, recentConversations } from '@/lib/support/admin'
 import { addKnowledgeNote, refreshKnowledge, saveEvalCase, setEvalCaseActive, setKnowledgeNoteActive, updateKnowledgeNote } from '@/lib/support/actions'
@@ -138,6 +138,7 @@ async function Overview({ span, label }: { span: Span; label: string }) {
                   <Td>
                     <span className="text-adm-muted">{s.model} · {s.effort}</span>{' '}
                     {!isAssistantConfigured(a) && <Badge tone="bad">no API key</Badge>}
+                    {!ASSISTANT_SWITCHED_ON[a] && <Badge>switched off</Badge>}
                   </Td>
                   <Td align="right">{num(r.conversations)}</Td>
                   <Td align="right">{num(r.answers)}</Td>

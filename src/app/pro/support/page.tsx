@@ -5,12 +5,15 @@ import { useSearchParams } from 'next/navigation'
 import { Lightbulb, Loader2, MessageSquarePlus, MessagesSquare, Send, Trash2, LifeBuoy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SUPPORT_PHONE } from '@/lib/pro/config'
+import { assistantOpen } from '@/lib/ai/config'
 import { ChatThread, type ChatMessage } from '@/components/assistant/ChatThread'
 
 /**
- * The dealer's personal support tab: a support agent that talks them through
- * questions and checks their own orders and warranty jobs, their last 20
- * chats, and every request they've sent with the team's replies.
+ * The dealer's personal support tab: every request they've sent with the
+ * team's replies, and "Ask the team" to send one. When the support agent is
+ * switched on (NEXT_PUBLIC_DEALER_CHAT, see src/lib/ai/config.ts) it also has
+ * the agent, which talks them through questions and checks their own orders and
+ * warranty jobs, and their last 20 chats with it.
  */
 
 interface ChatRow {
@@ -70,11 +73,12 @@ function SupportTab() {
   const [tickets, setTickets] = useState<TicketRow[]>([])
   const [limit, setLimit] = useState(20)
   const [readOnly, setReadOnly] = useState(false)
-  const [assistantOn, setAssistantOn] = useState(true)
+  const [assistantOn, setAssistantOn] = useState(() => assistantOpen('dealer'))
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<View>(() => {
     const ticket = params.get('ticket')
-    return ticket ? { type: 'ticket', id: ticket } : { type: 'chat', id: null }
+    if (ticket) return { type: 'ticket', id: ticket }
+    return assistantOpen('dealer') ? { type: 'chat', id: null } : { type: 'feedback' }
   })
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatLoading, setChatLoading] = useState(false)
@@ -88,6 +92,8 @@ function SupportTab() {
     setLimit(data.chatLimit)
     setReadOnly(data.readOnly)
     setAssistantOn(data.assistantOn)
+    // Without the agent, an empty new chat has nothing to offer; open "Ask the team" instead.
+    if (!data.assistantOn) setView((v) => (v.type === 'chat' && v.id === null ? { type: 'feedback' } : v))
   }, [])
 
   useEffect(() => {
@@ -122,7 +128,7 @@ function SupportTab() {
   const disabledReason = readOnly
     ? 'You’re viewing this account as an admin, which is read-only.'
     : !assistantOn
-      ? `The support agent isn’t switched on yet. Use “Send feedback”, or call ${SUPPORT_PHONE}.`
+      ? `The support agent isn’t switched on yet. Use “Ask the team”, or call ${SUPPORT_PHONE}.`
       : null
 
   return (
@@ -132,23 +138,29 @@ function SupportTab() {
           <h1 className="flex items-center gap-2 text-2xl font-bold text-[#003365]">
             <LifeBuoy className="h-6 w-6" /> Support
           </h1>
-          <p className="mt-1 text-sm text-gray-500">Your support agent knows the products, your orders and your warranty jobs, and can bring in the team.</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {assistantOn
+              ? 'Your support agent knows the products, your orders and your warranty jobs, and can bring in the team.'
+              : 'Ask the team about a product, an order or a warranty job, or send feedback. Replies show up here and by email.'}
+          </p>
         </div>
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => openChat(null)}
-            className="flex items-center gap-1.5 rounded-lg bg-[#003365] px-3 py-2 text-sm font-semibold text-white hover:bg-[#002347]"
-          >
-            <MessageSquarePlus className="h-4 w-4" /> New chat
-          </button>
+          {assistantOn && (
+            <button
+              type="button"
+              onClick={() => openChat(null)}
+              className="flex items-center gap-1.5 rounded-lg bg-[#003365] px-3 py-2 text-sm font-semibold text-white hover:bg-[#002347]"
+            >
+              <MessageSquarePlus className="h-4 w-4" /> New chat
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setView({ type: 'feedback' })}
             disabled={readOnly}
             className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-[#003365] hover:bg-gray-50 disabled:opacity-50"
           >
-            <Lightbulb className="h-4 w-4" /> Send feedback
+            <Lightbulb className="h-4 w-4" /> Ask the team
           </button>
         </div>
       </div>
@@ -163,7 +175,9 @@ function SupportTab() {
             {loading ? (
               <p className="px-3 py-3 text-sm text-gray-400">Loading…</p>
             ) : tickets.length === 0 ? (
-              <p className="px-3 py-3 text-sm text-gray-500">No requests yet. Ask the agent to bring in the team, or send feedback.</p>
+              <p className="px-3 py-3 text-sm text-gray-500">
+                {assistantOn ? 'No requests yet. Ask the agent to bring in the team, or use “Ask the team”.' : 'No requests yet. Use “Ask the team” to send one.'}
+              </p>
             ) : (
               <ul className="divide-y divide-gray-100">
                 {tickets.map((t) => (
@@ -188,30 +202,32 @@ function SupportTab() {
             )}
           </section>
 
-          <section className="rounded-xl border border-gray-200 bg-white">
-            <h2 className="flex items-center justify-between border-b border-gray-100 px-3 py-2 text-sm font-semibold text-[#003365]">
-              Recent chats <span className="text-[11px] font-normal text-gray-400">{chats.length} of {limit} kept</span>
-            </h2>
-            {chats.length === 0 ? (
-              <p className="px-3 py-3 text-sm text-gray-500">Your chats with the agent show up here. The newest {limit} are kept.</p>
-            ) : (
-              <ul className="divide-y divide-gray-100">
-                {chats.map((c) => (
-                  <li key={c.id} className={cn('group flex items-center', view.type === 'chat' && view.id === c.id && 'bg-[#003365]/5')}>
-                    <button type="button" onClick={() => openChat(c.id)} className="min-w-0 flex-1 px-3 py-2 text-left hover:bg-gray-50">
-                      <span className="block truncate text-sm text-gray-900">{c.title || 'Chat'}</span>
-                      <span className="text-[11.5px] text-gray-500">{when(c.last_message_at)}</span>
-                    </button>
-                    {!readOnly && (
-                      <button type="button" onClick={() => deleteChat(c.id)} className="px-2 text-gray-300 hover:text-red-600" aria-label="Delete chat">
-                        <Trash2 className="h-4 w-4" />
+          {(assistantOn || chats.length > 0) && (
+            <section className="rounded-xl border border-gray-200 bg-white">
+              <h2 className="flex items-center justify-between border-b border-gray-100 px-3 py-2 text-sm font-semibold text-[#003365]">
+                Recent chats <span className="text-[11px] font-normal text-gray-400">{chats.length} of {limit} kept</span>
+              </h2>
+              {chats.length === 0 ? (
+                <p className="px-3 py-3 text-sm text-gray-500">Your chats with the agent show up here. The newest {limit} are kept.</p>
+              ) : (
+                <ul className="divide-y divide-gray-100">
+                  {chats.map((c) => (
+                    <li key={c.id} className={cn('group flex items-center', view.type === 'chat' && view.id === c.id && 'bg-[#003365]/5')}>
+                      <button type="button" onClick={() => openChat(c.id)} className="min-w-0 flex-1 px-3 py-2 text-left hover:bg-gray-50">
+                        <span className="block truncate text-sm text-gray-900">{c.title || 'Chat'}</span>
+                        <span className="text-[11.5px] text-gray-500">{when(c.last_message_at)}</span>
                       </button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+                      {!readOnly && (
+                        <button type="button" onClick={() => deleteChat(c.id)} className="px-2 text-gray-300 hover:text-red-600" aria-label="Delete chat">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
         </aside>
 
         <main className="order-1 flex min-h-[460px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50 md:order-2 md:min-h-0">
@@ -373,7 +389,7 @@ function TicketView({ id, readOnly, onChange, onOpenChat }: { id: string; readOn
 }
 
 function FeedbackForm({ onSent }: { onSent: (id: string) => void }) {
-  const [kind, setKind] = useState<'general_feedback' | 'feature_request'>('general_feedback')
+  const [kind, setKind] = useState<'dealer_support' | 'general_feedback' | 'feature_request'>('dealer_support')
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
   const [busy, setBusy] = useState(false)
@@ -401,13 +417,14 @@ function FeedbackForm({ onSent }: { onSent: (id: string) => void }) {
         }
       }}
     >
-      <h2 className="text-lg font-bold text-[#003365]">Send feedback</h2>
+      <h2 className="text-lg font-bold text-[#003365]">Ask the team</h2>
       <p className="text-sm text-gray-500">Only the Crazy Seal team sees what you send. You’ll get replies here and by email.</p>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid gap-2 xl:grid-cols-3">
         {(
           [
+            ['dealer_support', 'Get help', 'A question about a product, an order or a warranty job'],
             ['general_feedback', 'Feedback or knowledge', 'Something we should know, or something that isn’t working right'],
-            ['feature_request', 'Feature request', 'Something you wish the Pro Hub or the agent could do'],
+            ['feature_request', 'Feature request', 'Something you wish the Pro Hub could do'],
           ] as const
         ).map(([key, label, hint]) => (
           <button

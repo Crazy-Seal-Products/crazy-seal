@@ -1,6 +1,6 @@
 import { after, NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { assistantSettings, MAX_USER_CHARS } from '@/lib/ai/config'
+import { assistantOpen, assistantSettings, MAX_USER_CHARS } from '@/lib/ai/config'
 import { chatResponse, titleFrom } from '@/lib/ai/chat'
 import { chatToken, passesHumanCheck, rateLimited, verifyChatToken } from '@/lib/ai/guard'
 import { screenCustomerConversation } from '@/lib/ai/screen'
@@ -11,6 +11,7 @@ import { createConversation, getConversation, getMessages, pruneCustomerChats } 
 export const maxDuration = 120
 
 export async function POST(request: NextRequest) {
+  if (!assistantOpen('customer')) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (rateLimited(request, 'site-chat', 20, 5 * 60_000)) {
     return NextResponse.json({ error: 'You’re sending messages too quickly. Please wait a minute.' }, { status: 429 })
   }
@@ -57,6 +58,7 @@ export async function POST(request: NextRequest) {
 
 /** Reopening the widget: the chat so far, plus any replies from the support team. */
 export async function GET(request: NextRequest) {
+  if (!assistantOpen('customer')) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   const id = request.nextUrl.searchParams.get('conversationId') ?? ''
   const token = request.nextUrl.searchParams.get('token')
   if (!verifyChatToken(id, token)) return NextResponse.json({ error: 'Not found' }, { status: 404 })
