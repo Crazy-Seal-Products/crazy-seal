@@ -20,3 +20,13 @@ export async function verifyTurnstile(token: string | undefined, request: NextRe
   }
   return Boolean(data.success)
 }
+
+/**
+ * verifyTurnstile for forms that also have to work in local development,
+ * where the site key doesn't issue tokens on localhost: skipped there only.
+ * Production always checks.
+ */
+export async function passesTurnstile(token: unknown, request: NextRequest): Promise<boolean> {
+  if (process.env.NODE_ENV !== 'production') return true
+  return verifyTurnstile(typeof token === 'string' ? token : undefined, request)
+}

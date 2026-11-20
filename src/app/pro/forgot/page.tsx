@@ -3,23 +3,31 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ProAuthLayout, authInputClass, authPrimaryButtonClass } from '@/components/pro-hub/ProAuthLayout'
+import { useProTurnstile } from '@/components/pro-hub/useProTurnstile'
 
 export default function ProForgotPage() {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const turnstile = useProTurnstile('pro-forgot-turnstile')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
     try {
+      const human = await turnstile.check()
+      if (!human.ok) {
+        setError(human.error)
+        return
+      }
       const res = await fetch('/api/pro/auth/forgot/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, turnstileToken: human.token }),
       })
+      turnstile.reset()
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         setError(data?.error || 'Could not send the email.')
@@ -27,6 +35,7 @@ export default function ProForgotPage() {
       }
       setSent(true)
     } catch {
+      turnstile.reset()
       setError('Something went wrong. Try again.')
     } finally {
       setLoading(false)
@@ -61,6 +70,7 @@ export default function ProForgotPage() {
               placeholder="you@shop.com"
             />
           </div>
+          {turnstile.widget}
           {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
           <button type="submit" disabled={loading || !email} className={authPrimaryButtonClass}>
             {loading ? 'Sending…' : 'Email me a reset link'}

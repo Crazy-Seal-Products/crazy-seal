@@ -1,15 +1,10 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { NextRequest } from 'next/server'
-import { verifyTurnstile } from '@/lib/turnstile'
+import { passesTurnstile } from '@/lib/turnstile'
 
-/**
- * Turnstile for starting a site chat. Skipped in local development only:
- * the site key doesn't issue tokens on localhost, so the chat couldn't be
- * tested there otherwise. Production always checks.
- */
+/** Turnstile for starting a site chat (skipped in local development only, see passesTurnstile). */
 export async function passesHumanCheck(token: string | null | undefined, request: NextRequest): Promise<boolean> {
-  if (process.env.NODE_ENV !== 'production') return true
-  return verifyTurnstile(token ?? undefined, request)
+  return passesTurnstile(token, request)
 }
 
 /**

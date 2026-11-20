@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ProAuthLayout, authInputClass, authPrimaryButtonClass } from '@/components/pro-hub/ProAuthLayout'
+import { useProTurnstile } from '@/components/pro-hub/useProTurnstile'
 
 // Sign-up emails a link; the password is chosen on /pro/reset/ once the link is opened.
 export default function ProSignupPage() {
@@ -12,6 +13,7 @@ export default function ProSignupPage() {
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const turnstile = useProTurnstile('pro-signup-turnstile')
 
   useEffect(() => {
     fetch('/api/pro/me/').then((res) => {
@@ -24,11 +26,17 @@ export default function ProSignupPage() {
     setLoading(true)
     setError(null)
     try {
+      const human = await turnstile.check()
+      if (!human.ok) {
+        setError(human.error)
+        return
+      }
       const res = await fetch('/api/pro/auth/signup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, turnstileToken: human.token }),
       })
+      turnstile.reset()
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         setError(data?.error || 'Could not create the account.')
@@ -36,6 +44,7 @@ export default function ProSignupPage() {
       }
       setSent(true)
     } catch {
+      turnstile.reset()
       setError('Something went wrong. Try again.')
     } finally {
       setLoading(false)
@@ -70,6 +79,7 @@ export default function ProSignupPage() {
               placeholder="you@shop.com"
             />
           </div>
+          {turnstile.widget}
           {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
           <button type="submit" disabled={loading || !email} className={authPrimaryButtonClass}>
             {loading ? 'Sending…' : 'Email me a link'}

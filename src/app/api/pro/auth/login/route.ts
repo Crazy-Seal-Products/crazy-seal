@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { passesTurnstile } from '@/lib/turnstile'
 import { applySessionCookie, createSession, getProUserByEmail, isMissingRelation, touchLogin } from '@/lib/pro/auth'
 import { verifyPassword } from '@/lib/pro/password'
 
@@ -8,6 +9,9 @@ const WRONG = 'Email or password is wrong.'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
+    if (!(await passesTurnstile(body?.turnstileToken, request))) {
+      return NextResponse.json({ error: 'Please complete the verification and try again.', verify: true }, { status: 403 })
+    }
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
     const password = typeof body?.password === 'string' ? body.password : ''
     if (!EMAIL_RE.test(email) || !password) {

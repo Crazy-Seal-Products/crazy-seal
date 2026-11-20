@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { passesTurnstile } from '@/lib/turnstile'
 import { createMagicLink, getProUserByEmail, isMissingRelation, requestOrigin } from '@/lib/pro/auth'
 import { sendProSignupLink } from '@/lib/email/gmail'
 
@@ -11,6 +12,9 @@ const EMAIL_RE = /^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
+    if (!(await passesTurnstile(body?.turnstileToken, request))) {
+      return NextResponse.json({ error: 'Please complete the verification and try again.', verify: true }, { status: 403 })
+    }
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
     if (!EMAIL_RE.test(email)) {
       return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 })

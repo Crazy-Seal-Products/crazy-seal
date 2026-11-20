@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ProAuthLayout, authInputClass, authPrimaryButtonClass } from '@/components/pro-hub/ProAuthLayout'
+import { useProTurnstile } from '@/components/pro-hub/useProTurnstile'
 
 export default function ProLoginPage() {
   return (
@@ -22,6 +23,7 @@ function ProLoginForm() {
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(expired ? 'That sign-in link expired. Request a new one.' : null)
   const [loading, setLoading] = useState(false)
+  const turnstile = useProTurnstile('pro-login-turnstile')
 
   useEffect(() => {
     fetch('/api/pro/me/').then((res) => {
@@ -34,11 +36,17 @@ function ProLoginForm() {
     setLoading(true)
     setError(null)
     try {
+      const human = await turnstile.check()
+      if (!human.ok) {
+        setError(human.error)
+        return
+      }
       const res = await fetch('/api/pro/auth/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken: human.token }),
       })
+      turnstile.reset()
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         setError(data?.error || 'Could not sign in.')
@@ -47,6 +55,7 @@ function ProLoginForm() {
       router.replace('/pro/')
       router.refresh()
     } catch {
+      turnstile.reset()
       setError('Something went wrong. Try again.')
     } finally {
       setLoading(false)
@@ -61,11 +70,17 @@ function ProLoginForm() {
     setLoading(true)
     setError(null)
     try {
+      const human = await turnstile.check()
+      if (!human.ok) {
+        setError(human.error)
+        return
+      }
       const res = await fetch('/api/pro/auth/request/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, turnstileToken: human.token }),
       })
+      turnstile.reset()
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         setError(data?.error || 'Could not send the link.')
@@ -73,6 +88,7 @@ function ProLoginForm() {
       }
       setSent(true)
     } catch {
+      turnstile.reset()
       setError('Something went wrong. Try again.')
     } finally {
       setLoading(false)
@@ -132,6 +148,7 @@ function ProLoginForm() {
               className={authInputClass}
             />
           </div>
+          {turnstile.widget}
           {error && (
             <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
           )}
