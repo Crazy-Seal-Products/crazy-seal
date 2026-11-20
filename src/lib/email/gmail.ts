@@ -229,6 +229,38 @@ const WARRANTY_REPLY_COPY = {
   },
 } as const
 
+/**
+ * A set-password link for a Crazy Seal Admin login, from "Forgot your password?".
+ * New staff use the same form to choose their first password.
+ */
+export async function sendStaffPasswordLink(email: string, name: string | null, url: string, validMinutes: number) {
+  const first = (name ?? '').trim().split(/\s+/)[0] || 'there'
+  const safeFirst = first.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c)
+  await sendEmail({
+    to: email,
+    subject: 'Set your Crazy Seal Admin password',
+    html: `
+      <div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1f2937;max-width:600px;">
+        <div style="background:#003365;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Admin</p>
+          <h1 style="margin:8px 0 0;font-size:22px;">Set your password</h1>
+        </div>
+        <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 12px 12px;">
+          <p>Hi ${safeFirst},</p>
+          <p>Use the button below to choose your password for the Crazy Seal Admin. The link works once and expires in ${validMinutes} minutes.</p>
+          <p style="margin:28px 0;">
+            <a href="${url}" target="_blank"
+               style="display:inline-block;background:#5BA411;color:#fff;font-weight:bold;padding:12px 24px;border-radius:8px;text-decoration:none;">
+              Set my password
+            </a>
+          </p>
+          <p style="font-size:12px;color:#9ca3af;">If you didn't ask for this, you can ignore it. Nothing changes until the link is used.</p>
+        </div>
+      </div>
+    `,
+  })
+}
+
 export async function sendProMagicLink(email: string, url: string) {
   await sendEmail({
     to: email,

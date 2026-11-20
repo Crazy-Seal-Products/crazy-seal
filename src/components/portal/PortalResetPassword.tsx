@@ -9,13 +9,10 @@ import type { EmailOtpType } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { getAuthCallbackError, hasAuthHash } from '@/lib/auth/recovery'
 import { checkStaffSession } from '@/lib/portal/actions'
+import { requestStaffPasswordLink } from '@/lib/portal/admin/password-setup-actions'
 import { portalInput } from './ui'
 
 const LOGO = 'https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-1000x800-400x320.png'
-
-// Supabase only sends links to allowed redirect URLs; this one was already
-// allowed for the old site admin and now forwards to /portal/reset-password/.
-const RESET_REDIRECT_PATH = '/admin/reset-password/'
 
 type Mode = 'request' | 'checking' | 'ready' | 'missing'
 
@@ -90,9 +87,11 @@ function readResetLink(setMode: (m: Mode) => void, setError: (e: string) => void
 }
 
 /**
- * Staff password reset for the Crazy Seal Admin (Supabase staff accounts).
- * Without a reset token in the URL it asks for an email and sends a link;
- * opened from that link it sets the new password and signs the person in.
+ * Staff password reset for the Crazy Seal Admin, and how new staff set their
+ * first password. Without a token in the URL it asks for an email and emails a
+ * set-password link (/portal/set-password/, see requestPasswordLink). Older
+ * Supabase reset links still land here: opened from one, it sets the new
+ * password and signs the person in.
  */
 export function PortalResetPassword() {
   const router = useRouter()
@@ -121,12 +120,14 @@ export function PortalResetPassword() {
     setPending(true)
     setError(null)
     setNotice(null)
-    const { error: resetError } = await createClient().auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}${RESET_REDIRECT_PATH}`,
-    })
-    setPending(false)
-    if (resetError) setError(resetError.message)
-    else setNotice('If that email belongs to a staff account, a reset link is on its way. Open it in this browser.')
+    try {
+      await requestStaffPasswordLink(email.trim())
+      setNotice('If that email belongs to a staff account, a link to set your password is on its way. It works once, for an hour.')
+    } catch {
+      setError('That didn’t go through. Check your connection and try again.')
+    } finally {
+      setPending(false)
+    }
   }
 
   async function savePassword(e: React.FormEvent) {
@@ -160,7 +161,7 @@ export function PortalResetPassword() {
         <img src={LOGO} alt="Crazy Seal" className="mx-auto mb-6 h-20 w-auto" />
         <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-highlight">Crazy Seal Admin</p>
         <h1 className="mt-2 text-3xl font-extrabold tracking-tight">
-          {mode === 'request' ? 'Reset your password' : mode === 'missing' ? 'That link didn’t work' : 'Set a new password'}
+          {mode === 'request' ? 'Set your password' : mode === 'missing' ? 'That link didn’t work' : 'Set a new password'}
         </h1>
 
         {mode === 'checking' && (
@@ -171,7 +172,7 @@ export function PortalResetPassword() {
 
         {mode === 'request' && (
           <form onSubmit={sendLink} className="mt-7 space-y-4">
-            <p className="text-sm text-blue-100/60">Enter your staff email and we’ll send you a link to set a new password.</p>
+            <p className="text-sm text-blue-100/60">Enter your staff email and we’ll email you a link to choose a password. New to the admin? This is how you set your first one.</p>
             <label className="block">
               <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Email</span>
               <span className="relative block">
@@ -188,7 +189,7 @@ export function PortalResetPassword() {
               </span>
             </label>
             <Feedback error={error} notice={notice} />
-            <SubmitButton pending={pending} label="Send reset link" pendingLabel="Sending…" />
+            <SubmitButton pending={pending} label="Email me a link" pendingLabel="Sending…" />
           </form>
         )}
 
