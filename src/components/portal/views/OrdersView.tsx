@@ -8,10 +8,11 @@ import { demoOrders } from '@/lib/portal/demo-data'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { usePortal } from '../PortalContext'
 import { Panel, PanelTitle, ProgressBar, StatTile, StatusPill, ViewHeader, money, portalButton } from '../ui'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 const PERKS = [
   { icon: Percent, title: 'Partner pricing', desc: 'Tiered pricing on every kit and product.' },
-  { icon: Truck, title: 'Free shipping over $500', desc: 'Straight to your shop or the job site.' },
+  { icon: Truck, title: `Free shipping over ${FREE_SHIPPING_OVER_TEXT}`, desc: 'Straight to your shop or the job site.' },
   { icon: Gift, title: 'Rewards on every order', desc: 'Balance applies to future orders.' },
 ]
 

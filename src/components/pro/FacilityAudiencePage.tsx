@@ -30,6 +30,7 @@ import { CountUp, GlowOrb, Stagger, StaggerItem } from '@/components/motion'
 import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import { MEDIA, ProTestimonials } from '@/components/pro/ProSections'
 import { ProContactSection } from '@/components/pro/ProContactSection'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 const PHASES = [
   {
@@ -115,7 +116,7 @@ const KIT_INCLUDES = [
   '24/7 Access to our video instruction series to show you step by step exactly how to install your system.',
   'PDF instructions to accompany the video series.',
   'Additional resource pages to guide you through installation.',
-  'Free shipping on orders over $500.00',
+  `Free shipping on orders over ${FREE_SHIPPING_OVER_TEXT}`,
 ]
 
 const ADVANTAGES = [

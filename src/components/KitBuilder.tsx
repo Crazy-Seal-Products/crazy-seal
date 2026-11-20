@@ -42,6 +42,7 @@ import {
   type KitInstallMethod,
   type KitRecommendation,
 } from '@/lib/store/kit-builder'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 const APPLICATION_LABELS: Record<KitApplication, string> = {
   rv: 'RV',
@@ -58,7 +59,7 @@ function usd(n: number): string {
 
 const KIT_ASSURANCES = [
   { icon: PackageCheck, label: 'In-stock & ready to ship' },
-  { icon: Truck, label: 'Free shipping over $500' },
+  { icon: Truck, label: `Free shipping over ${FREE_SHIPPING_OVER_TEXT}` },
   { icon: ShieldCheck, label: '50 year warranty' },
 ] as const
 

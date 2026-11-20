@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import { MapPin, Phone, Truck, PackageCheck, Flag } from 'lucide-react'
 import { Container, LinkButton } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export const metadata: Metadata = {
   title: 'Shipping',
   description:
-    'Crazy Seal shipping policy. Our free shipping policy applies to the continental USA only. Orders shipped outside this area will be charged normal shipping rates.',
+    `Crazy Seal shipping policy. Orders over ${FREE_SHIPPING_OVER_TEXT} ship free within the continental USA. Orders shipped outside this area will be charged normal shipping rates.`,
 }
 
 // CSS entrance (runs before hydration, so the hero never flashes empty)
@@ -49,7 +50,7 @@ export default function ShippingPage() {
               Shipping Policy
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed">
-              Our free shipping policy applies to the continental USA only.
+              Orders over {FREE_SHIPPING_OVER_TEXT} ship free within the continental USA.
               Orders shipped outside this area will be charged normal shipping
               rates.
             </p>
@@ -57,7 +58,7 @@ export default function ShippingPage() {
 
           <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-3 rounded-3xl bg-gradient-to-r from-primary/[0.03] via-accent/[0.06] to-primary/[0.03] p-3 ring-1 ring-primary/[0.06] sm:grid-cols-3">
             {[
-              { icon: MapPin, title: 'Continental USA', desc: 'Covered by our free shipping policy' },
+              { icon: MapPin, title: 'Continental USA', desc: `Free shipping on orders over ${FREE_SHIPPING_OVER_TEXT}` },
               { icon: PackageCheck, title: 'Outside that area', desc: 'Normal shipping rates apply' },
               { icon: Flag, title: 'Made in the USA', desc: 'Ships direct to your door' },
             ].map(({ icon: Icon, title, desc }) => (

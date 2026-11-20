@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Phone, Mail, Truck, Handshake, ShieldCheck, Flag, Award } from 'lucide-react'
 import { QuoteButton } from '@/components/QuoteButton'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 const FOOTER_LINKS = {
   system: [
@@ -52,7 +53,7 @@ const TRUST = [
   { icon: ShieldCheck, label: '50 Year Warranty' },
   { icon: Award, label: 'U.S. Patent #12,146,061' },
   { icon: Flag, label: 'Made in the USA' },
-  { icon: Truck, label: 'Free shipping over $500' },
+  { icon: Truck, label: `Free shipping over ${FREE_SHIPPING_OVER_TEXT}` },
 ]
 
 function FooterColumn({

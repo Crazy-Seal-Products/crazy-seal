@@ -13,6 +13,7 @@ import {
   fadeDelay,
 } from '@/components/system-pages/blocks'
 import { TiltCard } from '@/components/system-pages/motion-blocks'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export const metadata: Metadata = {
   title: 'Crazy Seal Products',
@@ -118,7 +119,7 @@ export default function ProductsPage() {
                 style={fadeDelay(160)}
               >
                 Every component of the Crazy Seal Roofing System, available individually or in pre-built
-                kits. Free shipping on orders over $500.
+                kits. Free shipping on orders over {FREE_SHIPPING_OVER_TEXT}.
               </p>
               <div
                 className="animate-fade-up flex flex-wrap items-center justify-center lg:justify-start gap-3"
@@ -136,7 +137,7 @@ export default function ProductsPage() {
                 className="mt-8 justify-center lg:justify-start"
                 items={[
                   { icon: Package, label: 'Individually or in kits' },
-                  { icon: Truck, label: 'Free shipping over $500' },
+                  { icon: Truck, label: `Free shipping over ${FREE_SHIPPING_OVER_TEXT}` },
                 ]}
               />
             </div>

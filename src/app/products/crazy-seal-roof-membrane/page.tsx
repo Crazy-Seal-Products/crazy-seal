@@ -78,7 +78,7 @@ export default function CrazySealRoofMembranePage() {
 
       {/* ─── ORDER PERKS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-6">
-        <OrderPerks freeShippingOver="$700" />
+        <OrderPerks />
       </Container>
 
       {/* ─── PRODUCT DETAILS ─── */}

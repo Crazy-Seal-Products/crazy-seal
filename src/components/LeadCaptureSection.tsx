@@ -2,6 +2,7 @@ import { Phone, ShieldCheck, Truck, MessageSquare, Clock } from 'lucide-react'
 import { Container } from '@/lib/design-system'
 import { FormModalButton } from '@/components/forms/FormModalButton'
 import { GlowOrb } from '@/components/motion'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 interface LeadCaptureSectionProps {
   /** Attribution label for the lead, e.g. 'rv-roofs'. */
@@ -14,7 +15,7 @@ interface LeadCaptureSectionProps {
 
 const PROMISES = [
   { icon: ShieldCheck, text: 'Backed by our 50 year warranty — do it once, do it right' },
-  { icon: Truck, text: 'Kits ship straight to your door. Free shipping over $500' },
+  { icon: Truck, text: `Kits ship straight to your door. Free shipping over ${FREE_SHIPPING_OVER_TEXT}` },
   { icon: Clock, text: 'Prefer to talk it through? Call us M-F 9AM-6PM EST' },
 ]
 

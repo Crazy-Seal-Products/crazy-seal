@@ -16,13 +16,14 @@ import {
   SwagPack,
 } from '@/components/system-pages/blocks'
 import { VideoPlayer } from './VideoPlayer'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 const SHOP_BYOK = '/kit-builder#products'
 
 export const metadata: Metadata = {
   title: 'Build Your Own Kit',
   description:
-    'Build your own Crazy Seal roofing kit from our lineup of roofing products. View coverage rates for Crazy Seal, Crazy Patch, Crazy Caulk, Crazy Clean, and Crazy Tape. In-stock and ready to ship with free shipping on orders over $500.',
+    `Build your own Crazy Seal roofing kit from our lineup of roofing products. View coverage rates for Crazy Seal, Crazy Patch, Crazy Caulk, Crazy Clean, and Crazy Tape. In-stock and ready to ship with free shipping on orders over ${FREE_SHIPPING_OVER_TEXT}.`,
 }
 
 const PRODUCTS = [
@@ -227,7 +228,7 @@ export default function BuildYourOwnKitPage() {
 
       {/* ─── ORDER PERKS ─── */}
       <Container size="xl" className="sm:pt-4 md:pt-6">
-        <OrderPerks freeShippingOver="$500" />
+        <OrderPerks />
       </Container>
 
       {/* ─── PRODUCTS ─── */}

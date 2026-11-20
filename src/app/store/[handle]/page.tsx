@@ -39,6 +39,7 @@ import {
   CompanionProducts,
   type CompanionItem,
 } from '@/components/store/CompanionProducts'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export const revalidate = 300
 
@@ -49,7 +50,7 @@ interface PageProps {
 const ASSURANCES = [
   { icon: PackageCheck, strong: 'In-stock & ready to ship', rest: 'from our USA facility' },
   { icon: CreditCard, strong: 'Split into 4 installments', rest: 'on $100–$1,000 orders' },
-  { icon: Truck, strong: 'Free shipping', rest: 'on orders over $500' },
+  { icon: Truck, strong: 'Free shipping', rest: `on orders over ${FREE_SHIPPING_OVER_TEXT}` },
   { icon: ShieldCheck, strong: '50 year warranty', rest: 'when registered' },
 ]
 

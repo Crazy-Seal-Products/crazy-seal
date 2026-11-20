@@ -36,6 +36,7 @@ import {
   WHY_CRAZY_SEAL_VIDEOS,
   REASONS_PDF_URL,
 } from '@/lib/store/social-proof'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export interface HubPageConfig {
   family: ApplicationFamily
@@ -122,7 +123,7 @@ export async function HubPage({ config }: { config: HubPageConfig }) {
     config.stagedAssurance
       ? { icon: Layers, strong: 'Install in stages', rest: 'as your budget allows' }
       : { icon: CreditCard, strong: 'Split into 4 installments', rest: 'on $100–$1,000 orders' },
-    { icon: Truck, strong: 'Free shipping', rest: 'on orders over $500' },
+    { icon: Truck, strong: 'Free shipping', rest: `on orders over ${FREE_SHIPPING_OVER_TEXT}` },
     { icon: ShieldCheck, strong: '50 year warranty', rest: 'when registered' },
   ]
 

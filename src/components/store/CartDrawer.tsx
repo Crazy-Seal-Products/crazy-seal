@@ -6,6 +6,7 @@ import { X, Minus, Plus, Trash2, ShoppingCart, Lock, Truck } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { formatPrice } from '@/lib/store/products'
 import { CallRepLink, SpeakToRepButton } from '@/components/store/SpeakToRep'
+import { FREE_SHIPPING_OVER } from '@/lib/shipping'
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
@@ -160,10 +161,10 @@ export function CartDrawer() {
 
             <div className="border-t border-primary/[0.06] bg-gradient-to-b from-white to-slate-50 px-5 py-4 space-y-3">
               <div className="rounded-xl bg-white px-3.5 py-3 ring-1 ring-primary/[0.07]">
-                {subtotal < 500 ? (
+                {subtotal < FREE_SHIPPING_OVER ? (
                   <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500">
                     <Truck className="h-3.5 w-3.5 text-accent" />
-                    Add {formatPrice(500 - subtotal)} more for free shipping
+                    Add {formatPrice(FREE_SHIPPING_OVER - subtotal)} more for free shipping
                   </p>
                 ) : (
                   <p className="flex items-center justify-center gap-1.5 text-xs font-semibold text-accent-dark">
@@ -175,7 +176,7 @@ export function CartDrawer() {
                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-100" aria-hidden="true">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-accent-light to-accent transition-[width] duration-700 ease-out"
-                    style={{ width: `${Math.min(100, (subtotal / 500) * 100)}%` }}
+                    style={{ width: `${Math.min(100, (subtotal / FREE_SHIPPING_OVER) * 100)}%` }}
                   />
                 </div>
               </div>

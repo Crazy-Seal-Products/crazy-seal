@@ -7,13 +7,14 @@ import { StoreCatalog } from '@/components/store/StoreCatalog'
 import { FloatingRep, ShopChooser } from '@/components/store/ShopChooser'
 import { getKitBuilderCatalog } from '@/lib/store/kit-builder-data'
 import { getShopProducts } from '@/lib/store/products'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Shop Crazy Seal: Kit Builder, RV Roofing Kits & Products',
   description:
-    'Build your Crazy Seal roofing kit in about a minute, or have a rep build it with you. RV roofing kits and individual products with live pricing, free shipping over $500 and a 50 year warranty.',
+    `Build your Crazy Seal roofing kit in about a minute, or have a rep build it with you. RV roofing kits and individual products with live pricing, free shipping over ${FREE_SHIPPING_OVER_TEXT} and a 50 year warranty.`,
 }
 
 // CSS entrance (runs before hydration, so the hero never flashes empty)
@@ -57,7 +58,7 @@ export default async function ShopPage() {
                   <ShieldCheck className="h-3.5 w-3.5 text-accent-light" /> 50 year warranty
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Truck className="h-3.5 w-3.5 text-accent-light" /> Free shipping over $500
+                  <Truck className="h-3.5 w-3.5 text-accent-light" /> Free shipping over {FREE_SHIPPING_OVER_TEXT}
                 </span>
               </div>
             </div>

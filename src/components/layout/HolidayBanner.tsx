@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Flag, Truck } from 'lucide-react'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 // Top announcement bar. Swap content seasonally or for promos.
 export function HolidayBanner() {
@@ -20,7 +21,7 @@ export function HolidayBanner() {
           <span className="hidden h-1 w-1 rounded-full bg-white/30 sm:block" />
           <span className="inline-flex items-center gap-1.5 text-blue-100/85">
             <Truck className="h-3.5 w-3.5 text-accent-light" />
-            Free shipping on orders over $500
+            Free shipping on orders over {FREE_SHIPPING_OVER_TEXT}
           </span>
         </div>
       </div>

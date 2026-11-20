@@ -22,6 +22,7 @@ import { twMerge } from 'tailwind-merge'
 import { LinkButton, SectionHeading } from '@/lib/design-system'
 import { CountUp, GlowOrb } from '@/components/motion'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -496,7 +497,7 @@ export function SystemTrail({ current }: { current: string }) {
 }
 
 /** "Ready to ship / pay in 4 / free shipping" strip under kit + product heroes. */
-export function OrderPerks({ freeShippingOver }: { freeShippingOver: '$500' | '$700' }) {
+export function OrderPerks() {
   const perks = [
     { icon: PackageCheck, title: 'In-Stock & Ready to Ship', desc: 'Ships straight from the manufacturer.' },
     {
@@ -504,7 +505,7 @@ export function OrderPerks({ freeShippingOver }: { freeShippingOver: '$500' | '$
       title: 'Pay in 4 Installments',
       desc: 'Orders between $100 - $1,000 can be broken into 4 installments during checkout.',
     },
-    { icon: Truck, title: 'Free Shipping', desc: `On orders over ${freeShippingOver}.` },
+    { icon: Truck, title: 'Free Shipping', desc: `On orders over ${FREE_SHIPPING_OVER_TEXT}.` },
   ]
   return (
     <div className="section-bleed bg-white border-y sm:border border-gray-200/80 p-3">
