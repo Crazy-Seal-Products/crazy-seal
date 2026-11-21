@@ -115,7 +115,7 @@ function matchesReview(r: Registration, f: ReviewFilter): boolean {
 
 /** Columns the list filters and table need; long text is loaded only for the rows on screen. */
 const LIST_COLS =
-  'id, created_at, name, email, phone, order_number, install_type, installer_name, installer_email, photo_urls, before_photo_urls, after_photo_urls, edited_photo_urls, rating, status, image_type, reviews_for_marketing, gf_entry_id, source'
+  'id, created_at, name, email, phone, customer_details, order_number, install_type, installer_name, installer_email, photo_urls, before_photo_urls, after_photo_urls, edited_photo_urls, rating, status, image_type, reviews_for_marketing, gf_entry_id, source'
 
 export function allRegistrations(): Promise<Registration[]> {
   return memo('warranty-registrations', 60_000, () => {
@@ -137,10 +137,15 @@ const PAGE_SIZE = 50
 
 export async function getRegistrations(opts: { review: ReviewFilter; status: string; install: string; q?: string; page: number }) {
   const rows = await allRegistrations()
-  const q = opts.q?.toLowerCase().replace(/^#/, '')
+  const q = opts.q?.trim().toLowerCase().replace(/^#/, '')
+  // Spacing and punctuation don't count, so "Aqua RV" finds "AquaRV" and "Aqua-RV".
+  const squash = (v: string) => v.toLowerCase().replace(/[^a-z0-9@]/g, '')
+  const qs = q ? squash(q) : ''
   const searched = q
     ? rows.filter((r) =>
-        [r.name, r.email, r.phone, r.order_number?.replace(/^#/, ''), r.installer_name, r.installer_email, r.customer_details].some((v) => v?.toLowerCase().includes(q)),
+        [r.name, r.email, r.phone, r.order_number?.replace(/^#/, ''), r.installer_name, r.installer_email, r.customer_details].some(
+          (v) => !!v && (v.toLowerCase().includes(q) || (!!qs && squash(v).includes(qs))),
+        ),
       )
     : rows
   const byStatus = (r: Registration) => opts.status === 'all' || r.status === opts.status

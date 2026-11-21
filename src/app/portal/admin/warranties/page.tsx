@@ -149,10 +149,13 @@ export default async function AdminWarrantiesPage({ searchParams }: { searchPara
   await requirePortalAdmin('warranties')
   const sp = await searchParams
   const tab = pick(sp.tab, TABS, 'registrations')
-  const review = pick(sp.review, REVIEW_FILTERS, 'needs_review')
+  const q = one(sp.q)
+  // A search looks through every registration unless a review filter was picked;
+  // otherwise searching for an already-classified warranty finds nothing.
+  const defaultReview = q ? 'all' : 'needs_review'
+  const review = pick(sp.review, REVIEW_FILTERS, defaultReview)
   const status = pick(sp.status, STATUS_FILTERS, 'all')
   const install = pick(sp.install, INSTALL_FILTERS, 'all')
-  const q = one(sp.q)
   const page = pageNum(sp.page)
 
   const [data, claims, transfers] = await Promise.all([getRegistrations({ review, status, install, q, page }), getClaims(), getTransfers()])
@@ -161,7 +164,7 @@ export default async function AdminWarrantiesPage({ searchParams }: { searchPara
   const openTransfers = transfers.filter((t) => t.status === 'submitted').length
   const params = {
     tab: tab === 'registrations' ? undefined : tab,
-    review: review === 'needs_review' ? undefined : review,
+    review: review === defaultReview ? undefined : review,
     status: status === 'all' ? undefined : status,
     install: install === 'all' ? undefined : install,
     q,
