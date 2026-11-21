@@ -3,7 +3,7 @@
 import React, { useActionState, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { Images, Loader2 } from 'lucide-react'
+import { Images, Loader2, Pencil, X } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { WarrantyReviewLightbox, type ReviewRegistration } from '@/components/admin/WarrantyReviewLightbox'
 import { IMAGE_TYPES, REVIEWS_FOR_MARKETING } from '@/lib/warranty/classification'
@@ -198,9 +198,15 @@ export function DetailsForm({ action, fields, className }: { action: FormAction;
   const [state, formAction, pending] = useActionState(action, null)
   return (
     <details className={twMerge('group', className)}>
-      <summary className="cursor-pointer list-none text-[12px] font-medium text-adm-blue-bright hover:underline [&::-webkit-details-marker]:hidden">
-        <span className="group-open:hidden">Edit details</span>
-        <span className="hidden group-open:inline">Close editing</span>
+      <summary className={twMerge(BUTTON.default, 'w-fit cursor-pointer list-none [&::-webkit-details-marker]:hidden')}>
+        <span className="inline-flex items-center gap-1.5 group-open:hidden">
+          <Pencil className="h-3.5 w-3.5" />
+          Edit details
+        </span>
+        <span className="hidden items-center gap-1.5 group-open:inline-flex">
+          <X className="h-3.5 w-3.5" />
+          Close editing
+        </span>
       </summary>
       <form action={formAction} className="mt-2 grid gap-2 sm:grid-cols-2">
         {fields.map((f) => (
