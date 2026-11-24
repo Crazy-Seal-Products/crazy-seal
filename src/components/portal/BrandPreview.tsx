@@ -2,7 +2,7 @@
 
 import { Check, Mail, Phone, ShieldCheck, Star } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
-import { initials, type PartnerBrand } from '@/lib/portal/accounts'
+import { initials, type PartnerBrand } from '@/lib/portal/brand'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 const CS_LOGO = `${MEDIA}/2019/03/CRAZY-SEAL-LOGO-150.png`

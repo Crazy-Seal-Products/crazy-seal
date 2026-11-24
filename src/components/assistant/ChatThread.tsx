@@ -17,7 +17,7 @@ export interface ChatMessage {
   failed?: boolean
 }
 
-export type ChatVariant = 'site' | 'pro' | 'admin'
+export type ChatVariant = 'site' | 'pro' | 'admin' | 'portal'
 
 const TOOL_LABEL: Record<string, string> = {
   search_knowledge: 'Searching Crazy Seal resources…',
@@ -48,6 +48,15 @@ const STYLE: Record<ChatVariant, { user: string; bot: string; failed: string; in
     send: 'bg-[#003365] text-white hover:bg-[#002347]',
     muted: 'text-gray-500',
     prose: '[&_a]:text-[#0b5cad]',
+  },
+  portal: {
+    user: 'bg-accent text-white',
+    bot: 'bg-white/[0.06] text-white/90 ring-1 ring-inset ring-white/10',
+    failed: 'bg-red-500/10 text-red-200 ring-1 ring-inset ring-red-400/30',
+    input: 'bg-white/[0.05] border-white/15 text-white placeholder:text-white/35 focus:border-highlight/60 focus:ring-highlight/20',
+    send: 'bg-accent text-white hover:brightness-110',
+    muted: 'text-white/50',
+    prose: '[&_a]:text-highlight',
   },
   admin: {
     user: 'bg-adm-blue-bright/15 text-adm-ink ring-1 ring-inset ring-adm-blue-bright/30',
@@ -237,14 +246,14 @@ export function ChatThread({
       {footer}
 
       {disabledReason ? (
-        <p className={twMerge('border-t px-3 py-3 text-[13px]', variant === 'admin' ? 'border-adm-line' : 'border-gray-200', s.muted)}>{disabledReason}</p>
+        <p className={twMerge('border-t px-3 py-3 text-[13px]', variant === 'admin' ? 'border-adm-line' : variant === 'portal' ? 'border-white/10' : 'border-gray-200', s.muted)}>{disabledReason}</p>
       ) : (
         <form
           onSubmit={(e) => {
             e.preventDefault()
             void send(input)
           }}
-          className={twMerge('border-t p-2.5', variant === 'admin' ? 'border-adm-line' : 'border-gray-200')}
+          className={twMerge('border-t p-2.5', variant === 'admin' ? 'border-adm-line' : variant === 'portal' ? 'border-white/10' : 'border-gray-200')}
         >
           {error && <p className="mb-2 px-1 text-[12.5px] text-red-600">{error}</p>}
           <div className="flex items-end gap-2">

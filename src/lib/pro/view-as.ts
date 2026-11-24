@@ -22,6 +22,10 @@ import type { ProUser } from './auth'
  * after signing up with that email. Once they sign up, the view shows their
  * account instead.
  *
+ * A contractor can be opened the same way for the contractor portal (/portal):
+ * the view shows the contractor's owner account, or a base view of the
+ * contractor's portal when nobody on their team has an account yet.
+ *
  * The model of all this is docs/statecharts/view-as (skill verify-view-as-model).
  */
 
@@ -43,13 +47,16 @@ export interface ViewAs {
   expiresAt: number
   /** False in a base view of a dealer with no Pro Hub account. */
   hasAccount: boolean
+  /** Set when the view was opened for a contractor's portal rather than an account. */
+  contractorId: string | null
 }
 
-export type ViewAsTarget = { proUserId: string } | { customerId: string }
+export type ViewAsTarget = { proUserId: string } | { customerId: string } | { contractorId: string }
 
 interface Payload {
   u?: string // pro user id
   c?: string // Shopify customer id, for a dealer with no Pro Hub account
+  k?: string // contractor id, for a contractor's portal
   a: string // admin email
   x: number // expiry, epoch seconds
 }
@@ -72,7 +79,7 @@ function readCookie(value: string | undefined): Payload | null {
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null
   try {
     const p = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as Payload
-    return (p.u || p.c) && p.a && p.x * 1000 > Date.now() ? p : null
+    return (p.u || p.c || p.k) && p.a && p.x * 1000 > Date.now() ? p : null
   } catch {
     return null
   }
@@ -131,8 +138,62 @@ async function accountForCustomer(c: CustomerForView): Promise<ProUser | null> {
   return (data as ProUser | null) ?? null
 }
 
+interface ContractorForView {
+  id: string
+  email: string | null
+  company: string | null
+  first_name: string | null
+  goes_by: string | null
+  last_name: string | null
+  phone: string | null
+}
+
+/**
+ * A contractor's portal: the account of their earliest owner who isn't
+ * disabled, or a base user standing in for the contractor when nobody on the
+ * team has an account yet.
+ */
+async function contractorView(contractorId: string): Promise<{ user: ProUser; hasAccount: boolean } | null> {
+  const db = createAdminClient()
+  const { data: contractor } = await db
+    .from('contractors')
+    .select('id, email, company, first_name, goes_by, last_name, phone')
+    .eq('id', contractorId)
+    .maybeSingle<ContractorForView>()
+  if (!contractor) return null
+  const { data: owner } = await db
+    .from('contractor_members')
+    .select('pro_user_id')
+    .eq('contractor_id', contractorId)
+    .eq('role', 'owner')
+    .neq('status', 'disabled')
+    .order('created_at')
+    .limit(1)
+    .maybeSingle<{ pro_user_id: string }>()
+  const account = owner ? await accountUser(owner.pro_user_id) : null
+  if (account) return { user: account, hasAccount: true }
+  const person = [contractor.goes_by || contractor.first_name, contractor.last_name].filter(Boolean).join(' ') || null
+  return {
+    hasAccount: false,
+    user: {
+      id: NO_ACCOUNT_ID,
+      email: contractor.email?.trim().toLowerCase() ?? '',
+      display_name: person,
+      business_name: contractor.company,
+      phone: contractor.phone,
+      shopify_customer_id: null,
+      status_override: null,
+      last_login_at: null,
+      invited_at: null,
+      created_at: new Date().toISOString(),
+      password_hash: null,
+    },
+  }
+}
+
 /** The dealer a view shows: their account, or for a roster dealer the base view until they sign up. */
 async function viewedUser(p: Payload): Promise<{ user: ProUser; hasAccount: boolean } | null> {
+  if (p.k) return contractorView(p.k)
   if (p.u) {
     const user = await accountUser(p.u)
     return user ? { user, hasAccount: true } : null
@@ -165,7 +226,7 @@ export const getViewAs = cache(async (): Promise<ViewAs | null> => {
   const admin = await getPortalAdmin()
   if (!admin || admin.email !== p.a || !(await adminCan('view_as'))) return null
   const viewed = await viewedUser(p)
-  return viewed ? { ...viewed, admin, expiresAt: p.x * 1000 } : null
+  return viewed ? { ...viewed, admin, expiresAt: p.x * 1000, contractorId: p.k ?? null } : null
 })
 
 export async function isViewingAs(): Promise<boolean> {
@@ -194,8 +255,11 @@ async function logEnd(p: Payload) {
  */
 export async function startViewAs(admin: PortalAdmin, target: ViewAsTarget): Promise<ProUser | null> {
   let user: ProUser | null
-  let named: Pick<Payload, 'u' | 'c'>
-  if ('proUserId' in target) {
+  let named: Pick<Payload, 'u' | 'c' | 'k'>
+  if ('contractorId' in target) {
+    user = (await contractorView(target.contractorId))?.user ?? null
+    named = { k: target.contractorId }
+  } else if ('proUserId' in target) {
     user = await accountUser(target.proUserId)
     named = { u: user?.id }
   } else {

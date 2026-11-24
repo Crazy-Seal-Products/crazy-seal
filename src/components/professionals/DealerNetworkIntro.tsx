@@ -85,7 +85,7 @@ export function DealerNetworkIntro() {
               Become a Dealer
               <ArrowRight className="h-4 w-4" />
             </FormModalButton>
-            <LinkButton href="/portal/demo/summit/" variant="white" size="lg">
+            <LinkButton href="#pro-portal" variant="white" size="lg">
               <Sparkles className="h-4 w-4" />
               Tour the Pro Portal
             </LinkButton>
@@ -95,8 +95,8 @@ export function DealerNetworkIntro() {
               <Phone className="h-4 w-4 text-accent-light" />
               (800) 963-0131
             </a>
-            <a href="/pro" className="text-white/60 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white">
-              Already a Pro? Sign in to the Pro Hub
+            <a href="/pro/login/?next=/portal/" className="text-white/60 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white">
+              Already a Pro? Sign in to the Pro Portal
             </a>
           </div>
         </div>

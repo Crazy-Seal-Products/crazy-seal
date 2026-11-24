@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Plus, RefreshCw } from 'lucide-react'
 import { requirePortalAdmin } from '@/lib/portal/admin/auth'
 import { syncContractorsFromShopify } from '@/lib/portal/admin/contractor-actions'
 import { getContractorList, type ContractorListRow } from '@/lib/portal/admin/dealers'
+import { getRepRoster, repForAdmin } from '@/lib/portal/admin/reps'
 import { getCoverage, customerName } from '@/lib/portal/admin/sales'
 import { dateShort, money0, num, pct } from '@/lib/portal/admin/format'
 import { one, pick, type SearchParams } from '@/lib/portal/admin/params'
@@ -60,6 +61,12 @@ const SORTS = [
   { key: 'name', label: 'Name' },
 ] as const
 
+/** For a login linked to a sales rep: their own contractors (contractors.rep_id) or everyone. */
+const SCOPES = [
+  { key: 'mine', label: 'My contractors' },
+  { key: 'all', label: 'All' },
+] as const
+
 type Filter = (typeof FILTERS)[number]['key']
 type Sort = (typeof SORTS)[number]['key']
 
@@ -91,24 +98,42 @@ const SORT: Record<Sort, (a: ContractorListRow, b: ContractorListRow) => number>
 }
 
 export default async function AdminContractorsPage({ searchParams }: { searchParams: SearchParams }) {
-  await requirePortalAdmin('contractors')
+  const admin = await requirePortalAdmin('contractors')
   const sp = await searchParams
   const q = one(sp.q)?.toLowerCase()
   const filter = pick(sp.filter, FILTERS, 'all')
   const type = pick(sp.type, TYPES, 'all')
   const sort = pick(sp.sort, SORTS, 'lifetime')
-  const [{ contractors, summary: s, reps, pending, recentDays }, coverage] = await Promise.all([getContractorList(), getCoverage()])
+  const [{ contractors, summary: s, reps, pending, recentDays }, coverage, roster] = await Promise.all([getContractorList(), getCoverage(), getRepRoster()])
   const since = coverage.first ? dateShort(coverage.first) : 'the start of the history'
 
-  const searched = contractors.filter(
+  // A login linked to a sales rep opens on their own contractors; others see everyone, and (not Sales reps) can pick a rep.
+  const myRepId = repForAdmin(admin, roster)?.id ?? null
+  const scope = myRepId ? pick(sp.scope, SCOPES, 'mine') : 'all'
+  const repOptions = [
+    { key: 'all', label: 'All reps' },
+    ...roster.reps
+      .filter((r): r is typeof r & { id: string } => Boolean(r.id) && (r.active || contractors.some((d) => d.repId === r.id)))
+      .map((r) => ({ key: r.id, label: r.name, count: contractors.filter((d) => d.repId === r.id).length })),
+    { key: 'none', label: 'No rep', count: contractors.filter((d) => !d.repId).length },
+  ]
+  const showRepFilter = scope === 'all' && admin.role !== 'sales_rep' && repOptions.length > 2
+  const rep = showRepFilter ? pick(sp.rep, repOptions, 'all') : 'all'
+  const scoped = contractors.filter((d) =>
+    scope === 'mine' ? d.repId === myRepId : rep === 'all' ? true : rep === 'none' ? !d.repId : d.repId === rep,
+  )
+
+  const searched = scoped.filter(
     (d) =>
       (type === 'all' || d.segment === type) &&
-      (!q || [d.name, d.contact, d.email, d.city, d.state, d.zip, d.slug, ...d.reps].some((v) => v?.toLowerCase().includes(q))),
+      (!q || [d.name, d.contact, d.email, d.city, d.state, d.zip, d.slug, d.repName, ...d.reps].some((v) => v?.toLowerCase().includes(q))),
   )
   // Names are already in order; the spending sorts keep that order for ties.
   const rows = searched.filter((d) => test(filter, d)).sort((a, b) => SORT[sort](a, b) || a.name.localeCompare(b.name))
   const params = {
     q: one(sp.q),
+    scope: myRepId && scope === 'all' ? 'all' : undefined,
+    rep: rep === 'all' ? undefined : rep,
     filter: filter === 'all' ? undefined : filter,
     type: type === 'all' ? undefined : type,
     sort: sort === 'lifetime' ? undefined : sort,
@@ -236,6 +261,16 @@ export default async function AdminContractorsPage({ searchParams }: { searchPar
       )}
 
       <Toolbar className="mb-2">
+        {myRepId && (
+          <Segmented
+            options={SCOPES.map((o) => ({ ...o, count: o.key === 'mine' ? contractors.filter((d) => d.repId === myRepId).length : contractors.length }))}
+            value={scope}
+            param="scope"
+            base={BASE}
+            params={{ ...params, rep: undefined }}
+          />
+        )}
+        {showRepFilter && <Segmented options={repOptions} value={rep} param="rep" base={BASE} params={params} />}
         <Segmented options={FILTERS.map((f) => ({ ...f, count: searched.filter((d) => test(f.key, d)).length }))} value={filter} param="filter" base={BASE} params={params} />
         <Segmented options={TYPES} value={type} param="type" base={BASE} params={params} />
         <Segmented options={SORTS} value={sort} param="sort" base={BASE} params={params} />
@@ -243,7 +278,12 @@ export default async function AdminContractorsPage({ searchParams }: { searchPar
       </Toolbar>
 
       {/* Keyed so a new filter, sort or search starts the list back at the top. */}
-      <ContractorsBoard key={`${filter}:${type}:${sort}:${q ?? ''}`} rows={rows} since={since} />
+      <ContractorsBoard
+        key={`${scope}:${rep}:${filter}:${type}:${sort}:${q ?? ''}`}
+        rows={rows}
+        since={since}
+        empty={scope === 'mine' && !scoped.length ? 'No contractors are assigned to you yet. A contractor’s rep is set on their page, under Pricing & account.' : undefined}
+      />
     </>
   )
 }

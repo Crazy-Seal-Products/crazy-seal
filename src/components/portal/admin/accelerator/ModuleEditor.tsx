@@ -23,7 +23,7 @@ import type { LessonDraft, ModuleDraft, ResourceDraft } from '@/lib/portal/admin
 import { LESSON_KINDS, MODULE_ICON_NAMES, RESOURCE_TYPES, type LessonKind } from '@/lib/portal/modules'
 import { Badge, PageHeader, Panel } from '../ui'
 import { BUTTON, inputCls, labelCls, textareaCls } from '../styles'
-import { MODULE_ICON_META, previewHref } from './icons'
+import { MODULE_ICON_META } from './icons'
 
 const KIND_ICONS: Record<LessonKind, LucideIcon> = { video: Video, assets: FolderOpen, checklist: ListChecks, quiz: CircleHelp }
 
@@ -57,8 +57,8 @@ function looksLikeImage(src: string) {
 }
 
 /**
- * Editor for one Accelerator Program module: its details and its lessons,
- * saved together. Lessons open one at a time; their ids (used in dealers'
+ * Editor for one Training module (the Accelerator Program): its details and its lessons,
+ * saved together. Lessons open one at a time; their ids (used in contractors'
  * saved progress and lesson links) are set on first save and never change.
  */
 export function ModuleEditor({
@@ -113,7 +113,7 @@ export function ModuleEditor({
         setDraft(r.draft)
         setSaved(r.draft)
         setOpenUid(open >= 0 ? (r.draft.lessons[open]?.uid ?? null) : null)
-        setStatus({ ok: true, text: 'Saved. Dealers see it on their next page load.' })
+        setStatus({ ok: true, text: 'Saved. Contractors see it on their next page load.' })
       } else if (!r.ok) setStatus({ ok: false, text: r.error })
     })
 
@@ -146,14 +146,14 @@ export function ModuleEditor({
         }
         description={
           published
-            ? `${draft.lessons.length} lessons · ${minutes} min · dealers see this in the Pro Portal`
-            : `${draft.lessons.length} lessons · ${minutes} min · hidden from dealers until you publish it`
+            ? `${draft.lessons.length} lessons · ${minutes} min · contractors see this under Training in their portal`
+            : `${draft.lessons.length} lessons · ${minutes} min · hidden from contractors until you publish it`
         }
         actions={
           <>
-            {published && (
-              <a href={previewHref(slug)} target="_blank" rel="noopener noreferrer" className={BUTTON.default}>
-                Preview <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
+            {/^(\/|https:\/\/)/.test(saved.publicHref) && (
+              <a href={saved.publicHref} target="_blank" rel="noopener noreferrer" className={BUTTON.default}>
+                Public page <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
               </a>
             )}
             <button

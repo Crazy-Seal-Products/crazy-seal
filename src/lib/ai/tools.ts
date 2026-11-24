@@ -38,7 +38,7 @@ export function dealerTools(user: ProUser, conversationId: () => string | null):
     knowledgeTool(true),
     {
       name: 'get_my_account',
-      description: "This dealer's Pro Hub account: business name, Pro statuses (Member, Pro, Commercial, High volume) and order count.",
+      description: "This dealer's portal account: business name, Pro statuses (Member, Pro, Commercial, High volume) and order count.",
       parameters: { type: 'object', properties: {} },
       run: async () => {
         const c = await context()
@@ -73,7 +73,7 @@ export function dealerTools(user: ProUser, conversationId: () => string | null):
     },
     {
       name: 'list_my_warranty_jobs',
-      description: "This dealer's warranty registrations, claims and transfers with their status (the Jobs page in the Pro Hub).",
+      description: "This dealer's warranty registrations, claims and transfers with their status (the Warranties page in their portal).",
       parameters: { type: 'object', properties: {} },
       run: async () => {
         const jobs = await loadJobsForPro(await context())
@@ -105,7 +105,7 @@ export function dealerTools(user: ProUser, conversationId: () => string | null):
           kind: 'dealer_support',
           subject,
           body: summary,
-          author: { type: 'system', name: 'Pro Hub assistant' },
+          author: { type: 'system', name: 'Pro Portal assistant' },
           conversationId: conversationId(),
           proUserId: user.id,
           contact: { name: user.business_name || user.display_name, email: user.email, phone: user.phone },

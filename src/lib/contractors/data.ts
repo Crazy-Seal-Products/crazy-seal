@@ -92,7 +92,8 @@ function toAdmin(r: ContractorRow, point: ZipPoint | null): AdminContractor {
     updatedAt: r.updated_at,
     shopifyCustomerIds: r.shopify_customer_ids ?? [],
     unlinkedCustomerIds: r.unlinked_customer_ids ?? [],
-    origin: r.import_key ? 'list' : (r.source ?? 'admin'),
+    // A Pro account's automatic company (import_key 'auto:…', src/lib/contractor/provision.ts) isn't from the dealer list.
+    origin: r.import_key && !r.import_key.startsWith('auto:') ? 'list' : (r.source ?? 'admin'),
   }
 }
 

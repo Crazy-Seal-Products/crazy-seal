@@ -264,11 +264,11 @@ export async function sendStaffPasswordLink(email: string, name: string | null, 
 export async function sendProMagicLink(email: string, url: string) {
   await sendEmail({
     to: email,
-    subject: 'Your Crazy Seal Pro Hub sign-in link',
+    subject: 'Your Crazy Seal Pro Portal sign-in link',
     html: `
       <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#333;max-width:600px;">
-        <div style="background:#003365;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Hub</p>
+        <div style="background:#00152b;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Portal</p>
           <h1 style="margin:8px 0 0;font-size:22px;">You're in</h1>
         </div>
         <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 12px 12px;">
@@ -276,7 +276,7 @@ export async function sendProMagicLink(email: string, url: string) {
           <p style="margin:28px 0;">
             <a href="${url}" target="_blank"
                style="display:inline-block;background:#5BA411;color:#fff;font-weight:bold;padding:12px 24px;border-radius:8px;text-decoration:none;">
-              Open Pro Hub
+              Open your portal
             </a>
           </p>
           <p style="font-size:12px;color:#888;">If you didn't ask for this email, you can ignore it.</p>
@@ -290,11 +290,11 @@ export async function sendProMagicLink(email: string, url: string) {
 export async function sendProSignupLink(email: string, url: string) {
   await sendEmail({
     to: email,
-    subject: 'Finish creating your Crazy Seal Pro Hub account',
+    subject: 'Finish creating your Crazy Seal Pro Portal account',
     html: `
       <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#333;max-width:600px;">
-        <div style="background:#003365;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Hub</p>
+        <div style="background:#00152b;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Portal</p>
           <h1 style="margin:8px 0 0;font-size:22px;">Choose your password</h1>
         </div>
         <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 12px 12px;">
@@ -316,11 +316,11 @@ export async function sendProSignupLink(email: string, url: string) {
 export async function sendProPasswordReset(email: string, url: string) {
   await sendEmail({
     to: email,
-    subject: 'Reset your Crazy Seal Pro Hub password',
+    subject: 'Reset your Crazy Seal Pro Portal password',
     html: `
       <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#333;max-width:600px;">
-        <div style="background:#003365;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Hub</p>
+        <div style="background:#00152b;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#F9EA1C;font-weight:bold;">Crazy Seal Pro Portal</p>
           <h1 style="margin:8px 0 0;font-size:22px;">Reset your password</h1>
         </div>
         <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 12px 12px;">

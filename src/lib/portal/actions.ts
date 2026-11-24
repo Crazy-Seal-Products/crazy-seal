@@ -1,10 +1,7 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { DEMO_ACCOUNT } from './accounts'
 import { logAccess } from './admin/access-log'
-import { isPortalDemoEnabled, PORTAL_COOKIE, PORTAL_COOKIE_MAX_AGE } from './session'
 import {
   endAdminSession,
   getPortalAdmin,
@@ -22,17 +19,6 @@ export interface SignInState {
   field?: 'email' | 'password'
   /** The email that was tried, so the form keeps it after an error. */
   email?: string
-}
-
-async function setDemoSession() {
-  const store = await cookies()
-  store.set(PORTAL_COOKIE, DEMO_ACCOUNT.id, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: PORTAL_COOKIE_MAX_AGE,
-  })
 }
 
 export async function portalSignIn(_prev: SignInState, formData: FormData): Promise<SignInState> {
@@ -63,28 +49,11 @@ export async function portalSignIn(_prev: SignInState, formData: FormData): Prom
     return { error: 'That password isn’t right. Try again, or use “Forgot your password?”.', field: 'password', email }
   }
 
-  if (email === DEMO_ACCOUNT.email.toLowerCase() && isPortalDemoEnabled()) {
-    await setDemoSession()
-    redirect('/portal/?welcome=1')
-  }
-
   return {
-    error: 'There’s no admin account for this email. Dealer sign-in isn’t open yet: explore the demo below, or use the Pro Hub for orders today.',
+    error: 'There’s no Crazy Seal staff account for this email. Contractors: use “Sign in to your contractor portal” below.',
     field: 'email',
     email,
   }
-}
-
-export async function portalStartDemo() {
-  if (!isPortalDemoEnabled()) redirect('/portal/login/')
-  await setDemoSession()
-  redirect('/portal/?welcome=1')
-}
-
-export async function portalSignOut() {
-  const store = await cookies()
-  store.delete(PORTAL_COOKIE)
-  redirect('/portal/login/')
 }
 
 /** After a password reset: is the new Supabase session a Crazy Seal Admin? */

@@ -3,6 +3,7 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronDown, Hammer, HelpCircle, Layers, ShieldCheck, Truck } from 'lucide-react'
+import { StoreLink } from '@/components/layout/StoreMode'
 
 interface FAQItem {
   id: string
@@ -35,9 +36,9 @@ const FAQ_ITEMS: FAQItem[] = [
         Labor is often one of the biggest costs in roofing. Do it yourself and
         you get a seamless roof at a fraction of the cost — saving thousands or
         more. Check out our{' '}
-        <Link href="/kit-builder" className={linkClass}>
+        <StoreLink href="/kit-builder" className={linkClass}>
           Kit Builder
-        </Link>{' '}
+        </StoreLink>{' '}
         to learn more.
       </>
     ),
@@ -55,9 +56,9 @@ const FAQ_ITEMS: FAQItem[] = [
       <>
         Very affordable — especially compared to alternatives that include
         labor. Visit our{' '}
-        <Link href="/kit-builder" className={linkClass}>
+        <StoreLink href="/kit-builder" className={linkClass}>
           Kit Builder
-        </Link>{' '}
+        </StoreLink>{' '}
         for the cost of your specific project.
       </>
     ),

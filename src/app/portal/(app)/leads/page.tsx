@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { LeadsView } from '@/components/portal/views/LeadsView'
+import { permanentRedirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Leads' }
-
-export default function PortalLeadsViewPage() {
-  return <LeadsView />
+/** Old demo portal address; the contractor portal moved this to /portal/projects/ */
+export default function OldAddress() {
+  permanentRedirect('/portal/projects/')
 }

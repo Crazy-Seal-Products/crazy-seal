@@ -24,7 +24,7 @@ export default async function AdminAcceleratorModulePage({ params }: { params: P
 
   return (
     <>
-      <BackLink href="/portal/admin/dealers/accelerator/">Accelerator Program</BackLink>
+      <BackLink href="/portal/admin/dealers/accelerator/">Training</BackLink>
       <ModuleEditor slug={row.slug} number={number} published={row.is_published} initial={toModuleDraft(row)} />
     </>
   )

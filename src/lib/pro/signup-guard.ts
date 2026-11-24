@@ -3,7 +3,8 @@ import { rateLimited } from '@/lib/ai/guard'
 
 /**
  * Extra bot screening for the Pro Hub forms that can create an account and email any address:
- * sign-up and "Email me a sign-in link". Their routes check Turnstile first (passesTurnstile); a bot
+ * sign-up, "Email me a sign-in link" and Forgot password (which makes a contractor's owner account,
+ * src/lib/contractor/invite.ts). Their routes check Turnstile first (passesTurnstile); a bot
  * used sign-up to mail strangers from Oct 27, 2026 (see signup-flags.ts). This adds:
  * - Honeypot: a hidden "website" field people never see. When it is filled, act as if it worked
  *   and do nothing, so the bot learns nothing.
@@ -13,7 +14,7 @@ import { rateLimited } from '@/lib/ai/guard'
 export function screenProEmailForm(
   request: NextRequest,
   body: Record<string, unknown> | null,
-  bucket: 'pro-signup' | 'pro-link',
+  bucket: 'pro-signup' | 'pro-link' | 'pro-forgot',
   pretendItWorked: () => NextResponse,
 ): NextResponse | null {
   if (typeof body?.website === 'string' && body.website.trim()) {

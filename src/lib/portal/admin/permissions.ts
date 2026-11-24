@@ -7,6 +7,7 @@ import {
   EDITABLE_ROLES,
   SECTION_KEYS,
   TOP_ROLE,
+  isDeveloperOnly,
   isSection,
   type AdminRole,
   type AdminSection,
@@ -39,7 +40,8 @@ export function getPermissionMatrix(): Promise<PermissionMatrix> {
     // Any other error fails closed (the page errors) rather than falling back to the defaults.
     if (error && !isMissingTable(error)) throw new Error(`admin_role_permissions: ${error.message}`)
     for (const row of (data ?? []) as PermissionRow[]) {
-      if (!(EDITABLE_ROLES as string[]).includes(row.role) || !isSection(row.section)) continue
+      // The Support area stays with Developers whatever a saved row says.
+      if (!(EDITABLE_ROLES as string[]).includes(row.role) || !isSection(row.section) || isDeveloperOnly(row.section)) continue
       const set = sets.get(row.role as AdminRole)!
       if (row.allowed) set.add(row.section)
       else set.delete(row.section)

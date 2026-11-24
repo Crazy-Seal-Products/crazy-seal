@@ -5,6 +5,7 @@ import { listAdminContractors } from '@/lib/contractors/data'
 import { isDealerOrderTags, planShopifySync } from '@/lib/contractors/shopify-match'
 import { placeLabel, type AdminContractor } from '@/lib/contractors/types'
 import { memo } from './cache'
+import { isMissingTable } from './permissions'
 import { legacyId as legacyIdOf } from './format'
 import { getRepRoster, repsOnTags } from './reps'
 import { allCustomers, allOrders, customerName, orderSales, type CustomerLite, type OrderLite } from './sales'
@@ -26,6 +27,13 @@ import { allCustomers, allOrders, customerName, orderSales, type CustomerLite, t
 const isDealerOrder = (o: OrderLite) => isDealerOrderTags(o.tags)
 
 export type PortalState = 'active' | 'idle' | 'invited' | 'none'
+
+/**
+ * A contractor's team on the contractor portal (contractor_members, access
+ * not turned off): an active owner, people but no active owner, only
+ * invitations nobody has accepted, or nobody.
+ */
+export type TeamState = 'owner' | 'team' | 'invited' | 'none'
 
 export interface ProUserRow {
   id: string
@@ -106,6 +114,34 @@ export interface ContractorListRow extends AdminContractor {
   /** Sales reps on their dealer orders, most orders first. */
   reps: string[]
   warranties: number
+  /** The Crazy Seal sales rep who owns the account (contractors.rep_id), set on their page. */
+  repId: string | null
+  repName: string | null
+  /** Their contractor portal team. */
+  team: TeamState
+}
+
+/**
+ * Each contractor's assigned rep and contractor portal team. Either half
+ * comes back empty (and logs) when its migration hasn't run: rep_id is
+ * 031_pricing.sql, contractor_members 027_contractor_portal.sql.
+ */
+async function contractorAccounts(): Promise<{ repOf: Map<string, string>; teamOf: Map<string, TeamState> }> {
+  const db = createAdminClient()
+  const [reps, members] = await Promise.all([
+    db.from('contractors').select('id, rep_id').not('rep_id', 'is', null).limit(5000).returns<{ id: string; rep_id: string }[]>(),
+    db.from('contractor_members').select('contractor_id, role, status').neq('status', 'disabled').limit(20_000).returns<{ contractor_id: string; role: string; status: string }[]>(),
+  ])
+  if (reps.error) console.error('[contractors] rep_id', reps.error.message)
+  if (members.error && !isMissingTable(members.error)) console.error('[contractors] contractor_members', members.error.message)
+  const repOf = new Map((reps.data ?? []).map((r) => [r.id, r.rep_id]))
+  const rank: Record<TeamState, number> = { owner: 3, team: 2, invited: 1, none: 0 }
+  const teamOf = new Map<string, TeamState>()
+  for (const m of members.data ?? []) {
+    const state: TeamState = m.status === 'invited' ? 'invited' : m.role === 'owner' ? 'owner' : 'team'
+    if (rank[state] > rank[teamOf.get(m.contractor_id) ?? 'none']) teamOf.set(m.contractor_id, state)
+  }
+  return { repOf, teamOf }
 }
 
 const RECENT_DAYS = 90
@@ -124,14 +160,16 @@ function rosterIds(customers: CustomerLite[], orders: OrderLite[]): Set<string> 
  * what the Shopify sync would do now, so the page can offer it.
  */
 export async function getContractorList() {
-  const [records, customers, users, orders, warranties, repRoster] = await Promise.all([
+  const [records, customers, users, orders, warranties, repRoster, { repOf, teamOf }] = await Promise.all([
     listAdminContractors(),
     allCustomers(),
     proUsers(),
     allOrders(),
     warrantyCounts(),
     getRepRoster(),
+    contractorAccounts(),
   ])
+  const repNameById = new Map(repRoster.reps.filter((r) => r.id).map((r) => [r.id!, r.name]))
   // Rep-name tags the sales team puts on orders (the Sales reps roster).
   const repNames = repRoster.reps.map((r) => r.name)
   const repsOf = (tags: string[]) => repsOnTags(tags, repNames)
@@ -179,6 +217,9 @@ export async function getContractorList() {
       lastOrderAt,
       reps: repCount.size ? [...repCount].sort((a, b) => b[1] - a[1]).map(([rep]) => rep) : repsOf(linked.flatMap((c) => c.tags)),
       warranties: [...emails].reduce((n, e) => n + (warranties.get(e) ?? 0), 0) + (user ? warranties.get(user.id) ?? 0 : 0),
+      repId: repOf.get(d.id) ?? null,
+      repName: repNameById.get(repOf.get(d.id) ?? '') ?? null,
+      team: teamOf.get(d.id) ?? 'none',
     } satisfies ContractorListRow
   })
 
@@ -265,6 +306,31 @@ export async function getContractorList() {
     },
     recentDays: RECENT_DAYS,
   }
+}
+
+export interface RepContractorRow extends ContractorListRow {
+  /** Their quotes still open or at checkout; null when the quotes table isn't there yet. */
+  openQuotes: number | null
+}
+
+/** The contractors a sales rep owns (contractors.rep_id), with their open quotes, most recent order first. */
+export async function getRepContractors(repId: string): Promise<RepContractorRow[]> {
+  const { contractors } = await getContractorList()
+  const mine = contractors.filter((d) => d.repId === repId)
+  if (!mine.length) return []
+  const { data, error } = await createAdminClient()
+    .from('quotes')
+    .select('contractor_id')
+    .in('contractor_id', mine.map((d) => d.id))
+    .in('status', ['open', 'checkout'])
+    .limit(10_000)
+    .returns<{ contractor_id: string }[]>()
+  if (error && !isMissingTable(error)) console.error('[reps] open quotes', error.message)
+  const open = new Map<string, number>()
+  for (const q of data ?? []) open.set(q.contractor_id, (open.get(q.contractor_id) ?? 0) + 1)
+  return mine
+    .map((d) => ({ ...d, openQuotes: error ? null : open.get(d.id) ?? 0 }))
+    .sort((a, b) => (b.lastOrderAt ?? '').localeCompare(a.lastOrderAt ?? '') || a.name.localeCompare(b.name))
 }
 
 /** One contractor with their linked Shopify customers and their orders in the history kept here, newest first. */

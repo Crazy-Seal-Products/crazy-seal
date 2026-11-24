@@ -20,6 +20,7 @@ import { CtaSection } from '@/components/CtaSection'
 import { CountUp, GlowOrb } from '@/components/motion'
 import { ProTestimonials } from '@/components/pro/ProSections'
 import { ProContactSection } from '@/components/pro/ProContactSection'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: 'Ways To Earn',
@@ -87,7 +88,8 @@ const EARNING_AVENUES = [
   },
 ]
 
-export default function WaysToEarnPage() {
+export default async function WaysToEarnPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -275,7 +277,7 @@ export default function WaysToEarnPage() {
                 </li>
               ))}
             </ul>
-            <LinkButton href="/kit-builder" variant="accent" size="lg">
+            <LinkButton href={shop('/kit-builder')} variant="accent" size="lg">
               <ShoppingCart className="w-5 h-5" />
               Shop Product Kits
             </LinkButton>

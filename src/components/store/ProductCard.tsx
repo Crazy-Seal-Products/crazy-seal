@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { StoreLink } from '@/components/layout/StoreMode'
 import { twMerge } from 'tailwind-merge'
 import { ArrowRight } from 'lucide-react'
 import { formatPrice, type StoreProduct } from '@/lib/store/products'
@@ -9,6 +9,7 @@ const KIT_CATEGORIES = new Set(['rv-kits', 'roof-kits', 'commercial-kits'])
 /**
  * Store-style product card: image, badge, stars, stock, price, Affirm note.
  * `compact` is the shop grid's tighter version (shorter image, one-line blurb).
+ * Links to the quote builder instead once it's live (StoreLink).
  */
 export function ProductCard({ product, compact = false }: { product: StoreProduct; compact?: boolean }) {
   const isKit = KIT_CATEGORIES.has(product.category)
@@ -18,7 +19,7 @@ export function ProductCard({ product, compact = false }: { product: StoreProduc
       : `From ${formatPrice(product.priceMin)}`
 
   return (
-    <Link
+    <StoreLink
       href={`/store/${product.handle}`}
       className={twMerge(
         'group relative flex flex-col overflow-hidden rounded-3xl bg-white p-2 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl hover:ring-primary/15',
@@ -89,6 +90,6 @@ export function ProductCard({ product, compact = false }: { product: StoreProduc
           </span>
         </div>
       </div>
-    </Link>
+    </StoreLink>
   )
 }

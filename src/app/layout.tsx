@@ -5,6 +5,7 @@ import "./globals.css";
 import { GlobalLayout } from "@/components/layout/GlobalLayout";
 import { TrackingProvider, MetaPixel, ClickCease, GoogleAds } from "@/components/tracking";
 import { AuthRedirectCatcher } from "@/components/auth/AuthRedirectCatcher";
+import { isPublicBuilderLive } from "@/lib/pricing/builder-live";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -60,11 +61,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Store or quote builder: decides the header, footer and cart links (cached; off on any error).
+  const builderLive = await isPublicBuilderLive();
   return (
     <html lang="en">
       {process.env.NEXT_PUBLIC_GTM_ID && (
@@ -81,7 +84,7 @@ export default function RootLayout({
         <GoogleAds />
         <AuthRedirectCatcher />
         <TrackingProvider>
-          <GlobalLayout>{children}</GlobalLayout>
+          <GlobalLayout builderLive={builderLive}>{children}</GlobalLayout>
         </TrackingProvider>
       </body>
     </html>

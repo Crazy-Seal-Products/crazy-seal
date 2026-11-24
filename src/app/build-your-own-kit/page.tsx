@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { ArrowRight, Headset, Palette, Phone, Ruler, SlidersHorizontal } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import {
@@ -17,6 +18,8 @@ import {
 } from '@/components/system-pages/blocks'
 import { VideoPlayer } from './VideoPlayer'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { isPublicBuilderLive } from '@/lib/pricing/builder-live'
+import { QUOTE_HREF } from '@/lib/store-mode'
 
 const SHOP_BYOK = '/kit-builder#products'
 
@@ -181,7 +184,9 @@ const OTHER_KITS = [
   },
 ]
 
-export default function BuildYourOwnKitPage() {
+export default async function BuildYourOwnKitPage() {
+  // The store is off once the public quote builder is live (307, so it can be switched back).
+  if (await isPublicBuilderLive()) redirect(QUOTE_HREF)
   return (
     <>
       {/* ─── HERO ─── */}

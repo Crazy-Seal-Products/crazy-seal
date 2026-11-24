@@ -37,7 +37,7 @@ export const TICKET_CAUSES = [
   { key: 'wrong_source', label: 'AI used the wrong page' },
   { key: 'prompt', label: 'Instructions / tone' },
   { key: 'tool', label: 'Lookup broken' },
-  { key: 'site_bug', label: 'Site or Pro Hub bug' },
+  { key: 'site_bug', label: 'Site or portal bug' },
   { key: 'model', label: 'Model limitation' },
   { key: 'not_ai', label: 'Not an AI problem' },
   { key: 'feature', label: 'Feature request' },
@@ -265,7 +265,7 @@ async function emailRequester(ticket: Ticket, body: string, fromName: string) {
       to: pro.email,
       subject: `Re: ${ticket.subject} [Support #${ticket.number}]`,
       html: emailShell(
-        `<p style="margin:0 0 12px">${escapeHtml(fromName)} replied to your support request:</p>${paragraphs(body)}<p><a href="${siteOrigin()}/pro/support/?ticket=${ticket.id}">View and reply in your Pro Hub</a></p>`,
+        `<p style="margin:0 0 12px">${escapeHtml(fromName)} replied to your support request:</p>${paragraphs(body)}<p><a href="${siteOrigin()}/portal/support/?ticket=${ticket.id}">View and reply in your portal</a></p>`,
       ),
     })
     return
@@ -297,7 +297,7 @@ export async function notifyResolved(ticket: Ticket, resolution: string | null):
     to: pro.email,
     subject: `Resolved: ${ticket.subject} [Support #${ticket.number}]`,
     html: emailShell(
-      `<p style="margin:0 0 12px">Your ${escapeHtml(kindLabel(ticket.kind).toLowerCase())} has been marked resolved.</p>${resolution ? paragraphs(resolution) : ''}<p><a href="${siteOrigin()}/pro/support/?ticket=${ticket.id}">View it in your Pro Hub</a></p>`,
+      `<p style="margin:0 0 12px">Your ${escapeHtml(kindLabel(ticket.kind).toLowerCase())} has been marked resolved.</p>${resolution ? paragraphs(resolution) : ''}<p><a href="${siteOrigin()}/portal/support/?ticket=${ticket.id}">View it in your portal</a></p>`,
     ),
   }).catch((err) => console.error('[support] resolved email failed', err))
 }

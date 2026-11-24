@@ -11,6 +11,7 @@ import {
   SECTION_WHITE,
   fadeDelay,
 } from '@/components/system-pages/blocks'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: 'Custom Orders',
@@ -37,7 +38,8 @@ const OPTIONS = [
   },
 ]
 
-export default function CustomOrdersPage() {
+export default async function CustomOrdersPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -71,7 +73,7 @@ export default function CustomOrdersPage() {
             {OPTIONS.map((option) => (
               <a
                 key={option.title}
-                href={option.href}
+                href={shop(option.href)}
                 className={`group relative flex flex-col overflow-hidden ${LIGHT_CARD}`}
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-accent/10">

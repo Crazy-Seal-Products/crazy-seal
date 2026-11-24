@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T11:19:52.173Z",
+  "generatedAt": "2026-11-24T06:00:11.338Z",
   "routes": [
     {
       "path": "/",
@@ -297,6 +297,16 @@
       "admin": false
     },
     {
+      "path": "/portal/account/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/activity/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/",
       "dynamic": false,
       "admin": false
@@ -432,6 +442,11 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/pricing/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/products/",
       "dynamic": false,
       "admin": false
@@ -452,7 +467,27 @@
       "admin": false
     },
     {
+      "path": "/portal/admin/quotes/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/quotes/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/quotes/new/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/admin/redirects/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/admin/reps/",
       "dynamic": false,
       "admin": false
     },
@@ -497,6 +532,36 @@
       "admin": false
     },
     {
+      "path": "/portal/brand/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/catalog/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/customer-view/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/customers/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/customers/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/jobs/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/leads/",
       "dynamic": false,
       "admin": false
@@ -517,7 +582,47 @@
       "admin": false
     },
     {
+      "path": "/portal/no-access/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
       "path": "/portal/orders/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/projects/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/projects/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/projects/new/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/quotes/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/quotes/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/quotes/[id]/proposal/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/quotes/new/",
       "dynamic": false,
       "admin": false
     },
@@ -528,6 +633,86 @@
     },
     {
       "path": "/portal/resources/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/rewards/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/[id]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/documents/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/estimates/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/inspections/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/planning/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/roofs/portfolio/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/set-password/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/support/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/systems/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/team/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/training/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/training/[slug]/",
+      "dynamic": true,
+      "admin": false
+    },
+    {
+      "path": "/portal/warranties/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/portal/warranties/new/",
       "dynamic": false,
       "admin": false
     },
@@ -669,6 +854,16 @@
     {
       "path": "/projects/",
       "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/quote/",
+      "dynamic": false,
+      "admin": false
+    },
+    {
+      "path": "/quote/[token]/",
+      "dynamic": true,
       "admin": false
     },
     {

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowUpRight, CircleCheck } from 'lucide-react'
+import { ArrowUpRight, CircleCheck, Plus } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { linkContractorCustomer, resendQuote, unlinkContractorCustomer } from '@/lib/portal/admin/contractor-actions'
-import { requirePortalAdmin } from '@/lib/portal/admin/auth'
+import { adminCan, requirePortalAdmin } from '@/lib/portal/admin/auth'
 import { getContractorDetail } from '@/lib/portal/admin/dealers'
 import { customerName, getCoverage, orderSales } from '@/lib/portal/admin/sales'
 import { ago, dateShort, legacyId, money0, num } from '@/lib/portal/admin/format'
@@ -16,6 +17,7 @@ import { ContractorLinkForm } from '@/components/portal/admin/ContractorLinkForm
 import { PORTAL_BADGE } from '@/components/portal/admin/portal-state'
 import { BUTTON } from '@/components/portal/admin/styles'
 import { ViewAsButton } from '@/components/portal/admin/ViewAsButton'
+import { ContractorPortalPanels } from '@/components/portal/admin/contractor-portal/ContractorPortalPanels'
 import { BackLink, Badge, CellLink, Empty, PageHeader, Panel, Stat, StatGrid, Table, Tag, TBody, Td, Th, THead, Tr } from '@/components/portal/admin/ui'
 
 export const metadata: Metadata = { title: 'Contractor' }
@@ -33,7 +35,7 @@ export default async function AdminContractorPage({ params, searchParams }: { pa
   await requirePortalAdmin('contractors')
   const { id } = await params
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound()
-  const [detail, leads, coverage, sp] = await Promise.all([getContractorDetail(id), listContractorLeads(id), getCoverage(), searchParams])
+  const [detail, leads, coverage, sp, canQuote] = await Promise.all([getContractorDetail(id), listContractorLeads(id), getCoverage(), searchParams, adminCan('quotes')])
   if (!detail) notFound()
   const { contractor: c, customers, orders, recentDays } = detail
   const since = coverage.first ? dateShort(coverage.first) : 'the start of the history'
@@ -48,6 +50,11 @@ export default async function AdminContractorPage({ params, searchParams }: { pa
         description={[SEGMENT_LABEL[c.segment], placeLabel(c), c.contact, ORIGIN[c.origin]].filter(Boolean).join(' · ')}
         actions={
           <>
+            {canQuote && (
+              <Link href={`/portal/admin/quotes/new/?contractor=${c.id}`} className={BUTTON.default}>
+                <Plus className="h-3.5 w-3.5" /> New quote
+              </Link>
+            )}
             {(c.proUserId || c.primaryCustomerEmail) && <ViewAsButton proUserId={c.proUserId} customerId={c.primaryCustomerId} name={c.name} className="h-8" />}
             {c.isListed && (
               <a href={`/contractor/${c.slug}/`} target="_blank" rel="noopener noreferrer" className={BUTTON.default}>
@@ -77,6 +84,8 @@ export default async function AdminContractorPage({ params, searchParams }: { pa
           {c.isListed ? `Added. Their page is live at /contractor/${c.slug}.` : 'Added. Their page stays hidden until you tick Listed publicly.'}
         </p>
       )}
+
+      <ContractorPortalPanels contractorId={c.id} name={c.name} />
 
       <Panel title="Shopify customers" meta={customers.length ? `${customers.length} linked · their orders are this contractor’s spending` : 'none linked'} tone="dealers" className="mb-2">
         {customers.length ? (

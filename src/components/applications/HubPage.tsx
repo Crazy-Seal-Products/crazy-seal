@@ -37,6 +37,7 @@ import {
   REASONS_PDF_URL,
 } from '@/lib/store/social-proof'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export interface HubPageConfig {
   family: ApplicationFamily
@@ -94,6 +95,7 @@ const enter = (delayMs: number) => ({
  */
 export async function HubPage({ config }: { config: HubPageConfig }) {
   const family = FAMILIES[config.family]
+  const shop = await getStoreHref()
 
   const [storeProducts, ownProjects] = await Promise.all([
     getStoreProducts(),
@@ -249,11 +251,11 @@ export async function HubPage({ config }: { config: HubPageConfig }) {
 
                 {/* CTAs */}
                 <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <LinkButton href={config.primaryCta.href} variant="accent" size="lg" className="w-full py-3.5">
+                  <LinkButton href={shop(config.primaryCta.href)} variant="accent" size="lg" className="w-full py-3.5">
                     {config.primaryCta.label}
                     <ArrowRight className="w-4 h-4" />
                   </LinkButton>
-                  <LinkButton href={config.secondaryCta.href} variant="outline-white" size="lg" className="w-full py-3.5">
+                  <LinkButton href={shop(config.secondaryCta.href)} variant="outline-white" size="lg" className="w-full py-3.5">
                     {config.secondaryCta.label}
                   </LinkButton>
                 </div>
@@ -360,7 +362,7 @@ export async function HubPage({ config }: { config: HubPageConfig }) {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-              <LinkButton href="/kit-builder" variant="white" size="md">
+              <LinkButton href={shop('/kit-builder')} variant="white" size="md">
                 Build a Custom Kit in 60 Seconds
                 <ArrowRight className="w-4 h-4" />
               </LinkButton>

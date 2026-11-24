@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getPublishedProjects } from '@/lib/projects'
 import { getShopProducts } from '@/lib/store/products'
+import { isPublicBuilderLive } from '@/lib/pricing/builder-live'
+import { QUOTE_HREF, isStoreHref } from '@/lib/store-mode'
 
 const BASE_URL = 'https://crazyseal.com'
 
@@ -98,8 +100,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/terms-and-conditions/',
   ]
 
+  // Once the public quote builder is live the store pages redirect to it: list /quote/ instead.
+  const builderLive = await isPublicBuilderLive()
+  const pages = builderLive
+    ? [{ url: QUOTE_HREF, changeFrequency: 'weekly' as const, priority: 0.9 }, ...mainPages.filter((page) => !isStoreHref(page.url))]
+    : mainPages
+
   const projects = await getPublishedProjects()
-  const storeProducts = await getShopProducts().catch(() => [])
+  const storeProducts = builderLive ? [] : await getShopProducts().catch(() => [])
 
   return [
     ...storeProducts.map((p) => ({
@@ -108,7 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     })),
-    ...mainPages.map((page) => ({
+    ...pages.map((page) => ({
       url: `${BASE_URL}${page.url}`,
       lastModified: now,
       changeFrequency: page.changeFrequency,

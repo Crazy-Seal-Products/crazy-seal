@@ -20,6 +20,7 @@ import {
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { LeadCaptureSection } from '@/components/LeadCaptureSection'
 import { GlowOrb, Marquee } from '@/components/motion'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -245,7 +246,8 @@ function SlideHint({ dark = false }: { dark?: boolean }) {
   )
 }
 
-export default function ReviewsPage() {
+export default async function ReviewsPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -587,7 +589,7 @@ export default function ReviewsPage() {
                 <LinkButton href="/warranty" variant="accent" size="lg">
                   Warranty Form
                 </LinkButton>
-                <LinkButton href="/kit-builder" variant="white" size="lg">
+                <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                   See Kit Pricing
                 </LinkButton>
                 <a

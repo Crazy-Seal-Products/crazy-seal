@@ -12,8 +12,9 @@ import {
 } from './modules'
 
 /**
- * The live Business Accelerator Program, edited from the admin's Contractors →
- * Accelerator Program page and stored in accelerator_program /
+ * The live Business Accelerator Program, shown under Training in the
+ * contractor portal, edited from the admin's Contractors → Training page and
+ * stored in accelerator_program /
  * accelerator_modules (migration 017). Until the admin seeds those tables,
  * or if they can't be read, the portal shows the built-in PORTAL_MODULES.
  */
@@ -63,7 +64,7 @@ export interface ProgramContent {
   modules: PortalModule[]
 }
 
-/** The published program for the Pro Portal, in order. Cached per request. */
+/** The published program for the contractor portal's Training, in order. Cached per request. */
 export const getProgramContent = cache(async (): Promise<ProgramContent> => {
   try {
     const supabase = createAdminClient()

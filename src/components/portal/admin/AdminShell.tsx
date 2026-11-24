@@ -11,6 +11,7 @@ import {
   LifeBuoy,
   Sparkles,
   BadgePercent,
+  Calculator,
   ChartColumn,
   ChevronLeft,
   ChevronRight,
@@ -27,7 +28,6 @@ import {
   MapPinned,
   Megaphone,
   Menu,
-  MonitorPlay,
   Moon,
   Package,
   PanelRightClose,
@@ -39,6 +39,7 @@ import {
   ShoppingCart,
   Shuffle,
   Sun,
+  Tags,
   Trophy,
   Truck,
   UserCog,
@@ -91,6 +92,8 @@ const GROUPS: Group[] = [
       { href: '/portal/admin/history/', label: 'Sales history', icon: ChartColumn, section: 'history' },
       { href: '/portal/admin/discounts/', label: 'Discounts', icon: BadgePercent, section: 'discounts' },
       { href: '/portal/admin/abandoned/', label: 'Abandoned carts', icon: ShoppingCart, section: 'abandoned' },
+      { href: '/portal/admin/quotes/', label: 'Quotes', icon: Calculator, section: 'quotes' },
+      { href: '/portal/admin/pricing/', label: 'Pricing', icon: Tags, section: 'pricing' },
     ],
   },
   {
@@ -106,7 +109,7 @@ const GROUPS: Group[] = [
       { href: '/portal/admin/dealers/portal/', label: 'Portal accounts', icon: KeyRound, section: 'portal_accounts' },
       { href: '/portal/admin/dealers/view-as/', label: 'View as', icon: Eye, section: 'view_as' },
       { href: '/portal/admin/dealers/applications/', label: 'Applications', icon: UserRoundPlus, section: 'applications', badge: 'newApplications' },
-      { href: '/portal/admin/dealers/accelerator/', label: 'Accelerator Program', icon: GraduationCap, section: 'accelerator' },
+      { href: '/portal/admin/dealers/accelerator/', label: 'Training', icon: GraduationCap, section: 'accelerator' },
     ],
   },
   {
@@ -140,7 +143,6 @@ const GROUPS: Group[] = [
 /** Outside links, one compact row so the sidebar fits without scrolling. */
 const QUICK_LINKS: { href: string; label: string; title: string; icon: LucideIcon; any?: AdminSection[] }[] = [
   { href: '/', label: 'Store', title: 'View the live store', icon: ShoppingBag },
-  { href: '/portal/demo/summit/', label: 'Demo', title: 'Dealer portal demo (made-up data)', icon: MonitorPlay, any: ['portal_accounts'] },
   {
     href: 'https://admin.shopify.com/store/crazy-seal',
     label: 'Shopify',

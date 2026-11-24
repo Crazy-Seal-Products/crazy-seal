@@ -3,6 +3,7 @@ import { MapPin, Phone, Truck, PackageCheck, Flag } from 'lucide-react'
 import { Container, LinkButton } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: 'Shipping',
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 // CSS entrance (runs before hydration, so the hero never flashes empty)
 const enter = (delayMs: number) => ({ style: { animationDelay: `${delayMs}ms` } })
 
-export default function ShippingPage() {
+export default async function ShippingPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -91,7 +93,7 @@ export default function ShippingPage() {
               <LinkButton href="/contact" variant="accent" size="lg">
                 Contact Us
               </LinkButton>
-              <LinkButton href="/kit-builder" variant="white" size="lg">
+              <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                 Build My Kit
               </LinkButton>
               <a

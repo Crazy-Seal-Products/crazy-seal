@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import React from 'react'
-import { ExternalLink, Trophy } from 'lucide-react'
+import Link from 'next/link'
+import { ExternalLink, Plus, Trophy } from 'lucide-react'
+import { twMerge } from 'tailwind-merge'
 import { getAdminSections, requirePortalAdmin } from '@/lib/portal/admin/auth'
 import {
   FOLLOW_UP_DAYS,
@@ -14,6 +16,7 @@ import {
   type RepStanding,
 } from '@/lib/portal/admin/reps'
 import { compareLabel, periodLabel, parseDay } from '@/lib/portal/admin/sales'
+import { getRepContractors, type RepContractorRow } from '@/lib/portal/admin/dealers'
 import { ago, bucketLabel, dateLong, dateShort, dayKey, legacyId, money, money0, num, pct, shopifyAdminUrl, timeOfDay } from '@/lib/portal/admin/format'
 import { one, pageNum, pick, type SearchParams } from '@/lib/portal/admin/params'
 import {
@@ -45,6 +48,9 @@ import { BarList } from '@/components/portal/admin/BarList'
 import { SERIES } from '@/components/portal/admin/series'
 import { RangePicker } from '@/components/portal/admin/RangePicker'
 import { RepEditor } from '@/components/portal/admin/RepEditor'
+import { OpenPortalButton } from '@/components/portal/admin/contractor-portal/OpenPortalButton'
+import { BUTTON } from '@/components/portal/admin/styles'
+import { TEAM_BADGE } from '@/components/portal/admin/portal-state'
 
 export const metadata: Metadata = { title: 'Sales reps' }
 
@@ -60,6 +66,93 @@ function Out({ href, external, children, className }: { href: string; external: 
       {children}
       <ExternalLink aria-label="(opens Shopify)" className="h-3 w-3 shrink-0 opacity-50" />
     </a>
+  )
+}
+
+/**
+ * The contractors a rep owns (contractors.rep_id): how far along their portal
+ * is, open quotes, last order, and New quote and Open portal (View as) for
+ * helping them.
+ */
+function RepContractors({
+  title,
+  rows,
+  canOpenPage,
+  canViewAs,
+  canQuote,
+}: {
+  title: string
+  rows: RepContractorRow[]
+  canOpenPage: boolean
+  canViewAs: boolean
+  canQuote: boolean
+}) {
+  const noOwner = rows.filter((c) => c.team !== 'owner').length
+  return (
+    <Panel
+      title={title}
+      meta={rows.length ? `${num(rows.length)} assigned${noOwner ? ` · ${num(noOwner)} without an owner on the portal` : ''}` : 'none assigned yet'}
+      tone="dealers"
+      className="mt-2"
+    >
+      {rows.length ? (
+        <Table>
+          <THead>
+            <Th>Contractor</Th>
+            <Th>Portal</Th>
+            <Th align="right" className="hidden @md:table-cell">
+              Open quotes
+            </Th>
+            <Th className="hidden @xl:table-cell">Last order</Th>
+            {(canViewAs || canQuote) && <Th align="right">Help</Th>}
+          </THead>
+          <TBody>
+            {rows.map((c) => (
+              <Tr key={c.id}>
+                <Td className="max-w-[16rem]">
+                  {canOpenPage ? (
+                    <CellLink href={`/portal/admin/dealers/contractors/${c.id}/`} className="block truncate">
+                      {c.name}
+                    </CellLink>
+                  ) : (
+                    <span className="block truncate font-medium text-adm-ink">{c.name}</span>
+                  )}
+                  <span className="block truncate text-[11px] text-adm-muted">{[c.contact, c.email ?? c.primaryCustomerEmail].filter(Boolean).join(' · ') || '—'}</span>
+                </Td>
+                <Td title={TEAM_BADGE[c.team].title}>
+                  <Badge tone={TEAM_BADGE[c.team].tone}>{TEAM_BADGE[c.team].label}</Badge>
+                </Td>
+                <Td align="right" className="hidden @md:table-cell">
+                  {c.openQuotes == null ? <span className="text-adm-faint">—</span> : c.openQuotes ? <span className="font-semibold text-adm-ink">{num(c.openQuotes)}</span> : <span className="text-adm-muted">0</span>}
+                </Td>
+                <Td muted className="hidden @xl:table-cell" title={c.lastOrderAt ?? undefined}>
+                  {c.lastOrderAt ? `${dateShort(c.lastOrderAt)} · ${ago(c.lastOrderAt)}` : 'No orders yet'}
+                </Td>
+                {(canViewAs || canQuote) && (
+                  <Td align="right">
+                    <span className="inline-flex items-center gap-1.5">
+                      {canQuote && (
+                        <Link href={`/portal/admin/quotes/new/?contractor=${c.id}`} title={`Build a quote for ${c.name}`} className={twMerge(BUTTON.default, 'whitespace-nowrap')}>
+                          <Plus className="h-3.5 w-3.5" /> New quote
+                        </Link>
+                      )}
+                      {canViewAs && <OpenPortalButton contractorId={c.id} name={c.name} />}
+                    </span>
+                  </Td>
+                )}
+              </Tr>
+            ))}
+          </TBody>
+        </Table>
+      ) : (
+        <Empty>No contractors are assigned to this rep yet. A contractor’s rep is set on their page, under Pricing &amp; account.</Empty>
+      )}
+      {rows.length > 0 && canViewAs && (
+        <p className="border-t border-adm-line-soft px-3 py-2 text-[12px] leading-snug text-adm-muted">
+          Open portal shows their contractor portal in a new tab, read-only, as their owner sees it (or the base view when nobody has a login yet).
+        </p>
+      )}
+    </Panel>
   )
 }
 
@@ -225,9 +318,12 @@ export default async function SalesRepsPage({ searchParams }: { searchParams: Se
   const asked = repParam && repParam !== 'all' ? roster.reps.find((r) => r.name.toLowerCase() === repParam.toLowerCase())?.name ?? null : null
   const selected = locked ? me?.name ?? null : repParam ? asked : me?.name ?? null
 
-  const [r, logins] = await Promise.all([
+  // The selected rep's contractors (contractors.rep_id): a rep's own, or the one an admin picked.
+  const selectedRep = selected ? roster.reps.find((x) => x.name === selected) ?? null : null
+  const [r, logins, repContractors] = await Promise.all([
     getRepReport({ range, day, type, rep: selected, page: pageNum(sp.page) }),
     canManage && roster.stored ? staffLogins() : Promise.resolve([]),
+    selectedRep?.id ? getRepContractors(selectedRep.id) : Promise.resolve(null),
   ])
   const label = periodLabel(range, r.window)
   const vs = compareLabel(range, r.window)
@@ -290,7 +386,31 @@ export default async function SalesRepsPage({ searchParams }: { searchParams: Se
         </Panel>
       )}
 
-      {r.rep ? <RepView r={r} rep={r.rep} links={links} vs={vs} daily={daily} label={label} params={params} hrefFor={hrefFor} /> : <TeamView r={r} vs={vs} label={label} hrefFor={hrefFor} locked={locked} />}
+      {r.rep ? (
+        <RepView
+          r={r}
+          rep={r.rep}
+          links={links}
+          vs={vs}
+          daily={daily}
+          label={label}
+          params={params}
+          hrefFor={hrefFor}
+          contractors={
+            repContractors && (
+              <RepContractors
+                title={me && me.name === r.rep.name ? 'Your contractors' : `${r.rep.name}’s contractors`}
+                rows={repContractors}
+                canOpenPage={sections.includes('contractors')}
+                canViewAs={sections.includes('view_as')}
+                canQuote={sections.includes('quotes')}
+              />
+            )
+          }
+        />
+      ) : (
+        <TeamView r={r} vs={vs} label={label} hrefFor={hrefFor} locked={locked} />
+      )}
 
       {canManage && (
         <Panel title="Reps" meta="who counts as a rep, their admin login and monthly goal" className="mt-2">
@@ -372,6 +492,7 @@ function RepView({
   label,
   params,
   hrefFor,
+  contractors,
 }: {
   r: RepReport
   rep: NonNullable<RepReport['rep']>
@@ -381,6 +502,8 @@ function RepView({
   label: string
   params: Record<string, string | undefined>
   hrefFor: ((name: string) => string) | null
+  /** Their contractors panel, under the numbers. */
+  contractors?: React.ReactNode
 }) {
   const t = rep.totals
   const p = rep.previous
@@ -411,6 +534,8 @@ function RepView({
         </Panel>
         <MonthPanel title="This month" month={r.month} goal={s?.month.goal ?? null} sales={s?.month.sales ?? 0} projected={s?.month.projected ?? null} />
       </div>
+
+      {contractors}
 
       <Panel title="Standings" meta={`${label} · ranked by sales`} tone="dealers" className="mt-2">
         <Standings rows={r.standings} selected={rep.name} hrefFor={hrefFor} showPace={r.month.paceShown} vs={vs} />

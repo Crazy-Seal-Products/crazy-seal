@@ -37,6 +37,7 @@ import { CtaSection } from '@/components/CtaSection'
 import { CoatingReveal } from '@/components/CoatingReveal'
 import { QuoteButton } from '@/components/QuoteButton'
 import { CountUp, GlowOrb, Marquee, Reveal, Stagger, StaggerItem } from '@/components/motion'
+import { useStoreHref } from '@/components/layout/StoreMode'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -152,6 +153,7 @@ const enter = (delayMs: number) => ({
 
 export default function HomePage() {
   const [videoPlaying, setVideoPlaying] = useState(false)
+  const shop = useStoreHref()
 
   return (
     <>
@@ -191,10 +193,10 @@ export default function HomePage() {
                 </p>
                 <div {...enter(320)} className="animate-fade-up hidden lg:flex flex-wrap items-center gap-3">
                   <QuoteButton size="lg" sourcePage="home-hero" />
-                  <LinkButton href="/kit-builder" variant="white" size="lg">
+                  <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                     See Kit Pricing
                   </LinkButton>
-                  <LinkButton href="/kit-builder" variant="outline-white" size="lg">
+                  <LinkButton href={shop('/kit-builder')} variant="outline-white" size="lg">
                     <ShoppingCart className="w-5 h-5" />
                     Shop Kits
                   </LinkButton>
@@ -278,7 +280,7 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <QuoteButton size="md" sourcePage="home-hero" />
-                  <LinkButton href="/kit-builder" variant="white" size="md">
+                  <LinkButton href={shop('/kit-builder')} variant="white" size="md">
                     See Kit Pricing
                   </LinkButton>
                 </div>
@@ -401,7 +403,7 @@ export default function HomePage() {
                 actions: (
                   <>
                     <QuoteButton size="md" sourcePage="home-path-picker" />
-                    <LinkButton href="/kit-builder" variant="outline-white" size="md">
+                    <LinkButton href={shop('/kit-builder')} variant="outline-white" size="md">
                       See Kit Pricing
                     </LinkButton>
                   </>
@@ -524,7 +526,7 @@ export default function HomePage() {
             {KIT_TYPES.map((kit) => (
               <a
                 key={kit.title}
-                href={kit.href}
+                href={shop(kit.href)}
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-2 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_-24px_rgba(0,0,0,0.6)]"
               >
                 <div className="relative grid h-36 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-accent/10">
@@ -553,7 +555,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-8">
-            <LinkButton href="/kit-builder" variant="white" size="md">
+            <LinkButton href={shop('/kit-builder')} variant="white" size="md">
               See Kit Pricing Online
             </LinkButton>
             <a

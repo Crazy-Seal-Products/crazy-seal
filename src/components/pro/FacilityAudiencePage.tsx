@@ -31,6 +31,7 @@ import { ProYouTubeEmbed } from '@/components/pro/ProYouTubeEmbed'
 import { MEDIA, ProTestimonials } from '@/components/pro/ProSections'
 import { ProContactSection } from '@/components/pro/ProContactSection'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const PHASES = [
   {
@@ -170,11 +171,12 @@ interface FacilityAudiencePageProps {
   sourcePage: string
 }
 
-export function FacilityAudiencePage({
+export async function FacilityAudiencePage({
   audienceHeading,
   audienceIntro,
   sourcePage,
 }: FacilityAudiencePageProps) {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -353,7 +355,7 @@ export function FacilityAudiencePage({
                 </span>
                 <h3 className="text-lg font-extrabold text-primary mb-4">{title}</h3>
                 <LinkButton
-                  href={href}
+                  href={shop(href)}
                   variant={variant === 'accent' ? 'accent' : 'primary'}
                   size="md"
                   className="mt-auto"
@@ -714,7 +716,7 @@ export function FacilityAudiencePage({
             {QUICK_LINKS.map((link) => (
               <a
                 key={link.heading}
-                href={link.href}
+                href={shop(link.href)}
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-white/[0.06] p-6 ring-1 ring-white/10 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.09] hover:ring-white/25"
               >
                 <div className="mb-5 flex items-start justify-between gap-4">

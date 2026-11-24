@@ -8,7 +8,7 @@ import type { AcceleratorProgram } from '@/lib/portal/modules'
 import type { ActionResult } from '../controls'
 import { BUTTON, inputCls, labelCls, textareaCls } from '../styles'
 
-/** Name, headline and intro shown above the modules in the Pro Portal. */
+/** Name, headline and intro shown above the modules under Training in the contractor portal. */
 export function ProgramForm({ initial }: { initial: AcceleratorProgram }) {
   const [v, setV] = useState(initial)
   const [result, setResult] = useState<ActionResult | null>(null)

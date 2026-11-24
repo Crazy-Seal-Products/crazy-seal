@@ -6,8 +6,9 @@ import { motion } from 'framer-motion'
 import {
   AlertCircle,
   ArrowRight,
+  FolderKanban,
   GraduationCap,
-  Inbox,
+  HardHat,
   Loader2,
   Lock,
   Mail,
@@ -15,24 +16,17 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
-import { initials, TIER_LABELS, type PartnerTier } from '@/lib/portal/accounts'
-import { portalSignIn, portalStartDemo, type SignInState } from '@/lib/portal/actions'
+import { portalSignIn, type SignInState } from '@/lib/portal/actions'
+import { CONTRACTOR_SIGN_IN } from '@/lib/contractor/next-path'
 import { EASE_OUT_EXPO, GlowOrb } from '@/components/motion'
 import { portalInput } from './ui'
 
 const BIG_LOGO = 'https://media.crazyseal.com/site-assets/wp-media/2019/03/CRAZY-SEAL-LOGO-1000x800-400x320.png'
 
-interface DemoSummary {
-  company: string
-  contactName: string
-  blurb: string
-  tier: PartnerTier
-}
-
 const FEATURES = [
-  { icon: GraduationCap, title: '6-module Accelerator Program', desc: 'Videos, checklists and quick checks — with progress saved.' },
-  { icon: Palette, title: 'White Label Studio', desc: 'Put your brand on presentations, brochures and emails.' },
-  { icon: Inbox, title: 'Leads & orders in one place', desc: 'Referrals from Crazy Seal, your pipeline, rewards tier.' },
+  { icon: FolderKanban, title: 'Projects, quotes & orders', desc: 'Every roof from the first request to the finished job.' },
+  { icon: GraduationCap, title: 'Training', desc: 'Videos, checklists and quick checks, with progress saved.' },
+  { icon: Palette, title: 'Your page', desc: 'Your colors and logo on your Crazy Seal contractor page.' },
   { icon: ShieldCheck, title: 'Warranty registration', desc: 'File the 50 year warranty for every job you finish.' },
 ]
 
@@ -47,7 +41,12 @@ function FieldError({ message }: { message?: string }) {
   )
 }
 
-export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
+/**
+ * /portal/login: Crazy Seal staff sign in to the admin here. Contractors sign
+ * in to their contractor portal with their Pro Hub account instead
+ * (CONTRACTOR_SIGN_IN), linked at the top.
+ */
+export function PortalLogin() {
   const [state, formAction, pending] = useActionState<SignInState, FormData>(portalSignIn, {})
   const [email, setEmail] = useState('')
   const passwordRef = useRef<HTMLInputElement>(null)
@@ -124,13 +123,12 @@ export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={BIG_LOGO} alt="Crazy Seal" className="mx-auto mb-6 h-20 w-auto lg:hidden" />
-          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-highlight">Pro Portal</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight">Sign in</h2>
-          <p className="mt-2 text-sm text-blue-100/60">
-            Crazy Seal partners and the Crazy Seal team sign in here.
-          </p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-highlight">Crazy Seal Admin</p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight">Staff sign-in</h2>
+          <p className="mt-2 text-sm text-blue-100/60">For the Crazy Seal team. Contractors and dealers sign in to the Pro Portal below.</p>
 
-          <form action={formAction} className="mt-7 space-y-4">
+
+          <form action={formAction} className="mt-6 space-y-4">
             <label className="block">
               <span className="mb-1.5 block text-xs font-semibold text-blue-100/60">Email</span>
               <span className="relative block">
@@ -187,49 +185,25 @@ export function PortalLogin({ demo }: { demo: DemoSummary | null }) {
             </button>
           </form>
 
-          {demo && (
-            <div className="mt-7">
-              <div className="mb-3 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100/40">
-                <span className="h-px flex-1 bg-white/10" />
-                Or explore the demo
-                <span className="h-px flex-1 bg-white/10" />
-              </div>
-              <form action={portalStartDemo}>
-                <button
-                  type="submit"
-                  className="group flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-white/[0.02] px-3.5 py-3 text-left transition hover:border-highlight/40"
-                >
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-highlight text-xs font-black text-primary">
-                    {initials(demo.company)}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-2">
-                      <span className="truncate text-sm font-semibold">{demo.company}</span>
-                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-blue-100/80">
-                        {TIER_LABELS[demo.tier]}
-                      </span>
-                    </span>
-                    <span className="block truncate text-xs text-blue-100/55">
-                      Demo dealer · {demo.contactName} · {demo.blurb}
-                    </span>
-                  </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-blue-100/50 transition group-hover:translate-x-0.5 group-hover:text-highlight" />
-                </button>
-              </form>
-            </div>
-          )}
+          <Link
+            href={CONTRACTOR_SIGN_IN}
+            className="group mt-8 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-highlight/50"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-highlight/90 text-primary">
+              <HardHat className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-bold">Contractor or dealer? Sign in to the Pro Portal</span>
+              <span className="block text-xs text-blue-100/60">A different login from staff: the email you order with (your old Pro Hub login). New here? Use Forgot password.</span>
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0 text-blue-100/60 transition group-hover:translate-x-0.5 group-hover:text-highlight" />
+          </Link>
 
-          <div className="mt-8 space-y-2 border-t border-white/10 pt-6 text-sm text-blue-100/60">
+          <div className="mt-6 border-t border-white/10 pt-5 text-sm text-blue-100/60">
             <p>
               Not a partner yet?{' '}
               <Link href="/professionals/" className="font-semibold text-white underline decoration-accent/50 underline-offset-4 hover:text-accent-light">
                 Become a dealer
-              </Link>
-            </p>
-            <p>
-              Need orders or rebates today?{' '}
-              <Link href="/pro/login/" className="font-semibold text-white underline decoration-accent/50 underline-offset-4 hover:text-accent-light">
-                Open the Pro Hub
               </Link>
             </p>
           </div>

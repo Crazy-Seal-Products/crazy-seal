@@ -3,7 +3,7 @@
 import React, { useActionState, useEffect, useState } from 'react'
 import { Check, ChevronDown, Copy, Eye, EyeOff, KeyRound, Loader2, LogIn, LogOut, PenLine, UserRound } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
-import { initials } from '@/lib/portal/accounts'
+import { initials } from '@/lib/portal/brand'
 import { adminSignOut } from '@/lib/portal/actions'
 import { changeMyPassword, getMyAccount, updateMyName, type MyAccount } from '@/lib/portal/admin/account-actions'
 import { ago, dateShort } from '@/lib/portal/admin/format'

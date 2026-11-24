@@ -11,6 +11,7 @@ import {
 import { GlowOrb, Marquee } from '@/components/motion'
 import { ApplicationIcon, FamilyIcon } from '@/components/applications/applicationIcons'
 import { APPLICATIONS, FAMILIES, type ApplicationFamily } from '@/lib/applications/config'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -86,7 +87,8 @@ const enter = (delayMs: number) => ({
   style: { animationDelay: `${delayMs}ms` },
 })
 
-export default function ApplicationsPage() {
+export default async function ApplicationsPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -293,7 +295,7 @@ export default function ApplicationsPage() {
               <LinkButton href="/contact" variant="accent" size="lg">
                 Contact Us
               </LinkButton>
-              <LinkButton href="/kit-builder" variant="white" size="lg">
+              <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                 Build My Kit
               </LinkButton>
               <a

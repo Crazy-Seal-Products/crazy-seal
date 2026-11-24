@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { ModulesView } from '@/components/portal/views/ModulesView'
+import { permanentRedirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Accelerator Program' }
-
-export default function PortalModulesPage() {
-  return <ModulesView />
+/** Old demo portal address; the contractor portal moved this to /portal/training/ */
+export default function OldAddress() {
+  permanentRedirect('/portal/training/')
 }

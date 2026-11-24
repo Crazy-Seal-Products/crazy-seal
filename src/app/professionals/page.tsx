@@ -32,9 +32,12 @@ import { GlowOrb } from '@/components/motion'
 import { PortalShowcase } from '@/components/portal/showcase/PortalShowcase'
 import { ModuleRoadmap } from '@/components/portal/showcase/ModuleRoadmap'
 import { WhiteLabelShowcase } from '@/components/portal/showcase/WhiteLabelShowcase'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
-const PORTAL_TOUR = '/portal/demo/summit/'
+/** The portal tour (screens) further down this page, and where contractors sign in to their portal. */
+const PORTAL_TOUR = '#pro-portal'
+const PORTAL_SIGN_IN = '/pro/login/?next=/portal/'
 
 export const metadata: Metadata = {
   title: 'Professionals',
@@ -157,7 +160,8 @@ const WHITE_LABEL_STEPS = [
   'Co-branded page, brochure and emails go live',
 ]
 
-export default function ProfessionalsPage() {
+export default async function ProfessionalsPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO: animated dealer network intro ─── */}
@@ -227,9 +231,9 @@ export default function ProfessionalsPage() {
             />
             <PortalShowcase />
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <LinkButton href={PORTAL_TOUR} variant="accent" size="lg">
+              <LinkButton href={PORTAL_SIGN_IN} variant="accent" size="lg">
                 <Sparkles className="w-4 h-4" />
-                Take the interactive tour
+                Contractor? Sign in to your portal
               </LinkButton>
               <FormModalButton form="professional" sourcePage="professionals" variant="outline-white" size="lg">
                 Get partner access
@@ -251,7 +255,7 @@ export default function ProfessionalsPage() {
             <ModuleRoadmap />
           </div>
           <div className="mt-10 flex flex-wrap justify-center gap-3 border-t border-primary/[0.06] pt-8 md:mt-14 md:pt-10">
-            <LinkButton href={PORTAL_TOUR} variant="accent" size="lg">
+            <LinkButton href="/pro/login/?next=/portal/training/" variant="accent" size="lg">
               <Sparkles className="w-4 h-4" />
               Start Module 1 in the Portal
             </LinkButton>
@@ -291,9 +295,9 @@ export default function ProfessionalsPage() {
                 ))}
               </ol>
               <div className="mt-7 flex flex-wrap justify-center lg:justify-start gap-3">
-                <LinkButton href={`${PORTAL_TOUR}?next=/portal/white-label/`} variant="white" size="md">
+                <LinkButton href="/pro/login/?next=/portal/brand/" variant="white" size="md">
                   <Palette className="w-4 h-4" />
-                  Try the studio
+                  Edit your page
                 </LinkButton>
                 <FormModalButton form="professional" sourcePage="professionals" variant="accent" size="md">
                   Become a Dealer
@@ -316,7 +320,7 @@ export default function ProfessionalsPage() {
             {QUICK_LINKS.map((link) => (
               <a
                 key={link.title}
-                href={link.href}
+                href={shop(link.href)}
                 className="group relative flex h-full items-start gap-4 rounded-3xl bg-gradient-to-b from-slate-50 to-white p-5 ring-1 ring-primary/[0.08] shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">
@@ -386,8 +390,8 @@ export default function ProfessionalsPage() {
               Start Getting Leads
               <ArrowRight className="w-4 h-4" />
             </FormModalButton>
-            <LinkButton href={`${PORTAL_TOUR}?next=/portal/leads/`} variant="outline" size="lg" className="border-primary/25 text-primary">
-              See the Leads Dashboard
+            <LinkButton href="/pro/login/?next=/portal/projects/" variant="outline" size="lg" className="border-primary/25 text-primary">
+              Contractor? See your leads
             </LinkButton>
           </div>
         </div>

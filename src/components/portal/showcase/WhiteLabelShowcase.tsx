@@ -3,13 +3,22 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { twMerge } from 'tailwind-merge'
-import { DEMO_ACCOUNT, type PartnerBrand } from '@/lib/portal/accounts'
+import type { PartnerBrand } from '@/lib/portal/brand'
 import { EASE_OUT_EXPO } from '@/components/motion'
 import { BrandPreview } from '../BrandPreview'
 
-/** The demo dealer's brand plus two sample looks, to show the range of styles. */
+/** Three sample partner brands, to show the range of styles. */
 const BRANDS: PartnerBrand[] = [
-  DEMO_ACCOUNT.brand,
+  {
+    companyName: 'Summit Roofing Co.',
+    tagline: 'Flat roofs, sealed for good.',
+    phone: '(865) 555-0142',
+    website: 'summitroofing.example',
+    primary: '#7A1F2B',
+    accent: '#E0A23B',
+    template: 'bold',
+    coBrand: true,
+  },
   {
     companyName: 'Coastal RV Restoration',
     tagline: 'Your RV roof, done once and done right.',

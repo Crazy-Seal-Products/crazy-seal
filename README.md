@@ -62,6 +62,38 @@ Migrations live in `supabase/migrations/` and are applied with psql against the 
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/XXX_name.sql
 ```
 
+## Contractor portal
+
+`/portal` is the contractor portal: Thermo's partner portal brought over to
+Crazy Seal. A contractor's team signs in with their Pro Hub accounts
+(`/pro/login/?next=/portal/`); `contractor_members` says which contractor an
+account belongs to and its role (owner, admin, sales manager, sales rep,
+operations; see `src/lib/contractor/roles.ts`). Projects are the center: one
+per roof, from the website request through the materials quote, the Shopify
+order, the install and the warranty. Crazy Seal staff add a contractor's
+people from the contractor's admin page and can open any portal read-only with
+View as. A contractor can also activate their own account with "Forgot
+password" using the email on their contractor record.
+
+Quotes are Crazy Seal's priced materials on the 2027 price list (Admin →
+Pricing): retail under 1,500 sq ft, project pricing by roof size above it,
+275-gallon totes for big jobs. Every quote is a 72-hour live offer: the full
+price less the best discount (10% for everyone, 20%/30% for contractors with
+26+/51+ orders, or a tier staff assign), free shipping from $750 to $3,500 and
+freight above. When it expires it can be refreshed at current prices. Quotes
+check out as a Shopify draft order; the `shopify_orders_link_quote` trigger
+marks a quote ordered when its order arrives. The public roof-only builder at
+`/quote` stays hidden until Pricing → "Public builder live" is on; turning it
+on also sends the store and kit builder to `/quote` and swaps Shop for
+"Get a quote" in the header.
+
+Migrations 027, 031, 032 and 033 were restored on 2026-11-23 from the live
+database after the original files were lost before they were committed. They
+match what is live, so running them there changes nothing. 035 (the
+website-request import skips an impossible roof size instead of failing) and
+036 (the editable 2027 price list) were applied to the live database on
+2026-11-23.
+
 ## Legacy data delta sync (pre-launch runbook)
 
 The WordPress site keeps collecting form entries until cutover, so run this

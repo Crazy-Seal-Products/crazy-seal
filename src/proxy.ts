@@ -89,6 +89,13 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith('/portal/admin') && hasStaffSession(request)) return refreshStaffSession(request)
+  // The contractor portal sends signed-out visitors to sign in and back to the page they asked for
+  // (an emailed support ticket, a warranty for one order): it reads that page from this header.
+  if (pathname.startsWith('/portal/') && !pathname.startsWith('/portal/admin')) {
+    const headers = new Headers(request.headers)
+    headers.set('x-cs-portal-path', pathname + search)
+    return NextResponse.next({ request: { headers } })
+  }
   return NextResponse.next()
 }
 
