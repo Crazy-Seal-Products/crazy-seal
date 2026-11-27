@@ -27,6 +27,10 @@ export interface MapPoint {
 
 type MapLib = typeof import('maplibre-gl')
 
+// MapLibre 6 runs its worker from a file. Written as `new URL(…, import.meta.url)`
+// so the bundler ships the worker as its own asset and this resolves to it.
+const WORKER_URL = new URL('maplibre-gl/dist/maplibre-gl-worker.mjs', import.meta.url).toString()
+
 const STYLE = {
   light: 'https://tiles.openfreemap.org/styles/positron',
   dark: 'https://tiles.openfreemap.org/styles/dark',
@@ -168,6 +172,7 @@ export function ContractorMap({
       const lib = await import('maplibre-gl')
       const container = containerRef.current
       if (disposed || !container) return
+      lib.setWorkerUrl(WORKER_URL)
       libRef.current = lib
       const adminRoot = theme === 'admin' ? container.closest('.cs-admin') : null
       const isDark = () => adminRoot?.getAttribute('data-theme') !== 'light' && Boolean(adminRoot)
@@ -201,8 +206,8 @@ export function ContractorMap({
         if (!m.loaded() && e.error?.message) setError(e.error.message)
       })
       // The dark base style names a few POI icons it doesn't ship; draw nothing for them.
-      m.on('styleimagemissing', (e) => {
-        if (!m.hasImage(e.id)) m.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) })
+      m.setMissingStyleImageResolver((id) => {
+        if (!m.hasImage(id)) m.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) })
       })
 
       const popup = new lib.Popup({ closeButton: false, closeOnClick: false, offset: 12, maxWidth: '260px', className: 'ct-popup' })
