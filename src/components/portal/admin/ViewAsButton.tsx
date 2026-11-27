@@ -3,8 +3,8 @@ import { twMerge } from 'tailwind-merge'
 import { BUTTON } from './styles'
 
 /**
- * Opens the Pro Hub as this dealer in a new tab, read-only (see
- * lib/pro/view-as). Give a Pro Hub account, or a roster dealer's Shopify
+ * Opens the Pro Portal as this dealer in a new tab, read-only (see
+ * lib/pro/view-as). Give a portal account, or a roster dealer's Shopify
  * customer, which opens the base view when they have no account. A plain
  * form post, so it needs no client JavaScript.
  */
@@ -19,7 +19,7 @@ export function ViewAsButton({
   name: string
   className?: string
 }) {
-  const title = proUserId ? `Open the Pro Hub as ${name} (read-only)` : `Open the base Pro Hub ${name} would see after signing up (read-only)`
+  const title = proUserId ? `Open the Pro Portal as ${name} (read-only)` : `Open the portal ${name} would see after signing up (read-only)`
   return (
     <form action="/api/admin/view-as/" method="post" target="_blank" className="inline-flex">
       {proUserId ? (

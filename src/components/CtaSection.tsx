@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { StoreLink } from '@/components/layout/StoreMode'
 import { ArrowRight, Phone, ShieldCheck } from 'lucide-react'
 import { QuoteButton } from '@/components/QuoteButton'
 
@@ -42,13 +42,13 @@ export function CtaSection() {
               (800) 963-0131
             </a>
           </div>
-          <Link
+          <StoreLink
             href="/kit-builder"
             className="group inline-flex items-center gap-1 text-xs font-semibold text-white/65 transition-colors hover:text-highlight sm:text-sm"
           >
             Or build your kit online
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          </StoreLink>
         </div>
       </div>
     </section>

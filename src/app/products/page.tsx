@@ -14,6 +14,7 @@ import {
 } from '@/components/system-pages/blocks'
 import { TiltCard } from '@/components/system-pages/motion-blocks'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: 'Crazy Seal Products',
@@ -103,7 +104,8 @@ const SHELF = [
   { src: `${MEDIA}/2021/12/Crazy-Tape-1395x1395-1-768x768.png`, className: 'h-16 sm:h-24 lg:h-28', delay: '-5.6s' },
 ]
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -125,11 +127,11 @@ export default function ProductsPage() {
                 className="animate-fade-up flex flex-wrap items-center justify-center lg:justify-start gap-3"
                 style={fadeDelay(240)}
               >
-                <LinkButton href="/kit-builder" variant="accent" size="lg">
+                <LinkButton href={shop('/kit-builder')} variant="accent" size="lg">
                   <ShoppingCart className="w-5 h-5" />
                   Visit Our Store
                 </LinkButton>
-                <LinkButton href="/kit-builder" variant="white" size="lg">
+                <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                   Build My Kit
                 </LinkButton>
               </div>
@@ -171,7 +173,7 @@ export default function ProductsPage() {
             {PRODUCTS.map((product) => (
               <TiltCard key={product.name}>
                 <a
-                  href={product.href}
+                  href={shop(product.href)}
                   className="group flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white ring-1 ring-primary/[0.08] shadow-sm transition-shadow duration-500 hover:shadow-xl"
                 >
                   <div className="relative grid h-52 place-items-center overflow-hidden bg-gradient-to-br from-slate-100 via-white to-accent/10">
@@ -224,7 +226,7 @@ export default function ProductsPage() {
           />
           <KitCardGrid kits={KITS} cta="Learn More" />
           <div className="flex flex-wrap items-center justify-center gap-3 pt-8">
-            <LinkButton href="/kit-builder#rv-kits" variant="white" size="md">
+            <LinkButton href={shop('/kit-builder#rv-kits')} variant="white" size="md">
               See All Kits On One Page
             </LinkButton>
           </div>

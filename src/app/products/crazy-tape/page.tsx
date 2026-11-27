@@ -9,6 +9,7 @@ import {
   ShopHero,
 } from '@/components/system-pages/blocks'
 import { VideoPlayer } from '../../build-your-own-kit/VideoPlayer'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const SHOP_URL = '/store/crazy-tape'
 
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
     'Crazy Tape is a special repair tape with a strong adhesive on one side and a fabric material on the other, designed to allow the Crazy Seal System to adhere to it. Sold in 25 foot rolls, 4 inches wide, in Charcoal Gray.',
 }
 
-export default function CrazyTapePage() {
+export default async function CrazyTapePage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -72,7 +74,7 @@ export default function CrazyTapePage() {
               <p>
                 You will see Crazy Tape in every{' '}
                 <a
-                  href="/kit-builder/#build"
+                  href={shop('/kit-builder/#build')}
                   className="font-semibold text-accent-dark underline decoration-accent/40 underline-offset-4 hover:text-primary"
                 >
                   direct-to-deck kit

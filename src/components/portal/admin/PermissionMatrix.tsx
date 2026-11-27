@@ -5,7 +5,7 @@ import { Loader2, Lock, Save } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { saveRolePermissions } from '@/lib/portal/admin/staff-actions'
 import type { PermissionMatrix as Matrix } from '@/lib/portal/admin/permissions'
-import { ADMIN_ROLES, ADMIN_SECTIONS, TOP_ROLE } from '@/lib/portal/admin/sections'
+import { ADMIN_ROLES, ADMIN_SECTIONS, TOP_ROLE, isDeveloperOnly } from '@/lib/portal/admin/sections'
 import type { ActionResult } from './controls'
 import { BUTTON } from './styles'
 import { BORDER } from './ui'
@@ -55,11 +55,16 @@ export function PermissionMatrix({ matrix, canEdit, counts }: { matrix: Matrix; 
                   </th>
                   {ADMIN_ROLES.map((r) => {
                     const top = r.key === TOP_ROLE
+                    const devOnly = !top && isDeveloperOnly(s.key)
                     return (
                       <td key={r.key} className="px-3 py-1.5 text-center">
                         {top ? (
                           <span title="Developers always have every section" className="inline-flex text-adm-faint">
                             <Lock className="h-3.5 w-3.5" aria-label={`${r.label} always has ${s.label}`} />
+                          </span>
+                        ) : devOnly ? (
+                          <span title="The Support area is for Developers only" className="text-[11px] text-adm-faint">
+                            Developers only
                           </span>
                         ) : (
                           <input

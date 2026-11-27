@@ -59,11 +59,11 @@ export default async function AdminViewAsPage({ searchParams }: { searchParams: 
     <>
       <PageHeader
         title="View as"
-        description="Open the Pro Hub as any dealer, read-only, in a new tab. Dealers who haven’t made an account open in the base view: the Pro Hub built from their Shopify record, as they’d see it after signing up."
+        description="Open the Pro Portal as any dealer, read-only, in a new tab (a contractor’s company portal opens from their page under Contractors). Dealers who haven’t made an account open in the base view: the portal built from their Shopify record, as they’d see it after signing up."
       >
         <StatGrid className="xl:grid-cols-4">
-          <Stat label="Dealers you can view" value={num(targets.length)} sub="roster plus Pro Hub accounts" tone="dealers" />
-          <Stat label="With a Pro Hub account" value={num(withAccount)} sub="opens their account" />
+          <Stat label="Dealers you can view" value={num(targets.length)} sub="roster plus portal accounts" tone="dealers" />
+          <Stat label="With a portal account" value={num(withAccount)} sub="opens their account" />
           <Stat label="No account yet" value={num(targets.length - withAccount)} sub="opens the base view" tone="info" />
           <Stat label="Views · 30 days" value={num(log.last30)} sub="by all admins" tone="info" />
         </StatGrid>
@@ -80,7 +80,7 @@ export default async function AdminViewAsPage({ searchParams }: { searchParams: 
             <Table>
               <THead>
                 <Th>Dealer</Th>
-                <Th>Pro Hub</Th>
+                <Th>Portal</Th>
                 <Th className="hidden @2xl:table-cell">Pro status</Th>
                 <Th className="hidden @xl:table-cell">Last sign-in</Th>
                 <Th align="right" className="hidden @3xl:table-cell">Lifetime</Th>
@@ -126,7 +126,7 @@ export default async function AdminViewAsPage({ searchParams }: { searchParams: 
                       {r.proUserId || r.email ? (
                         <ViewAsButton proUserId={r.proUserId} customerId={r.customerId} name={r.name} />
                       ) : (
-                        <span className="text-[11.5px] text-adm-faint" title="The Pro Hub works off the dealer’s email, and their Shopify record has none">
+                        <span className="text-[11.5px] text-adm-faint" title="The portal works off the dealer’s email, and their Shopify record has none">
                           No email
                         </span>
                       )}

@@ -5,6 +5,7 @@ import { Container } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
 import { SuccessCheck } from '@/components/forms/form-ui'
 import { ThankYouConversion } from './ThankYouConversion'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: 'Thank You',
@@ -48,6 +49,7 @@ export default async function ThankYouPage({
   searchParams: Promise<{ type?: string }>
 }) {
   const { type } = await searchParams
+  const shop = await getStoreHref()
   const isBusiness = type === 'business'
   const steps = isBusiness ? NEXT_STEPS.business : NEXT_STEPS.quote
 
@@ -110,7 +112,7 @@ export default async function ThankYouPage({
             {steps.map((step, i) => (
               <Link
                 key={step.href}
-                href={step.href}
+                href={shop(step.href)}
                 className="group animate-fade-up rounded-3xl bg-gradient-to-b from-slate-50 to-white p-5 text-left shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
                 style={{ animationDelay: `${500 + i * 100}ms` }}
               >

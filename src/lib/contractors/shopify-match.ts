@@ -98,18 +98,28 @@ export function planShopifySync({
   customers,
   accounts,
   roster,
+  noNewLinks,
 }: {
   contractors: MatchContractor[]
   customers: MatchCustomer[]
   accounts: MatchAccount[]
   /** Shopify ids of the dealer roster: customers Shopify marks as dealers. */
   roster: Set<string>
+  /**
+   * Contractors that keep the customers already linked to them but are never
+   * matched to new ones: a Pro account's own automatic company, whose phone
+   * and company come from a Shopify record any buyer controls.
+   */
+  noNewLinks?: Set<string>
 }): ShopifyPlan {
   const linked = new Set(contractors.flatMap((d) => d.shopify_customer_ids ?? []))
   const order = [...contractors].sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id))
   const index = (keys: (d: MatchContractor) => (string | null)[]) => {
     const map = new Map<string, MatchContractor[]>()
-    for (const d of order) for (const k of new Set(keys(d))) if (k) map.set(k, [...(map.get(k) ?? []), d])
+    for (const d of order) {
+      if (noNewLinks?.has(d.id)) continue
+      for (const k of new Set(keys(d))) if (k) map.set(k, [...(map.get(k) ?? []), d])
+    }
     return map
   }
   const byEmail = index((d) => [low(d.email) || null])

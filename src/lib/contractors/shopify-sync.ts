@@ -106,7 +106,10 @@ export async function syncShopifyContractors(db: SupabaseClient, { dryRun = fals
   const roster = new Set(customers.filter((c) => c.is_dealer).map((c) => c.shopify_id))
   for (const o of orders) if (!o.cancelled_at && o.customer_shopify_id && isDealerOrderTags(o.tags)) roster.add(o.customer_shopify_id)
 
-  const plan = planShopifySync({ contractors, customers, accounts, roster })
+  // Pro accounts' automatic companies (src/lib/contractor/provision.ts) never take on new customers.
+  const { data: autoRows } = await db.from('contractors').select('id').like('import_key', 'auto:%')
+  const noNewLinks = new Set(((autoRows ?? []) as { id: string }[]).map((r) => r.id))
+  const plan = planShopifySync({ contractors, customers, accounts, roster, noNewLinks })
   const contractorById = new Map(contractors.map((d) => [d.id, d]))
   const customerById = new Map(customers.map((c) => [c.shopify_id, c]))
   const report: SyncReport = {

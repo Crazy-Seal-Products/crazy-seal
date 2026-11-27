@@ -41,6 +41,7 @@ import {
   WHY_CRAZY_SEAL_VIDEOS,
   REASONS_PDF_URL,
 } from '@/lib/store/social-proof'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -81,6 +82,7 @@ const enter = (delayMs: number) => ({
  * lead-capture close.
  */
 export async function ApplicationPage({ config }: { config: ApplicationConfig }) {
+  const shop = await getStoreHref()
   const family = FAMILIES[config.family]
   const siblings = relatedApplications(config)
   const others = APPLICATIONS.filter((a) => a.family !== config.family)
@@ -148,11 +150,11 @@ export async function ApplicationPage({ config }: { config: ApplicationConfig })
                   {...enter(260)}
                   className="animate-fade-up flex flex-wrap items-center justify-center lg:justify-start gap-3"
                 >
-                  <LinkButton href={`/kit-builder#${family.storeAnchor}`} variant="accent" size="lg">
+                  <LinkButton href={shop(`/kit-builder#${family.storeAnchor}`)} variant="accent" size="lg">
                     <ShoppingCart className="w-5 h-5" />
                     Shop Kits
                   </LinkButton>
-                  <LinkButton href="/kit-builder" variant="white" size="lg">
+                  <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                     Build My Kit
                   </LinkButton>
                 </div>
@@ -334,7 +336,7 @@ export async function ApplicationPage({ config }: { config: ApplicationConfig })
               ))}
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 pt-8">
-              <LinkButton href="/kit-builder" variant="white" size="md">
+              <LinkButton href={shop('/kit-builder')} variant="white" size="md">
                 Build My Kit in 60 Seconds
                 <ArrowRight className="w-4 h-4" />
               </LinkButton>

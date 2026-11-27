@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
-import { ArrowUpRight } from 'lucide-react'
 import { adminCan, requirePortalAdmin } from '@/lib/portal/admin/auth'
 import { getPortalAccounts } from '@/lib/portal/admin/dealers'
 import { ago, dateShort, money0, num } from '@/lib/portal/admin/format'
 import { ViewAsButton } from '@/components/portal/admin/ViewAsButton'
 import { ProInviteButton } from '@/components/portal/admin/ProInviteButton'
+import { SyncProAccountsButton } from '@/components/portal/admin/contractor-portal/SyncProAccountsButton'
 import { FlaggedSignups } from '@/components/portal/admin/FlaggedSignups'
-import { BUTTON } from '@/components/portal/admin/styles'
 import {
   Badge,
   CellLink,
@@ -28,20 +27,18 @@ export const metadata: Metadata = { title: 'Portal accounts' }
 
 export default async function AdminPortalAccountsPage() {
   await requirePortalAdmin('portal_accounts')
-  const [{ rows, summary }, canViewAs] = await Promise.all([getPortalAccounts(), adminCan('view_as')])
+  const [{ rows, summary }, canViewAs, canSync] = await Promise.all([getPortalAccounts(), adminCan('view_as'), adminCan('contractors')])
 
   return (
     <>
       <PageHeader
         title="Portal accounts"
-        description="Dealers who sign in to the Pro Hub, the dealer portal live today. View as opens their Pro Hub, read-only."
+        description="Everyone who signs in to the Pro Portal (formerly Pro Hub): dealers and contractor teams. View as opens their portal, read-only. “Bring Pro Hub accounts over” links each account to its matching contractor; nothing is deleted."
         actions={
-          <>
-            <a href="/portal/demo/summit/" target="_blank" rel="noopener noreferrer" className={BUTTON.default} title="The new Pro Portal, with made-up data">
-              New portal demo <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
-            </a>
+          <span className="flex flex-wrap items-center gap-2">
+            {canSync && <SyncProAccountsButton />}
             <ProInviteButton />
-          </>
+          </span>
         }
       >
         <StatGrid className="xl:grid-cols-4">

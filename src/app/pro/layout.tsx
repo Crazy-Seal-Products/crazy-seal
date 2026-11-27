@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import { PRO_HUB_NAME } from '@/lib/pro/config'
-import { ProHubShell } from '@/components/pro-hub/ProHubShell'
 
+/**
+ * /pro is only sign-in now (login, sign-up, forgot and reset password); the
+ * rest of Pro Hub became the contractor portal at /portal, and its old pages
+ * redirect there.
+ */
 export const metadata: Metadata = {
   title: {
     default: PRO_HUB_NAME,
@@ -11,5 +15,5 @@ export const metadata: Metadata = {
 }
 
 export default function ProLayout({ children }: { children: React.ReactNode }) {
-  return <ProHubShell>{children}</ProHubShell>
+  return children
 }

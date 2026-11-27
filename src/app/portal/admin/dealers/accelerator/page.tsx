@@ -11,9 +11,9 @@ import { BUTTON } from '@/components/portal/admin/styles'
 import { AddModuleButton } from '@/components/portal/admin/accelerator/AddModuleButton'
 import { ModuleRowControls } from '@/components/portal/admin/accelerator/ModuleRowControls'
 import { ProgramForm } from '@/components/portal/admin/accelerator/ProgramForm'
-import { MODULE_ICON_META, previewHref } from '@/components/portal/admin/accelerator/icons'
+import { MODULE_ICON_META } from '@/components/portal/admin/accelerator/icons'
 
-export const metadata: Metadata = { title: 'Accelerator Program' }
+export const metadata: Metadata = { title: 'Training' }
 
 const BASE = '/portal/admin/dealers/accelerator/'
 
@@ -38,12 +38,12 @@ export default async function AdminAcceleratorPage() {
   return (
     <>
       <PageHeader
-        title="Accelerator Program"
-        description="The training dealers work through in the new Pro Portal. Changes show there as soon as you save."
+        title="Training"
+        description="The program contractors work through under Training in their portal. Changes show there as soon as you save."
         actions={
           <>
-            <a href={previewHref()} target="_blank" rel="noopener noreferrer" className={BUTTON.default}>
-              Preview in portal <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
+            <a href="/business-accelerator-program/" target="_blank" rel="noopener noreferrer" className={BUTTON.default}>
+              Public program page <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
             </a>
             <AddModuleButton />
           </>
@@ -58,7 +58,7 @@ export default async function AdminAcceleratorPage() {
       </PageHeader>
 
       <div className="grid gap-2 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <Panel title="Modules" meta="in the order dealers take them" tone="dealers">
+        <Panel title="Modules" meta="in the order contractors take them" tone="dealers">
           <ol className="divide-y divide-adm-line-soft">
             {rows.map(({ row, mod, minutes }, i) => {
               const Icon = MODULE_ICON_META[mod.icon].icon
@@ -100,7 +100,7 @@ export default async function AdminAcceleratorPage() {
           </ol>
         </Panel>
 
-        <Panel title="Program details" meta="top of the portal's program page">
+        <Panel title="Program details" meta="top of the portal’s Training page">
           <ProgramForm initial={{ name: program.name, title: program.title, description: program.description }} />
           {program.updated_at && (
             <p className="border-t border-adm-line px-3 py-1.5 text-[11px] text-adm-faint">

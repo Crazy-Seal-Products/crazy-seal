@@ -1,9 +1,10 @@
 /**
- * Crazy Seal Pro Hub — product naming and status labels.
- * Public URL is /pro (open to anyone; status pills are how dealers feel special).
+ * Crazy Seal Pro accounts — naming and status labels. Pro Hub became the
+ * contractor portal (/portal); /pro keeps the sign-in pages (open to anyone;
+ * status pills are how dealers feel special).
  */
 
-export const PRO_HUB_NAME = 'Crazy Seal Pro Hub'
+export const PRO_HUB_NAME = 'Crazy Seal Pro Portal'
 export const PRO_HUB_PATH = '/pro'
 export const SESSION_COOKIE = 'cs_pro_session'
 export const SESSION_DAYS = 30

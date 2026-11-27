@@ -7,6 +7,10 @@ export async function POST(request: NextRequest) {
   const origin = request.headers.get('origin')
   if (origin && origin !== url.origin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
+  const form = await request.formData().catch(() => null)
+  const back = String(form?.get('back') ?? '')
   await endViewAs()
-  return NextResponse.redirect(new URL('/portal/admin/dealers/view-as/', url), 303)
+  // The contractor portal sends people back to the contractor they were looking at.
+  const to = /^\/portal\/admin\/[a-z0-9/_-]*$/i.test(back) ? back : '/portal/admin/dealers/view-as/'
+  return NextResponse.redirect(new URL(to, url), 303)
 }

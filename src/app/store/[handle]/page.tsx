@@ -40,6 +40,8 @@ import {
   type CompanionItem,
 } from '@/components/store/CompanionProducts'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { isPublicBuilderLive } from '@/lib/pricing/builder-live'
+import { QUOTE_HREF } from '@/lib/store-mode'
 
 export const revalidate = 300
 
@@ -91,6 +93,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { handle } = await params
+  // The store is off once the public quote builder is live (307, so it can be switched back).
+  if (await isPublicBuilderLive()) redirect(QUOTE_HREF)
   // Retired flat-roof / commercial kits: the Kit Builder covers those roofs now.
   if (RETIRED_HANDLES.has(handle)) redirect('/kit-builder/')
   const product = await getStoreProduct(handle)

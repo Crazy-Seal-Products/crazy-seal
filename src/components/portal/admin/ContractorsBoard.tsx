@@ -7,7 +7,7 @@ import { placeLabel, SEGMENT_LABEL } from '@/lib/contractors/types'
 import type { ContractorListRow } from '@/lib/portal/admin/dealers'
 import { ago, dateShort, money0, num } from '@/lib/portal/admin/format'
 import { BUTTON } from './styles'
-import { PORTAL_BADGE } from './portal-state'
+import { PORTAL_BADGE, TEAM_BADGE } from './portal-state'
 import { Badge, CellLink, Empty, Panel, Table, TBody, Td, Th, THead } from './ui'
 
 /** Rows in the list at a time; Show more adds this many again. */
@@ -21,7 +21,7 @@ const faint = <span className="font-normal text-adm-faint">—</span>
  * spending. Pointing at a
  * row lights up its pin; clicking a pin opens their page in a new tab.
  */
-export function ContractorsBoard({ rows, since }: { rows: ContractorListRow[]; since: string }) {
+export function ContractorsBoard({ rows, since, empty }: { rows: ContractorListRow[]; since: string; empty?: string }) {
   const [hover, setHover] = useState<string | null>(null)
   const [limit, setLimit] = useState(PAGE)
   const shown = rows.slice(0, limit)
@@ -60,7 +60,9 @@ export function ContractorsBoard({ rows, since }: { rows: ContractorListRow[]; s
               <Th>Contractor</Th>
               <Th className="hidden @xl:table-cell">Type</Th>
               <Th className="hidden @lg:table-cell">Location</Th>
-              <Th>Pro Hub</Th>
+              <Th className="hidden @xl:table-cell">Rep</Th>
+              <Th>Portal</Th>
+              <Th className="hidden @sm:table-cell">Pro Hub</Th>
               <Th align="right">Lifetime</Th>
               <Th align="right" className="hidden @2xl:table-cell">
                 Since {since}
@@ -115,7 +117,13 @@ export function ContractorsBoard({ rows, since }: { rows: ContractorListRow[]; s
                     {placeLabel(c) || '—'}
                     {c.lat === null && <span className="block text-[11px] text-adm-warn">Not on the map: {c.zip ? 'unknown ZIP' : 'no ZIP'}</span>}
                   </Td>
-                  <Td title={c.lastLoginAt ? `Last sign-in ${dateShort(c.lastLoginAt)}` : undefined}>
+                  <Td muted className="hidden @xl:table-cell" title={c.reps.length ? `On their dealer orders: ${c.reps.join(', ')}` : undefined}>
+                    {c.repName ?? faint}
+                  </Td>
+                  <Td title={TEAM_BADGE[c.team].title}>
+                    <Badge tone={TEAM_BADGE[c.team].tone}>{TEAM_BADGE[c.team].label}</Badge>
+                  </Td>
+                  <Td className="hidden @sm:table-cell" title={c.lastLoginAt ? `Last sign-in ${dateShort(c.lastLoginAt)}` : undefined}>
                     <Badge tone={PORTAL_BADGE[c.portal].tone}>{PORTAL_BADGE[c.portal].label}</Badge>
                   </Td>
                   <Td align="right" className="font-semibold text-adm-ink" title={c.customerCount ? `${num(c.lifetimeOrders)} orders since 2019` : undefined}>
@@ -153,7 +161,7 @@ export function ContractorsBoard({ rows, since }: { rows: ContractorListRow[]; s
             </TBody>
           </Table>
         ) : (
-          <Empty>No contractors match.</Empty>
+          <Empty>{empty ?? 'No contractors match.'}</Empty>
         )}
         {rows.length > shown.length && (
           <div className="flex items-center justify-between gap-2 border-t border-adm-line px-3 py-2 text-[12px] text-adm-muted">

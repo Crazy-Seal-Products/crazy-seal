@@ -36,6 +36,7 @@ import {
   fadeDelay,
 } from '@/components/system-pages/blocks'
 import { StepTimeline, TiltCard } from '@/components/system-pages/motion-blocks'
+import { useStoreHref } from '@/components/layout/StoreMode'
 
 const BADGES = [
   { image: `${MEDIA}/2019/05/Warranty.png`, label: '50 Year Warranty' },
@@ -172,6 +173,7 @@ const TESTIMONIALS = [
 
 export default function CrazySealSystemPage() {
   const [videoPlaying, setVideoPlaying] = useState(false)
+  const shop = useStoreHref()
 
   return (
     <>
@@ -204,7 +206,7 @@ export default function CrazySealSystemPage() {
                 className="animate-fade-up flex flex-wrap items-center justify-center lg:justify-start gap-3"
                 style={fadeDelay(300)}
               >
-                <LinkButton href="/kit-builder" variant="accent" size="lg">
+                <LinkButton href={shop('/kit-builder')} variant="accent" size="lg">
                   <ShoppingCart className="w-5 h-5" />
                   Shop Kits
                 </LinkButton>
@@ -386,11 +388,11 @@ export default function CrazySealSystemPage() {
                 All Crazy Seal products ship directly to your door.
               </p>
               <div className="relative flex flex-col gap-3">
-                <LinkButton href="/kit-builder" variant="accent" size="md">
+                <LinkButton href={shop('/kit-builder')} variant="accent" size="md">
                   <ShoppingCart className="w-4 h-4" />
                   Shop Product Kits
                 </LinkButton>
-                <LinkButton href="/kit-builder" variant="outline-white" size="md">
+                <LinkButton href={shop('/kit-builder')} variant="outline-white" size="md">
                   Build My Kit
                 </LinkButton>
               </div>
@@ -476,7 +478,7 @@ export default function CrazySealSystemPage() {
               system.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <LinkButton href="/kit-builder" variant="primary" size="md">
+              <LinkButton href={shop('/kit-builder')} variant="primary" size="md">
                 <ShoppingCart className="w-4 h-4" />
                 Shop Kits
               </LinkButton>

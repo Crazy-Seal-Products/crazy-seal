@@ -8,10 +8,10 @@
  */
 
 export const ADMIN_ROLES = [
-  { key: 'developer', label: 'Developer', description: 'Everything, including roles and the permission matrix.' },
-  { key: 'admin', label: 'Admin', description: 'The sections ticked below. Can manage Staff and Sales reps.' },
-  { key: 'staff', label: 'Staff', description: 'The sections ticked below. Can’t manage other users.' },
-  { key: 'sales_rep', label: 'Sales rep', description: 'Their own numbers on Sales reps, plus the sales sections ticked below. Can’t manage other users.' },
+  { key: 'developer', label: 'Developer', description: 'Everything, including the Support area, roles and the permission matrix.' },
+  { key: 'admin', label: 'Admin', description: 'The sections ticked below, never the Support area. Can manage Staff and Sales reps.' },
+  { key: 'staff', label: 'Staff', description: 'The sections ticked below, never the Support area. Can’t manage other users.' },
+  { key: 'sales_rep', label: 'Sales rep', description: 'Their own numbers, contractors and quotes (and the quote builder), View as, plus the sales sections ticked below. Can’t manage other users.' },
 ] as const
 
 export type AdminRole = (typeof ADMIN_ROLES)[number]['key']
@@ -74,12 +74,14 @@ export const ADMIN_SECTIONS = [
   { key: 'history', label: 'Sales history', group: 'Sales', href: '/portal/admin/history/' },
   { key: 'discounts', label: 'Discounts', group: 'Sales', href: '/portal/admin/discounts/' },
   { key: 'abandoned', label: 'Abandoned carts', group: 'Sales', href: '/portal/admin/abandoned/' },
+  { key: 'quotes', label: 'Quotes', group: 'Sales', href: '/portal/admin/quotes/' },
+  { key: 'pricing', label: 'Pricing', group: 'Sales', href: '/portal/admin/pricing/' },
   { key: 'marketing', label: 'Performance', group: 'Marketing', href: '/portal/admin/marketing/' },
   { key: 'contractors', label: 'Contractors', group: 'Contractors', href: '/portal/admin/dealers/contractors/' },
   { key: 'portal_accounts', label: 'Portal accounts', group: 'Contractors', href: '/portal/admin/dealers/portal/' },
   { key: 'view_as', label: 'View as', group: 'Contractors', href: '/portal/admin/dealers/view-as/' },
   { key: 'applications', label: 'Applications', group: 'Contractors', href: '/portal/admin/dealers/applications/' },
-  { key: 'accelerator', label: 'Accelerator Program', group: 'Contractors', href: '/portal/admin/dealers/accelerator/' },
+  { key: 'accelerator', label: 'Training', group: 'Contractors', href: '/portal/admin/dealers/accelerator/' },
   { key: 'warranties', label: 'Warranties', group: 'Site', href: '/portal/admin/warranties/' },
   { key: 'projects', label: 'Projects', group: 'Site', href: '/portal/admin/projects/' },
   { key: 'assets', label: 'Site assets', group: 'Site', href: '/portal/admin/assets/' },
@@ -100,21 +102,38 @@ export function isSection(value: string): value is AdminSection {
   return (SECTION_KEYS as readonly string[]).includes(value)
 }
 
-/** The Sales group: what a Sales rep starts with. */
-const SALES_SECTIONS: readonly AdminSection[] = ADMIN_SECTIONS.filter((s) => s.group === 'Sales').map((s) => s.key)
+/**
+ * What a Sales rep starts with: the Sales group less Pricing (costs and
+ * markups), plus View as so they can open a contractor's or dealer's portal
+ * read-only to help them (every use is logged).
+ */
+const SALES_SECTIONS: readonly AdminSection[] = [
+  ...ADMIN_SECTIONS.filter((s) => s.group === 'Sales' && s.key !== 'pricing').map((s) => s.key),
+  'view_as',
+]
 
-/** The support queue (Support inbox and AI review): Developers only for now, until it's ready for Admins. */
-const SUPPORT_QUEUE: readonly AdminSection[] = ['support', 'ai_review']
+/**
+ * The Support area (Support inbox, AI review, Assistant): Developers only for
+ * now. Unlike other sections this isn't on the Users & roles matrix, so no
+ * saved permission can open it to another role (see ./permissions).
+ */
+export const DEVELOPER_ONLY: readonly AdminSection[] = ADMIN_SECTIONS.filter((s) => s.group === 'Support').map((s) => s.key)
+
+export function isDeveloperOnly(section: AdminSection): boolean {
+  return DEVELOPER_ONLY.includes(section)
+}
+
+/** Sections the Users & roles matrix can turn on or off for a role. */
+export const MATRIX_SECTIONS: readonly AdminSection[] = SECTION_KEYS.filter((s) => !isDeveloperOnly(s))
 
 /**
  * Out of the box: Developers get every section, always. Admins get every
- * section but the support queue (a Developer can change that on Users &
- * roles), Staff everything but Users & roles and the support queue, and
- * Sales reps the Sales group.
+ * section but the Support area, Staff everything but Users & roles, Pricing
+ * and the Support area, and Sales reps the Sales group without Pricing.
  */
 export const DEFAULT_PERMISSIONS: Record<AdminRole, readonly AdminSection[]> = {
   developer: SECTION_KEYS,
-  admin: SECTION_KEYS.filter((s) => !SUPPORT_QUEUE.includes(s)),
-  staff: SECTION_KEYS.filter((s) => s !== 'users' && !SUPPORT_QUEUE.includes(s)),
+  admin: MATRIX_SECTIONS,
+  staff: MATRIX_SECTIONS.filter((s) => s !== 'users' && s !== 'pricing'),
   sales_rep: SALES_SECTIONS,
 }

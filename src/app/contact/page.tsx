@@ -3,6 +3,8 @@ import { Phone, Mail, Clock, ShoppingCart, ShieldCheck, Flag, Truck, ArrowUpRigh
 import { Container, Stack } from '@/lib/design-system'
 import { FormModalButton } from '@/components/forms/FormModalButton'
 import { GlowOrb } from '@/components/motion'
+import { isPublicBuilderLive } from '@/lib/pricing/builder-live'
+import { QUOTE_HREF } from '@/lib/store-mode'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -33,7 +35,11 @@ const HERO_TRUST = [
 // CSS entrance (runs before hydration, so the hero never flashes empty)
 const enter = (delayMs: number) => ({ style: { animationDelay: `${delayMs}ms` } })
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  // Once the public quote builder is live the "Online Store" card points at it instead.
+  const contactInfo = (await isPublicBuilderLive())
+    ? CONTACT_INFO.map((item) => (item.href === '/kit-builder' ? { ...item, label: 'Online Quote', value: 'crazyseal.com/quote', href: QUOTE_HREF } : item))
+    : CONTACT_INFO
   return (
     <Container size="xl">
       <Stack gap="lg">
@@ -107,7 +113,7 @@ export default function ContactPage() {
             {/* Contact Info Sidebar */}
             <div className="lg:sticky lg:top-24 lg:self-start">
               <Stack gap="md">
-                {CONTACT_INFO.map((item) => {
+                {contactInfo.map((item) => {
                   const body = (
                     <div className="flex items-center gap-3.5">
                       <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-light to-accent-dark text-white shadow-glow-accent transition-transform duration-500 group-hover:-rotate-6">

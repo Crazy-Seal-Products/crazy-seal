@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { WarrantyView } from '@/components/portal/views/WarrantyView'
+import { permanentRedirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Warranties' }
-
-export default function PortalWarrantyViewPage() {
-  return <WarrantyView />
+/** Old demo portal address; the contractor portal moved this to /portal/warranties/ */
+export default function OldAddress() {
+  permanentRedirect('/portal/warranties/')
 }

@@ -4,6 +4,7 @@ import { createMagicLink, getProUserByEmail, isMissingRelation, requestOrigin } 
 import { sendProMagicLink } from '@/lib/email/gmail'
 import { clientIp, clientUserAgent, screenProEmailForm } from '@/lib/pro/signup-guard'
 import { recordSignup } from '@/lib/pro/signup-flags'
+import { safePortalNext } from '@/lib/contractor/next-path'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -39,7 +40,9 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const url = `${requestOrigin(request)}/api/pro/auth/callback/?token=${encodeURIComponent(token)}`
+    // A contractor portal page to open after signing in (only /portal/ pages); the callback checks it again.
+    const next = safePortalNext(body?.next)
+    const url = `${requestOrigin(request)}/api/pro/auth/callback/?token=${encodeURIComponent(token)}${next ? `&next=${encodeURIComponent(next)}` : ''}`
     await sendProMagicLink(email, url)
 
     return sent()

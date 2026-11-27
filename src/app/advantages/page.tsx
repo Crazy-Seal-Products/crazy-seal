@@ -48,6 +48,7 @@ import {
   SECTION_WHITE,
   fadeDelay,
 } from '@/components/system-pages/blocks'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: 'Crazy Seal Advantages',
@@ -172,7 +173,8 @@ const TEMPS = [
   },
 ]
 
-export default function AdvantagesPage() {
+export default async function AdvantagesPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO + TOP 3 ADVANTAGES ─── */}
@@ -203,7 +205,7 @@ export default function AdvantagesPage() {
                 </p>
                 <p className="relative text-white/70 leading-relaxed mb-6">{item.desc}</p>
                 <div className="relative mt-auto">
-                  <LinkButton href={item.href} variant="accent" size="md">
+                  <LinkButton href={shop(item.href)} variant="accent" size="md">
                     {item.cta}
                     <ArrowRight className="w-4 h-4" />
                   </LinkButton>

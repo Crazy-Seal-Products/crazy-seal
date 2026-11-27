@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { WhiteLabelStudio } from '@/components/portal/views/WhiteLabelStudio'
+import { permanentRedirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'White Label Studio' }
-
-export default function PortalWhiteLabelStudioPage() {
-  return <WhiteLabelStudio />
+/** Old demo portal address; the contractor portal moved this to /portal/brand/ */
+export default function OldAddress() {
+  permanentRedirect('/portal/brand/')
 }

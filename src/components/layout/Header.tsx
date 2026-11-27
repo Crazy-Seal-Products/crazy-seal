@@ -3,11 +3,13 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Phone, ChevronDown, ShoppingCart, MessageSquare, ArrowUpRight } from 'lucide-react'
+import { Menu, X, Phone, ChevronDown, ShoppingCart, MessageSquare, ArrowUpRight, Calculator } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { clsx } from 'clsx'
 import { CartButton } from '@/components/store/CartButton'
 import { useQuoteModal } from '@/contexts/QuoteModalContext'
+import { useBuilderLive } from '@/components/layout/StoreMode'
+import { QUOTE_HREF } from '@/lib/store-mode'
 
 const SYSTEM_DROPDOWN = [
   { href: '/crazy-seal', label: 'Our System' },
@@ -32,8 +34,7 @@ const APPLICATIONS_DROPDOWN = [
 
 const PROFESSIONALS_DROPDOWN = [
   { href: '/professionals', label: 'Become a Dealer' },
-  { href: '/portal/login', label: 'Pro Portal' },
-  { href: '/pro', label: 'Pro Hub' },
+  { href: '/pro/login/?next=/portal/', label: 'Pro Portal' },
   { href: '/ways-to-earn', label: 'Ways to Earn' },
   { href: '/business-accelerator-program', label: 'Business Accelerator' },
   { href: '/professional-tools', label: 'Pro Tools' },
@@ -50,6 +51,23 @@ const TOP_NAV = [
   { href: '/reviews', label: 'Reviews' },
 ]
 
+// Once the public quote builder is live there is no store: Pricing is the
+// quote builder and the Shop button and cart give way to "Get a quote".
+const TOP_NAV_QUOTE = [
+  { href: QUOTE_HREF, label: 'Pricing' },
+  { href: '/warranty', label: 'Warranty' },
+  { href: '/reviews', label: 'Reviews' },
+]
+
+const GREEN_CTA =
+  'btn-sheen flex items-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-2 text-sm font-semibold text-white transition-all shadow-[0_6px_16px_-6px_rgba(91,164,17,0.7)] hover:shadow-[0_12px_24px_-10px_rgba(91,164,17,0.75)] hover:-translate-y-0.5 cursor-pointer'
+const OUTLINE_CTA =
+  'flex items-center gap-2 rounded-full border border-accent/60 bg-white px-4 py-2 text-sm font-semibold text-accent-dark hover:bg-accent/10 hover:border-accent transition-all hover:-translate-y-0.5 cursor-pointer'
+const MOBILE_GREEN =
+  'btn-sheen flex items-center justify-center gap-2 w-full text-center rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-3 text-base font-semibold text-white shadow-[0_8px_20px_-8px_rgba(91,164,17,0.7)] cursor-pointer'
+const MOBILE_OUTLINE =
+  'flex items-center justify-center gap-2 w-full text-center rounded-full border border-[#5BA411] px-5 py-3 text-base font-semibold text-[#5BA411] cursor-pointer'
+
 const SYSTEM_PATHS = SYSTEM_DROPDOWN.map(l => l.href)
 const APPLICATION_PATHS = APPLICATIONS_DROPDOWN.map(l => l.href)
 const PROFESSIONAL_PATHS = PROFESSIONALS_DROPDOWN.map(l => l.href)
@@ -59,7 +77,8 @@ function isActive(pathname: string | null, href: string): boolean {
   // Hash deep-links (e.g. Pricing → /kit-builder#pricing) are not path-active
   if (href.includes('#')) return false
   if (href === '/') return pathname === '/'
-  return pathname === href || pathname.startsWith(href + '/')
+  const path = href.replace(/\/+$/, '')
+  return pathname === path || pathname.startsWith(path + '/')
 }
 
 interface DropdownProps {
@@ -206,6 +225,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { openQuoteModal } = useQuoteModal()
+  const builderLive = useBuilderLive()
+  const topNav = builderLive ? TOP_NAV_QUOTE : TOP_NAV
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -244,7 +265,7 @@ export function Header() {
             <DesktopDropdown label="Applications" links={APPLICATIONS_DROPDOWN} active={isApplicationsActive} pathname={pathname} />
             <DesktopDropdown label="Professionals" links={PROFESSIONALS_DROPDOWN} active={isProfessionalsActive} pathname={pathname} />
 
-            {TOP_NAV.map((link) => (
+            {topNav.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
@@ -271,27 +292,45 @@ export function Header() {
               <Phone className="w-4 h-4" />
               <span className="hidden xl:inline">(800) 963-0131</span>
             </a>
-            <Link
-              href="/kit-builder"
-              className="flex items-center gap-2 rounded-full border border-accent/60 bg-white px-4 py-2 text-sm font-semibold text-accent-dark hover:bg-accent/10 hover:border-accent transition-all hover:-translate-y-0.5"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              Shop
-            </Link>
-            <button
-              type="button"
-              onClick={() => openQuoteModal({ sourcePage: 'header' })}
-              className="btn-sheen flex items-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-2 text-sm font-semibold text-white transition-all shadow-[0_6px_16px_-6px_rgba(91,164,17,0.7)] hover:shadow-[0_12px_24px_-10px_rgba(91,164,17,0.75)] hover:-translate-y-0.5 cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Talk to a Specialist
-            </button>
-            <CartButton />
+            {builderLive ? (
+              <>
+                <button type="button" onClick={() => openQuoteModal({ sourcePage: 'header' })} className={OUTLINE_CTA}>
+                  <MessageSquare className="w-4 h-4" />
+                  Talk to a Specialist
+                </button>
+                <Link href={QUOTE_HREF} className={GREEN_CTA}>
+                  <Calculator className="w-4 h-4" />
+                  Get a quote
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/kit-builder" className={OUTLINE_CTA}>
+                  <ShoppingCart className="w-4 h-4" />
+                  Shop
+                </Link>
+                <button type="button" onClick={() => openQuoteModal({ sourcePage: 'header' })} className={GREEN_CTA}>
+                  <MessageSquare className="w-4 h-4" />
+                  Talk to a Specialist
+                </button>
+                <CartButton />
+              </>
+            )}
           </div>
 
-          {/* Mobile cart + menu button */}
+          {/* Mobile cart (or Get a quote once the builder is live) + menu button */}
           <div className="lg:hidden flex items-center gap-1 md:hidden">
-            <CartButton />
+            {builderLive ? (
+              <Link
+                href={QUOTE_HREF}
+                className="btn-sheen flex items-center gap-1.5 rounded-full bg-gradient-to-b from-accent-light to-accent px-3.5 py-1.5 text-sm font-semibold text-white shadow-[0_6px_16px_-6px_rgba(91,164,17,0.7)]"
+              >
+                <Calculator className="w-4 h-4" />
+                Get a quote
+              </Link>
+            ) : (
+              <CartButton />
+            )}
           </div>
           <button
             type="button"
@@ -361,7 +400,7 @@ export function Header() {
               onNavigate={() => setMobileMenuOpen(false)}
             />
 
-            {TOP_NAV.map((link) => (
+            {topNav.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
@@ -385,25 +424,43 @@ export function Header() {
                 <Phone className="w-5 h-5" />
                 (800) 963-0131
               </a>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false)
-                  openQuoteModal({ sourcePage: 'header-mobile' })
-                }}
-                className="btn-sheen flex items-center justify-center gap-2 w-full text-center rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-3 text-base font-semibold text-white shadow-[0_8px_20px_-8px_rgba(91,164,17,0.7)] cursor-pointer"
-              >
-                <MessageSquare className="w-5 h-5" />
-                Talk to a Specialist
-              </button>
-              <Link
-                href="/kit-builder"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full text-center rounded-full border border-[#5BA411] px-5 py-3 text-base font-semibold text-[#5BA411]"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                Shop Kits
-              </Link>
+              {builderLive ? (
+                <>
+                  <Link href={QUOTE_HREF} onClick={() => setMobileMenuOpen(false)} className={MOBILE_GREEN}>
+                    <Calculator className="w-5 h-5" />
+                    Get a quote
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      openQuoteModal({ sourcePage: 'header-mobile' })
+                    }}
+                    className={MOBILE_OUTLINE}
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    Talk to a Specialist
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      openQuoteModal({ sourcePage: 'header-mobile' })
+                    }}
+                    className={MOBILE_GREEN}
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    Talk to a Specialist
+                  </button>
+                  <Link href="/kit-builder" onClick={() => setMobileMenuOpen(false)} className={MOBILE_OUTLINE}>
+                    <ShoppingCart className="w-5 h-5" />
+                    Shop Kits
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </motion.div>

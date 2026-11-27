@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { CalendarClock, Mail, MapPin, Percent, Phone, Truck } from 'lucide-react'
 import { Container, LinkButton } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const metadata: Metadata = {
   title: '90 Day Return Policy',
@@ -18,7 +19,8 @@ const HERO_FACTS = [
   { icon: Truck, label: 'Report damage within 24 hrs' },
 ]
 
-export default function ReturnPolicyPage() {
+export default async function ReturnPolicyPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -160,7 +162,7 @@ export default function ReturnPolicyPage() {
               <LinkButton href="/contact" variant="accent" size="lg">
                 Contact Us
               </LinkButton>
-              <LinkButton href="/kit-builder" variant="white" size="lg">
+              <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                 Build My Kit
               </LinkButton>
             </div>

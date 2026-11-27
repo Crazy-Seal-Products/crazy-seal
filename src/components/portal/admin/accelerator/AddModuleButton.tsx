@@ -40,7 +40,7 @@ export function AddModuleButton() {
               <input className={inputCls} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Running Your Crew" autoFocus required />
             </label>
             <p className="text-[11.5px] leading-snug text-adm-muted">
-              It starts as a draft, so dealers won’t see it until you add lessons and publish it.
+              It starts as a draft, so contractors won’t see it until you add lessons and publish it.
             </p>
             {error && <p className="text-[12px] text-adm-red">{error}</p>}
             <div className="flex gap-2">

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { Grid, SectionHeading, TestimonialCard, LinkButton } from '@/lib/design-system'
 import { Stagger, StaggerItem } from '@/components/motion'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -232,7 +233,8 @@ const QUICK_LINKS = [
   },
 ]
 
-export function ProQuickLinks() {
+export async function ProQuickLinks() {
+  const shop = await getStoreHref()
   return (
     <>
       <SectionHeading eyebrow="Jump To" heading="Quick Links" variant="dark" />
@@ -240,7 +242,7 @@ export function ProQuickLinks() {
         {QUICK_LINKS.map((link) => (
           <a
             key={link.heading}
-            href={link.href}
+            href={shop(link.href)}
             className="group relative flex flex-col overflow-hidden rounded-3xl bg-white/[0.06] p-6 ring-1 ring-white/10 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.09] hover:ring-white/25"
           >
             <div className="mb-5 flex items-start justify-between gap-4">

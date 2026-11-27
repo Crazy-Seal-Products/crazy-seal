@@ -15,6 +15,7 @@ import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
 import { ProVimeoEmbed } from '@/components/pro/ProVimeoEmbed'
 import { ContentRequestSection, ModuleNav } from '@/components/pro/ProgramModule'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -81,7 +82,8 @@ const MODULES = [
   },
 ]
 
-export default function BusinessAcceleratorProgramPage() {
+export default async function BusinessAcceleratorProgramPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -186,7 +188,7 @@ export default function BusinessAcceleratorProgramPage() {
               </h2>
               <p className="text-sm text-gray-500">Work through every module with built-in progress tracking.</p>
             </div>
-            <LinkButton href="/portal/login/" variant="primary" size="md">
+            <LinkButton href="/pro/login/?next=/portal/training/" variant="primary" size="md">
               Open in the Pro Portal
               <ArrowRight className="h-4 w-4" />
             </LinkButton>
@@ -208,7 +210,7 @@ export default function BusinessAcceleratorProgramPage() {
             {MODULES.map((mod) => (
               <a
                 key={mod.number}
-                href={mod.href}
+                href={shop(mod.href)}
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white p-6 shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl md:p-7"
               >
                 <span

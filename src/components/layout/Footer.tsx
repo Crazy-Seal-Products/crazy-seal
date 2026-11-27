@@ -2,9 +2,11 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Phone, Mail, Truck, Handshake, ShieldCheck, Flag, Award } from 'lucide-react'
+import { Phone, Mail, Truck, Handshake, ShieldCheck, Flag, Award, Calculator } from 'lucide-react'
 import { QuoteButton } from '@/components/QuoteButton'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { useBuilderLive } from '@/components/layout/StoreMode'
+import { QUOTE_HREF, isStoreHref } from '@/lib/store-mode'
 
 const FOOTER_LINKS = {
   system: [
@@ -40,14 +42,22 @@ const FOOTER_LINKS = {
   ],
   partners: [
     { href: '/professionals', label: 'Become a Dealer' },
-    { href: '/portal/login', label: 'Pro Portal' },
-    { href: '/pro', label: 'Pro Hub' },
+    { href: '/pro/login/?next=/portal/', label: 'Pro Portal' },
     { href: '/ways-to-earn', label: 'Ways to Earn' },
     { href: '/business-accelerator-program', label: 'Business Accelerator' },
     { href: '/professional-tools', label: 'Pro Tools' },
     { href: '/affiliates', label: 'Affiliates' },
   ],
+  // Replaces the Shop column once the public quote builder is live (no store).
+  quote: [
+    { href: QUOTE_HREF, label: 'Get a Quote' },
+    { href: '/products', label: 'Products' },
+    { href: '/contact', label: 'Talk to a Specialist' },
+  ],
 }
+
+/** The System column without its store link once the builder is live. */
+const SYSTEM_QUOTE = FOOTER_LINKS.system.filter((l) => !isStoreHref(l.href))
 
 const TRUST = [
   { icon: ShieldCheck, label: '50 Year Warranty' },
@@ -98,6 +108,7 @@ function FooterColumn({
 }
 
 export function Footer() {
+  const builderLive = useBuilderLive()
   return (
     <footer className="relative overflow-hidden bg-primary-dark text-white">
       {/* Ambient glows */}
@@ -128,7 +139,23 @@ export function Footer() {
               </p>
             </div>
             <div className="flex flex-row flex-wrap items-center justify-center gap-3">
-              <QuoteButton sourcePage="footer" />
+              {builderLive && (
+                <Link
+                  href={QUOTE_HREF}
+                  className="btn-sheen inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_18px_-6px_rgba(91,164,17,0.6)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-10px_rgba(91,164,17,0.65)] sm:px-6 sm:py-3 sm:text-base"
+                >
+                  <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
+                  Get a quote
+                </Link>
+              )}
+              <QuoteButton
+                sourcePage="footer"
+                className={
+                  builderLive
+                    ? 'inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/15 cursor-pointer sm:text-base'
+                    : undefined
+                }
+              />
               <Link
                 href="/professionals"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/15 sm:text-base"
@@ -185,10 +212,14 @@ export function Footer() {
             </div>
           </div>
 
-          <FooterColumn title="The System" links={FOOTER_LINKS.system} />
+          <FooterColumn title="The System" links={builderLive ? SYSTEM_QUOTE : FOOTER_LINKS.system} />
           <FooterColumn title="Applications" links={FOOTER_LINKS.applications} />
           <FooterColumn title="Support" links={FOOTER_LINKS.support} />
-          <FooterColumn title="Shop" links={FOOTER_LINKS.shop} native />
+          {builderLive ? (
+            <FooterColumn title="Pricing" links={FOOTER_LINKS.quote} />
+          ) : (
+            <FooterColumn title="Shop" links={FOOTER_LINKS.shop} native />
+          )}
           <FooterColumn title="Partners" links={FOOTER_LINKS.partners} />
         </div>
 

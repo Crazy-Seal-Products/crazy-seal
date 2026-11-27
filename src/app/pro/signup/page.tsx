@@ -56,18 +56,18 @@ export default function ProSignupPage() {
     <ProAuthLayout subtitle="Create an account with the email on your Crazy Seal orders.">
       {sent ? (
         <div className="text-center py-4" role="status">
-          <h2 className="text-lg font-bold text-[#003365] mb-2">Check your email</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-lg font-bold text-white mb-2">Check your email</h2>
+          <p className="text-sm text-white/70">
             We sent a link to <strong>{email}</strong>. Open it to choose your password. It expires in 20 minutes.
           </p>
-          <Link href="/pro/login/" className="inline-block mt-4 text-sm font-medium text-[#003365] hover:underline">
+          <Link href="/pro/login/" className="inline-block mt-4 text-sm font-medium text-highlight hover:underline">
             Back to sign in
           </Link>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-white/75 mb-1">Email</label>
             <input
               id="email"
               type="email"
@@ -85,13 +85,13 @@ export default function ProSignupPage() {
             <input ref={honeypotRef} name="website" tabIndex={-1} autoComplete="off" />
           </div>
           {turnstile.widget}
-          {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+          {error && <p className="text-sm text-red-200 bg-red-500/10 ring-1 ring-red-400/30 px-3 py-2 rounded-lg">{error}</p>}
           <button type="submit" disabled={loading || !email} className={authPrimaryButtonClass}>
             {loading ? 'Sending…' : 'Email me a link'}
           </button>
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-white/55">
             Already have one?{' '}
-            <Link href="/pro/login/" className="font-semibold text-[#003365] hover:underline">Sign in</Link>
+            <Link href="/pro/login/" className="font-semibold text-highlight hover:underline">Sign in</Link>
           </p>
         </form>
       )}

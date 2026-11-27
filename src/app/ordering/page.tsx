@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { Container, SectionHeading, LinkButton } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -106,7 +107,8 @@ const HERO_TRUST = [
 // CSS entrance (runs before hydration, so the hero never flashes empty)
 const enter = (delayMs: number) => ({ style: { animationDelay: `${delayMs}ms` } })
 
-export default function OrderingPage() {
+export default async function OrderingPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO ─── */}
@@ -133,11 +135,11 @@ export default function OrderingPage() {
               directly to your door.
             </p>
             <div {...enter(240)} className="animate-fade-up flex flex-wrap items-center justify-center gap-3">
-              <LinkButton href="/kit-builder" variant="accent" size="lg">
+              <LinkButton href={shop('/kit-builder')} variant="accent" size="lg">
                 <ShoppingCart className="w-5 h-5" />
                 Visit Our Store
               </LinkButton>
-              <LinkButton href="/kit-builder" variant="white" size="lg">
+              <LinkButton href={shop('/kit-builder')} variant="white" size="lg">
                 Build My Kit
               </LinkButton>
             </div>
@@ -189,7 +191,7 @@ export default function OrderingPage() {
             {KITS.map((kit) => (
               <a
                 key={kit.title}
-                href={kit.href}
+                href={shop(kit.href)}
                 className="group flex flex-col overflow-hidden rounded-3xl bg-white p-2 text-center shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl"
               >
                 <div className="relative grid h-32 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-accent/10">
@@ -213,7 +215,7 @@ export default function OrderingPage() {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-8 md:pt-10">
-            <LinkButton href="/kit-builder#rv-kits" variant="primary" size="md">
+            <LinkButton href={shop('/kit-builder#rv-kits')} variant="primary" size="md">
               See All Kits On One Page
               <ArrowRight className="w-4 h-4" />
             </LinkButton>
@@ -233,7 +235,7 @@ export default function OrderingPage() {
             {PRODUCTS.map((product) => (
               <a
                 key={product.name}
-                href={product.href}
+                href={shop(product.href)}
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-2 text-center shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_-24px_rgba(0,0,0,0.6)]"
               >
                 <div className="relative grid h-40 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-accent/10">
@@ -259,7 +261,7 @@ export default function OrderingPage() {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-8 md:pt-10">
-            <LinkButton href="/kit-builder#products" variant="white" size="md">
+            <LinkButton href={shop('/kit-builder#products')} variant="white" size="md">
               See All Products On One Page
             </LinkButton>
           </div>
@@ -276,7 +278,7 @@ export default function OrderingPage() {
             <LinkButton href="/contact" variant="accent" size="lg">
               Contact Us
             </LinkButton>
-            <LinkButton href="/kit-builder" variant="primary" size="lg">
+            <LinkButton href={shop('/kit-builder')} variant="primary" size="lg">
               Build My Kit
             </LinkButton>
             <a

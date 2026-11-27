@@ -8,6 +8,7 @@ import {
   ModuleNav,
   ModuleNext,
 } from '@/components/pro/ProgramModule'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
 
@@ -62,7 +63,8 @@ const KIT_TIPS = [
   'Need help choosing? Our team is happy to help',
 ]
 
-export default function BuildingAKitPage() {
+export default async function BuildingAKitPage() {
+  const shop = await getStoreHref()
   return (
     <>
       {/* ─── HERO / MODULE VIDEO ─── */}
@@ -115,7 +117,7 @@ export default function BuildingAKitPage() {
                 </h2>
                 <p className="mt-1 text-gray-600">Double layer, direct to deck, commercial and build-your-own kits.</p>
               </div>
-              <LinkButton href="/kit-builder" variant="accent" size="lg">
+              <LinkButton href={shop('/kit-builder')} variant="accent" size="lg">
                 <ShoppingCart className="h-5 w-5" />
                 All Project Kits
               </LinkButton>
@@ -132,7 +134,7 @@ export default function BuildingAKitPage() {
             {PRODUCTS.map((product) => (
               <a
                 key={product.heading}
-                href={product.href}
+                href={shop(product.href)}
                 className="group relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 to-white shadow-sm ring-1 ring-primary/[0.08] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
                 <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-accent/10 p-6">
@@ -159,7 +161,7 @@ export default function BuildingAKitPage() {
           </div>
           <div className="mt-8 flex flex-col items-center gap-4 text-center md:mt-10">
             <h3 className="text-lg font-extrabold text-primary">See All Products On One Page</h3>
-            <LinkButton href="/kit-builder#products" variant="primary" size="lg">
+            <LinkButton href={shop('/kit-builder#products')} variant="primary" size="lg">
               See All Products
               <ArrowRight className="h-4 w-4" />
             </LinkButton>

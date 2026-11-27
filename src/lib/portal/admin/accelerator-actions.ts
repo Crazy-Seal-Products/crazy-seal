@@ -8,13 +8,13 @@ import { requirePortalAdmin } from './auth'
 import { cleanModule, getAcceleratorAdmin, getModuleRow, slugify, toModuleDraft, uniqueSlug, type ModuleDraft } from './accelerator'
 
 /**
- * Writes for Contractors → Accelerator Program. Every change shows in the Pro
- * Portal on the next page load. Each action loads the program first, which
+ * Writes for Contractors → Training (the Accelerator Program). Every change
+ * shows under Training in the contractor portal on the next page load. Each action loads the program first, which
  * seeds the tables from the built-in modules if nobody has edited them yet.
  */
 
 function refresh() {
-  // Covers the admin pages and the dealer portal (both under /portal).
+  // Covers the admin pages and the contractor portal (both under /portal).
   revalidatePath('/portal', 'layout')
 }
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { ShieldCheck, Truck } from 'lucide-react'
 import { Container } from '@/lib/design-system'
 import { GlowOrb } from '@/components/motion'
@@ -8,6 +9,8 @@ import { FloatingRep, ShopChooser } from '@/components/store/ShopChooser'
 import { getKitBuilderCatalog } from '@/lib/store/kit-builder-data'
 import { getShopProducts } from '@/lib/store/products'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
+import { isPublicBuilderLive } from '@/lib/pricing/builder-live'
+import { QUOTE_HREF } from '@/lib/store-mode'
 
 export const revalidate = 300
 
@@ -23,6 +26,8 @@ const enter = (delayMs: number) => ({
 })
 
 export default async function ShopPage() {
+  // The store is off once the public quote builder is live (307, so it can be switched back).
+  if (await isPublicBuilderLive()) redirect(QUOTE_HREF)
   const [catalog, products] = await Promise.all([getKitBuilderCatalog(), getShopProducts()])
 
   return (

@@ -18,6 +18,7 @@ import {
   roleLabel,
   TOP_ROLE,
   TOP_ROLE_VALUES,
+  isDeveloperOnly,
   type AdminRole,
 } from './sections'
 import { findAuthUserIdByEmail } from './users'
@@ -183,6 +184,7 @@ export async function saveRolePermissions(_prev: ActionResult | null, form: Form
   const at = new Date().toISOString()
   for (const role of EDITABLE_ROLES) {
     for (const s of ADMIN_SECTIONS) {
+      if (isDeveloperOnly(s.key)) continue
       const allowed = form.get(`perm:${role}:${s.key}`) === 'on'
       rows.push({ role, section: s.key, allowed, updated_by: admin.email, updated_at: at })
       if (allowed !== before[role].includes(s.key)) changes.push(`${roleLabel(role)} ${allowed ? '+' : '−'} ${s.label}`)

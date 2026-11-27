@@ -19,6 +19,7 @@ import { CtaSection } from '@/components/CtaSection'
 import { ProjectCard } from '@/components/RealProjectsSection'
 import { GlowOrb } from '@/components/motion'
 import { getProjectBySlug, getPublishedProjects, categoryLabel } from '@/lib/projects'
+import { getStoreHref } from '@/lib/pricing/builder-live'
 
 export const revalidate = 3600
 
@@ -71,6 +72,7 @@ export default async function ProjectPage({
   const { slug } = await params
   const project = await getProjectBySlug(slug)
   if (!project) notFound()
+  const shop = await getStoreHref()
 
   // Related: latest other projects in same category
   const related = (await getPublishedProjects(project.category || undefined))
@@ -260,7 +262,7 @@ export default async function ProjectPage({
             {KIT_LINKS.map((kit) => (
               <Link
                 key={kit.href}
-                href={kit.href}
+                href={shop(kit.href)}
                 className="group relative overflow-hidden rounded-3xl bg-white/[0.06] p-6 lg:p-8 text-center ring-1 ring-white/10 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.09] hover:ring-white/25"
               >
                 <div

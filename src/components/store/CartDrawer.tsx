@@ -2,16 +2,24 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { X, Minus, Plus, Trash2, ShoppingCart, Lock, Truck } from 'lucide-react'
+import { X, Minus, Plus, Trash2, ShoppingCart, Lock, Truck, Calculator } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { formatPrice } from '@/lib/store/products'
 import { CallRepLink, SpeakToRepButton } from '@/components/store/SpeakToRep'
 import { FREE_SHIPPING_OVER } from '@/lib/shipping'
+import { useBuilderLive, useStoreHref } from '@/components/layout/StoreMode'
+import { QUOTE_HREF } from '@/lib/store-mode'
+
+const CHECKOUT_CLASS =
+  'btn-sheen w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-6 py-3.5 text-base font-bold text-white shadow-[0_8px_22px_-8px_rgb(91_164_17/0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_32px_-10px_rgb(91_164_17/0.7)] active:translate-y-0 active:scale-[0.98] disabled:opacity-60 disabled:hover:translate-y-0 cursor-pointer'
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
   const [checkingOut, setCheckingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Once the public quote builder is live there is no checkout: the cart sends people to /quote/.
+  const builderLive = useBuilderLive()
+  const shop = useStoreHref()
 
   function cartSummary() {
     const lines = items
@@ -81,11 +89,11 @@ export function CartDrawer() {
             </span>
             <p className="text-gray-500">Your cart is empty.</p>
             <Link
-              href="/kit-builder"
+              href={shop('/kit-builder')}
               onClick={closeCart}
               className="btn-sheen rounded-full bg-gradient-to-b from-accent-light to-accent px-6 py-2.5 text-sm font-bold text-white shadow-[0_6px_18px_-6px_rgb(91_164_17/0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-accent"
             >
-              Browse the Store
+              {builderLive ? 'Get a quote' : 'Browse the Store'}
             </Link>
             <SpeakToRepButton
               sourcePage="cart-empty"
@@ -114,7 +122,7 @@ export function CartDrawer() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <Link
-                      href={`/store/${item.productHandle}`}
+                      href={shop(`/store/${item.productHandle}`)}
                       onClick={closeCart}
                       className="text-sm font-bold text-primary hover:text-secondary line-clamp-2"
                     >
@@ -185,17 +193,27 @@ export function CartDrawer() {
                 <span className="text-xl font-extrabold text-primary font-[family-name:var(--font-display)]">{formatPrice(subtotal)}</span>
               </div>
               {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600 ring-1 ring-red-100">{error}</p>}
-              <button
-                onClick={handleCheckout}
-                disabled={checkingOut}
-                className="btn-sheen w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-accent-light to-accent px-6 py-3.5 text-base font-bold text-white shadow-[0_8px_22px_-8px_rgb(91_164_17/0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_32px_-10px_rgb(91_164_17/0.7)] active:translate-y-0 active:scale-[0.98] disabled:opacity-60 disabled:hover:translate-y-0 cursor-pointer"
-              >
-                <Lock className="w-4 h-4" />
-                {checkingOut ? 'Starting Checkout…' : 'Secure Checkout'}
-              </button>
-              <p className="text-[11px] text-gray-400 text-center">
-                Taxes and shipping calculated at checkout
-              </p>
+              {builderLive ? (
+                <>
+                  <Link href={QUOTE_HREF} onClick={closeCart} className={CHECKOUT_CLASS}>
+                    <Calculator className="w-4 h-4" />
+                    Get a quote
+                  </Link>
+                  <p className="text-[11px] text-gray-400 text-center">
+                    Answer a few questions about your roof and we&apos;ll price it on the spot
+                  </p>
+                </>
+              ) : (
+                <>
+                  <button onClick={handleCheckout} disabled={checkingOut} className={CHECKOUT_CLASS}>
+                    <Lock className="w-4 h-4" />
+                    {checkingOut ? 'Starting Checkout…' : 'Secure Checkout'}
+                  </button>
+                  <p className="text-[11px] text-gray-400 text-center">
+                    Taxes and shipping calculated at checkout
+                  </p>
+                </>
+              )}
               <div className="rounded-2xl bg-[#fff8dc] p-3 ring-1 ring-[#f5c542]/70">
                 <p className="mb-2 text-center text-xs font-semibold text-primary-dark">
                   Not sure it&apos;s the right kit? A rep will check it with you, free.

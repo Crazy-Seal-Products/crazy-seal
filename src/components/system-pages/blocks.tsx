@@ -22,6 +22,7 @@ import { twMerge } from 'tailwind-merge'
 import { LinkButton, SectionHeading } from '@/lib/design-system'
 import { CountUp, GlowOrb } from '@/components/motion'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { StoreAnchor, StoreLinkButton } from '@/components/layout/StoreMode'
 import { FREE_SHIPPING_OVER_TEXT } from '@/lib/shipping'
 
 export const MEDIA = 'https://media.crazyseal.com/site-assets/wp-media'
@@ -324,13 +325,13 @@ export function ShopHero({
             className="animate-fade-up flex flex-wrap items-center justify-center lg:justify-start gap-3"
             style={fadeDelay(240)}
           >
-            <LinkButton href={shopHref} variant="accent" size="lg" external={shopExternal}>
+            <StoreLinkButton href={shopHref} variant="accent" size="lg" external={shopExternal}>
               <ShoppingCart className="w-5 h-5" />
               {shopLabel}
-            </LinkButton>
-            <LinkButton href={secondary.href} variant="white" size="lg">
+            </StoreLinkButton>
+            <StoreLinkButton href={secondary.href} variant="white" size="lg">
               {secondary.label}
-            </LinkButton>
+            </StoreLinkButton>
           </div>
           {chips && <HeroChips items={chips} delay={320} className="mt-8 justify-center lg:justify-start" />}
         </div>
@@ -434,10 +435,10 @@ export function ProductDetail({
           )}
           <SpecTable rows={specs} caption={`${name} specifications`} className="mb-7" />
           {footer}
-          <LinkButton href={shopHref} variant="accent" size="md" external>
+          <StoreLinkButton href={shopHref} variant="accent" size="md" external>
             {shopLabel}
             <ArrowRight className="w-4 h-4" />
-          </LinkButton>
+          </StoreLinkButton>
         </div>
       </div>
       {after}
@@ -563,10 +564,10 @@ export function SwagPack() {
               </li>
             ))}
           </ul>
-          <LinkButton href="/store/free-crazy-seal-swag-pack" variant="white" size="lg">
+          <StoreLinkButton href="/store/free-crazy-seal-swag-pack" variant="white" size="lg">
             <ShoppingCart className="w-5 h-5" />
             Add to Cart
-          </LinkButton>
+          </StoreLinkButton>
         </div>
       </div>
     </div>
@@ -648,7 +649,7 @@ export function KitCardGrid({
       )}
     >
       {kits.map((kit) => (
-        <a
+        <StoreAnchor
           key={kit.title}
           href={kit.href}
           className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-2 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_-24px_rgba(0,0,0,0.6)]"
@@ -675,7 +676,7 @@ export function KitCardGrid({
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
           </div>
-        </a>
+        </StoreAnchor>
       ))}
     </div>
   )
@@ -771,10 +772,10 @@ export function BiggerRoofBanner({ className }: { className?: string }) {
           </h3>
           <p className="mt-1 text-white/70">Click the button to start building your own kit!</p>
         </div>
-        <LinkButton href="/build-your-own-kit" variant="accent" size="lg">
+        <StoreLinkButton href="/build-your-own-kit" variant="accent" size="lg">
           Build Your Own Kit
           <ArrowRight className="w-5 h-5" />
-        </LinkButton>
+        </StoreLinkButton>
       </div>
     </div>
   )
@@ -837,10 +838,10 @@ export function KitAbout({
           <SectionHeading eyebrow={eyebrow} heading={heading} align="left" className="mb-4 text-center md:text-left" />
           <div className="text-gray-600 text-base md:text-lg leading-relaxed mb-6 text-pretty">{lead}</div>
           <Checklist items={checklist} className="mb-8 max-w-xl mx-auto md:mx-0" />
-          <LinkButton href={shopHref} variant="accent" size="md" external>
+          <StoreLinkButton href={shopHref} variant="accent" size="md" external>
             <ShoppingCart className="w-4 h-4" />
             {shopLabel}
-          </LinkButton>
+          </StoreLinkButton>
         </div>
         <div className="space-y-4">{aside}</div>
       </div>
@@ -1034,9 +1035,9 @@ export function ContactCta({ variant = 'light' }: { variant?: 'light' | 'dark' }
           <LinkButton href="/contact" variant="accent" size="lg">
             Contact Us
           </LinkButton>
-          <LinkButton href="/kit-builder" variant={dark ? 'white' : 'primary'} size="lg">
+          <StoreLinkButton href="/kit-builder" variant={dark ? 'white' : 'primary'} size="lg">
             Build My Kit
-          </LinkButton>
+          </StoreLinkButton>
           <a
             href="tel:8009630131"
             className={twMerge(

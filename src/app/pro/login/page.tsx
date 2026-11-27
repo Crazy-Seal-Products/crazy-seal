@@ -5,10 +5,11 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ProAuthLayout, authInputClass, authPrimaryButtonClass } from '@/components/pro-hub/ProAuthLayout'
 import { useProTurnstile } from '@/components/pro-hub/useProTurnstile'
+import { nextQuery, pageAfterSignIn, safePortalNext } from '@/lib/contractor/next-path'
 
 export default function ProLoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#003365]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#00152b]" />}>
       <ProLoginForm />
     </Suspense>
   )
@@ -18,6 +19,8 @@ function ProLoginForm() {
   const router = useRouter()
   const params = useSearchParams()
   const expired = params.get('error') === 'expired'
+  // A contractor portal page to open after signing in (only /portal/ pages; see safePortalNext).
+  const next = safePortalNext(params.get('next'))
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [sent, setSent] = useState(false)
@@ -28,9 +31,9 @@ function ProLoginForm() {
 
   useEffect(() => {
     fetch('/api/pro/me/').then((res) => {
-      if (res.ok) router.replace('/pro/')
+      if (res.ok) router.replace(pageAfterSignIn(next))
     }).catch(() => {})
-  }, [router])
+  }, [router, next])
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,7 +56,7 @@ function ProLoginForm() {
         setError(data?.error || 'Could not sign in.')
         return
       }
-      router.replace('/pro/')
+      router.replace(pageAfterSignIn(next))
       router.refresh()
     } catch {
       turnstile.reset()
@@ -79,7 +82,7 @@ function ProLoginForm() {
       const res = await fetch('/api/pro/auth/request/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, turnstileToken: human.token, website: honeypotRef.current?.value ?? '' }),
+        body: JSON.stringify({ email, turnstileToken: human.token, website: honeypotRef.current?.value ?? '', next }),
       })
       turnstile.reset()
       const data = await res.json().catch(() => null)
@@ -100,14 +103,14 @@ function ProLoginForm() {
     <ProAuthLayout>
       {sent ? (
         <div className="text-center py-4">
-          <h2 className="text-lg font-bold text-[#003365] mb-2">Check your email</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-lg font-bold text-white mb-2">Check your email</h2>
+          <p className="text-sm text-white/70">
             We sent a sign-in link to <strong>{email}</strong>. It expires in 20 minutes.
           </p>
           <button
             type="button"
             onClick={() => setSent(false)}
-            className="mt-4 text-sm text-[#003365] font-medium hover:underline"
+            className="mt-4 text-sm text-highlight font-medium hover:underline"
           >
             Back to sign in
           </button>
@@ -115,7 +118,7 @@ function ProLoginForm() {
       ) : (
         <form onSubmit={handlePasswordLogin} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-white/75 mb-1">
               Email
             </label>
             <input
@@ -132,10 +135,10 @@ function ProLoginForm() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-white/75">
                 Password
               </label>
-              <Link href="/pro/forgot/" className="text-xs font-medium text-[#003365] hover:underline">
+              <Link href={`/pro/forgot/${nextQuery(next)}`} className="text-xs font-medium text-highlight hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -155,7 +158,17 @@ function ProLoginForm() {
           </div>
           {turnstile.widget}
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+            <div className="text-sm text-red-200 bg-red-500/10 ring-1 ring-red-400/30 px-3 py-2 rounded-lg">
+              <p>{error}</p>
+              {/* Staff accounts are separate: a staff email and password never work here. */}
+              <p className="mt-1 text-xs text-red-100/80">
+                Crazy Seal staff?{' '}
+                <Link href="/portal/login/" className="font-semibold text-highlight underline underline-offset-2">
+                  Sign in to the admin instead
+                </Link>
+                .
+              </p>
+            </div>
           )}
           <button
             type="submit"
@@ -168,23 +181,30 @@ function ProLoginForm() {
             type="button"
             onClick={handleMagicLink}
             disabled={loading}
-            className="w-full text-sm font-medium text-[#003365] hover:underline"
+            className="w-full text-sm font-medium text-highlight hover:underline"
           >
             Email me a sign-in link instead
           </button>
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-white/55">
             New here?{' '}
-            <Link href="/pro/signup/" className="font-semibold text-[#003365] hover:underline">
+            <Link href="/pro/signup/" className="font-semibold text-highlight hover:underline">
               Create an account
             </Link>
           </p>
         </form>
       )}
-      <p className="text-center text-xs text-gray-400 mt-6">
+      <p className="text-center text-xs text-white/40 mt-6">
         DIY customer? This still works — you&apos;ll see your orders and certificates.{' '}
-        <Link href="/professionals/" className="text-[#003365] hover:underline">Become a Pro</Link>
+        <Link href="/professionals/" className="text-highlight hover:underline">Become a Pro</Link>
         {' · '}
         <Link href="/" className="hover:underline">crazyseal.com</Link>
+      </p>
+      <p className="text-center text-xs text-white/40 mt-2">
+        Crazy Seal staff sign in to the{' '}
+        <Link href="/portal/login/" className="text-highlight hover:underline">
+          admin
+        </Link>
+        , not here.
       </p>
     </ProAuthLayout>
   )
