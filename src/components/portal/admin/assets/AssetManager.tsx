@@ -158,24 +158,29 @@ export function AssetManager() {
   const toggleAll = () => select(allSelected ? NONE : files.map((f) => f.key))
 
   // ─── Toasts, clipboard, audio ──────────────────────────────────────────
-  const [toast, setToast] = useState<Toast | null>(null)
+  const [toast, setToast] = useState<(Toast & { ms: number }) | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
   const [playing, setPlaying] = useState<string | null>(null)
-  const live = useRef({ toast: 0, copy: 0, audio: null as HTMLAudioElement | null })
+  const live = useRef({ copy: 0, audio: null as HTMLAudioElement | null })
 
   useEffect(() => {
     const l = live.current
     return () => {
-      window.clearTimeout(l.toast)
       window.clearTimeout(l.copy)
       l.audio?.pause()
     }
   }, [])
 
+  // A toast with a time limit closes itself. A newer toast, closing it, or
+  // leaving the page cancels the timer.
+  useEffect(() => {
+    if (!toast?.ms) return
+    const timer = window.setTimeout(() => setToast(null), toast.ms)
+    return () => window.clearTimeout(timer)
+  }, [toast])
+
   const notify = (tone: Toast['tone'], title: string, details?: string[], ms = tone === 'ok' ? 4000 : 6000) => {
-    window.clearTimeout(live.current.toast)
-    setToast({ tone, title, details })
-    if (ms) live.current.toast = window.setTimeout(() => setToast(null), ms)
+    setToast({ tone, title, details, ms })
   }
 
   const copy = async (url: string) => {

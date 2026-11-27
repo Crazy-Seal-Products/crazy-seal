@@ -74,10 +74,10 @@ export function useJourneyTracking(): UseJourneyTrackingReturn {
 
   useEffect(() => {
     if (state.isInitialized || isInitializing.current) return
-    if (isDoNotTrack() || isUntrackedPath(window.location.pathname)) {
-      setState(prev => ({ ...prev, isInitialized: true }))
-      return
-    }
+    // Do Not Track, or the admin: tracking stays off for this visit. Nothing
+    // reads isInitialized outside this hook, and with no visitor or session
+    // the page-view and event code below already does nothing.
+    if (isDoNotTrack() || isUntrackedPath(window.location.pathname)) return
 
     isInitializing.current = true
 

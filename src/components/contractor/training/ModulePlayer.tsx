@@ -87,7 +87,7 @@ function Player({ mod, initialLesson }: { mod: PortalModule; initialLesson?: str
   useEffect(() => {
     if (!hydrated || positioned.current || initialLesson) return
     positioned.current = true
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync with client-only storage
+    // One-time sync with client-only storage.
     setActiveId(nextLesson(mod, completed).id)
   }, [hydrated, mod, completed, initialLesson])
 
