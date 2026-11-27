@@ -24,6 +24,8 @@ npm run dev
 
 Copy `.env.local.example` to `.env.local` and fill in credentials.
 
+For a map of how the site is built, run `npm run map`. It's an isometric view of the areas, guided tours, and the model-checked flows in `docs/statecharts/`. It runs only on your machine (127.0.0.1), needs no credentials, and is never deployed. `npm run map:check` keeps it honest after changes. See `docs/system-map/README.md`.
+
 On Windows PowerShell, use `npm.cmd ci` and `npm.cmd run dev`. The site runs
 at `http://localhost:3004`. To create the local file without overwriting one:
 

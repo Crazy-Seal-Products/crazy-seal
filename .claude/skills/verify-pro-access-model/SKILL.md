@@ -41,7 +41,7 @@ Also outside the model: since branch `claude/pro-signup-guard` (Nov 20, 2026), s
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code. `fixed.cfg` and `fixed-after-takeover.cfg` describe the code as it is; `before-fix.cfg` keeps `96e6068` for comparison.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), for example `statechart ProAccess.tla --config fixed.cfg --view view.mts --out <folder>`.
-4. Compare with the expected results, then copy the new `chart.mmd` and `report.md` into `charts/` as `<config>.mmd` and `<config>.report.md`, and render the SVGs with Pele.
+4. Compare with the expected results, then copy the new `chart.mmd` and `report.md` into `charts/` as `<config>.mmd` and `<config>.report.md`. Check them in the System Map (`npm run map`, then Flows); there is no SVG to render.
 5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./register.mjs --test pro-access.test.mjs`. It runs the real sign-up, login, forgot, reset and callback routes, `consumeMagicLink`, `loadProContext` and `loadJobsForPro` against a fake database, a fake Shopify and a fake Gmail. All 8 tests pass on the branch; against `96e6068` the 7 that cover a bug fail and "an invited pro still signs in with an emailed link" passes. Also run `pro-signup-guard.test.mjs` (bot screening and flags, 12 tests).
 
 Expected results:

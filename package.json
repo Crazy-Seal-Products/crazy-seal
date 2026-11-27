@@ -9,7 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "env:check": "node scripts/check-env.mjs"
+    "env:check": "node scripts/check-env.mjs",
+    "map": "node docs/system-map/serve.mjs",
+    "map:check": "node docs/system-map/check.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.7.0",

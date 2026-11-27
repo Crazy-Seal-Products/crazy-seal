@@ -38,7 +38,7 @@ Not modeled, and covered elsewhere:
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code. `Fixed = TRUE` in `fixed*.cfg` describes the code; `before-fix*.cfg` keep the old code for comparison.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), for example `statechart ShopifyCopy.tla --config fixed.cfg --view view.mts --out <new folder>`.
-4. Compare with the expected results, then copy the new chart and report into `charts/`.
+4. Compare with the expected results, then copy the new chart and report into `charts/`. Check them in the System Map (`npm run map`, then Flows).
 5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./register.mjs --test shopify-copy.test.mjs`. It runs the real `fetchAndUpsertOrder`, `markShopifyDeleted` and admin refresh with a fake Shopify and a fake database whose `.rpc()` runs a JavaScript copy of the SQL functions (`shopify-copy-sql.mjs`). All five tests pass on the fix and fail on `96e6068`.
 6. If the SQL functions changed, update `shopify-copy-sql.mjs` to match and check the SQL itself in PGlite: install `@electric-sql/pglite` in a folder outside the repo, then from the same replay folder run `PGLITE_DIR=<that folder> node --import ./register.mjs --test shopify-copy-sql.check.mjs`. It runs migrations 015 and 019 and writes rows built by the real `commerce-map.ts`.
 

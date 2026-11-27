@@ -38,7 +38,7 @@ It also leaves out the Shopify sync (`src/lib/contractors/shopify-sync.ts`, rule
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code, and set `Fixed` in the configs to describe the code as it is.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), with an `--out` folder that doesn't exist yet.
-4. Compare with the expected results, then copy the new chart and report into `charts/` and render the SVGs with `node ~/.local/share/pele/render.mjs charts/before.mmd charts/today.mmd`.
+4. Compare with the expected results, then copy the new chart and report into `charts/`. Check them in the System Map (`npm run map`, then Flows): the chart and each bug path redraw on their own, so there is no SVG to render.
 5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./contractor-records.register.mjs --test contractor-records.test.mjs`. It runs the real import script, `createContractor`, `saveContractor`, `getPublicContractor` and `currentAddressFor` against a fake database and a fake dealer list. Each test walks a former bug path and asserts the rule now holds; two more pin the fix's trade-offs (a new contact at a listed company is held for review; one email in two states keeps two pages). After the import or the admin actions change, rerun them and the real import (`node --env-file=.env.local scripts/import-contractors.mjs <dealer list>`), which on 2026-11-10 printed 0 added, 133 updated, 0 linked, 0 held.
 
 Expected results on 2026-11-10:

@@ -45,7 +45,7 @@ Not modeled: a page opened at `?near=me` asks for the location once (the `nearPa
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code, and keep `today.cfg` describing the code as it is.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), with an `--out` folder that doesn't exist yet.
-4. Compare with the expected results, then copy the new chart and report into `charts/` (`today.*`, `before.*`).
+4. Compare with the expected results, then copy the new chart and report into `charts/` (`today.*`, `before.*`). Check them in the System Map (`npm run map`, then Flows).
 5. Replay in the browser against the dev server. Patch `window.fetch` to hold `/api/contractors/zip/?zip=` answers (keep a queue per ZIP, since the same ZIP can be out twice) and `navigator.geolocation.getCurrentPosition` to hold the location, then release them in the order of the path. Paths that don't change the address replay reliably. On a dev server that another session is editing, an address change sometimes reloads the whole page (the document is fetched again, not the `_rsc` payload), which wipes the harness; that is the dev server, not the finder.
 
 Expected results:
