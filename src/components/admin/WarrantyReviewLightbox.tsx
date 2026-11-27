@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, Check, ChevronLeft, ChevronRight, Loader2, Maximize2, Quote, ShieldAlert, Star, X } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import {
@@ -301,9 +301,23 @@ export function WarrantyReviewLightbox({
   const currentRef = useRef(current)
   const imageTypeRef = useRef(imageType)
   const classifyRef = useRef<(value: string) => Promise<void>>(async () => {})
-  indexRef.current = index
-  currentRef.current = current
-  imageTypeRef.current = imageType
+
+  // Opening another registration (or a fresh copy of this one after a save)
+  // loads its saved answers and goes back to the first photos. Done while
+  // rendering, so the old registration's answers never show for a frame.
+  const [shownRegistration, setShownRegistration] = useState<ReviewRegistration | undefined | null>(null)
+  if (current !== shownRegistration) {
+    setShownRegistration(current)
+    if (current) {
+      setImageType(current.image_type || 'RV')
+      setReviews(current.reviews_for_marketing || '')
+      setBeforeIndex(0)
+      setAfterIndex(0)
+      setPhotoIndex(0)
+      setUnlabeledIndex(0)
+      setZoom(null)
+    }
+  }
 
   const slides = useMemo(() => (current ? slidesFor(current) : []), [current])
   const beforeSlides = slides.filter((s) => s.label === 'Before')
@@ -312,17 +326,6 @@ export function WarrantyReviewLightbox({
   const compare = beforeSlides.length > 0 || afterSlides.length > 0
   const safeUnlabeledIndex = Math.min(unlabeledIndex, Math.max(0, unlabeledSlides.length - 1))
   const progress = registrations.length ? ((index + 1) / registrations.length) * 100 : 0
-
-  useEffect(() => {
-    if (!current) return
-    setImageType(current.image_type || 'RV')
-    setReviews(current.reviews_for_marketing || '')
-    setBeforeIndex(0)
-    setAfterIndex(0)
-    setPhotoIndex(0)
-    setUnlabeledIndex(0)
-    setZoom(null)
-  }, [current])
 
   useEffect(() => {
     const prev = document.body.style.overflow
@@ -407,7 +410,14 @@ export function WarrantyReviewLightbox({
     }
   }
 
-  classifyRef.current = classify
+  // The keyboard shortcuts and classify() read the latest values through refs.
+  // Refresh them after each render, before any other effect or event runs.
+  useLayoutEffect(() => {
+    indexRef.current = index
+    currentRef.current = current
+    imageTypeRef.current = imageType
+    classifyRef.current = classify
+  })
 
   if (!current) return null
 

@@ -75,11 +75,18 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
   const normalized = pathname.replace(/\/+$/, '') || '/'
   const isPublicAuth = ['/pro/login', '/pro/signup', '/pro/forgot', '/pro/reset'].includes(normalized)
 
+  // The sign-in pages need no account check.
+  if (isPublicAuth && !authChecked) setAuthChecked(true)
+
+  // Opening another page closes the mobile menu.
+  const [menuPath, setMenuPath] = useState(pathname)
+  if (menuPath !== pathname) {
+    setMenuPath(pathname)
+    setMobileOpen(false)
+  }
+
   useEffect(() => {
-    if (isPublicAuth) {
-      setAuthChecked(true)
-      return
-    }
+    if (isPublicAuth) return
 
     fetch('/api/pro/me/')
       .then(async (res) => {
@@ -98,8 +105,6 @@ export function ProHubShell({ children }: { children: React.ReactNode }) {
       })
       .catch(() => router.replace('/pro/login/'))
   }, [isPublicAuth, router])
-
-  useEffect(() => { setMobileOpen(false) }, [pathname])
 
   useEffect(() => {
     if (mobileOpen) document.body.style.overflow = 'hidden'

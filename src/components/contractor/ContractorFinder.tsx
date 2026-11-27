@@ -113,8 +113,12 @@ export function ContractorFinder({ contractors }: { contractors: PublicContracto
     )
   }, [])
 
-  // A shared link (?zip=) searches on arrival.
+  // A shared link (?zip=) searches on arrival. lookUp marks the search as
+  // pending before its request goes out (the spinner and the finder's model,
+  // docs/statecharts/contractor-finder, rely on that), so this effect sets
+  // state on purpose.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see above
     if (/^\d{5}$/.test(zipParam)) void lookUp(zipParam)
   }, [zipParam, lookUp])
 

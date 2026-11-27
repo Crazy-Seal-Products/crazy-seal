@@ -83,18 +83,21 @@ function SupportTab() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatLoading, setChatLoading] = useState(false)
 
-  const refresh = useCallback(async () => {
-    const res = await fetch('/api/pro/support/')
-    if (!res.ok) return
-    const data = (await res.json()) as { chats: ChatRow[]; tickets: TicketRow[]; chatLimit: number; readOnly: boolean; assistantOn: boolean }
-    setChats(data.chats)
-    setTickets(data.tickets)
-    setLimit(data.chatLimit)
-    setReadOnly(data.readOnly)
-    setAssistantOn(data.assistantOn)
-    // Without the agent, an empty new chat has nothing to offer; open "Ask the team" instead.
-    if (!data.assistantOn) setView((v) => (v.type === 'chat' && v.id === null ? { type: 'feedback' } : v))
-  }, [])
+  const refresh = useCallback(
+    () =>
+      fetch('/api/pro/support/').then(async (res) => {
+        if (!res.ok) return
+        const data = (await res.json()) as { chats: ChatRow[]; tickets: TicketRow[]; chatLimit: number; readOnly: boolean; assistantOn: boolean }
+        setChats(data.chats)
+        setTickets(data.tickets)
+        setLimit(data.chatLimit)
+        setReadOnly(data.readOnly)
+        setAssistantOn(data.assistantOn)
+        // Without the agent, an empty new chat has nothing to offer; open "Ask the team" instead.
+        if (!data.assistantOn) setView((v) => (v.type === 'chat' && v.id === null ? { type: 'feedback' } : v))
+      }),
+    [],
+  )
 
   useEffect(() => {
     refresh().finally(() => setLoading(false))
@@ -278,21 +281,30 @@ function TicketView({ id, readOnly, onChange, onOpenChat }: { id: string; readOn
   const [reply, setReply] = useState('')
   const [busy, setBusy] = useState(false)
 
-  const load = useCallback(async () => {
-    const res = await fetch(`/api/pro/support/tickets/${id}/`)
-    const json = await res.json()
-    if (!res.ok) setError(json.error || 'Could not load this request')
-    else {
-      setData(json)
-      onChange()
-    }
+  const load = useCallback(
+    () =>
+      fetch(`/api/pro/support/tickets/${id}/`).then(async (res) => {
+        const json = await res.json()
+        if (!res.ok) setError(json.error || 'Could not load this request')
+        else {
+          setData(json)
+          onChange()
+        }
+      }),
     // onChange only refreshes the unread dots; it's stable from the parent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+    [id],
+  )
 
-  useEffect(() => {
+  // Opening another request clears the one shown until it loads.
+  const [shownId, setShownId] = useState(id)
+  if (shownId !== id) {
+    setShownId(id)
     setData(null)
     setError(null)
+  }
+
+  useEffect(() => {
     load()
   }, [load])
 

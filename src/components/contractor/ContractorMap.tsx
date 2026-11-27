@@ -2,7 +2,7 @@
 
 import 'maplibre-gl/dist/maplibre-gl.css'
 import './contractor-map.css'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FeatureCollection, Point } from 'geojson'
 import type { GeoJSONSource, LngLatBoundsLike, Map as MapLibreMap, MapMouseEvent, Marker } from 'maplibre-gl'
 import { twMerge } from 'tailwind-merge'
@@ -157,8 +157,12 @@ export function ContractorMap({
   const mapRef = useRef<MapLibreMap | null>(null)
   const libRef = useRef<MapLib | null>(null)
   const markerRef = useRef<Marker | null>(null)
+  // The map's own event handlers read the latest props through this ref.
+  // Refreshed after each render, before the effects below run.
   const latest = useRef({ points, focus, selected, newTab })
-  latest.current = { points, focus, selected, newTab }
+  useLayoutEffect(() => {
+    latest.current = { points, focus, selected, newTab }
+  })
   const [ready, setReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

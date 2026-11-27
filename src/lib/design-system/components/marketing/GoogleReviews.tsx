@@ -13,9 +13,12 @@ export interface GoogleReviewsProps {
 
 interface ReviewData {
   reviewId: string
-  reviewer: { displayName: string; profilePhotoUrl?: string }
+  /** profilePhoto is an older name for profilePhotoUrl. */
+  reviewer: { displayName: string; profilePhotoUrl?: string; profilePhoto?: string }
   comment: string
   starRating: number
+  /** Older name for starRating. */
+  rating?: number
   createTime?: string
 }
 
@@ -53,12 +56,12 @@ const CHAR_LIMIT = 150
 function ReviewCard({ review, accentColor }: { review: ReviewData; accentColor: string }) {
   const [imageError, setImageError] = useState(false)
   const [expanded, setExpanded] = useState(false)
-  const rating = (review as any).starRating ?? (review as any).rating ?? 5
-  const photoUrl = (review.reviewer as any).profilePhotoUrl ?? (review.reviewer as any).profilePhoto
+  const rating = review.starRating ?? review.rating ?? 5
+  const photoUrl = review.reviewer.profilePhotoUrl ?? review.reviewer.profilePhoto
   const comment = review.comment || ''
   const isLong = comment.length > CHAR_LIMIT
 
-  const InitialsAvatar = () => (
+  const initialsAvatar = (
     <div
       className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg"
       style={{ backgroundColor: `${accentColor}15`, color: accentColor }}
@@ -79,7 +82,7 @@ function ReviewCard({ review, accentColor }: { review: ReviewData; accentColor: 
             onError={() => setImageError(true)}
           />
         ) : (
-          <InitialsAvatar />
+          initialsAvatar
         )}
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-gray-900 truncate">
