@@ -1,0 +1,6 @@
+{
+  "name": "Crazy Seal",
+  "data": ["map-data.js"],
+  "statecharts": "docs/statecharts",
+  "port": 4401
+}

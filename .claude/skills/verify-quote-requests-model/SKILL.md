@@ -31,7 +31,7 @@ Last confirmed against the uncommitted working tree on 2026-11-10, after the fix
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code, and set `Fixed` in the configs to describe the code as it is.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), with an `--out` folder that doesn't exist yet.
-4. Compare with the expected results, then copy the new chart and report into `charts/`.
+4. Compare with the expected results, then copy the new chart and report into `charts/`. Check them in the System Map (`npm run map`, then Flows).
 5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./register-quote-requests.mjs --test quote-requests.test.mjs`. It runs the real quote route (with `after()` queued by `quote-requests.hooks.mjs`), `recordQuote`, `notifyQuote`, `resendUnsentQuotes` and the cron route with a fake database and a fake Gmail. Each test walks a former bug path and asserts the rule now holds; others pin the open retry route: calls in the same hour send nothing extra, two calls at once send once, Send again skips the wait, and a `CRON_SECRET`, if set, is enforced.
 
 Expected results today:

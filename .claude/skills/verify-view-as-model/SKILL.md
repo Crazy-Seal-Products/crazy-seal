@@ -40,7 +40,7 @@ Last confirmed against the uncommitted working tree on 2026-11-10, after the Vie
 1. Read the diff. If it touches nothing above, say so and stop.
 2. Update the model so each action matches the new code, with `today.cfg` describing the code as it is.
 3. Run each config with the pstack `/statechart` skill, giving it `view.mts` as the view. On Eric's Windows machine the command is `statechart` (or `statechart-wsl`), with an `--out` folder that doesn't exist yet.
-4. Compare with the expected results, then render with `node ~/.local/share/pele/render.mjs chart.mmd` and copy the chart, SVG and report into `charts/`.
+4. Compare with the expected results, then copy the chart and report into `charts/`. Check them in the System Map (`npm run map`, then Flows): the chart and each bug path redraw on their own, so there is no SVG to render.
 5. Replay against the real code: from `docs/statecharts/replay/crazy-seal/`, run `node --import ./register-view-as.mjs --test view-as.test.mjs`. It runs the real View as route, `/api/pro/me`, the logout route, `view-as.ts` and `loadProContext` with a fake database, a fake admin sign-in and one fake cookie jar. Each former bug path asserts the fixed behavior, plus the rule that always held and a dealer's own sign-out with no view cookie. All 6 pass on the code now. The Pro Hub access and Shopify copy replays use the shared `fakes.mjs`, whose `view-as.ts` stand-in exports `isViewingAs` and `NO_ACCOUNT_ID` for `context.ts`.
 
 Expected results on the working tree of 2026-11-10, after the fix:

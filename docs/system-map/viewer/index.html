@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>System Map</title>
+  <!--
+    Developer reference, served only by docs/system-map/serve.mjs on 127.0.0.1.
+    Never deployed and never imported by app code. How to update: docs/system-map/README.md.
+  -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <button type="button" class="icon-btn" id="menu" aria-label="Open the list of areas, tours and flows" aria-expanded="false" aria-controls="drawer"></button>
+    <a class="brand" href="#/" aria-label="Back to the whole system">
+      <svg class="logo" viewBox="0 0 40 32" aria-hidden="true"><path d="M8 13 16 9l8 4-8 4z" class="logo-top"/><path d="M8 13v7l8 4v-7z" class="logo-l"/><path d="M24 13v7l-8 4v-7z" class="logo-r"/><path d="M20 7l8-4 8 4-8 4z" class="logo-top2"/><path d="M20 7v6l8 4v-6z" class="logo-l"/><path d="M36 7v6l-8 4v-6z" class="logo-r"/></svg>
+      <span class="brand-text"><span class="brand-sub">System Map</span><span class="brand-title" id="project">Loading</span></span>
+    </a>
+    <nav class="tabs" aria-label="Views">
+      <a class="tab" data-tab="map" href="#/">Map</a>
+      <a class="tab" data-tab="tour" href="#/tour">Tours <span class="count" id="count-tours"></span></a>
+      <a class="tab" data-tab="flow" href="#/flow">Flows <span class="count" id="count-flows"></span></a>
+    </nav>
+    <span class="spacer"></span>
+    <span class="local-tag" title="Served from this machine only. Never deployed.">Local only</span>
+    <button type="button" class="icon-btn" id="theme" aria-label="Switch between light and dark"></button>
+  </header>
+
+  <main class="layout">
+    <div class="left">
+      <section class="card stage-card">
+        <div class="stage-head">
+          <nav class="crumbs" id="crumbs" aria-label="Where you are"></nav>
+          <h1 id="title"></h1>
+          <p id="subtitle" class="subtitle"></p>
+        </div>
+        <div id="stage" class="stage" tabindex="0" aria-label="Map. Drag to move, scroll to zoom, click a block for details, double-click to open it."></div>
+        <div class="stage-foot">
+          <div class="legend" id="legend"></div>
+          <div class="stage-tools">
+            <button type="button" class="icon-btn small" id="fit" aria-label="Fit the view"></button>
+            <button type="button" class="icon-btn small" id="replay" aria-label="Replay the animation"></button>
+            <button type="button" class="icon-btn small" id="pause" aria-label="Pause the animation" aria-pressed="false"></button>
+          </div>
+        </div>
+      </section>
+      <section class="card timeline-card" id="timeline" hidden></section>
+    </div>
+    <aside class="right" id="panel" aria-live="polite"></aside>
+  </main>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="Areas, tours and flows" hidden></nav>
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

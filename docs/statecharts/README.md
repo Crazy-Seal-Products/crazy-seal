@@ -1,6 +1,8 @@
 # Statecharts
 
-Each folder models one flow where the order of events matters, checks it with TLC (the TLA+ model checker), and draws the result as a statechart in plain words. Red boxes are states that break a rule; the report gives the shortest path to each one.
+Each folder models one flow where the order of events matters, checks it with TLC (the TLA+ model checker), and draws the result as a statechart in plain words. Red states break a rule; the report gives the shortest path to each one.
+
+**To look at them, run `npm run map` and open Flows.** The System Map (`docs/system-map/`, local only, never deployed) draws each `charts/<config>.mmd` as isometric blocks in pstack's phase colors, lists each rule in the plain words of its verify skill, and steps through every bug path from `<config>.report.md` with **Walk the path**. It reads the checker's files directly, so there are no rendered SVGs to keep in sync.
 
 | Flow | Folder | Recheck skill |
 |---|---|---|
@@ -36,4 +38,4 @@ claude plugin marketplace add cursor/plugins
 claude plugin install pstack@cursor-plugins
 ```
 
-The checker needs Node 22.18+, Java 11+ and `tla2tools.jar` (TLA+ 1.7.4). On a Mac or in Linux it runs as pstack ships it. On Eric's Windows machine, `statechart` runs a patched Windows copy and `statechart-wsl` runs it inside WSL; the Company Engineers repo's `docs/statecharts/README.md` has the setup. Charts are rendered to SVG with Pele (`pele@1.9.0`).
+The checker needs Node 22.18+, Java 11+ and `tla2tools.jar` (TLA+ 1.7.4). On a Mac or in Linux it runs as pstack ships it. On Eric's Windows machine, `statechart` runs a patched Windows copy and `statechart-wsl` runs it inside WSL; the Company Engineers repo's `docs/statecharts/README.md` has the setup. Charts are drawn by the System Map from the checker's `.mmd` and `.report.md`; there is no separate render step.
